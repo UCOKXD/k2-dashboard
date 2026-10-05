@@ -39,16 +39,23 @@ const RAW: [string, string][] = [
 
 export const STUDENTS = RAW.map(([full, short]) => ({ full, short }));
 
+// Ubah nama dari form (nama lengkap, panggilan, atau nama depan) menjadi nama lengkap siswa.
+// Nama yang tidak dikenali dikembalikan apa adanya; string kosong tetap kosong.
+export function resolveName(raw: string) {
+  const n = raw.trim().toLowerCase();
+  if (!n) return "";
+  const s = STUDENTS.find(
+    (x) => x.full.toLowerCase() === n || x.short.toLowerCase() === n || x.full.toLowerCase().startsWith(n + " ")
+  );
+  return s ? s.full : raw.trim();
+}
+
 // Hitung pelanggaran per siswa (0 tetap tampil). Nama di form boleh nama lengkap, panggilan, atau nama depan.
 export function countBy(names: string[]) {
   const m = new Map(STUDENTS.map((s) => [s.full, 0]));
   for (const raw of names) {
-    const n = raw.trim().toLowerCase();
-    if (!n) continue;
-    const s = STUDENTS.find(
-      (x) => x.full.toLowerCase() === n || x.short.toLowerCase() === n || x.full.toLowerCase().startsWith(n + " ")
-    );
-    const k = s ? s.full : raw.trim();
+    const k = resolveName(raw);
+    if (!k) continue;
     m.set(k, (m.get(k) ?? 0) + 1);
   }
   return [...m]
