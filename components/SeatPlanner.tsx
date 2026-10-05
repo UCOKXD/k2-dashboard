@@ -81,7 +81,7 @@ export default function SeatPlanner() {
         <div className="grid min-w-[900px] grid-cols-11 gap-2" style={{ gridTemplateRows: "auto repeat(4, 3.25rem)" }}>
           <div style={{ gridRow: 1, gridColumn: "4 / 8" }} className="rounded-lg bg-navy-900 py-2 text-center text-sm font-semibold text-white">Papan</div>
           <div style={{ gridRow: 1, gridColumn: "10 / 12" }} className="rounded-lg bg-sea-500 py-2 text-center text-sm font-semibold text-white">Dosen</div>
-          <div style={{ gridRow: "4 / 6", gridColumn: "1 / 4" }} className="grid place-items-center rounded-lg border-2 border-dashed border-sea-300 text-sm text-sea-600">Pintu</div>
+          <div style={{ gridRow: "4 / 6", gridColumn: "1 / 4" }} className="grid place-items-center rounded-lg border-2 border-dashed border-sea-300 text-sm text-sea-600">Box</div>
 
           {SEATS.map((p, i) => {
             const s = STUDENTS[order[i]];
