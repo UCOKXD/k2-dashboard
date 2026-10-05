@@ -37,16 +37,16 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   const home = usePathname() === "/";
   return (
     <div className="min-h-screen">
-      {/* Header bernuansa laut, senada dengan gelembung biru di kedua logo. */}
+      {/* Header bernuansa laut, senada dengan gelembung biru di kedua logo.
+          Di layar lebar island menu menempel di tengah header, jadi isi kiri & kanan dijaga tetap ramping. */}
       <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-white/10 bg-gradient-to-r from-navy-900/95 via-navy-700/95 to-sea-600/95 px-4 shadow-[0_10px_30px_rgba(11,30,61,0.35)] backdrop-blur-md md:px-8">
         <Link href="/" className="flex min-w-0 items-center gap-2" aria-label="K2 Pusat Informasi, ke halaman utama">
           <Image src="/logo-k2.png" alt="Logo Divisi K2" width={40} height={41} className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]" priority />
           <Image src="/logo-absorbing.png" alt="Logo kelas Absorbing PPTI 28" width={40} height={42} className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]" priority />
           <Image src="/k2-wordmark.png" alt="K2 Pusat Informasi" width={600} height={235} className="ml-1 h-8 w-auto shrink-0" priority />
-          <span className="ml-2 hidden border-l border-white/25 pl-3 text-[11px] italic text-sea-100/80 lg:block">Custos Disciplinae et Aequitas</span>
         </Link>
         <div className="flex shrink-0 items-center gap-2.5">
-          <span className="hidden items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white sm:flex">
+          <span className="hidden items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white sm:flex lg:hidden xl:flex">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Siswa Aktif
           </span>
           <LoginButton />

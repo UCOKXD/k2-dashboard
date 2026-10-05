@@ -61,10 +61,11 @@ export default function NavIsland({ variant }: { variant: "floating" | "static" 
       {MENU.map((item) => {
         const Icon = item.icon;
         const active = item.match !== "" && path === item.match;
-        // Docked: nama menu terlihat semua di layar lebar (sisanya hanya menu aktif / saat hover).
+        // Docked: nama menu terlihat semua hanya di layar sangat lebar supaya tidak menutupi logo/tombol header;
+        // selain itu hanya menu aktif / saat hover.
         // Melayang: nama menu hanya muncul saat hover.
         const label = docked
-          ? `${active ? "ml-1 max-w-[160px] opacity-100" : "max-w-0 opacity-0"} min-[1450px]:ml-1 min-[1450px]:max-w-[160px] min-[1450px]:opacity-100 group-hover:ml-1 group-hover:max-w-[160px] group-hover:opacity-100`
+          ? `${active ? "ml-1 max-w-[160px] opacity-100" : "max-w-0 opacity-0"} min-[1680px]:ml-1 min-[1680px]:max-w-[160px] min-[1680px]:opacity-100 group-hover:ml-1 group-hover:max-w-[160px] group-hover:opacity-100`
           : "max-w-0 opacity-0 sm:group-hover:ml-1 sm:group-hover:max-w-[160px] sm:group-hover:opacity-100";
         return (
           <Link
