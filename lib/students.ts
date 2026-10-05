@@ -1,5 +1,5 @@
-// Siswa ABSORBING PPTI 28: [nama lengkap, panggilan di denah].
-// Panggilan Ina, Sasa, dan Dea adalah tebakan dari denah, mohon dicek.
+// Siswa ABSORBING PPTI 28: [nama lengkap, panggilan di denah], urut sesuai nomor absen.
+// Panggilan Ina masih tebakan dari denah, mohon dicek.
 const RAW: [string, string][] = [
   ["Aditya Yoga Eka Saputra", "Adit"],
   ["Ahmad Zaqi", "Zaqi"],
@@ -18,7 +18,7 @@ const RAW: [string, string][] = [
   ["Edward Devon Kosasih", "Edward"],
   ["Evelyn Davina", "Eve"],
   ["Fahri Roiza", "Fahri"],
-  ["Francis Demetrio Villanova", "Francis"],
+  ["Francis Demetrio Villanova", "Ancis"],
   ["Grady Wiendy Koesnadi", "Grady"],
   ["Joevans Rafael Kosasih", "Joevans"],
   ["Justine Taniardi", "Justine"],
@@ -37,7 +37,10 @@ const RAW: [string, string][] = [
   ["Yeremia Theofilus Handoyo", "Yere"],
 ];
 
-export const STUDENTS = RAW.map(([full, short]) => ({ full, short }));
+// NIM sementara masih dummy. Ganti isi NIM di sini (urut absen 1-34) kalau data asli sudah ada.
+const NIM: string[] = RAW.map((_, i) => `0000000${String(i + 1).padStart(3, "0")}`);
+
+export const STUDENTS = RAW.map(([full, short], i) => ({ full, short, absen: i + 1, nim: NIM[i] }));
 
 // Ubah nama dari form (nama lengkap, panggilan, atau nama depan) menjadi nama lengkap siswa.
 // Nama yang tidak dikenali dikembalikan apa adanya; string kosong tetap kosong.

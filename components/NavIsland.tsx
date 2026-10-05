@@ -7,6 +7,7 @@ import {
   Armchair,
   BookOpen,
   Calendar,
+  Clock,
   FileText,
   LayoutDashboard,
   Stethoscope,
@@ -20,6 +21,7 @@ const MENU = [
   { name: "Izin Sakit", icon: Stethoscope, href: "/izin-sakit", match: "/izin-sakit" },
   { name: "Izin", icon: FileText, href: "/izin", match: "/izin" },
   { name: "Kalender", icon: Calendar, href: "/kalender-acara", match: "/kalender-acara" },
+  { name: "Waktu", icon: Clock, href: "/waktu", match: "/waktu" },
   { name: "Pelanggaran", icon: AlertTriangle, href: "/pelanggaran", match: "/pelanggaran" },
   { name: "Tempat Duduk", icon: Armchair, href: "/tempat-duduk", match: "/tempat-duduk" },
 ] as const;

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import {
   Activity,
   AlertTriangle,
@@ -14,21 +14,24 @@ import {
   PieChart as PieIcon,
   Search,
   ShieldAlert,
-  Sparkles,
   Stethoscope,
+  UserCheck,
   Users,
   X,
 } from "lucide-react";
 import NavIsland from "@/components/NavIsland";
 import OrgChart from "@/components/OrgChart";
-import { buildPelanggaran } from "@/lib/dashboard";
+import { LOCAL_DOA_LOG, buildPelanggaran, doaLog } from "@/lib/dashboard";
+import { STUDENTS } from "@/lib/students";
+import type { DoaPick } from "@/lib/store";
 import type { HomeData, LogType, PelanggaranData, StudentStat } from "@/lib/dashboard";
 import type { Table } from "@/lib/sheets";
 
-// Ganti dengan foto kelas: taruh file di public/slides/ lalu ubah nama file di sini.
-const SLIDES = ["/slides/foto-1.svg", "/slides/foto-2.svg"];
+// Foto kelas di public/slides/. Tambah atau ganti foto: taruh file di sana lalu ubah daftar ini.
+const SLIDES = ["/slides/foto-1.jpg", "/slides/foto-2.jpg"];
 
-const CARD = "rounded-[2.5rem] border border-slate-100 bg-white shadow-[0_30px_80px_rgba(0,0,0,0.12)]";
+// Bayangan sengaja agak gelap supaya kartu terlihat timbul (3D).
+const CARD = "rounded-[2.5rem] border border-slate-200/70 bg-white shadow-[0_30px_80px_rgba(15,23,42,0.24)]";
 const PIE_COLORS = ["#2563eb", "#6366f1", "#38bdf8", "#f59e0b", "#10b981", "#94a3b8"];
 
 const LOG_STYLE: Record<LogType, { icon: typeof Calendar; badge: string; color: string }> = {
@@ -36,6 +39,7 @@ const LOG_STYLE: Record<LogType, { icon: typeof Calendar; badge: string; color: 
   sakit: { icon: Stethoscope, badge: "Izin Sakit", color: "bg-amber-50 text-amber-600 border-amber-200" },
   izin: { icon: FileText, badge: "Izin", color: "bg-sky-50 text-sky-600 border-sky-200" },
   acara: { icon: Calendar, badge: "Input Acara", color: "bg-indigo-50 text-indigo-600 border-indigo-200" },
+  doa: { icon: UserCheck, badge: "Doa Harian", color: "bg-emerald-50 text-emerald-600 border-emerald-200" },
 };
 
 /* ------------------------------------------------------------------ Hero */
@@ -66,7 +70,7 @@ function Hero() {
     <div className="mx-auto max-w-[1000px] px-4 pt-[4.5rem] md:px-0">
       <div
         ref={ref}
-        className="relative flex h-[320px] origin-top items-center justify-center overflow-hidden rounded-[2.5rem] border-4 border-white bg-slate-200 shadow-[0_25px_60px_rgba(0,0,0,0.2)] will-change-transform sm:h-[460px]"
+        className="relative flex h-[320px] origin-top items-center justify-center overflow-hidden rounded-[2.5rem] border-4 border-white bg-slate-200 shadow-[0_30px_70px_rgba(15,23,42,0.35)] will-change-transform sm:h-[460px]"
       >
         {SLIDES.map((src, i) => (
           <Image
@@ -74,22 +78,16 @@ function Hero() {
             src={src}
             alt={`Slide foto ${i + 1}`}
             fill
-            unoptimized
             priority={i === 0}
             sizes="1000px"
-            className={`object-cover transition-all duration-1000 ease-in-out ${i === slide ? "scale-100 opacity-100" : "scale-105 opacity-0"}`}
+            className={`object-cover object-[50%_65%] transition-all duration-1000 ease-in-out ${i === slide ? "scale-100 opacity-100" : "scale-105 opacity-0"}`}
           />
         ))}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/10" />
 
         <div className="relative z-10 px-6 text-center">
-          <span className="mb-3 inline-flex items-center gap-1.5 rounded-full border border-white/40 bg-white/25 px-3 py-1 text-xs font-semibold text-white shadow-lg backdrop-blur-md">
-            <Sparkles size={14} className="text-yellow-300" /> Dokumentasi Kelas Kita
-          </span>
-          <h1 className="text-3xl font-extrabold leading-tight tracking-tight text-white drop-shadow-xl sm:text-5xl md:text-6xl">
-            Selamat Datang
-            <br />
-            di Portal Siswa
+          <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-[0_6px_24px_rgba(0,0,0,0.6)] sm:text-5xl md:text-6xl">
+            Pusat Informasi K2
           </h1>
         </div>
 
@@ -133,6 +131,7 @@ function useStudentTooltip() {
 function TipBox({ tip }: { tip: Tip | null }) {
   if (!tip) return null;
   const { s } = tip;
+  const info = STUDENTS.find((x) => x.full === s.nama);
   return (
     <div
       className="animate-fadeIn pointer-events-none fixed z-[70] w-72 rounded-2xl border border-slate-700 bg-slate-900 p-4 text-white shadow-[0_25px_50px_rgba(0,0,0,0.4)]"
@@ -143,6 +142,11 @@ function TipBox({ tip }: { tip: Tip | null }) {
         <span className="shrink-0 text-xs text-slate-400">{s.short}</span>
       </div>
       <div className="space-y-1 text-xs text-slate-300">
+        {info && (
+          <p>
+            <strong className="text-slate-200">Absen:</strong> {info.absen} · <strong className="text-slate-200">NIM:</strong> {info.nim}
+          </p>
+        )}
         <p>
           <strong className="text-slate-200">Total:</strong> {s.jumlah} pelanggaran
         </p>
@@ -163,22 +167,43 @@ function TipBox({ tip }: { tip: Tip | null }) {
 
 /* ------------------------------------------------------- Log aktivitas */
 
+function subscribeStorage(cb: () => void) {
+  window.addEventListener("storage", cb);
+  return () => window.removeEventListener("storage", cb);
+}
+function readLocalDoa() {
+  try {
+    return localStorage.getItem(LOCAL_DOA_LOG) ?? "[]";
+  } catch {
+    return "[]";
+  }
+}
+
 function LogPanel({ logs }: { logs: HomeData["logs"] }) {
   const [range, setRange] = useState<7 | 14>(14);
   const [order, setOrder] = useState<"newest" | "oldest">("newest");
+  // Acak doa yang belum tersimpan di server hanya ada di browser ini.
+  const raw = useSyncExternalStore(subscribeStorage, readLocalDoa, () => "[]");
+  const local = useMemo(() => {
+    try {
+      return (JSON.parse(raw) as DoaPick[]).map((p, i) => doaLog(p, i));
+    } catch {
+      return [];
+    }
+  }, [raw]);
 
-  const shown = logs
+  const shown = [...logs, ...local]
     .filter((l) => l.daysAgo <= range)
     .sort((a, b) => (order === "newest" ? a.daysAgo - b.daysAgo : b.daysAgo - a.daysAgo));
 
   return (
-    <div className={`${CARD} p-6 shadow-[0_25px_60px_rgba(0,0,0,0.1)] sm:p-8`}>
+    <div className={`${CARD} p-6 sm:p-8`}>
       <div className="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <div>
           <h3 className="flex items-center gap-2 text-lg font-bold text-slate-800">
             <BellRing className="h-5 w-5 animate-bounce text-blue-600" /> Log Aktivitas &amp; Pengumuman Terbaru K2
           </h3>
-          <p className="text-xs text-slate-400">Laporan pelanggaran, izin, dan acara terbaru dari form kelas.</p>
+          <p className="text-xs text-slate-400">Laporan pelanggaran, izin, acara, dan petugas doa harian terbaru.</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
@@ -213,7 +238,7 @@ function LogPanel({ logs }: { logs: HomeData["logs"] }) {
             return (
               <div
                 key={log.id}
-                className="flex items-start justify-between gap-4 rounded-2xl border border-slate-200/70 bg-slate-50/80 p-4 transition-all hover:bg-slate-100/80 sm:items-center"
+                className="flex items-start justify-between gap-4 rounded-2xl border border-slate-200/80 bg-slate-50/80 p-4 shadow-[0_6px_16px_rgba(15,23,42,0.10)] transition-all hover:bg-slate-100/80 sm:items-center"
               >
                 <div className="flex min-w-0 items-start gap-3.5 sm:items-center">
                   <div className={`mt-0.5 shrink-0 rounded-xl border p-2.5 sm:mt-0 ${st.color}`}>
@@ -269,7 +294,7 @@ function PieSection({ pel }: { pel: PelanggaranData }) {
 
       <div className="grid grid-cols-1 items-center gap-8 pt-4 lg:grid-cols-3">
         <div className="flex justify-center">
-          <div className="relative flex h-48 w-48 items-center justify-center rounded-full border-4 border-white bg-slate-50 p-3 shadow-[0_15px_35px_rgba(0,0,0,0.08)] sm:h-56 sm:w-56">
+          <div className="relative flex h-48 w-48 items-center justify-center rounded-full border-4 border-white bg-slate-50 p-3 shadow-[0_18px_40px_rgba(15,23,42,0.25)] sm:h-56 sm:w-56">
             <div
               className="absolute inset-3 rounded-full"
               style={{
@@ -288,7 +313,7 @@ function PieSection({ pel }: { pel: PelanggaranData }) {
         <div className="space-y-4 lg:col-span-2">
           {categories.length === 0 && <p className="text-sm text-slate-400">Belum ada pelanggaran yang tercatat.</p>}
           {categories.map((c, i) => (
-            <div key={c.kategori} className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-slate-50 p-4 transition-all hover:border-blue-300">
+            <div key={c.kategori} className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-slate-50 p-4 shadow-[0_8px_20px_rgba(15,23,42,0.12)] transition-all hover:border-blue-300">
               <div className="flex min-w-0 items-center gap-3">
                 <div className="h-4 w-4 shrink-0 rounded-full shadow-sm" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
                 <div className="min-w-0">
@@ -327,12 +352,12 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
       (s.kategori || "bersih").toLowerCase().includes(q)
   );
 
-  const panel = "rounded-3xl border border-slate-200/90 bg-gradient-to-br from-slate-50 to-blue-50/40 p-6 shadow-[0_20px_50px_rgba(0,0,0,0.12)] sm:p-8";
+  const panel = "rounded-3xl border border-slate-200/90 bg-gradient-to-br from-slate-50 to-blue-50/40 p-6 shadow-[0_20px_50px_rgba(15,23,42,0.2)] sm:p-8";
 
   return (
     <section id="dashboard" className="scroll-mt-32">
       <TipBox tip={tip} />
-      <div className="space-y-10 rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-[0_30px_80px_rgba(0,0,0,0.18)] md:p-10">
+      <div className="space-y-10 rounded-[2.5rem] border border-slate-200/70 bg-white p-8 shadow-[0_30px_80px_rgba(15,23,42,0.28)] md:p-10">
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div>
             <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-800 sm:text-3xl">
@@ -347,7 +372,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {/* A. Hall of Shame */}
-          <div className="rounded-3xl border border-rose-100 bg-gradient-to-r from-rose-50 via-orange-50 to-amber-50 p-6 shadow-[0_20px_50px_rgba(244,63,94,0.08)] sm:p-7 lg:col-span-2">
+          <div className="rounded-3xl border border-rose-100 bg-gradient-to-r from-rose-50 via-orange-50 to-amber-50 p-6 shadow-[0_20px_50px_rgba(15,23,42,0.18)] sm:p-7 lg:col-span-2">
             <div className="mb-5 flex items-center gap-2">
               <div className="rounded-xl bg-rose-500 p-2 text-white shadow-md">
                 <Flame size={20} />
@@ -362,7 +387,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
             ) : (
               <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3">
                 {topThree.map((s, i) => (
-                  <div key={s.nama} className="relative flex flex-col justify-between overflow-hidden rounded-2xl border border-rose-100 bg-white p-4 shadow-[0_10px_30px_rgba(0,0,0,0.06)] transition-transform hover:scale-[1.02]">
+                  <div key={s.nama} className="relative flex flex-col justify-between overflow-hidden rounded-2xl border border-rose-100 bg-white p-4 shadow-[0_10px_28px_rgba(15,23,42,0.16)] transition-transform hover:scale-[1.02]">
                     <div className="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-600">#{i + 1}</div>
                     <div>
                       <span className="inline-block max-w-[calc(100%-2rem)] truncate rounded-md border border-rose-100 bg-rose-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-rose-600">
@@ -381,7 +406,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
           </div>
 
           {/* B. History terbaru (live) */}
-          <div className="flex flex-col justify-between rounded-3xl border border-slate-800 bg-slate-900 p-6 text-white shadow-[0_20px_50px_rgba(0,0,0,0.25)] sm:p-7">
+          <div className="flex flex-col justify-between rounded-3xl border border-slate-800 bg-slate-900 p-6 text-white shadow-[0_24px_55px_rgba(15,23,42,0.45)] sm:p-7">
             <div>
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -479,7 +504,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
               {filtered.map((s, i) => (
                 <div
                   key={s.nama}
-                  className="flex items-center justify-between gap-2 rounded-2xl border border-blue-100/60 bg-white p-3.5 shadow-[0_8px_25px_rgba(59,130,246,0.1)] transition-all hover:border-blue-300"
+                  className="flex items-center justify-between gap-2 rounded-2xl border border-blue-100/60 bg-white p-3.5 shadow-[0_8px_22px_rgba(15,23,42,0.14)] transition-all hover:border-blue-300"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shadow-md shadow-blue-500/30">{i + 1}</span>
@@ -552,23 +577,21 @@ export default function HomeDashboard({ data }: { data: HomeData }) {
       <NavIsland variant="floating" />
 
       <div className="mx-auto max-w-6xl space-y-12 px-4 pb-32 pt-8 md:px-8">
-        <div className="mx-auto max-w-2xl px-4 text-center">
-          <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 sm:text-sm">Platform Informasi Terpadu Kelas</p>
-          <p className="mt-3 text-base font-medium leading-relaxed text-slate-600 sm:text-lg">
-            Platform interaktif untuk ringkasan catatan kedisiplinan dan aktivitas kelas secara transparan.
-          </p>
-        </div>
-
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-shadow hover:shadow-lg">
-            <p className="text-sm text-slate-500">Total pelanggaran bulan ini</p>
-            <p className="mt-2 text-4xl font-extrabold text-blue-600">{stats.pelanggaranBulanIni}</p>
-          </div>
-          <div className="rounded-3xl border border-slate-100 bg-white p-6 shadow-[0_20px_50px_rgba(0,0,0,0.08)] transition-shadow hover:shadow-lg">
-            <p className="text-sm text-slate-500">Anak izin sakit hari ini</p>
-            <p className="mt-2 text-4xl font-extrabold text-blue-600">{stats.sakitHariIni.length}</p>
-            {stats.sakitHariIni.length > 0 && <p className="mt-2 text-sm text-slate-700">{stats.sakitHariIni.join(", ")}</p>}
-          </div>
+          {[
+            { label: "Total Pelanggaran", value: pel.total, icon: AlertTriangle, tone: "bg-rose-50 text-rose-600 border-rose-200" },
+            { label: "Total Izin Sakit", value: stats.totalSakit, icon: Stethoscope, tone: "bg-amber-50 text-amber-600 border-amber-200" },
+          ].map(({ label, value, icon: Icon, tone }) => (
+            <div key={label} className="flex items-center justify-between gap-4 rounded-3xl border border-slate-200/70 bg-white p-6 shadow-[0_22px_50px_rgba(15,23,42,0.22)] transition-shadow hover:shadow-[0_26px_60px_rgba(15,23,42,0.3)] sm:p-7">
+              <div>
+                <p className="text-base font-semibold text-slate-600 sm:text-lg">{label}</p>
+                <p className="mt-1 text-5xl font-extrabold text-blue-600">{value}</p>
+              </div>
+              <div className={`rounded-2xl border p-4 shadow-md ${tone}`}>
+                <Icon size={28} />
+              </div>
+            </div>
+          ))}
         </div>
 
         <LogPanel logs={data.logs} />

@@ -2,12 +2,13 @@
 // Aman dipakai di server maupun browser (tidak menyentuh API key).
 import type { Table } from "@/lib/sheets";
 import { STUDENTS, resolveName } from "@/lib/students";
+import type { DoaPick } from "@/lib/store";
 
 // Kolom pelanggaran di sheet dideteksi otomatis dari judul kolom.
 // Kalau salah tebak, isi huruf kolomnya di sini (mis. kategori: "D", ket: "E").
 const PEL_COLS = { kategori: "", ket: "" };
 
-export type LogType = "pelanggaran" | "sakit" | "izin" | "acara";
+export type LogType = "pelanggaran" | "sakit" | "izin" | "acara" | "doa";
 
 export type LogItem = {
   id: string;
@@ -38,10 +39,13 @@ export type PelanggaranData = {
 };
 
 export type HomeData = {
-  stats: { pelanggaranBulanIni: number; sakitHariIni: string[] };
+  stats: { totalSakit: number };
   pelanggaran: PelanggaranData;
   logs: LogItem[];
 };
+
+// Riwayat acak doa yang hanya tersimpan di browser (dipakai selama penyimpanan server belum dipasang).
+export const LOCAL_DOA_LOG = "k2-doa-log";
 
 const shortOf = (full: string) => STUDENTS.find((s) => s.full === full)?.short ?? full;
 
@@ -127,7 +131,7 @@ export function buildPelanggaran(t: Table): PelanggaranData {
   return { total, students, categories, recent };
 }
 
-const TITLE: Record<LogType, string> = {
+const TITLE: Record<Exclude<LogType, "doa">, string> = {
   pelanggaran: "Laporan Pelanggaran Terbaru",
   sakit: "Laporan Izin Sakit",
   izin: "Laporan Izin Tidak Hadir / Telat",
@@ -135,9 +139,9 @@ const TITLE: Record<LogType, string> = {
 };
 
 // Gabungkan laporan terbaru dari semua tab sheet menjadi satu daftar log (maksimal `maxDays` hari ke belakang).
-export function buildLogs(tables: Record<LogType, Table>, maxDays = 14): LogItem[] {
+export function buildLogs(tables: Record<keyof typeof TITLE, Table>, doa: DoaPick[] = [], maxDays = 14): LogItem[] {
   const out: (LogItem & { seq: number })[] = [];
-  for (const type of Object.keys(TITLE) as LogType[]) {
+  for (const type of Object.keys(TITLE) as (keyof typeof TITLE)[]) {
     const t = tables[type];
     const pc = type === "pelanggaran" ? pelCols(t) : null;
     const others = t.cols.filter((c) => c.key !== "A" && c.key !== t.name);
@@ -159,8 +163,28 @@ export function buildLogs(tables: Record<LogType, Table>, maxDays = 14): LogItem
       out.push({ id: `${type}-${seq}`, type, title: TITLE[type], detail: clip(detail), daysAgo: d, time: agoLabel(d), seq });
     });
   }
+  doa.forEach((p, seq) => {
+    const log = doaLog(p, seq);
+    if (log.daysAgo <= maxDays) out.push({ ...log, seq: 1e6 + seq });
+  });
   return out
     .sort((a, b) => a.daysAgo - b.daysAgo || b.seq - a.seq)
     .slice(0, 120)
     .map(({ seq: _seq, ...log }) => log);
+}
+
+// Tanggal "DD/MM/YYYY" (zona Jakarta) dari waktu ISO, supaya bisa dihitung daysAgo seperti data sheet.
+const jktDate = (iso: string) => new Date(iso).toLocaleDateString("en-GB", { timeZone: "Asia/Jakarta" });
+
+export function doaLog(p: DoaPick, seq = 0): LogItem {
+  const d = Math.max(daysAgo(jktDate(p.at)) ?? 0, 0);
+  const jam = new Date(p.at).toLocaleTimeString("id-ID", { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit" });
+  return {
+    id: `doa-${p.at}-${seq}`,
+    type: "doa",
+    title: "Petugas doa hari ini telah diacak admin",
+    detail: `Petugas hari ini : ${p.name} (${p.nim})`,
+    daysAgo: d,
+    time: d === 0 ? `Hari ini, ${jam}` : agoLabel(d),
+  };
 }
