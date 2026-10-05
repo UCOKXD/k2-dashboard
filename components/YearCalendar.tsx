@@ -3,7 +3,7 @@ import { useMemo, useState } from "react";
 import { CalendarDays, ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react";
 import { hasSkb, holidaysOf, type Holiday } from "@/lib/holidays";
 
-export type CalEvent = { date: string; title: string; detail: string }; // date = "YYYY-MM-DD"
+import type { CalEvent } from "@/lib/acara";
 
 const FIRST_YEAR = 2026;
 const DAYS = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];

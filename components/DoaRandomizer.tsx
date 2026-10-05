@@ -1,7 +1,9 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, LogOut } from "lucide-react";
+import { Lock } from "lucide-react";
+import { adminFetch, useAuth } from "@/components/AuthProvider";
 import { LOCAL_DOA_LOG } from "@/lib/dashboard";
 import { STUDENTS } from "@/lib/students";
 import type { DoaPick } from "@/lib/store";
@@ -11,14 +13,13 @@ const monthKey = () => {
   const d = new Date();
   return `k2-doa-${d.getFullYear()}-${d.getMonth() + 1}`;
 };
-const PIN_KEY = "k2-admin-pin"; // hanya sessionStorage: hilang saat tab ditutup
 
 const nimOf = (name: string) => STUDENTS.find((s) => s.full === name)?.nim ?? "-";
 const fmt = (iso: string) => new Date(iso).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta" });
 
-function readLocal<T>(key: string, store: Storage = localStorage): T[] {
+function readLocal<T>(key: string): T[] {
   try {
-    return JSON.parse(store.getItem(key) ?? "[]") as T[];
+    return JSON.parse(localStorage.getItem(key) ?? "[]") as T[];
   } catch {
     return [];
   }
@@ -34,18 +35,11 @@ function localHistory(): DoaPick[] {
   });
 }
 
-async function call(method: "POST" | "DELETE", body: object) {
-  const res = await fetch("/api/doa", { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
-  const data = (await res.json().catch(() => ({}))) as { error?: string; stored?: boolean };
-  if (!res.ok) throw new Error(data.error ?? "Terjadi kesalahan");
-  return data;
-}
-
+// Semua orang bisa melihat riwayat; hanya admin yang sudah masuk yang bisa mengacak.
 export default function DoaRandomizer({ names }: { names: string[] }) {
+  const { user } = useAuth();
   const [history, setHistory] = useState<DoaPick[]>([]);
-  const [stored, setStored] = useState(false); // true = riwayat tersimpan di server (terlihat semua orang)
-  const [pin, setPin] = useState("");
-  const [pinInput, setPinInput] = useState("");
+  const [stored, setStored] = useState(true); // true = riwayat tersimpan di server (terlihat semua orang)
   const [error, setError] = useState("");
   const [shown, setShown] = useState("Siapa yang baca doa?");
   const [spinning, setSpinning] = useState(false);
@@ -55,13 +49,8 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
     fetch("/api/doa")
       .then((r) => r.json())
       .then((d: { stored?: boolean; picks?: DoaPick[] }) => {
-        try {
-          setPin(sessionStorage.getItem(PIN_KEY) ?? "");
-        } catch {}
-        if (d.stored) {
-          setStored(true);
-          setHistory(d.picks ?? []);
-        } else setHistory(localHistory());
+        setStored(!!d.stored);
+        setHistory(d.stored ? (d.picks ?? []) : localHistory());
       })
       .catch(() => setHistory(localHistory()));
     return () => clearInterval(timer.current);
@@ -70,34 +59,16 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
   // Yang sudah terpilih di bulan ini tidak masuk kandidat lagi.
   const pool = names.filter((n) => !history.some((h) => h.name === n));
 
-  async function login(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    try {
-      await call("POST", { pin: pinInput });
-      sessionStorage.setItem(PIN_KEY, pinInput);
-      setPin(pinInput);
-      setPinInput("");
-    } catch (err) {
-      setError((err as Error).message);
-    }
-  }
-
-  function logout() {
-    sessionStorage.removeItem(PIN_KEY);
-    setPin("");
-  }
-
   async function spin() {
-    if (spinning || !pool.length || !pin) return;
+    if (spinning || !pool.length || !user) return;
     setError("");
     setSpinning(true);
     const winner = pool[Math.floor(Math.random() * pool.length)];
     timer.current = setInterval(() => setShown(names[Math.floor(Math.random() * names.length)]), 70);
 
-    // Catat dulu di server (sekaligus cek PIN); animasi tetap jalan minimal 2,5 detik.
+    // Catat dulu di server; animasi tetap jalan minimal 2,5 detik.
     const [res] = await Promise.allSettled([
-      call("POST", { pin, name: winner }),
+      adminFetch<{ stored: boolean; pick: DoaPick }>("/api/doa", "POST", { name: winner }),
       new Promise((r) => setTimeout(r, 2500)),
     ]);
     clearInterval(timer.current);
@@ -106,10 +77,9 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
     if (res.status === "rejected") {
       setShown("Siapa yang baca doa?");
       setError((res.reason as Error).message);
-      if ((res.reason as Error).message === "PIN salah") logout();
       return;
     }
-    const pick: DoaPick = { name: winner, nim: nimOf(winner), at: new Date().toISOString() };
+    const pick = res.value.pick;
     setShown(winner);
     const next = [...history, pick];
     setHistory(next);
@@ -120,9 +90,9 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
   }
 
   async function reset() {
-    if (!pin || !confirm("Reset riwayat doa bulan ini?")) return;
+    if (!user || !confirm("Reset riwayat doa bulan ini?")) return;
     try {
-      await call("DELETE", { pin });
+      await adminFetch("/api/doa", "DELETE");
       localStorage.removeItem(monthKey());
       setHistory([]);
       setShown("Siapa yang baca doa?");
@@ -133,7 +103,7 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      <div className="rounded-2xl border border-sea-100 bg-white/70 backdrop-blur-md p-6 text-center shadow-[0_20px_45px_rgba(15,23,42,0.2)]">
+      <div className="rounded-2xl border border-white/60 bg-white/70 p-6 text-center shadow-[0_20px_45px_rgba(15,23,42,0.2)] backdrop-blur-md">
         <motion.div
           animate={{ scale: spinning ? [1, 1.04, 1] : 1 }}
           transition={{ repeat: spinning ? Infinity : 0, duration: 0.3 }}
@@ -142,7 +112,7 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
           {shown}
         </motion.div>
 
-        {pin ? (
+        {user ? (
           <>
             <button
               onClick={spin}
@@ -154,44 +124,29 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
             <p className="mt-3 text-sm">
               {pool.length ? `${pool.length} nama tersisa bulan ini` : "Semua nama sudah terpilih bulan ini. Reset untuk mulai lagi."}
             </p>
-            <button onClick={logout} className="mx-auto mt-2 flex items-center gap-1 text-xs text-navy-700 underline">
-              <LogOut size={12} /> Keluar mode admin
-            </button>
           </>
         ) : (
-          <form onSubmit={login} className="mx-auto mt-5 flex max-w-xs flex-col gap-2">
-            <label className="flex items-center justify-center gap-1.5 text-sm font-semibold text-navy-900">
-              <Lock size={14} /> Masukkan PIN admin untuk mengacak
-            </label>
-            <div className="flex gap-2">
-              <input
-                type="password"
-                inputMode="numeric"
-                autoComplete="off"
-                value={pinInput}
-                onChange={(e) => setPinInput(e.target.value)}
-                placeholder="PIN"
-                className="min-w-0 flex-1 rounded-lg border border-sea-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-sea-500"
-              />
-              <button disabled={!pinInput} className="rounded-lg bg-navy-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50">
-                Buka
-              </button>
-            </div>
-          </form>
+          <p className="mx-auto mt-5 flex max-w-xs items-center justify-center gap-1.5 text-sm text-navy-700">
+            <Lock size={14} /> Pengacakan dilakukan oleh admin.{" "}
+            <Link href="/masuk" className="font-semibold text-sea-600 underline">
+              Masuk
+            </Link>
+          </p>
         )}
         {error && <p className="mt-3 text-sm font-medium text-rose-600">{error}</p>}
-        {!stored && <p className="mt-3 text-xs text-navy-700/80">Riwayat & log saat ini hanya tersimpan di perangkat ini.</p>}
+        {user && !stored && <p className="mt-3 text-xs text-navy-700/80">Riwayat & log saat ini hanya tersimpan di perangkat ini (penyimpanan server belum dipasang).</p>}
       </div>
 
-      <div className="rounded-2xl border border-sea-100 bg-white/70 backdrop-blur-md p-6 shadow-[0_20px_45px_rgba(15,23,42,0.2)]">
+      <div className="rounded-2xl border border-white/60 bg-white/70 p-6 shadow-[0_20px_45px_rgba(15,23,42,0.2)] backdrop-blur-md">
         <div className="flex items-center justify-between">
           <h3 className="font-bold">Sudah dipanggil bulan ini</h3>
-          {pin && (
+          {user && (
             <button onClick={reset} className="text-sm text-sea-600 underline">
               Reset
             </button>
           )}
         </div>
+        {history.length === 0 && <p className="mt-3 text-sm text-navy-700/70">Belum ada.</p>}
         <ol className="mt-3 space-y-1 text-sm">
           {history.map((h, i) => (
             <li key={i} className="flex justify-between gap-3 border-b border-sea-100 py-1">

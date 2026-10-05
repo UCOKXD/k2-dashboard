@@ -11,19 +11,21 @@ import {
   FileText,
   LayoutDashboard,
   Stethoscope,
-  Users,
+  GraduationCap,
+  Images,
 } from "lucide-react";
 
 const MENU = [
   { name: "Dashboard", icon: LayoutDashboard, href: "/", match: "/" },
-  { name: "Struktur Organisasi", icon: Users, href: "/#organisasi", match: "" },
   { name: "Doa Harian", icon: BookOpen, href: "/doa-harian", match: "/doa-harian" },
   { name: "Izin Sakit", icon: Stethoscope, href: "/izin-sakit", match: "/izin-sakit" },
   { name: "Izin", icon: FileText, href: "/izin", match: "/izin" },
   { name: "Kalender", icon: Calendar, href: "/kalender-acara", match: "/kalender-acara" },
+  { name: "Jadwal", icon: GraduationCap, href: "/jadwal", match: "/jadwal" },
   { name: "Waktu", icon: Clock, href: "/waktu", match: "/waktu" },
   { name: "Pelanggaran", icon: AlertTriangle, href: "/pelanggaran", match: "/pelanggaran" },
   { name: "Tempat Duduk", icon: Armchair, href: "/tempat-duduk", match: "/tempat-duduk" },
+  { name: "Galeri", icon: Images, href: "/galeri", match: "/galeri" },
 ] as const;
 
 // floating: halaman utama. Island melayang di bawah banner, lalu menempel di tengah atas layar saat di-scroll.
@@ -60,12 +62,12 @@ export default function NavIsland({ variant }: { variant: "floating" | "static" 
     >
       {MENU.map((item) => {
         const Icon = item.icon;
-        const active = item.match !== "" && path === item.match;
+        const active = path === item.match;
         // Docked: nama menu terlihat semua hanya di layar sangat lebar supaya tidak menutupi logo/tombol header;
         // selain itu hanya menu aktif / saat hover.
         // Melayang: nama menu hanya muncul saat hover.
         const label = docked
-          ? `${active ? "ml-1 max-w-[160px] opacity-100" : "max-w-0 opacity-0"} min-[1680px]:ml-1 min-[1680px]:max-w-[160px] min-[1680px]:opacity-100 group-hover:ml-1 group-hover:max-w-[160px] group-hover:opacity-100`
+          ? `${active ? "ml-1 max-w-[160px] opacity-100 lg:ml-0 lg:max-w-0 lg:opacity-0 min-[1120px]:ml-1 min-[1120px]:max-w-[160px] min-[1120px]:opacity-100" : "max-w-0 opacity-0"} min-[1900px]:ml-1 min-[1900px]:max-w-[160px] min-[1900px]:opacity-100 group-hover:ml-1 group-hover:max-w-[160px] group-hover:opacity-100`
           : "max-w-0 opacity-0 sm:group-hover:ml-1 sm:group-hover:max-w-[160px] sm:group-hover:opacity-100";
         return (
           <Link

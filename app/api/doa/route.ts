@@ -1,25 +1,10 @@
-import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
+import { recordHistory, requireAdmin } from "@/lib/auth";
 import { STUDENTS } from "@/lib/students";
 import { addDoaPick, getDoaPicks, resetDoaPicks, storeReady } from "@/lib/store";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
-
-// PIN admin disimpan di Environment Variables Vercel dengan nama ADMIN_PIN.
-function pinOk(pin: unknown) {
-  const real = process.env.ADMIN_PIN;
-  if (!real || typeof pin !== "string") return false;
-  const a = Buffer.from(pin);
-  const b = Buffer.from(real);
-  return a.length === b.length && timingSafeEqual(a, b);
-}
-
-function denied() {
-  return NextResponse.json(
-    { error: process.env.ADMIN_PIN ? "PIN salah" : "PIN admin belum diatur di Vercel (ADMIN_PIN)" },
-    { status: 401 }
-  );
-}
 
 // Riwayat acak bulan ini (kosong kalau penyimpanan belum dipasang; browser memakai riwayat lokal).
 export async function GET() {
@@ -31,34 +16,37 @@ export async function GET() {
   }
 }
 
-// { pin, name? }: tanpa name = hanya cek PIN; dengan name = catat petugas doa.
+// { name }: catat petugas doa hasil acak. Hanya admin yang sudah masuk.
 export async function POST(req: Request) {
-  const body = (await req.json().catch(() => ({}))) as { pin?: unknown; name?: unknown };
-  if (!pinOk(body.pin)) return denied();
-  if (body.name === undefined) return NextResponse.json({ ok: true, stored: storeReady });
-
+  const { user, error } = await requireAdmin(req);
+  if (error) return error;
+  const body = (await req.json().catch(() => ({}))) as { name?: unknown };
   const s = STUDENTS.find((x) => x.full === body.name);
   if (!s) return NextResponse.json({ error: "Nama tidak dikenal" }, { status: 400 });
-  const pick = { name: s.full, nim: s.nim, at: new Date().toISOString() };
+  const pick = { name: s.full, nim: s.nim, at: new Date().toISOString(), by: user.panggilan };
   if (storeReady) {
     try {
       await addDoaPick(pick);
+      await recordHistory(user, `Mengacak petugas doa: ${s.full}`);
     } catch {
       return NextResponse.json({ error: "Gagal menyimpan" }, { status: 502 });
     }
+    revalidatePath("/");
   }
   return NextResponse.json({ ok: true, stored: storeReady, pick });
 }
 
 export async function DELETE(req: Request) {
-  const body = (await req.json().catch(() => ({}))) as { pin?: unknown };
-  if (!pinOk(body.pin)) return denied();
+  const { user, error } = await requireAdmin(req);
+  if (error) return error;
   if (storeReady) {
     try {
       await resetDoaPicks();
+      await recordHistory(user, "Mereset riwayat doa bulan ini");
     } catch {
       return NextResponse.json({ error: "Gagal mereset" }, { status: 502 });
     }
+    revalidatePath("/");
   }
   return NextResponse.json({ ok: true });
 }

@@ -3,12 +3,14 @@
 import type { Table } from "@/lib/sheets";
 import { STUDENTS, resolveName } from "@/lib/students";
 import type { DoaPick } from "@/lib/store";
+import { DEFAULT_PEL, type ActivityLog, type OrgData, type PelOverrides, type ScheduleItem, type SlidesData } from "@/lib/content";
+import type { CalEvent } from "@/lib/acara";
 
 // Kolom pelanggaran di sheet dideteksi otomatis dari judul kolom.
 // Kalau salah tebak, isi huruf kolomnya di sini (mis. kategori: "D", ket: "E").
 const PEL_COLS = { kategori: "", ket: "" };
 
-export type LogType = "pelanggaran" | "sakit" | "izin" | "acara" | "doa";
+export type LogType = "pelanggaran" | "sakit" | "izin" | "acara" | "doa" | "seat";
 
 export type LogItem = {
   id: string;
@@ -22,7 +24,8 @@ export type LogItem = {
 export type StudentStat = {
   nama: string; // nama lengkap
   short: string; // panggilan
-  jumlah: number;
+  jumlah: number; // total poin
+  kasus: number; // jumlah catatan
   kategori: string; // kategori paling sering ("" kalau belum ada pelanggaran)
   pelanggaran: string[]; // maksimal 3 pelanggaran terbaru
 };
@@ -36,12 +39,23 @@ export type PelanggaranData = {
   students: StudentStat[]; // urut pelanggaran terbanyak
   categories: CategoryStat[];
   recent: RecentViolation[]; // terbaru dulu
+  shame: StudentStat[]; // Hall of Shame
+};
+
+export type HomeCards = {
+  nextEvent: (CalEvent & { days: number }) | null;
+  doaToday: DoaPick | null;
+  ultah: { nama: string; short: string; mmdd: string; days: number }[];
+  schedule: ScheduleItem[];
 };
 
 export type HomeData = {
   stats: { totalSakit: number };
   pelanggaran: PelanggaranData;
   logs: LogItem[];
+  org: OrgData;
+  slides: SlidesData;
+  cards: HomeCards;
 };
 
 // Riwayat acak doa yang hanya tersimpan di browser (dipakai selama penyimpanan server belum dipasang).
@@ -73,19 +87,59 @@ function pelCols(t: Table) {
 
 const clip = (s: string, n = 140) => (s.length > n ? s.slice(0, n - 1) + "…" : s);
 
-export function buildPelanggaran(t: Table): PelanggaranData {
+// Satu catatan pelanggaran: dari sheet (bisa dikoreksi admin) atau ditambahkan admin.
+export type PelRow = {
+  id: string;
+  source: "sheet" | "admin";
+  nama: string; // nama lengkap
+  kat: string;
+  ket: string;
+  tanggal: string; // DD/MM/YYYY
+  ago: number | null;
+  poin: number;
+  hidden: boolean;
+};
+
+const ymdToDmy = (s: string) => {
+  const [y, m, d] = s.split("-");
+  return y && m && d ? `${d}/${m}/${y}` : s;
+};
+
+// Semua catatan (termasuk yang disembunyikan admin), urut dari yang terlama.
+export function pelRows(t: Table, ov: PelOverrides = DEFAULT_PEL): PelRow[] {
   const { kategori, ket } = pelCols(t);
-  const rows = t.rows
-    .map((r) => {
+  const sheet: PelRow[] = t.rows
+    .map((r): PelRow => {
       const kat = (kategori ? r[kategori] : "")?.trim() || "Lainnya";
+      const id = `s:${r.A}|${(r[t.name] ?? "").trim()}`;
+      const e = ov.edits[id] ?? {};
+      const tgl = (r[t.date] || r.A || "").split(" ")[0];
       return {
+        id,
+        source: "sheet",
         nama: resolveName(r[t.name] ?? ""),
-        kat,
-        ket: ((ket ? r[ket] : "")?.trim() || kat),
+        kat: e.kat?.trim() || kat,
+        ket: e.ket?.trim() || ((ket ? r[ket] : "")?.trim() || kat),
+        tanggal: tgl,
         ago: daysAgo(r.A),
+        poin: e.poin ?? 1,
+        hidden: !!e.hidden,
       };
     })
     .filter((r) => r.nama);
+  const added: PelRow[] = ov.added.map((a) => {
+    const e = ov.edits[a.id] ?? {};
+    const tanggal = ymdToDmy(a.tanggal);
+    return { id: a.id, source: "admin", nama: a.nama, kat: a.kat, ket: a.ket || a.kat, tanggal, ago: daysAgo(tanggal), poin: a.poin, hidden: !!e.hidden };
+  });
+  return [...sheet, ...added]
+    .map((r, i) => ({ r, i }))
+    .sort((a, b) => (b.r.ago ?? 0) - (a.r.ago ?? 0) || a.i - b.i)
+    .map(({ r }) => r);
+}
+
+export function buildPelanggaran(t: Table, ov: PelOverrides = DEFAULT_PEL): PelanggaranData {
+  const rows = pelRows(t, ov).filter((r) => !r.hidden);
 
   // per siswa (siswa tanpa pelanggaran tetap tampil)
   const per = new Map<string, typeof rows>(STUDENTS.map((s) => [s.full, []]));
@@ -101,14 +155,15 @@ export function buildPelanggaran(t: Table): PelanggaranData {
       return {
         nama,
         short: shortOf(nama),
-        jumlah: rs.length,
+        jumlah: rs.reduce((n, r) => n + r.poin, 0),
+        kasus: rs.length,
         kategori: top,
         pelanggaran: rs.slice(-3).reverse().map((r) => r.ket),
       };
     })
-    .sort((a, b) => b.jumlah - a.jumlah || a.nama.localeCompare(b.nama));
+    .sort((a, b) => b.jumlah - a.jumlah || b.kasus - a.kasus || a.nama.localeCompare(b.nama));
 
-  // kategori (huruf besar-kecil dianggap sama); lebih dari 5 jenis digabung jadi "Lainnya"
+  // kategori (huruf besar-kecil dianggap sama); lebih dari 6 jenis digabung jadi "Lainnya"
   const cat = new Map<string, { kategori: string; jumlah: number }>();
   for (const r of rows) {
     const k = r.kat.toLowerCase().replace(/\s+/g, " ");
@@ -128,10 +183,13 @@ export function buildPelanggaran(t: Table): PelanggaranData {
     .reverse()
     .map((r) => ({ nama: shortOf(r.nama), aksi: r.ket, kategori: r.kat, time: agoLabel(r.ago) }));
 
-  return { total, students, categories, recent };
+  // Hall of Shame: 3 poin tertinggi, kecuali siswa yang dikecualikan admin.
+  const shame = students.filter((s) => s.jumlah > 0 && !ov.hideFromShame.includes(s.nama)).slice(0, 3);
+
+  return { total, students, categories, recent, shame };
 }
 
-const TITLE: Record<Exclude<LogType, "doa">, string> = {
+const TITLE: Record<Exclude<LogType, "doa" | "seat">, string> = {
   pelanggaran: "Laporan Pelanggaran Terbaru",
   sakit: "Laporan Izin Sakit",
   izin: "Laporan Izin Tidak Hadir / Telat",
@@ -139,26 +197,28 @@ const TITLE: Record<Exclude<LogType, "doa">, string> = {
 };
 
 // Gabungkan laporan terbaru dari semua tab sheet menjadi satu daftar log (maksimal `maxDays` hari ke belakang).
-export function buildLogs(tables: Record<keyof typeof TITLE, Table>, doa: DoaPick[] = [], maxDays = 14): LogItem[] {
+type Sources = { pelanggaran: PelRow[]; sakit: Table; izin: Table; acara: Table };
+
+export function buildLogs(src: Sources, doa: DoaPick[] = [], activity: ActivityLog[] = [], maxDays = 14): LogItem[] {
   const out: (LogItem & { seq: number })[] = [];
-  for (const type of Object.keys(TITLE) as (keyof typeof TITLE)[]) {
-    const t = tables[type];
-    const pc = type === "pelanggaran" ? pelCols(t) : null;
+  src.pelanggaran
+    .filter((r) => !r.hidden)
+    .forEach((r, seq) => {
+      if (r.ago === null || r.ago > maxDays) return;
+      const d = Math.max(r.ago, 0);
+      const detail = `${shortOf(r.nama)}: ${r.ket}${r.kat && r.kat !== r.ket ? ` (${r.kat})` : ""}`;
+      out.push({ id: `pel-${r.id}`, type: "pelanggaran", title: TITLE.pelanggaran, detail: clip(detail), daysAgo: d, time: agoLabel(d), seq });
+    });
+  for (const type of ["sakit", "izin", "acara"] as const) {
+    const t = src[type];
     const others = t.cols.filter((c) => c.key !== "A" && c.key !== t.name);
     t.rows.forEach((r, seq) => {
       const ago = daysAgo(r.A);
       if (ago === null || ago > maxDays) return;
       const raw = (r[t.name] ?? "").trim();
       const who = type === "acara" ? raw : shortOf(resolveName(raw));
-      let detail: string;
-      if (pc) {
-        const kat = (r[pc.kategori] ?? "").trim();
-        const ket = (r[pc.ket] ?? "").trim();
-        detail = `${who}: ${ket || kat}${kat && ket && kat !== ket ? ` (${kat})` : ""}`;
-      } else {
-        const extra = others.map((c) => (r[c.key] ?? "").trim()).filter(Boolean).slice(0, type === "acara" ? 3 : 2);
-        detail = [who, ...extra].filter(Boolean).join(" · ");
-      }
+      const extra = others.map((c) => (r[c.key] ?? "").trim()).filter(Boolean).slice(0, type === "acara" ? 3 : 2);
+      const detail = [who, ...extra].filter(Boolean).join(" · ");
       const d = Math.max(ago, 0);
       out.push({ id: `${type}-${seq}`, type, title: TITLE[type], detail: clip(detail), daysAgo: d, time: agoLabel(d), seq });
     });
@@ -167,10 +227,14 @@ export function buildLogs(tables: Record<keyof typeof TITLE, Table>, doa: DoaPic
     const log = doaLog(p, seq);
     if (log.daysAgo <= maxDays) out.push({ ...log, seq: 1e6 + seq });
   });
+  activity.forEach((a, seq) => {
+    const log = activityLog(a, seq);
+    if (log.daysAgo <= maxDays) out.push({ ...log, seq: 2e6 - seq });
+  });
   return out
     .sort((a, b) => a.daysAgo - b.daysAgo || b.seq - a.seq)
     .slice(0, 120)
-    .map(({ seq: _seq, ...log }) => log);
+    .map(({ seq: _seq, ...log }) => log); // eslint-disable-line @typescript-eslint/no-unused-vars
 }
 
 // Tanggal "DD/MM/YYYY" (zona Jakarta) dari waktu ISO, supaya bisa dihitung daysAgo seperti data sheet.
@@ -183,8 +247,14 @@ export function doaLog(p: DoaPick, seq = 0): LogItem {
     id: `doa-${p.at}-${seq}`,
     type: "doa",
     title: "Petugas doa hari ini telah diacak admin",
-    detail: `Petugas hari ini : ${p.name} (${p.nim})`,
+    detail: `Petugas hari ini : ${p.name} (${p.nim})${p.by ? ` · diacak oleh ${p.by}` : ""}`,
     daysAgo: d,
     time: d === 0 ? `Hari ini, ${jam}` : agoLabel(d),
   };
+}
+
+export function activityLog(a: ActivityLog, seq = 0): LogItem {
+  const d = Math.max(daysAgo(jktDate(a.at)) ?? 0, 0);
+  const jam = new Date(a.at).toLocaleTimeString("id-ID", { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit" });
+  return { id: `act-${a.at}-${seq}`, type: a.type, title: a.title, detail: a.detail, daysAgo: d, time: d === 0 ? `Hari ini, ${jam}` : agoLabel(d) };
 }

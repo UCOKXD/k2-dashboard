@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "reac
 import {
   Activity,
   AlertTriangle,
+  Armchair,
   BarChart3,
   BellRing,
   Calendar,
@@ -21,14 +22,12 @@ import {
 } from "lucide-react";
 import NavIsland from "@/components/NavIsland";
 import OrgChart from "@/components/OrgChart";
-import { LOCAL_DOA_LOG, buildPelanggaran, doaLog } from "@/lib/dashboard";
+import { LOCAL_DOA_LOG, doaLog } from "@/lib/dashboard";
+import HomeCards from "@/components/HomeCards";
+import type { SlidesData } from "@/lib/content";
 import { STUDENTS } from "@/lib/students";
 import type { DoaPick } from "@/lib/store";
 import type { HomeData, LogType, PelanggaranData, StudentStat } from "@/lib/dashboard";
-import type { Table } from "@/lib/sheets";
-
-// Foto kelas di public/slides/. Tambah atau ganti foto: taruh file di sana lalu ubah daftar ini.
-const SLIDES = ["/slides/foto-1.jpg", "/slides/foto-2.jpg"];
 
 // Bayangan sengaja agak gelap supaya kartu terlihat timbul (3D).
 const CARD = "rounded-[2.5rem] border border-slate-200/70 bg-white/70 backdrop-blur-md shadow-[0_30px_80px_rgba(15,23,42,0.24)]";
@@ -40,18 +39,21 @@ const LOG_STYLE: Record<LogType, { icon: typeof Calendar; badge: string; color: 
   izin: { icon: FileText, badge: "Izin", color: "bg-sky-50 text-sky-600 border-sky-200" },
   acara: { icon: Calendar, badge: "Input Acara", color: "bg-indigo-50 text-indigo-600 border-indigo-200" },
   doa: { icon: UserCheck, badge: "Doa Harian", color: "bg-emerald-50 text-emerald-600 border-emerald-200" },
+  seat: { icon: Armchair, badge: "Tempat Duduk", color: "bg-blue-50 text-blue-600 border-blue-200" },
 };
 
 /* ------------------------------------------------------------------ Hero */
 
-function Hero() {
+function Hero({ slides }: { slides: SlidesData }) {
+  const SLIDES = slides.items.map((x) => x.src);
   const ref = useRef<HTMLDivElement>(null);
   const [slide, setSlide] = useState(0);
 
   useEffect(() => {
-    const id = setInterval(() => setSlide((s) => (s + 1) % SLIDES.length), 8000);
+    // Lama tiap foto diatur admin (Panel Admin > Foto Banner).
+    const id = setInterval(() => setSlide((s) => (s + 1) % SLIDES.length), slides.duration * 1000);
     return () => clearInterval(id);
-  }, []);
+  }, [SLIDES.length, slides.duration]);
 
   // Banner memudar dan menyusut mengikuti scroll. Hanya transform/opacity, jadi tinggi halaman tidak berubah.
   useEffect(() => {
@@ -78,6 +80,7 @@ function Hero() {
             src={src}
             alt={`Slide foto ${i + 1}`}
             fill
+            unoptimized={src.startsWith("/api/")}
             priority={i === 0}
             sizes="1000px"
             className={`object-cover object-[50%_65%] transition-all duration-1000 ease-in-out ${i === slide ? "scale-100 opacity-100" : "scale-105 opacity-0"}`}
@@ -148,7 +151,7 @@ function TipBox({ tip }: { tip: Tip | null }) {
           </p>
         )}
         <p>
-          <strong className="text-slate-200">Total:</strong> {s.jumlah} pelanggaran
+          <strong className="text-slate-200">Total:</strong> {s.kasus} pelanggaran · {s.jumlah} poin
         </p>
         <p className="mt-2 font-semibold text-amber-400">{s.pelanggaran.length ? "Daftar Pelanggaran Terbaru:" : "Belum ada pelanggaran."}</p>
         {s.pelanggaran.length > 0 && (
@@ -340,7 +343,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
   const { tip, show, hide } = useStudentTooltip();
 
   const ranked = pel.students.filter((s) => s.jumlah > 0);
-  const topThree = ranked.slice(0, 3);
+  const topThree = pel.shame;
   const pareto = ranked.slice(0, 8);
   const max = pareto[0]?.jumlah ?? 1;
 
@@ -545,15 +548,15 @@ export default function HomeDashboard({ data }: { data: HomeData }) {
   const [pel, setPel] = useState(data.pelanggaran);
   const [live, setLive] = useState(true);
 
-  // Data pelanggaran diambil ulang tiap 15 detik lewat /api/sheet/pelanggaran (di-cache server 30 detik).
+  // Data pelanggaran (sheet + koreksi admin) diambil ulang tiap 15 detik lewat /api/pelanggaran.
   useEffect(() => {
     let alive = true;
     const tick = async () => {
       if (document.visibilityState === "hidden") return;
       try {
-        const res = await fetch("/api/sheet/pelanggaran");
+        const res = await fetch("/api/pelanggaran");
         if (!res.ok) throw new Error(String(res.status));
-        const next = buildPelanggaran((await res.json()) as Table);
+        const next = ((await res.json()) as { data: PelanggaranData }).data;
         if (alive) {
           setPel(next);
           setLive(true);
@@ -573,7 +576,7 @@ export default function HomeDashboard({ data }: { data: HomeData }) {
 
   return (
     <div className="relative min-h-screen overflow-x-clip text-slate-900 selection:bg-blue-100">
-      <Hero />
+      <Hero slides={data.slides} />
       <NavIsland variant="floating" />
 
       <div className="mx-auto max-w-6xl space-y-12 px-4 pb-32 pt-8 md:px-8">
@@ -594,8 +597,10 @@ export default function HomeDashboard({ data }: { data: HomeData }) {
           ))}
         </div>
 
+        <HomeCards cards={data.cards} />
+
         <LogPanel logs={data.logs} />
-        <OrgChart />
+        <OrgChart org={data.org} />
         <PieSection pel={pel} />
         <DashboardSection pel={pel} live={live} />
       </div>

@@ -4,10 +4,11 @@ const REDIS_URL = process.env.KV_REST_API_URL || process.env.UPSTASH_REDIS_REST_
 const TOKEN = process.env.KV_REST_API_TOKEN || process.env.UPSTASH_REDIS_REST_TOKEN;
 
 export const storeReady = Boolean(REDIS_URL && TOKEN);
+export const NOT_READY = "Penyimpanan (Upstash Redis) belum dipasang di Vercel, jadi perubahan belum bisa disimpan.";
 
-// Tanpa opsi cache: di route API selalu baru, di halaman utama (ISR 30 detik) dibaca ulang tiap regenerasi.
-async function cmd<T>(...args: (string | number)[]): Promise<T> {
-  if (!storeReady) throw new Error("Penyimpanan belum dipasang");
+// Tanpa opsi cache: di route API selalu baru, di halaman (ISR 30 detik) dibaca ulang tiap regenerasi.
+export async function cmd<T>(...args: (string | number)[]): Promise<T> {
+  if (!storeReady) throw new Error(NOT_READY);
   const res = await fetch(REDIS_URL!, {
     method: "POST",
     headers: { Authorization: `Bearer ${TOKEN}` },
@@ -17,9 +18,47 @@ async function cmd<T>(...args: (string | number)[]): Promise<T> {
   return ((await res.json()) as { result: T }).result;
 }
 
+/* ------------------------------------------------------------ Dokumen JSON */
+
+export async function getJSON<T>(key: string, fallback: T): Promise<T> {
+  if (!storeReady) return fallback;
+  try {
+    const raw = await cmd<string | null>("GET", key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+export async function setJSON(key: string, value: unknown) {
+  await cmd("SET", key, JSON.stringify(value));
+}
+
+// Daftar JSON terbaru di depan, dipotong supaya tidak membengkak.
+export async function pushJSON(key: string, value: unknown, max = 300) {
+  await cmd("LPUSH", key, JSON.stringify(value));
+  await cmd("LTRIM", key, 0, max - 1);
+}
+
+export async function listJSON<T>(key: string, count = 300): Promise<T[]> {
+  if (!storeReady) return [];
+  try {
+    const raw = await cmd<string[]>("LRANGE", key, 0, count - 1);
+    return raw.flatMap((s) => {
+      try {
+        return [JSON.parse(s) as T];
+      } catch {
+        return [];
+      }
+    });
+  } catch {
+    return [];
+  }
+}
+
 /* ------------------------------------------------------------ Doa harian */
 
-export type DoaPick = { name: string; nim: string; at: string }; // at = ISO waktu acak
+export type DoaPick = { name: string; nim: string; at: string; by?: string }; // at = ISO waktu acak, by = panggilan admin
 
 // Bulan berjalan di zona Jakarta, mis. "2026-10".
 export function monthId(offset = 0) {
