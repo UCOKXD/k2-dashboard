@@ -54,7 +54,7 @@ export default function NavIsland({ variant }: { variant: "floating" | "static" 
 
   const nav = (
     <nav
-      className={`pointer-events-auto flex max-w-[calc(100vw-1rem)] items-center gap-1 overflow-x-auto rounded-full border border-white/20 bg-black/95 p-2 text-white shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl no-scrollbar
+      className={`pointer-events-auto flex max-w-[calc(100vw-1rem)] items-center gap-1 overflow-x-auto rounded-full border border-white/20 bg-slate-950/60 p-2 text-white shadow-[0_20px_60px_rgba(0,0,0,0.4)] backdrop-blur-xl backdrop-saturate-150 no-scrollbar
         transition-all duration-[600ms] ease-[cubic-bezier(0.76,0,0.24,1)] sm:gap-2 ${docked ? "scale-95 sm:px-4" : "scale-100 sm:px-3"}`}
       aria-label="Menu utama"
     >

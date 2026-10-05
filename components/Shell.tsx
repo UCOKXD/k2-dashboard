@@ -39,7 +39,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen">
       {/* Header bernuansa laut, senada dengan gelembung biru di kedua logo.
           Di layar lebar island menu menempel di tengah header, jadi isi kiri & kanan dijaga tetap ramping. */}
-      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-white/10 bg-gradient-to-r from-navy-900/95 via-navy-700/95 to-sea-600/95 px-4 shadow-[0_10px_30px_rgba(11,30,61,0.35)] backdrop-blur-md md:px-8">
+      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-white/10 bg-gradient-to-r from-navy-900/85 via-navy-700/80 to-sea-600/80 px-4 shadow-[0_10px_30px_rgba(11,30,61,0.35)] backdrop-blur-md md:px-8">
         <Link href="/" className="flex min-w-0 items-center gap-2" aria-label="K2 Pusat Informasi, ke halaman utama">
           <Image src="/logo-k2.png" alt="Logo Divisi K2" width={40} height={41} className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]" priority />
           <Image src="/logo-absorbing.png" alt="Logo kelas Absorbing PPTI 28" width={40} height={42} className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]" priority />

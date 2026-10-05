@@ -1,6 +1,16 @@
 @import "tailwindcss";
 @config "../tailwind.config.ts";
 
+/* Latar halaman: gradasi biru laut lembut supaya kartu yang transparan terlihat seperti kaca. */
+body {
+  background-color: #eef6fc;
+  background-image:
+    radial-gradient(60rem 40rem at 10% -10%, rgba(46, 155, 224, 0.22), transparent 60%),
+    radial-gradient(50rem 36rem at 95% 15%, rgba(99, 102, 241, 0.16), transparent 60%),
+    radial-gradient(55rem 40rem at 50% 110%, rgba(240, 140, 163, 0.14), transparent 60%);
+  background-attachment: fixed;
+}
+
 /* Dipakai halaman utama */
 .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
 .no-scrollbar::-webkit-scrollbar { display: none; }

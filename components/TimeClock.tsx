@@ -105,7 +105,7 @@ export default function TimeClock() {
         </div>
       </div>
 
-      <div className="flex flex-col items-start justify-between gap-3 rounded-2xl border border-slate-200/70 bg-white p-5 shadow-[0_18px_40px_rgba(15,23,42,0.18)] sm:flex-row sm:items-center">
+      <div className="flex flex-col items-start justify-between gap-3 rounded-2xl border border-slate-200/70 bg-white/70 backdrop-blur-md p-5 shadow-[0_18px_40px_rgba(15,23,42,0.18)] sm:flex-row sm:items-center">
         <div className="flex items-start gap-3">
           {failed ? (
             <TriangleAlert className="mt-0.5 shrink-0 text-amber-500" />

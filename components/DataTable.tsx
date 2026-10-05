@@ -23,9 +23,9 @@ export default function DataTable({
         className="w-full max-w-xs rounded-lg border border-sea-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-sea-500"
       />
       {shown.length === 0 ? (
-        <p className="rounded-xl bg-white p-6 text-sm">{rows.length ? "Tidak ada yang cocok." : "Belum ada data."}</p>
+        <p className="rounded-xl bg-white/75 p-6 text-sm backdrop-blur-md">{rows.length ? "Tidak ada yang cocok." : "Belum ada data."}</p>
       ) : (
-        <div className="max-h-[70vh] overflow-auto rounded-xl border border-sea-100 bg-white">
+        <div className="max-h-[70vh] overflow-auto rounded-xl border border-white/60 bg-white/75 shadow-[0_18px_40px_rgba(15,23,42,0.18)] backdrop-blur-md">
           <table className="w-full text-left text-sm">
             <thead className={`sticky top-0 ${head}`}>
               <tr>

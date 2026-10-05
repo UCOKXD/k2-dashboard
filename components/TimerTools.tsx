@@ -196,7 +196,7 @@ export default function TimerTools() {
   const [tab, setTab] = useState<"timer" | "stopwatch">("timer");
 
   return (
-    <div className="rounded-[2rem] border border-slate-200/70 bg-white p-5 shadow-[0_24px_60px_rgba(15,23,42,0.22)] sm:p-8">
+    <div className="rounded-[2rem] border border-slate-200/70 bg-white/70 backdrop-blur-md p-5 shadow-[0_24px_60px_rgba(15,23,42,0.22)] sm:p-8">
       <div className="mx-auto mb-6 flex w-fit gap-1 rounded-full border border-slate-200 bg-slate-100 p-1">
         {(
           [

@@ -133,7 +133,7 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
-      <div className="rounded-2xl border border-sea-100 bg-white p-6 text-center shadow-[0_20px_45px_rgba(15,23,42,0.2)]">
+      <div className="rounded-2xl border border-sea-100 bg-white/70 backdrop-blur-md p-6 text-center shadow-[0_20px_45px_rgba(15,23,42,0.2)]">
         <motion.div
           animate={{ scale: spinning ? [1, 1.04, 1] : 1 }}
           transition={{ repeat: spinning ? Infinity : 0, duration: 0.3 }}
@@ -183,7 +183,7 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
         {!stored && <p className="mt-3 text-xs text-navy-700/80">Riwayat & log saat ini hanya tersimpan di perangkat ini.</p>}
       </div>
 
-      <div className="rounded-2xl border border-sea-100 bg-white p-6 shadow-[0_20px_45px_rgba(15,23,42,0.2)]">
+      <div className="rounded-2xl border border-sea-100 bg-white/70 backdrop-blur-md p-6 shadow-[0_20px_45px_rgba(15,23,42,0.2)]">
         <div className="flex items-center justify-between">
           <h3 className="font-bold">Sudah dipanggil bulan ini</h3>
           {pin && (

@@ -38,7 +38,7 @@ function Box({ role, icon: Icon, person, className }: { role: string; icon: type
 export default function OrgChart() {
   return (
     <section id="organisasi" className="scroll-mt-32">
-      <div className="space-y-5 rounded-[2.5rem] border border-slate-200/70 bg-white p-6 shadow-[0_30px_80px_rgba(15,23,42,0.24)] md:p-8">
+      <div className="space-y-5 rounded-[2.5rem] border border-slate-200/70 bg-white/70 backdrop-blur-md p-6 shadow-[0_30px_80px_rgba(15,23,42,0.24)] md:p-8">
         <div className="text-center">
           <span className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
             <Users size={14} /> Struktur Kepengurusan
@@ -59,7 +59,7 @@ export default function OrgChart() {
           <Connector />
           <div className="grid w-full max-w-2xl grid-cols-1 gap-3 sm:grid-cols-3">
             {ORG.anggota.map((p) => (
-              <div key={p.nama} className="min-w-0 rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-center shadow-[0_10px_24px_rgba(15,23,42,0.16)] transition-all hover:border-blue-400">
+              <div key={p.nama} className="min-w-0 rounded-2xl border border-slate-200 bg-white/70 backdrop-blur-md px-3 py-2.5 text-center shadow-[0_10px_24px_rgba(15,23,42,0.16)] transition-all hover:border-blue-400">
                 <p className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Anggota K2</p>
                 <p className="text-sm font-bold text-slate-800">{p.nama}</p>
                 <p className="text-[11px] text-slate-400">({p.panggilan})</p>

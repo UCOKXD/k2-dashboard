@@ -33,38 +33,60 @@ function shuffle<T>(arr: T[]) {
   return a;
 }
 
-// Kursi "depan" = baris paling depan; kalau nama prioritas lebih banyak dari kursinya, baris berikutnya ikut dipakai.
-function frontZone(count: number) {
-  const zone = new Set<number>();
-  if (!count) return zone;
-  for (let row = 2; row <= 5 && zone.size < count; row++) SEATS.forEach((p, i) => p.r === row && zone.add(i));
-  return zone;
+// Aturan prioritas: baris terdepan diisi PENUH oleh nama prioritas dulu, sisanya di baris berikutnya.
+// full = kursi yang wajib berisi nama prioritas; partial = baris tempat sisa nama prioritas (boleh campur).
+function frontRows(count: number) {
+  const full = new Set<number>();
+  const partial = new Set<number>();
+  let left = count;
+  for (let row = 2; row <= 5 && left > 0; row++) {
+    const seats = SEATS.flatMap((p, i) => (p.r === row ? [i] : []));
+    if (left >= seats.length) seats.forEach((i) => full.add(i));
+    else seats.forEach((i) => partial.add(i));
+    left -= seats.length;
+  }
+  return { full, partial, zone: new Set([...full, ...partial]) };
 }
 
-// Pindahkan nama prioritas yang belum di zona depan ke kursi depan yang diisi nama non-prioritas.
+// Susunan sah: semua kursi "full" berisi prioritas, dan semua prioritas duduk di zona depan.
+function valid(order: number[], prio: number[]) {
+  const { full, zone } = frontRows(prio.length);
+  return [...full].every((seat) => prio.includes(order[seat])) && prio.every((st) => zone.has(order.indexOf(st)));
+}
+
+// Rapikan susunan dengan pindahan sesedikit mungkin supaya memenuhi aturan prioritas.
 function ensureFront(order: number[], prio: number[]) {
-  const zone = frontZone(prio.length);
+  const { full, partial, zone } = frontRows(prio.length);
   const a = [...order];
+  const isP = (seat: number) => prio.includes(a[seat]);
+  const swap = (x: number, y: number) => ([a[x], a[y]] = [a[y], a[x]]);
+  // 1. Kursi "full" yang masih diisi nama biasa: tukar dengan prioritas yang duduk di luar kursi "full".
+  for (const seat of full) {
+    if (isP(seat)) continue;
+    const from = a.findIndex((st, i) => prio.includes(st) && !full.has(i));
+    if (from >= 0) swap(seat, from);
+  }
+  // 2. Prioritas yang masih di luar zona depan: pindah ke kursi baris sisa yang diisi nama biasa.
   for (const st of prio) {
     const at = a.indexOf(st);
     if (zone.has(at)) continue;
-    const free = [...zone].find((seat) => !prio.includes(a[seat]));
-    if (free === undefined) break;
-    [a[at], a[free]] = [a[free], a[at]];
+    const free = [...partial].find((seat) => !isP(seat));
+    if (free !== undefined) swap(at, free);
   }
   return a;
 }
 
-// Acak semua kursi, tapi nama prioritas hanya diacak di antara kursi depan.
+// Acak semua kursi dengan tetap mematuhi aturan prioritas.
 function shuffleWithFront(prio: number[]) {
-  const zone = frontZone(prio.length);
-  const zoneSeats = shuffle([...zone]);
+  const { full, partial } = frontRows(prio.length);
+  const pr = shuffle(prio);
   const rest = shuffle(STUDENTS.map((_, i) => i).filter((i) => !prio.includes(i)));
   const order = new Array<number>(SEATS.length);
-  const pr = shuffle(prio);
-  zoneSeats.forEach((seat, k) => (order[seat] = k < pr.length ? pr[k] : rest.pop()!));
+  for (const seat of full) order[seat] = pr.pop()!;
+  const partialSeats = shuffle([...partial]);
+  partialSeats.forEach((seat) => (order[seat] = pr.length ? pr.pop()! : rest.pop()!));
   SEATS.forEach((_, seat) => {
-    if (!zone.has(seat)) order[seat] = rest.pop()!;
+    if (order[seat] === undefined) order[seat] = rest.pop()!;
   });
   return order;
 }
@@ -96,7 +118,7 @@ export default function SeatPlanner() {
     };
   }, []);
 
-  const zone = frontZone(prio.length);
+  const { zone, full } = frontRows(prio.length);
 
   function savePrio(next: number[]) {
     setPrio(next);
@@ -132,10 +154,15 @@ export default function SeatPlanner() {
     if (picked === null) return setPicked(seat);
     if (picked !== seat) {
       // Nama prioritas tidak boleh pindah ke luar kursi depan.
-      const a = order[picked];
-      const b = order[seat];
-      if ((prio.includes(a) && !zone.has(seat)) || (prio.includes(b) && !zone.has(picked))) {
-        setMsg(`${STUDENTS[prio.includes(a) && !zone.has(seat) ? a : b].short} wajib duduk paling depan. Lepas dulu dari daftar prioritas kalau ingin dipindah.`);
+      const next = [...order];
+      [next[picked], next[seat]] = [next[seat], next[picked]];
+      if (!valid(next, prio)) {
+        const who = [order[picked], order[seat]].find((st) => prio.includes(st));
+        setMsg(
+          who !== undefined
+            ? `${STUDENTS[who].short} wajib duduk paling depan. Lepas dulu dari daftar prioritas kalau ingin dipindah.`
+            : "Baris paling depan khusus untuk nama prioritas."
+        );
         setPicked(null);
         return;
       }
@@ -148,7 +175,10 @@ export default function SeatPlanner() {
     setPicked(null);
   }
 
-  const zoneLabel = zone.size > 10 ? `${zone.size} kursi terdepan` : "baris paling depan (10 kursi)";
+  const zoneLabel =
+    prio.length > 10
+      ? `baris paling depan (penuh 10 kursi), sisanya ${prio.length - full.size} di baris berikutnya`
+      : "baris paling depan (10 kursi)";
   const candidates = STUDENTS.map((s, i) => ({ ...s, i })).filter(
     (s) => !pq || s.full.toLowerCase().includes(pq.toLowerCase()) || s.short.toLowerCase().includes(pq.toLowerCase())
   );
@@ -175,7 +205,7 @@ export default function SeatPlanner() {
       <p className="text-sm text-navy-700">Klik dua kursi untuk saling menukar. Arahkan kursor ke kursi untuk melihat nama lengkap.</p>
       {msg && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700">{msg}</p>}
 
-      <div className="overflow-x-auto rounded-2xl border border-sea-100 bg-white p-4 shadow-[0_20px_45px_rgba(15,23,42,0.2)]">
+      <div className="overflow-x-auto rounded-2xl border border-sea-100 bg-white/70 backdrop-blur-md p-4 shadow-[0_20px_45px_rgba(15,23,42,0.2)]">
         <div className="grid min-w-[900px] grid-cols-11 gap-2" style={{ gridTemplateRows: "auto repeat(4, 3.25rem)" }}>
           <div style={{ gridRow: 1, gridColumn: "4 / 8" }} className="rounded-lg bg-navy-900 py-2 text-center text-sm font-semibold text-white">Papan</div>
           <div style={{ gridRow: 1, gridColumn: "10 / 12" }} className="rounded-lg bg-sea-500 py-2 text-center text-sm font-semibold text-white">Dosen</div>
@@ -215,14 +245,14 @@ export default function SeatPlanner() {
       </div>
 
       {/* Prioritas duduk depan */}
-      <div className="space-y-3 rounded-2xl border border-sea-100 bg-white p-5 shadow-[0_20px_45px_rgba(15,23,42,0.2)]">
+      <div className="space-y-3 rounded-2xl border border-sea-100 bg-white/70 backdrop-blur-md p-5 shadow-[0_20px_45px_rgba(15,23,42,0.2)]">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <h3 className="flex items-center gap-1.5 font-bold text-navy-900">
               <Star size={16} className="fill-amber-400 text-amber-500" /> Prioritas Duduk Depan
             </h3>
             <p className="text-sm text-navy-700">
-              Pilih nama yang wajib duduk paling depan. Saat diacak, mereka tetap di {zoneLabel}; sisanya diacak atau dipindah manual seperti biasa.
+              Pilih nama yang wajib duduk paling depan. Saat diacak, mereka tetap di {zoneLabel}. Nama lain bisa diacak atau dipindah manual seperti biasa.
             </p>
           </div>
           {prio.length > 0 && (

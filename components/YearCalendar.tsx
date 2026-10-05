@@ -110,7 +110,7 @@ export default function YearCalendar({ events, today }: { events: CalEvent[]; to
 
       {view === "bulan" ? (
         <>
-          <div className="overflow-hidden rounded-[1.75rem] border border-slate-200/70 bg-white shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
+          <div className="overflow-hidden rounded-[1.75rem] border border-slate-200/70 bg-white/70 backdrop-blur-md shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
             <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50">
               {DAYS.map((d, i) => (
                 <div key={d} className={`py-2.5 text-center text-xs font-bold uppercase tracking-wider ${i === 0 ? "text-red-600" : "text-slate-500"}`}>
@@ -141,7 +141,7 @@ export default function YearCalendar({ events, today }: { events: CalEvent[]; to
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-[0_18px_40px_rgba(15,23,42,0.18)]">
+            <div className="rounded-2xl border border-slate-200/70 bg-white/70 backdrop-blur-md p-5 shadow-[0_18px_40px_rgba(15,23,42,0.18)]">
               <h3 className="mb-3 font-bold text-slate-800">Acara bulan ini</h3>
               {monthEv.length === 0 && <p className="text-sm text-slate-400">Belum ada acara.</p>}
               <ul className="space-y-2">
@@ -158,7 +158,7 @@ export default function YearCalendar({ events, today }: { events: CalEvent[]; to
                 )}
               </ul>
             </div>
-            <div className="rounded-2xl border border-slate-200/70 bg-white p-5 shadow-[0_18px_40px_rgba(15,23,42,0.18)]">
+            <div className="rounded-2xl border border-slate-200/70 bg-white/70 backdrop-blur-md p-5 shadow-[0_18px_40px_rgba(15,23,42,0.18)]">
               <h3 className="mb-3 font-bold text-slate-800">Libur & cuti bersama bulan ini</h3>
               {monthHol.length === 0 && <p className="text-sm text-slate-400">Tidak ada libur nasional.</p>}
               <ul className="space-y-2">
@@ -181,7 +181,7 @@ export default function YearCalendar({ events, today }: { events: CalEvent[]; to
                 setMonth(m);
                 setView("bulan");
               }}
-              className="rounded-2xl border border-slate-200/70 bg-white p-3 text-left shadow-[0_16px_36px_rgba(15,23,42,0.18)] transition hover:-translate-y-0.5 hover:border-sea-300"
+              className="rounded-2xl border border-slate-200/70 bg-white/70 backdrop-blur-md p-3 text-left shadow-[0_16px_36px_rgba(15,23,42,0.18)] transition hover:-translate-y-0.5 hover:border-sea-300"
             >
               <p className="mb-2 font-bold text-navy-900">{name}</p>
               <div className="grid grid-cols-7 gap-y-0.5 text-center text-[11px]">
