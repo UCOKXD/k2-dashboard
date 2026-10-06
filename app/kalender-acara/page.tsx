@@ -1,6 +1,8 @@
 import { getTable } from "@/lib/sheets";
 import DataTable from "@/components/DataTable";
 import YearCalendar from "@/components/YearCalendar";
+import TaskBoard from "@/components/TaskBoard";
+import AdminLink from "@/components/AdminLink";
 import { eventsFrom, todayJkt } from "@/lib/acara";
 import { getContent } from "@/lib/content-server";
 import { STUDENTS } from "@/lib/students";
@@ -8,7 +10,7 @@ import { STUDENTS } from "@/lib/students";
 export const revalidate = 30;
 
 export default async function Page() {
-  const [t, birthdays, schedule] = await Promise.all([getTable("acara"), getContent("birthdays"), getContent("schedule")]);
+  const [t, birthdays, schedule, tasks] = await Promise.all([getTable("acara"), getContent("birthdays"), getContent("schedule"), getContent("tasks")]);
   const bdays = Object.entries(birthdays).map(([nama, mmdd]) => ({ nama, mmdd, short: STUDENTS.find((s) => s.full === nama)?.short ?? nama }));
 
   const events = eventsFrom(t);
@@ -17,8 +19,12 @@ export default async function Page() {
 
   return (
     <div className="space-y-8 pb-16">
-      <h2 className="text-2xl font-bold">Kalender Acara</h2>
-      <YearCalendar events={events} today={today} birthdays={bdays} schedule={schedule} />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-2xl font-bold">Kalender Acara</h2>
+        <AdminLink href="/admin?tab=tugas" label="Kelola tugas" />
+      </div>
+      <TaskBoard tasks={tasks} today={today} />
+      <YearCalendar events={events} today={today} birthdays={bdays} schedule={schedule} tasks={tasks} />
       <div className="space-y-3">
         <h3 className="text-lg font-bold">Daftar acara dari form</h3>
         <DataTable head="bg-sea-100 text-navy-900" cols={t.cols} rows={t.rows} />

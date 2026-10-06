@@ -4,6 +4,7 @@ import { recordHistory, requireAdmin } from "@/lib/auth";
 import { CONTENT, type ContentKey, type GalleryItem, type OrgData, type PelOverrides, type ScheduleItem, type SeatsData, type SlidesData } from "@/lib/content";
 import { getContent } from "@/lib/content-server";
 import { DEFAULT_ORDER, valid } from "@/lib/seats";
+import type { TaskItem } from "@/lib/tasks";
 import { NOT_READY, cmd, pushJSON, setJSON, storeReady } from "@/lib/store";
 import { STUDENTS } from "@/lib/students";
 
@@ -100,6 +101,27 @@ function clean(key: ContentKey, b: unknown): [unknown, string] | string {
       });
       return [d, `Mengubah jadwal kuliah (${d.length} sesi)`];
     }
+    case "tasks": {
+      const list = Array.isArray(b) ? b.slice(0, 200) : [];
+      const d: TaskItem[] = list.flatMap((x) => {
+        const it = x as Record<string, unknown>;
+        const judul = str(it.judul, 100);
+        const deadline = /^\d{4}-\d{2}-\d{2}$/.test(str(it.deadline)) ? str(it.deadline) : "";
+        if (!judul || !deadline) return [];
+        const diff = Math.round(Number(it.difficulty));
+        return [{
+          id: str(it.id, 40),
+          judul,
+          matkul: str(it.matkul, 80),
+          deadline,
+          jam: /^\d{2}:\d{2}$/.test(str(it.jam)) ? str(it.jam) : "",
+          difficulty: (diff === 1 || diff === 3 ? diff : 2) as TaskItem["difficulty"],
+          catatan: str(it.catatan, 300),
+          done: !!it.done,
+        }];
+      });
+      return [d, `Memperbarui daftar tugas (${d.length} tugas)`];
+    }
   }
 }
 
@@ -111,6 +133,7 @@ const PAGES: Record<ContentKey, string[]> = {
   pelanggaran: ["/", "/pelanggaran"],
   birthdays: ["/", "/kalender-acara"],
   schedule: ["/", "/jadwal", "/kalender-acara"],
+  tasks: ["/kalender-acara"],
 };
 
 export async function GET(_: Request, { params }: { params: Promise<{ key: string }> }) {

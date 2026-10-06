@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { AlertTriangle, BookOpen, Cake, GraduationCap, History, Images, KeyRound, Lock, Network, Presentation, Armchair } from "lucide-react";
+import { AlertTriangle, ClipboardList, BookOpen, Cake, GraduationCap, History, Images, KeyRound, Lock, Network, Presentation, Armchair } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import OrgEditor from "@/components/admin/OrgEditor";
 import PelEditor from "@/components/admin/PelEditor";
@@ -9,6 +9,7 @@ import SlidesEditor from "@/components/admin/SlidesEditor";
 import GalleryEditor from "@/components/admin/GalleryEditor";
 import BirthdayEditor from "@/components/admin/BirthdayEditor";
 import ScheduleEditor from "@/components/admin/ScheduleEditor";
+import TasksEditor from "@/components/admin/TasksEditor";
 import HistoryTab from "@/components/admin/HistoryTab";
 import AccountTab from "@/components/admin/AccountTab";
 
@@ -19,6 +20,7 @@ const TABS = [
   { id: "galeri", label: "Galeri", icon: Images, el: GalleryEditor },
   { id: "ultah", label: "Ulang Tahun", icon: Cake, el: BirthdayEditor },
   { id: "jadwal", label: "Jadwal", icon: GraduationCap, el: ScheduleEditor },
+  { id: "tugas", label: "Tugas", icon: ClipboardList, el: TasksEditor },
   { id: "riwayat", label: "Riwayat", icon: History, el: HistoryTab },
   { id: "akun", label: "Akun", icon: KeyRound, el: AccountTab },
 ] as const;

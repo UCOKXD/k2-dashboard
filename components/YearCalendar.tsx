@@ -5,6 +5,7 @@ import { hasSkb, holidaysOf, type Holiday } from "@/lib/holidays";
 
 import type { CalEvent } from "@/lib/acara";
 import type { ScheduleItem } from "@/lib/content";
+import { DIFFICULTY, URGENCY, daysLabel, urgencyOf, type TaskItem } from "@/lib/tasks";
 
 const FIRST_YEAR = 2026;
 const DAYS = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
@@ -53,11 +54,13 @@ export default function YearCalendar({
   today,
   birthdays = [],
   schedule = [],
+  tasks = [],
 }: {
   events: CalEvent[];
   today: string;
   birthdays?: Bday[];
   schedule?: ScheduleItem[];
+  tasks?: TaskItem[];
 }) {
   const [ty, tm] = today.split("-").map(Number);
   const [year, setYear] = useState(Math.max(ty, FIRST_YEAR));
@@ -70,6 +73,12 @@ export default function YearCalendar({
     for (const s of [...schedule].sort((a, b) => a.start.localeCompare(b.start))) m.set(s.day, [...(m.get(s.day) ?? []), s]);
     return m;
   }, [schedule]);
+  // Tugas per tanggal deadline.
+  const taskByDate = useMemo(() => {
+    const m = new Map<string, TaskItem[]>();
+    for (const t of tasks) m.set(t.deadline, [...(m.get(t.deadline) ?? []), t]);
+    return m;
+  }, [tasks]);
   const { hol, ev, bd } = useYearData(year, events, birthdays);
 
   function shift(n: number) {
@@ -136,6 +145,13 @@ export default function YearCalendar({
         <span><b className="text-rose-400">Merah muda</b>: cuti bersama</span>
         <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-sea-500" /> Acara kelas</span>
         <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-pink-500" /> Ulang tahun</span>
+        {tasks.length > 0 && (
+          <span className="flex items-center gap-1">
+            Deadline tugas: <span className="rounded bg-red-600 px-1 text-[10px] font-black text-white">URGENT</span> ≤3 hari ·{" "}
+            <span className="rounded bg-amber-500 px-1 text-[10px] font-black text-white">MEDIUM</span> 4–10 ·{" "}
+            <span className="rounded bg-emerald-600 px-1 text-[10px] font-black text-white">LOW</span> &gt;10
+          </span>
+        )}
         {schedule.length > 0 && (
           <label className="flex cursor-pointer items-center gap-1.5">
             <input type="checkbox" checked={showKuliah} onChange={(e) => setShowKuliah(e.target.checked)} className="accent-sky-600" />
@@ -162,6 +178,7 @@ export default function YearCalendar({
                 const h = hol.get(k);
                 const es = ev.get(k) ?? [];
                 const bs = bd.get(k) ?? [];
+                const ts = taskByDate.get(k) ?? [];
                 // Kuliah mingguan tampil setiap hari yang sesuai, kecuali libur nasional.
                 const kul = showKuliah && !(h && !h.cuti) ? (kuliahByDay.get(i % 7) ?? []) : [];
                 const isToday = k === today;
@@ -174,6 +191,19 @@ export default function YearCalendar({
                         {e.title}
                       </p>
                     ))}
+                    {ts.map((t) => {
+                      const u = urgencyOf(t, today);
+                      return (
+                        <p
+                          key={t.id}
+                          title={`${t.judul}${t.matkul ? ` · ${t.matkul}` : ""} · ${DIFFICULTY[t.difficulty].label}${t.jam ? ` · ${t.jam}` : ""} · ${daysLabel(u.days)}`}
+                          className={`mt-1 truncate rounded-md px-1.5 py-0.5 text-[10px] font-bold shadow-sm sm:text-[11px] ${URGENCY[u.level].chip} ${u.level === "urgent" ? "animate-pulse" : ""}`}
+                        >
+                          {u.level === "urgent" ? "URGENT · " : ""}
+                          {t.judul}
+                        </p>
+                      );
+                    })}
                     {kul.slice(0, 3).map((c) => (
                       <p
                         key={c.id}
@@ -260,12 +290,15 @@ export default function YearCalendar({
                   const k = key(year, m, d);
                   const h = hol.get(k);
                   return (
-                    <span key={k} title={[h?.name, ...(ev.get(k) ?? []).map((e) => e.title), ...(bd.get(k) ?? []).map((b) => `Ultah ${b.short}`)].filter(Boolean).join(" · ") || undefined} className="relative grid place-items-center py-0.5">
+                    <span key={k} title={[h?.name, ...(ev.get(k) ?? []).map((e) => e.title), ...(bd.get(k) ?? []).map((b) => `Ultah ${b.short}`), ...(taskByDate.get(k) ?? []).map((t) => `Deadline ${t.judul}`)].filter(Boolean).join(" · ") || undefined} className="relative grid place-items-center py-0.5">
                       <span className={`grid h-6 w-6 place-items-center rounded-full font-semibold ${k === today ? "bg-sea-500 text-white" : dayTone(i % 7, h)}`}>{d}</span>
-                      {(ev.has(k) || bd.has(k)) && (
+                      {(ev.has(k) || bd.has(k) || taskByDate.has(k)) && (
                         <span className="absolute bottom-0 flex gap-0.5">
                           {ev.has(k) && <span className="h-1 w-1 rounded-full bg-sea-500" />}
                           {bd.has(k) && <span className="h-1 w-1 rounded-full bg-pink-500" />}
+                          {(taskByDate.get(k) ?? []).slice(0, 2).map((t) => (
+                            <span key={t.id} className={`h-1 w-1 rounded-full ${URGENCY[urgencyOf(t, today).level].dot}`} />
+                          ))}
                         </span>
                       )}
                     </span>

@@ -1,4 +1,5 @@
 // Konten yang bisa diubah admin dari website (disimpan di Redis). Tipe & nilai awal; aman dipakai di browser.
+import type { TaskItem } from "@/lib/tasks";
 
 export type OrgData = {
   dpp: string; // teks bebas, boleh kosong
@@ -60,6 +61,7 @@ export const CONTENT = {
   pelanggaran: { key: "k2:pel", fallback: DEFAULT_PEL as PelOverrides },
   birthdays: { key: "k2:birthdays", fallback: {} as Birthdays },
   schedule: { key: "k2:schedule", fallback: [] as ScheduleItem[] },
+  tasks: { key: "k2:tasks", fallback: [] as TaskItem[] },
 } as const;
 
 export type ContentKey = keyof typeof CONTENT;
