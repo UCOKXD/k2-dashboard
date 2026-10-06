@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
-import { CheckCircle2, RefreshCw, TriangleAlert } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { CheckCircle2, Maximize2, Minimize2, RefreshCw, TriangleAlert } from "lucide-react";
 
 type Sync = { offset: number; accuracy: number }; // offset = waktu server - jam perangkat (ms)
 
@@ -79,21 +79,63 @@ export default function TimeClock() {
     return () => cancelAnimationFrame(raf);
   }, [sync]);
 
+  // Layar penuh: pakai Fullscreen API; kalau tidak didukung (mis. iPhone), tampilkan menutupi layar dengan CSS.
+  const card = useRef<HTMLDivElement>(null);
+  const [full, setFull] = useState(false);
+  useEffect(() => {
+    const onChange = () => setFull(document.fullscreenElement === card.current);
+    document.addEventListener("fullscreenchange", onChange);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setFull(false);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("fullscreenchange", onChange);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, []);
+  async function toggleFull() {
+    const el = card.current;
+    if (!el) return;
+    if (document.fullscreenElement) return document.exitFullscreen();
+    if (full) return setFull(false);
+    if (el.requestFullscreen) {
+      try {
+        await el.requestFullscreen();
+        return;
+      } catch {}
+    }
+    setFull(true);
+  }
+
   const offset = sync?.offset ?? 0;
   // offset positif = server di depan = jam perangkat terlambat
   const exact = sync && Math.abs(offset) < Math.max(200, sync.accuracy);
 
   return (
     <div className="space-y-4">
-      <div className="rounded-[2rem] border border-slate-200/70 bg-gradient-to-br from-navy-900 via-navy-800 to-navy-700 p-6 text-center text-white shadow-[0_28px_70px_rgba(11,30,61,0.45)] sm:p-10">
-        <p className="text-sm font-semibold uppercase tracking-[0.3em] text-sea-300">Waktu Indonesia Barat</p>
-        <p className="mt-3 font-mono text-6xl font-black tabular-nums tracking-tight sm:text-8xl md:text-9xl">
+      <div
+        ref={card}
+        className={`relative bg-gradient-to-br from-navy-900 via-navy-800 to-navy-700 text-center text-white ${
+          full
+            ? "fixed inset-0 z-[100] flex flex-col items-center justify-center p-6"
+            : "rounded-[2rem] border border-slate-200/70 p-6 shadow-[0_28px_70px_rgba(11,30,61,0.45)] sm:p-10"
+        }`}
+      >
+        <button
+          type="button"
+          onClick={toggleFull}
+          className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20"
+          aria-label={full ? "Keluar dari layar penuh" : "Tampilkan jam layar penuh"}
+        >
+          {full ? <Minimize2 size={14} /> : <Maximize2 size={14} />} {full ? "Keluar" : "Layar penuh"}
+        </button>
+        <p className={`font-semibold uppercase tracking-[0.3em] text-sea-300 ${full ? "text-lg sm:text-2xl" : "text-sm"}`}>Waktu Indonesia Barat</p>
+        <p className={`mt-3 font-mono font-black tabular-nums tracking-tight ${full ? "text-[19vw] leading-none" : "text-6xl sm:text-8xl md:text-9xl"}`}>
           {now ? part(now, "Asia/Jakarta", { hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }) : "--:--:--"}
         </p>
-        <p className="mt-3 text-base font-medium text-sea-100 sm:text-xl">
+        <p className={`mt-3 font-medium text-sea-100 ${full ? "text-2xl sm:text-4xl" : "text-base sm:text-xl"}`}>
           {now ? part(now, "Asia/Jakarta", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : " "}
         </p>
-        <div className="mx-auto mt-6 grid max-w-md grid-cols-3 gap-3">
+        <div className={`mx-auto mt-6 grid w-full grid-cols-3 gap-3 ${full ? "max-w-2xl" : "max-w-md"}`}>
           {ZONES.map((z) => (
             <div key={z.tz} className="rounded-2xl bg-white/10 px-2 py-2.5 shadow-inner">
               <p className="text-[11px] font-bold tracking-wider text-sea-300">{z.label}</p>
