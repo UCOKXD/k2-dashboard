@@ -4,6 +4,7 @@ import { Cake, CalendarDays, ChevronLeft, ChevronRight, LayoutGrid } from "lucid
 import { hasSkb, holidaysOf, type Holiday } from "@/lib/holidays";
 
 import type { CalEvent } from "@/lib/acara";
+import type { ScheduleItem } from "@/lib/content";
 
 const FIRST_YEAR = 2026;
 const DAYS = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
@@ -47,11 +48,28 @@ function dayTone(dow: number, h?: Holiday) {
   return "text-slate-900";
 }
 
-export default function YearCalendar({ events, today, birthdays = [] }: { events: CalEvent[]; today: string; birthdays?: Bday[] }) {
+export default function YearCalendar({
+  events,
+  today,
+  birthdays = [],
+  schedule = [],
+}: {
+  events: CalEvent[];
+  today: string;
+  birthdays?: Bday[];
+  schedule?: ScheduleItem[];
+}) {
   const [ty, tm] = today.split("-").map(Number);
   const [year, setYear] = useState(Math.max(ty, FIRST_YEAR));
   const [month, setMonth] = useState(ty < FIRST_YEAR ? 0 : tm - 1);
   const [view, setView] = useState<"bulan" | "tahun">("bulan");
+  const [showKuliah, setShowKuliah] = useState(true);
+  // Jadwal kuliah mingguan per hari (0 = Minggu), urut jam mulai.
+  const kuliahByDay = useMemo(() => {
+    const m = new Map<number, ScheduleItem[]>();
+    for (const s of [...schedule].sort((a, b) => a.start.localeCompare(b.start))) m.set(s.day, [...(m.get(s.day) ?? []), s]);
+    return m;
+  }, [schedule]);
   const { hol, ev, bd } = useYearData(year, events, birthdays);
 
   function shift(n: number) {
@@ -118,6 +136,12 @@ export default function YearCalendar({ events, today, birthdays = [] }: { events
         <span><b className="text-rose-400">Merah muda</b>: cuti bersama</span>
         <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-sea-500" /> Acara kelas</span>
         <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-pink-500" /> Ulang tahun</span>
+        {schedule.length > 0 && (
+          <label className="flex cursor-pointer items-center gap-1.5">
+            <input type="checkbox" checked={showKuliah} onChange={(e) => setShowKuliah(e.target.checked)} className="accent-sky-600" />
+            <span className="h-2.5 w-2.5 rounded-full bg-sky-200 ring-1 ring-sky-500" /> Jadwal kuliah (tidak tampil di hari libur nasional)
+          </label>
+        )}
         {!hasSkb(year) && <span className="font-semibold text-amber-700">SKB libur {year} belum terbit: baru libur bertanggal tetap.</span>}
       </div>
 
@@ -138,6 +162,8 @@ export default function YearCalendar({ events, today, birthdays = [] }: { events
                 const h = hol.get(k);
                 const es = ev.get(k) ?? [];
                 const bs = bd.get(k) ?? [];
+                // Kuliah mingguan tampil setiap hari yang sesuai, kecuali libur nasional.
+                const kul = showKuliah && !(h && !h.cuti) ? (kuliahByDay.get(i % 7) ?? []) : [];
                 const isToday = k === today;
                 return (
                   <div key={k} className={`min-h-20 border-b border-r border-slate-100 p-1.5 sm:min-h-28 sm:p-2 ${h && !h.cuti ? "bg-red-50/60" : h?.cuti ? "bg-rose-50/40" : ""}`}>
@@ -148,6 +174,16 @@ export default function YearCalendar({ events, today, birthdays = [] }: { events
                         {e.title}
                       </p>
                     ))}
+                    {kul.slice(0, 3).map((c) => (
+                      <p
+                        key={c.id}
+                        title={`${c.matkul} · ${c.start}–${c.end}${c.ruang ? ` · ${c.ruang}` : ""}${c.dosen ? ` · ${c.dosen}` : ""}`}
+                        className="mt-1 truncate rounded-md border border-sky-200 bg-sky-50 px-1.5 py-0.5 text-[10px] font-medium text-sky-700 sm:text-[11px]"
+                      >
+                        <span className="font-mono">{c.start}</span> {c.matkul}
+                      </p>
+                    ))}
+                    {kul.length > 3 && <p className="mt-0.5 text-[10px] font-semibold text-sky-600">+{kul.length - 3} kelas lagi</p>}
                     {bs.map((b) => (
                       <p key={b.nama} title={`Ulang tahun ${b.nama}`} className="mt-1 flex items-center gap-1 truncate rounded-md bg-pink-500 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm sm:text-[11px]">
                         <Cake size={11} className="shrink-0" /> <span className="truncate">{b.short}</span>

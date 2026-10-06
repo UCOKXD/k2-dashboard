@@ -110,7 +110,7 @@ const PAGES: Record<ContentKey, string[]> = {
   seats: ["/tempat-duduk", "/"],
   pelanggaran: ["/", "/pelanggaran"],
   birthdays: ["/", "/kalender-acara"],
-  schedule: ["/", "/jadwal"],
+  schedule: ["/", "/jadwal", "/kalender-acara"],
 };
 
 export async function GET(_: Request, { params }: { params: Promise<{ key: string }> }) {
