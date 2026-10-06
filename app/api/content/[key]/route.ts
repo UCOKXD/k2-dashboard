@@ -109,7 +109,7 @@ const PAGES: Record<ContentKey, string[]> = {
   gallery: ["/galeri"],
   seats: ["/tempat-duduk", "/"],
   pelanggaran: ["/", "/pelanggaran"],
-  birthdays: ["/"],
+  birthdays: ["/", "/kalender-acara"],
   schedule: ["/", "/jadwal"],
 };
 

@@ -5,8 +5,10 @@ import { adminFetch } from "@/components/AuthProvider";
 import type { ContentKey, ContentOf } from "@/lib/content";
 import { STUDENTS } from "@/lib/students";
 
-export const input =
-  "w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-sea-500 focus:ring-2 focus:ring-sea-500/30";
+// Gaya isian tanpa lebar (inputBase) dan versi selebar kolom (input).
+export const inputBase =
+  "rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-sea-500 focus:ring-2 focus:ring-sea-500/30";
+export const input = `w-full ${inputBase}`;
 export const smallBtn = "rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40";
 
 export function Panel({ title, desc, children }: { title: string; desc?: string; children: React.ReactNode }) {

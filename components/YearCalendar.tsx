@@ -1,6 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
-import { CalendarDays, ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react";
+import { Cake, CalendarDays, ChevronLeft, ChevronRight, LayoutGrid } from "lucide-react";
 import { hasSkb, holidaysOf, type Holiday } from "@/lib/holidays";
 
 import type { CalEvent } from "@/lib/acara";
@@ -18,14 +18,25 @@ function monthCells(y: number, m: number) {
   return [...Array(lead).fill(null), ...Array.from({ length: days }, (_, i) => i + 1)] as (number | null)[];
 }
 
-function useYearData(year: number, events: CalEvent[]) {
+export type Bday = { nama: string; short: string; mmdd: string }; // mmdd = "MM-DD"
+
+const isLeap = (y: number) => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+
+function useYearData(year: number, events: CalEvent[], birthdays: Bday[]) {
   return useMemo(() => {
     const hol = new Map<string, Holiday>();
     for (const h of holidaysOf(year)) hol.set(h.date, h);
     const ev = new Map<string, CalEvent[]>();
     for (const e of events) if (e.date.startsWith(`${year}-`)) ev.set(e.date, [...(ev.get(e.date) ?? []), e]);
-    return { hol, ev };
-  }, [year, events]);
+    // Ulang tahun berulang setiap tahun (29 Februari ditampilkan 28 Februari di tahun biasa).
+    const bd = new Map<string, Bday[]>();
+    for (const b of birthdays) {
+      const md = b.mmdd === "02-29" && !isLeap(year) ? "02-28" : b.mmdd;
+      const k = `${year}-${md}`;
+      bd.set(k, [...(bd.get(k) ?? []), b]);
+    }
+    return { hol, ev, bd };
+  }, [year, events, birthdays]);
 }
 
 // Warna angka tanggal: merah untuk Minggu & libur nasional, merah muda untuk cuti bersama, hitam untuk hari biasa.
@@ -36,12 +47,12 @@ function dayTone(dow: number, h?: Holiday) {
   return "text-slate-900";
 }
 
-export default function YearCalendar({ events, today }: { events: CalEvent[]; today: string }) {
+export default function YearCalendar({ events, today, birthdays = [] }: { events: CalEvent[]; today: string; birthdays?: Bday[] }) {
   const [ty, tm] = today.split("-").map(Number);
   const [year, setYear] = useState(Math.max(ty, FIRST_YEAR));
   const [month, setMonth] = useState(ty < FIRST_YEAR ? 0 : tm - 1);
   const [view, setView] = useState<"bulan" | "tahun">("bulan");
-  const { hol, ev } = useYearData(year, events);
+  const { hol, ev, bd } = useYearData(year, events, birthdays);
 
   function shift(n: number) {
     const t = year * 12 + month + n;
@@ -51,6 +62,7 @@ export default function YearCalendar({ events, today }: { events: CalEvent[]; to
   }
 
   const monthHol = holidaysOf(year).filter((h) => Number(h.date.slice(5, 7)) === month + 1);
+  const monthBd = [...bd.entries()].filter(([d]) => Number(d.slice(5, 7)) === month + 1).sort(([a], [b]) => a.localeCompare(b));
   const monthEv = [...ev.entries()].filter(([d]) => Number(d.slice(5, 7)) === month + 1).sort(([a], [b]) => a.localeCompare(b));
 
   return (
@@ -105,6 +117,7 @@ export default function YearCalendar({ events, today }: { events: CalEvent[]; to
         <span><b className="text-red-600">Merah</b>: Minggu & libur nasional</span>
         <span><b className="text-rose-400">Merah muda</b>: cuti bersama</span>
         <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-sea-500" /> Acara kelas</span>
+        <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-pink-500" /> Ulang tahun</span>
         {!hasSkb(year) && <span className="font-semibold text-amber-700">SKB libur {year} belum terbit: baru libur bertanggal tetap.</span>}
       </div>
 
@@ -124,6 +137,7 @@ export default function YearCalendar({ events, today }: { events: CalEvent[]; to
                 const k = key(year, month, d);
                 const h = hol.get(k);
                 const es = ev.get(k) ?? [];
+                const bs = bd.get(k) ?? [];
                 const isToday = k === today;
                 return (
                   <div key={k} className={`min-h-20 border-b border-r border-slate-100 p-1.5 sm:min-h-28 sm:p-2 ${h && !h.cuti ? "bg-red-50/60" : h?.cuti ? "bg-rose-50/40" : ""}`}>
@@ -134,6 +148,11 @@ export default function YearCalendar({ events, today }: { events: CalEvent[]; to
                         {e.title}
                       </p>
                     ))}
+                    {bs.map((b) => (
+                      <p key={b.nama} title={`Ulang tahun ${b.nama}`} className="mt-1 flex items-center gap-1 truncate rounded-md bg-pink-500 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm sm:text-[11px]">
+                        <Cake size={11} className="shrink-0" /> <span className="truncate">{b.short}</span>
+                      </p>
+                    ))}
                   </div>
                 );
               })}
@@ -142,20 +161,30 @@ export default function YearCalendar({ events, today }: { events: CalEvent[]; to
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="rounded-2xl border border-slate-200/70 bg-white/70 backdrop-blur-md p-5 shadow-[0_18px_40px_rgba(15,23,42,0.18)]">
-              <h3 className="mb-3 font-bold text-slate-800">Acara bulan ini</h3>
-              {monthEv.length === 0 && <p className="text-sm text-slate-400">Belum ada acara.</p>}
+              <h3 className="mb-3 font-bold text-slate-800">Acara & ulang tahun bulan ini</h3>
+              {monthEv.length === 0 && monthBd.length === 0 && <p className="text-sm text-slate-400">Belum ada acara.</p>}
               <ul className="space-y-2">
-                {monthEv.flatMap(([d, es]) =>
-                  es.map((e, j) => (
-                    <li key={d + j} className="flex gap-3 text-sm">
-                      <span className="w-8 shrink-0 font-bold text-sea-600">{Number(d.slice(8))}</span>
-                      <span>
-                        <b className="text-slate-800">{e.title}</b>
-                        {e.detail && <span className="block text-xs text-slate-500">{e.detail}</span>}
-                      </span>
+                {/* Acara dan ulang tahun digabung, urut tanggal. */}
+                {[
+                  ...monthEv.flatMap(([d, es]) => es.map((e, n) => ({ d, k: `e${d}${n}`, e, b: null as Bday | null }))),
+                  ...monthBd.flatMap(([d, bs]) => bs.map((b) => ({ d, k: `b${d}${b.nama}`, e: null as CalEvent | null, b }))),
+                ]
+                  .sort((x, y) => x.d.localeCompare(y.d))
+                  .map(({ d, k, e, b }) => (
+                    <li key={k} className="flex gap-3 text-sm">
+                      <span className={`w-8 shrink-0 font-bold ${b ? "text-pink-500" : "text-sea-600"}`}>{Number(d.slice(8))}</span>
+                      {e ? (
+                        <span>
+                          <b className="text-slate-800">{e.title}</b>
+                          {e.detail && <span className="block text-xs text-slate-500">{e.detail}</span>}
+                        </span>
+                      ) : (
+                        <span className="flex items-center gap-1.5">
+                          <Cake size={14} className="shrink-0 text-pink-500" /> <b className="text-slate-800">Ulang tahun {b!.nama}</b>
+                        </span>
+                      )}
                     </li>
-                  ))
-                )}
+                  ))}
               </ul>
             </div>
             <div className="rounded-2xl border border-slate-200/70 bg-white/70 backdrop-blur-md p-5 shadow-[0_18px_40px_rgba(15,23,42,0.18)]">
@@ -195,9 +224,14 @@ export default function YearCalendar({ events, today }: { events: CalEvent[]; to
                   const k = key(year, m, d);
                   const h = hol.get(k);
                   return (
-                    <span key={k} title={[h?.name, ...(ev.get(k) ?? []).map((e) => e.title)].filter(Boolean).join(" · ") || undefined} className="relative grid place-items-center py-0.5">
+                    <span key={k} title={[h?.name, ...(ev.get(k) ?? []).map((e) => e.title), ...(bd.get(k) ?? []).map((b) => `Ultah ${b.short}`)].filter(Boolean).join(" · ") || undefined} className="relative grid place-items-center py-0.5">
                       <span className={`grid h-6 w-6 place-items-center rounded-full font-semibold ${k === today ? "bg-sea-500 text-white" : dayTone(i % 7, h)}`}>{d}</span>
-                      {ev.has(k) && <span className="absolute bottom-0 h-1 w-1 rounded-full bg-sea-500" />}
+                      {(ev.has(k) || bd.has(k)) && (
+                        <span className="absolute bottom-0 flex gap-0.5">
+                          {ev.has(k) && <span className="h-1 w-1 rounded-full bg-sea-500" />}
+                          {bd.has(k) && <span className="h-1 w-1 rounded-full bg-pink-500" />}
+                        </span>
+                      )}
                     </span>
                   );
                 })}

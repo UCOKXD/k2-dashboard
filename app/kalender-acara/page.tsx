@@ -2,11 +2,14 @@ import { getTable } from "@/lib/sheets";
 import DataTable from "@/components/DataTable";
 import YearCalendar from "@/components/YearCalendar";
 import { eventsFrom, todayJkt } from "@/lib/acara";
+import { getContent } from "@/lib/content-server";
+import { STUDENTS } from "@/lib/students";
 
 export const revalidate = 30;
 
 export default async function Page() {
-  const t = await getTable("acara");
+  const [t, birthdays] = await Promise.all([getTable("acara"), getContent("birthdays")]);
+  const bdays = Object.entries(birthdays).map(([nama, mmdd]) => ({ nama, mmdd, short: STUDENTS.find((s) => s.full === nama)?.short ?? nama }));
 
   const events = eventsFrom(t);
 
@@ -15,7 +18,7 @@ export default async function Page() {
   return (
     <div className="space-y-8 pb-16">
       <h2 className="text-2xl font-bold">Kalender Acara</h2>
-      <YearCalendar events={events} today={today} />
+      <YearCalendar events={events} today={today} birthdays={bdays} />
       <div className="space-y-3">
         <h3 className="text-lg font-bold">Daftar acara dari form</h3>
         <DataTable head="bg-sea-100 text-navy-900" cols={t.cols} rows={t.rows} />

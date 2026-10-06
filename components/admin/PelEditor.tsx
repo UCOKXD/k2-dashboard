@@ -4,7 +4,7 @@ import { Eye, EyeOff, Flame, Pencil, Plus, Trash2 } from "lucide-react";
 import { buildPelanggaran, pelRows } from "@/lib/dashboard";
 import type { PelEdit } from "@/lib/content";
 import type { Table } from "@/lib/sheets";
-import { Panel, SaveBar, StudentSelect, input, newId, smallBtn, useContent } from "@/components/admin/ui";
+import { Panel, SaveBar, StudentSelect, input, inputBase, newId, smallBtn, useContent } from "@/components/admin/ui";
 
 const todayYmd = () => new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" });
 
@@ -164,7 +164,7 @@ export default function PelEditor() {
                         if (r.source === "admin") c.setDraft({ ...d, added: d.added.map((a) => (a.id === r.id ? { ...a, poin } : a)) });
                         else setEdit(r.id, { poin: poin === 1 ? undefined : poin });
                       }}
-                      className={`${input} w-16 px-2 py-1`}
+                      className={`${inputBase} w-16 px-2 py-1`}
                       aria-label="Poin"
                     />
                   </td>

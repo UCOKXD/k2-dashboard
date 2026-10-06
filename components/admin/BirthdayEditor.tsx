@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { STUDENTS } from "@/lib/students";
-import { Panel, SaveBar, input, useContent } from "@/components/admin/ui";
+import { Panel, SaveBar, input, inputBase, useContent } from "@/components/admin/ui";
 
 const BULAN = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
@@ -36,7 +36,7 @@ export default function BirthdayEditor() {
               <span className="min-w-0 flex-1 truncate text-sm font-medium text-slate-700" title={s.full}>
                 {s.absen}. {s.full}
               </span>
-              <select value={day} onChange={(e) => set(s.full, e.target.value, month)} className={`${input} w-20 px-2 py-1.5`} aria-label="Tanggal">
+              <select value={day} onChange={(e) => set(s.full, e.target.value, month)} className={`${inputBase} w-20 shrink-0 px-2 py-1.5`} aria-label="Tanggal">
                 <option value="">Tgl</option>
                 {Array.from({ length: 31 }, (_, i) => (
                   <option key={i} value={i + 1}>
@@ -44,7 +44,7 @@ export default function BirthdayEditor() {
                   </option>
                 ))}
               </select>
-              <select value={month} onChange={(e) => set(s.full, day, e.target.value)} className={`${input} w-32 px-2 py-1.5`} aria-label="Bulan">
+              <select value={month} onChange={(e) => set(s.full, day, e.target.value)} className={`${inputBase} w-32 shrink-0 px-2 py-1.5`} aria-label="Bulan">
                 <option value="">Bulan</option>
                 {BULAN.map((b, i) => (
                   <option key={b} value={i + 1}>
