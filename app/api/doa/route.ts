@@ -34,6 +34,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Gagal menyimpan" }, { status: 502 });
     }
     revalidatePath("/");
+    revalidatePath("/api/logs");
   }
   return NextResponse.json({ ok: true, stored: storeReady, pick });
 }
@@ -51,6 +52,7 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ error: "Gagal mereset" }, { status: 502 });
     }
     revalidatePath("/");
+    revalidatePath("/api/logs");
   }
   return NextResponse.json({ ok: true });
 }

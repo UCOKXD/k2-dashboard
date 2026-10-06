@@ -114,3 +114,12 @@ body {
 .dark .border-violet-200, .dark .border-pink-200 { border-color: rgb(167 139 250 / 0.3); }
 .dark .text-violet-600 { color: #c4b5fd; }
 .dark .text-pink-600 { color: #f9a8d4; }
+/* Judul kolom tabel selalu putih di tema gelap (warna terang bawaan tiap tabel tidak terbaca). */
+.dark thead { color: #f8fafc !important; }
+.dark thead.bg-emerald-100, .dark thead.bg-yellow-100, .dark thead.bg-sea-100 { background-color: #1e3a5f; }
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-16px); }
+  to { opacity: 1; transform: none; }
+}
+.animate-toastIn { animation: toastIn 0.45s ease-out; }

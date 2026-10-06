@@ -142,8 +142,6 @@ export default function YearCalendar({
       </div>
 
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
-        <span><b className="text-red-600">Merah</b>: Minggu & libur nasional</span>
-        <span><b className="text-rose-400">Merah muda</b>: cuti bersama</span>
         <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-sea-500" /> Acara kelas</span>
         <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-pink-500" /> Ulang tahun</span>
         {tasks.length > 0 && (

@@ -20,7 +20,6 @@ import {
   Flame,
   PieChart as PieIcon,
   Search,
-  ShieldAlert,
   Stethoscope,
   UserCheck,
   Users,
@@ -379,11 +378,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
             <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-800 sm:text-3xl">
               <BarChart3 className="h-8 w-8 text-blue-600" /> Ringkasan Dashboard Kedisiplinan
             </h2>
-            <p className="mt-1 text-sm text-slate-500">Grafik rekapitulasi data dan informasi pelanggaran dari Google Sheets.</p>
           </div>
-          <span className="flex items-center gap-1.5 rounded-full border border-amber-200 bg-amber-50 px-4 py-1.5 text-xs font-bold text-amber-700 shadow-sm">
-            <ShieldAlert size={14} /> Update Bulanan
-          </span>
         </div>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

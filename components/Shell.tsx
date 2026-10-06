@@ -8,6 +8,7 @@ import { ChevronDown, KeyRound, LayoutDashboard, LogIn, LogOut } from "lucide-re
 import AuthProvider, { useAuth } from "@/components/AuthProvider";
 import ThemeToggle from "@/components/ThemeToggle";
 import NavIsland from "@/components/NavIsland";
+import UpdateToasts from "@/components/UpdateToasts";
 
 // Kanan atas: tombol Masuk (pengunjung) atau menu akun (admin).
 function AccountButton() {
@@ -103,6 +104,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       {!home && <NavIsland variant="static" />}
 
       <main className={home ? "" : "mx-auto max-w-6xl p-4 pt-32 sm:p-8 sm:pt-32 lg:pt-24"}>{children}</main>
+      <UpdateToasts />
     </div>
     </AuthProvider>
   );

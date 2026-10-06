@@ -12,6 +12,7 @@ export default function ScheduleEditor() {
   const set = (id: string, patch: Partial<ScheduleItem>) => c.setDraft(d.map((x) => (x.id === id ? { ...x, ...patch } : x)));
   const sorted = [...d].sort((a, b) => a.day - b.day || a.start.localeCompare(b.start));
   const incomplete = d.some((s) => !s.matkul.trim() || !s.start || !s.end);
+  const badTime = d.filter((s) => s.start && s.end && s.end <= s.start);
 
   return (
     <Panel title="Jadwal Kuliah" desc="Satu baris = satu sesi kuliah. Baris tanpa nama mata kuliah atau jam tidak akan disimpan.">
@@ -47,6 +48,7 @@ export default function ScheduleEditor() {
         <Plus size={13} /> Tambah sesi
       </button>
       {incomplete && <p className="text-xs text-amber-700">Ada baris yang belum lengkap (mata kuliah / jam).</p>}
+      {badTime.length > 0 && <p className="text-xs font-semibold text-rose-600">Jam selesai harus setelah jam mulai: {badTime.map((s) => s.matkul || "(tanpa nama)").join(", ")}.</p>}
       <SaveBar dirty={c.dirty} saving={c.saving} status={c.status} onSave={() => c.save()} onReset={c.reset} />
     </Panel>
   );

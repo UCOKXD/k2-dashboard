@@ -30,7 +30,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
   const admin = !!user;
   const base = saved ?? { order: DEFAULT_ORDER, prio: [] as number[] };
   const dirty = order.join() !== base.order.join() || [...prio].sort().join() !== [...base.prio].sort().join();
-  const { zone, full } = frontRows(prio.length);
+  const { zone } = frontRows(prio.length);
 
   function togglePrio(st: number) {
     setMsg("");
@@ -100,8 +100,6 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
     setMsg("");
   }
 
-  const zoneLabel =
-    prio.length > 10 ? `baris paling depan (penuh 10 kursi), sisanya ${prio.length - full.size} di baris berikutnya` : "baris paling depan (10 kursi)";
   const candidates = STUDENTS.map((s, i) => ({ ...s, i })).filter(
     (s) => !pq || s.full.toLowerCase().includes(pq.toLowerCase()) || s.short.toLowerCase().includes(pq.toLowerCase())
   );
@@ -202,9 +200,6 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
               <h3 className="flex items-center gap-1.5 font-bold text-navy-900">
                 <Star size={16} className="fill-amber-400 text-amber-500" /> Prioritas Duduk Depan
               </h3>
-              <p className="text-sm text-navy-700">
-                Pilih nama yang wajib duduk paling depan. Saat diacak, mereka tetap di {zoneLabel}. Nama lain bisa diacak atau dipindah manual seperti biasa.
-              </p>
             </div>
             {prio.length > 0 && (
               <button

@@ -24,7 +24,7 @@ export default async function Page() {
           <div className="grid gap-4 sm:grid-cols-3">
             {pel.shame.map((r, i) => (
               <div key={r.nama} className="rounded-xl border-2 border-dashed border-red-400 bg-amber-50 p-4 text-center shadow transition-transform hover:-rotate-1 hover:scale-105">
-                <p className="text-sm font-bold text-red-600">Dicari #{i + 1}</p>
+                <p className="text-sm font-bold text-red-600">#{i + 1}</p>
                 <p className="my-2 text-lg font-extrabold">{r.nama}</p>
                 <p className="text-3xl font-black text-red-600">
                   {r.jumlah} <span className="text-sm font-semibold">poin</span>
