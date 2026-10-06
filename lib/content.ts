@@ -1,5 +1,6 @@
 // Konten yang bisa diubah admin dari website (disimpan di Redis). Tipe & nilai awal; aman dipakai di browser.
 import type { TaskItem } from "@/lib/tasks";
+import type { ActivityType } from "@/lib/changelog";
 
 export type OrgData = {
   dpp: string; // teks bebas, boleh kosong
@@ -46,7 +47,8 @@ export type Birthdays = Record<string, string>; // nama lengkap -> "MM-DD"
 
 export type ScheduleItem = { id: string; day: number; start: string; end: string; matkul: string; ruang: string; dosen: string }; // day 1 = Senin
 
-export type ActivityLog = { type: "seat"; title: string; detail: string; at: string; by: string };
+// Entri Log Aktivitas publik dari perubahan admin (lihat lib/changelog.ts).
+export type ActivityLog = { type: ActivityType; title: string; detail: string; at: string; by: string };
 
 export type HistoryItem = { at: string; by: string; jabatan: string; action: string };
 

@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { recordHistory, requireAdmin } from "@/lib/auth";
 import { STUDENTS } from "@/lib/students";
-import { addDoaPick, getDoaPicks, resetDoaPicks, storeReady } from "@/lib/store";
+import { addDoaPick, getDoaPicks, pushJSON, resetDoaPicks, storeReady } from "@/lib/store";
+import { TITLES, sentence } from "@/lib/changelog";
+import type { ActivityLog } from "@/lib/content";
 import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +44,9 @@ export async function DELETE(req: Request) {
   if (storeReady) {
     try {
       await resetDoaPicks();
-      await recordHistory(user, "Mereset riwayat doa bulan ini");
+      const detail = sentence(user, ["mereset riwayat petugas doa bulan ini (semua nama bisa terpilih lagi)"]);
+      await recordHistory(user, detail);
+      await pushJSON("k2:log", { type: "doa-reset", title: TITLES["doa-reset"], detail, at: new Date().toISOString(), by: user.panggilan } satisfies ActivityLog, 200);
     } catch {
       return NextResponse.json({ error: "Gagal mereset" }, { status: 502 });
     }

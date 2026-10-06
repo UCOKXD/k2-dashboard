@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { CheckCircle2, Circle, Plus, Trash2 } from "lucide-react";
 import { DIFFICULTY, URGENCY, daysLabel, urgencyOf, type TaskItem } from "@/lib/tasks";
-import { Panel, SaveBar, input, inputBase, newId, smallBtn, useContent } from "@/components/admin/ui";
+import { DateSelect, Panel, SaveBar, TimeSelect, input, inputBase, newId, smallBtn, useContent } from "@/components/admin/ui";
 
 const todayYmd = () => new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" });
 const EMPTY = { judul: "", matkul: "", deadline: "", jam: "", difficulty: 2 as TaskItem["difficulty"], catatan: "" };
@@ -26,11 +26,11 @@ export default function TasksEditor() {
   return (
     <div className="space-y-6">
       <Panel title="Tambah tugas" desc="Tugas tampil di Kalender pada tanggal deadline. Sisa ≤ 3 hari = URGENT (merah), 4–10 hari = MEDIUM, lebih dari 10 hari = LOW.">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-6">
-          <input value={form.judul} onChange={(e) => setForm({ ...form, judul: e.target.value })} placeholder="Judul (mis. Quiz, Presentasi Expert)" className={`${input} lg:col-span-2`} />
-          <input value={form.matkul} onChange={(e) => setForm({ ...form, matkul: e.target.value })} placeholder="Mata kuliah (opsional)" className={`${input} lg:col-span-2`} />
-          <input type="date" min={today} value={form.deadline} onChange={(e) => setForm({ ...form, deadline: e.target.value })} className={input} aria-label="Deadline" />
-          <input type="time" value={form.jam} onChange={(e) => setForm({ ...form, jam: e.target.value })} className={input} aria-label="Jam deadline (opsional)" />
+        <div className="grid items-center gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto_auto]">
+          <input value={form.judul} onChange={(e) => setForm({ ...form, judul: e.target.value })} placeholder="Judul (mis. Quiz, Presentasi Expert)" className={input} />
+          <input value={form.matkul} onChange={(e) => setForm({ ...form, matkul: e.target.value })} placeholder="Mata kuliah (opsional)" className={input} />
+          <DateSelect value={form.deadline} onChange={(v) => setForm({ ...form, deadline: v })} label="Deadline" />
+          <TimeSelect value={form.jam} onChange={(v) => setForm({ ...form, jam: v })} optional label="Jam deadline" />
           <div className="flex gap-1.5 lg:col-span-2" role="radiogroup" aria-label="Tingkat kesulitan">
             {([1, 2, 3] as const).map((n) => (
               <button
@@ -43,7 +43,7 @@ export default function TasksEditor() {
               </button>
             ))}
           </div>
-          <input value={form.catatan} onChange={(e) => setForm({ ...form, catatan: e.target.value })} placeholder="Catatan (opsional)" className={`${input} sm:col-span-2 lg:col-span-3`} />
+          <input value={form.catatan} onChange={(e) => setForm({ ...form, catatan: e.target.value })} placeholder="Catatan (opsional)" className={input} />
           <button onClick={add} disabled={!form.judul.trim() || !form.deadline} className="flex items-center justify-center gap-1.5 rounded-xl bg-sea-500 px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-40">
             <Plus size={15} /> Tambah
           </button>
@@ -61,10 +61,10 @@ export default function TasksEditor() {
                   {t.done ? <CheckCircle2 size={20} className="text-emerald-600" /> : <Circle size={20} />}
                 </button>
                 <span className={`rounded-md px-2 py-0.5 text-[10px] font-black tracking-wider ${URGENCY[u.level].chip}`}>{URGENCY[u.level].label}</span>
-                <input value={t.judul} onChange={(e) => set(t.id, { judul: e.target.value })} className={`${inputBase} min-w-[10rem] flex-1 py-1.5`} aria-label="Judul" />
-                <input value={t.matkul} onChange={(e) => set(t.id, { matkul: e.target.value })} placeholder="Mata kuliah" className={`${inputBase} w-40 py-1.5`} aria-label="Mata kuliah" />
-                <input type="date" value={t.deadline} onChange={(e) => e.target.value && set(t.id, { deadline: e.target.value })} className={`${inputBase} w-40 py-1.5`} aria-label="Deadline" />
-                <input type="time" value={t.jam} onChange={(e) => set(t.id, { jam: e.target.value })} className={`${inputBase} w-28 py-1.5`} aria-label="Jam" />
+                <input value={t.judul} onChange={(e) => set(t.id, { judul: e.target.value })} className={`${inputBase} min-w-[8rem] flex-1 py-1.5`} aria-label="Judul" />
+                <input value={t.matkul} onChange={(e) => set(t.id, { matkul: e.target.value })} placeholder="Mata kuliah" className={`${inputBase} w-32 py-1.5`} aria-label="Mata kuliah" />
+                <DateSelect value={t.deadline} onChange={(v) => v && set(t.id, { deadline: v })} label="Deadline" />
+                <TimeSelect value={t.jam} onChange={(v) => set(t.id, { jam: v })} optional label="Jam" />
                 <select value={t.difficulty} onChange={(e) => set(t.id, { difficulty: Number(e.target.value) as TaskItem["difficulty"] })} className={`${inputBase} w-28 py-1.5`} aria-label="Kesulitan">
                   {([1, 2, 3] as const).map((n) => (
                     <option key={n} value={n}>
@@ -72,7 +72,7 @@ export default function TasksEditor() {
                     </option>
                   ))}
                 </select>
-                <span className="w-24 text-xs text-slate-500">{daysLabel(u.days)}</span>
+                <span className="w-20 text-xs text-slate-500">{daysLabel(u.days)}</span>
                 <button onClick={() => c.setDraft(d.filter((x) => x.id !== t.id))} className={`${smallBtn} text-rose-600`} aria-label="Hapus tugas">
                   <Trash2 size={14} />
                 </button>

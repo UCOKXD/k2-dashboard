@@ -109,3 +109,8 @@ body {
 .dark .bg-red-50\/90 { background-color: rgb(220 38 38 / 0.16); }
 .dark .text-red-900 { color: #fecaca; }
 .dark .border-red-400 { border-color: rgb(248 113 113 / 0.6); }
+.dark .bg-violet-50 { background-color: rgb(139 92 246 / 0.14); }
+.dark .bg-pink-50 { background-color: rgb(236 72 153 / 0.14); }
+.dark .border-violet-200, .dark .border-pink-200 { border-color: rgb(167 139 250 / 0.3); }
+.dark .text-violet-600 { color: #c4b5fd; }
+.dark .text-pink-600 { color: #f9a8d4; }

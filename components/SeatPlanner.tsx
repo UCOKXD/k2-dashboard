@@ -8,7 +8,7 @@ import { DEFAULT_ORDER, SEATS, ensureFront, frontRows, shuffleWithFront, valid }
 import { STUDENTS } from "@/lib/students";
 
 const fmt = (iso: string) =>
-  new Date(iso).toLocaleString("id-ID", { timeZone: "Asia/Jakarta", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  new Date(iso).toLocaleString("id-ID", { timeZone: "Asia/Jakarta", hourCycle: "h23", day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
 // Denah yang dipublikasikan admin terlihat semua orang. Hanya admin yang bisa mengacak, menukar, dan mengatur prioritas.
 export default function SeatPlanner({ initial }: { initial: SeatsData }) {
@@ -23,6 +23,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
   const [ok, setOk] = useState("");
   const [busy, setBusy] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [shuffled, setShuffled] = useState(false); // untuk Log Aktivitas: "mengacak" vs "memindahkan kursi"
   const timer = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
   useEffect(() => () => clearInterval(timer.current), []);
 
@@ -41,6 +42,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
   function acak() {
     if (busy) return;
     setBusy(true);
+    setShuffled(true);
     setPicked(null);
     setMsg("");
     let n = 0;
@@ -80,8 +82,9 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
     setMsg("");
     setOk("");
     try {
-      const r = await adminFetch<{ data: SeatsData }>("/api/content/seats", "PUT", { order, prio });
+      const r = await adminFetch<{ data: SeatsData }>("/api/content/seats", "PUT", { order, prio, acak: shuffled });
       setSaved(r.data);
+      setShuffled(false);
       setOk("Tempat duduk disimpan dan diumumkan di Log Aktivitas.");
     } catch (e) {
       setMsg((e as Error).message);
@@ -92,6 +95,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
   function discard() {
     setOrder(base.order);
     setPrio(base.prio);
+    setShuffled(false);
     setPicked(null);
     setMsg("");
   }

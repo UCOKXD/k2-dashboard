@@ -1,4 +1,5 @@
 import { AlarmClock, BookOpen, ClipboardList } from "lucide-react";
+import { jam } from "@/lib/time";
 import { DIFFICULTY, URGENCY, daysLabel, urgencyOf, type TaskItem } from "@/lib/tasks";
 
 const BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
@@ -31,7 +32,7 @@ export default function TaskBoard({ tasks, today }: { tasks: TaskItem[]; today: 
                   {t.matkul && <span className="text-red-700">· {t.matkul}</span>}
                   <span className="font-bold text-red-600">
                     · {daysLabel(u.days)} ({fmt(t.deadline)}
-                    {t.jam && `, ${t.jam}`})
+                    {t.jam && `, pukul ${jam(t.jam)}`})
                   </span>
                 </li>
               );
@@ -61,7 +62,7 @@ export default function TaskBoard({ tasks, today }: { tasks: TaskItem[]; today: 
                 )}
                 <p className="mt-1 text-xs text-slate-600">
                   Deadline {fmt(t.deadline)}
-                  {t.jam && `, ${t.jam}`} · <b>{daysLabel(u.days)}</b>
+                  {t.jam && `, pukul ${jam(t.jam)}`} · <b>{daysLabel(u.days)}</b>
                 </p>
                 {t.catatan && <p className="mt-1 text-xs text-slate-500">{t.catatan}</p>}
               </div>

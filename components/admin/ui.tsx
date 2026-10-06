@@ -120,3 +120,86 @@ export async function uploadImage(file: File): Promise<string> {
 }
 
 export const newId = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
+
+// Pilihan jam 24 jam (00-23) dan menit (00-59) supaya tidak pernah muncul AM/PM seperti kotak jam bawaan browser.
+export function TimeSelect({ value, onChange, optional = false, label }: { value: string; onChange: (v: string) => void; optional?: boolean; label: string }) {
+  const [h = "", m = ""] = value ? value.split(":") : [];
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const emit = (hh: string, mm: string) => onChange(hh === "" ? "" : `${hh}:${mm || "00"}`);
+  return (
+    <div className="flex items-center gap-1" aria-label={label}>
+      <select value={h} onChange={(e) => emit(e.target.value, m)} className={`${inputBase} w-[4.25rem] px-2 py-1.5`} aria-label={`${label} (jam)`}>
+        <option value="">{optional ? "--" : "Jam"}</option>
+        {Array.from({ length: 24 }, (_, i) => (
+          <option key={i} value={pad(i)}>
+            {pad(i)}
+          </option>
+        ))}
+      </select>
+      <span className="font-bold text-slate-400">.</span>
+      <select value={h ? m : ""} disabled={!h} onChange={(e) => emit(h, e.target.value)} className={`${inputBase} w-[4.25rem] px-2 py-1.5 disabled:opacity-50`} aria-label={`${label} (menit)`}>
+        {!h && <option value="">--</option>}
+        {Array.from({ length: 60 }, (_, i) => (
+          <option key={i} value={pad(i)}>
+            {pad(i)}
+          </option>
+        ))}
+      </select>
+      {optional && h && (
+        <button type="button" onClick={() => onChange("")} className="px-1 text-xs text-slate-400 hover:text-rose-600" aria-label={`Kosongkan ${label}`}>
+          ×
+        </button>
+      )}
+    </div>
+  );
+}
+
+const BULAN_PENDEK = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+
+// Pilihan tanggal urut Indonesia (tgl - bulan - tahun), nilai tetap "YYYY-MM-DD".
+export function DateSelect({ value, onChange, label }: { value: string; onChange: (v: string) => void; label: string }) {
+  const [y = "", m = "", d = ""] = value ? value.split("-") : [];
+  const nowY = Number(new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" }).slice(0, 4));
+  const years = Array.from({ length: 5 }, (_, i) => String(nowY - 1 + i));
+  if (y && !years.includes(y)) years.unshift(y);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const max = y && m ? new Date(Number(y), Number(m), 0).getDate() : 31;
+  // Isi otomatis bagian yang masih kosong supaya hasilnya selalu tanggal yang sah.
+  const emit = (yy: string, mm: string, dd: string) => {
+    if (!yy && !mm && !dd) return onChange("");
+    const Y = yy || String(nowY);
+    const M = mm || "01";
+    const last = new Date(Number(Y), Number(M), 0).getDate();
+    const D = pad(Math.min(Number(dd || "1"), last));
+    onChange(`${Y}-${M}-${D}`);
+  };
+  const cls = `${inputBase} px-2 py-1.5`;
+  return (
+    <div className="flex items-center gap-1" aria-label={label}>
+      <select value={d} onChange={(e) => emit(y, m, e.target.value)} className={`${cls} w-[4.25rem]`} aria-label={`${label} (tanggal)`}>
+        <option value="">Tgl</option>
+        {Array.from({ length: max }, (_, i) => (
+          <option key={i} value={pad(i + 1)}>
+            {i + 1}
+          </option>
+        ))}
+      </select>
+      <select value={m} onChange={(e) => emit(y, e.target.value, d)} className={`${cls} w-[4.75rem]`} aria-label={`${label} (bulan)`}>
+        <option value="">Bln</option>
+        {BULAN_PENDEK.map((b, i) => (
+          <option key={b} value={pad(i + 1)}>
+            {b}
+          </option>
+        ))}
+      </select>
+      <select value={y} onChange={(e) => emit(e.target.value, m, d)} className={`${cls} w-[5.25rem]`} aria-label={`${label} (tahun)`}>
+        <option value="">Thn</option>
+        {years.map((yy) => (
+          <option key={yy} value={yy}>
+            {yy}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}

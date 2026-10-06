@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { MapPin, User } from "lucide-react";
 import { HARI, type ScheduleItem } from "@/lib/content";
+import { jam } from "@/lib/time";
 
 const toMin = (hhmm: string) => {
   const [h, m] = hhmm.split(":").map(Number);
@@ -54,7 +55,7 @@ export default function ScheduleView({ schedule }: { schedule: ScheduleItem[] })
                     <div className="flex items-start justify-between gap-2">
                       <p className="font-bold text-slate-800">{s.matkul}</p>
                       <span className="shrink-0 font-mono text-xs font-semibold text-slate-500">
-                        {s.start}–{s.end}
+                        {jam(s.start)}–{jam(s.end)}
                       </span>
                     </div>
                     <div className="mt-1 flex flex-wrap gap-x-3 text-xs text-slate-500">

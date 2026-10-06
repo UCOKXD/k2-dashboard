@@ -5,6 +5,12 @@ import {
   Activity,
   AlertTriangle,
   Armchair,
+  Cake,
+  ClipboardList,
+  GraduationCap,
+  Images,
+  Network,
+  Presentation,
   BarChart3,
   BellRing,
   Calendar,
@@ -39,7 +45,14 @@ const LOG_STYLE: Record<LogType, { icon: typeof Calendar; badge: string; color: 
   izin: { icon: FileText, badge: "Izin", color: "bg-sky-50 text-sky-600 border-sky-200" },
   acara: { icon: Calendar, badge: "Input Acara", color: "bg-indigo-50 text-indigo-600 border-indigo-200" },
   doa: { icon: UserCheck, badge: "Doa Harian", color: "bg-emerald-50 text-emerald-600 border-emerald-200" },
-  seat: { icon: Armchair, badge: "Tempat Duduk", color: "bg-blue-50 text-blue-600 border-blue-200" },
+  seats: { icon: Armchair, badge: "Tempat Duduk", color: "bg-blue-50 text-blue-600 border-blue-200" },
+  org: { icon: Network, badge: "Struktur", color: "bg-violet-50 text-violet-600 border-violet-200" },
+  slides: { icon: Presentation, badge: "Foto Banner", color: "bg-sky-50 text-sky-600 border-sky-200" },
+  gallery: { icon: Images, badge: "Galeri", color: "bg-sky-50 text-sky-600 border-sky-200" },
+  birthdays: { icon: Cake, badge: "Ulang Tahun", color: "bg-pink-50 text-pink-600 border-pink-200" },
+  schedule: { icon: GraduationCap, badge: "Jadwal Kuliah", color: "bg-sky-50 text-sky-600 border-sky-200" },
+  tasks: { icon: ClipboardList, badge: "Tugas", color: "bg-amber-50 text-amber-600 border-amber-200" },
+  "doa-reset": { icon: UserCheck, badge: "Doa Harian", color: "bg-emerald-50 text-emerald-600 border-emerald-200" },
 };
 
 /* ------------------------------------------------------------------ Hero */
@@ -206,7 +219,7 @@ function LogPanel({ logs }: { logs: HomeData["logs"] }) {
           <h3 className="flex items-center gap-2 text-lg font-bold text-slate-800">
             <BellRing className="h-5 w-5 animate-bounce text-blue-600" /> Log Aktivitas &amp; Pengumuman Terbaru K2
           </h3>
-          <p className="text-xs text-slate-400">Laporan pelanggaran, izin, acara, dan petugas doa harian terbaru.</p>
+          <p className="text-xs text-slate-400">Semua laporan dari Google Form dan setiap perubahan oleh admin, lengkap dengan nama admin yang mengubah.</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
@@ -236,7 +249,7 @@ function LogPanel({ logs }: { logs: HomeData["logs"] }) {
       <div className="custom-scrollbar max-h-[380px] space-y-3.5 overflow-y-auto pr-1">
         {shown.length > 0 ? (
           shown.map((log) => {
-            const st = LOG_STYLE[log.type];
+            const st = LOG_STYLE[log.type] ?? LOG_STYLE.seats;
             const Icon = st.icon;
             return (
               <div

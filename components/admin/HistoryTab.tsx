@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import type { HistoryItem } from "@/lib/content";
 import { Panel } from "@/components/admin/ui";
 
-const fmt = (iso: string) => new Date(iso).toLocaleString("id-ID", { timeZone: "Asia/Jakarta", day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+const fmt = (iso: string) => new Date(iso).toLocaleString("id-ID", { timeZone: "Asia/Jakarta", hourCycle: "h23", day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
 
 export default function HistoryTab() {
   const [items, setItems] = useState<HistoryItem[] | null>(null);

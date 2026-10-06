@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { BookOpenCheck, CalendarClock, Cake, GraduationCap } from "lucide-react";
 import { HARI, type ScheduleItem } from "@/lib/content";
+import { jam } from "@/lib/time";
 import type { HomeCards as Cards } from "@/lib/dashboard";
 
 const BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
@@ -81,7 +82,7 @@ export default function HomeCards({ cards }: { cards: Cards }) {
           <>
             <p className="mt-1 truncate text-lg font-extrabold text-slate-800">{kelas.s.matkul}</p>
             <p className="text-sm text-slate-600">
-              <span className={kelas.live ? "font-bold text-emerald-600" : "font-semibold text-sky-600"}>{kelas.when}</span> · {kelas.s.start}–{kelas.s.end}
+              <span className={kelas.live ? "font-bold text-emerald-600" : "font-semibold text-sky-600"}>{kelas.when}</span> · {jam(kelas.s.start)}–{jam(kelas.s.end)}
               {kelas.s.ruang && ` · ${kelas.s.ruang}`}
             </p>
           </>

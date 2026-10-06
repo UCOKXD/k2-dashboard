@@ -1,7 +1,8 @@
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 import { recordHistory, requireAdmin } from "@/lib/auth";
-import { CONTENT, type ContentKey, type GalleryItem, type OrgData, type PelOverrides, type ScheduleItem, type SeatsData, type SlidesData } from "@/lib/content";
+import { describe, sentence, TITLES } from "@/lib/changelog";
+import { CONTENT, type ActivityLog, type ContentKey, type GalleryItem, type OrgData, type PelOverrides, type ScheduleItem, type SeatsData, type SlidesData } from "@/lib/content";
 import { getContent } from "@/lib/content-server";
 import { DEFAULT_ORDER, valid } from "@/lib/seats";
 import type { TaskItem } from "@/lib/tasks";
@@ -149,19 +150,25 @@ export async function PUT(req: Request, { params }: { params: Promise<{ key: str
   if (error) return error;
   if (!storeReady) return NextResponse.json({ error: NOT_READY }, { status: 503 });
 
-  const r = clean(key, await req.json().catch(() => null));
+  const body = await req.json().catch(() => null);
+  const r = clean(key, body);
   if (typeof r === "string") return NextResponse.json({ error: r }, { status: 400 });
   const at = new Date().toISOString();
-  const [raw, summary] = r;
+  const [raw] = r;
   const data = key === "seats" ? { ...(raw as object), at, by: user.panggilan } : raw;
 
   try {
+    // Bandingkan dengan data sebelumnya untuk Log Aktivitas publik: siapa mengubah apa.
+    const before = await getContent(key);
+    const parts = describe(key, before, data, { acak: !!(body as { acak?: unknown } | null)?.acak });
     await setJSON(CONTENT[key].key, data);
     if (key === "gallery" || key === "slides") await dropUnusedMedia();
-    await recordHistory(user, summary);
-    // Pembaruan tempat duduk diumumkan di Log Aktivitas halaman utama.
-    if (key === "seats")
-      await pushJSON("k2:log", { type: "seat", title: "Tempat duduk telah di update Admin!", detail: `Denah tempat duduk diperbarui oleh ${user.panggilan} (${user.jabatan}).`, at, by: user.panggilan }, 100);
+    if (parts.length) {
+      const detail = sentence(user, parts);
+      await recordHistory(user, detail);
+      await pushJSON("k2:log", { type: key, title: TITLES[key], detail, at, by: user.panggilan } satisfies ActivityLog, 200);
+      revalidatePath("/");
+    }
   } catch {
     return NextResponse.json({ error: "Gagal menyimpan" }, { status: 502 });
   }

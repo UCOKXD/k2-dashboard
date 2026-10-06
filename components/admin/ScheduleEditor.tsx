@@ -1,7 +1,7 @@
 "use client";
 import { Plus, Trash2 } from "lucide-react";
 import { HARI, type ScheduleItem } from "@/lib/content";
-import { Panel, SaveBar, input, newId, smallBtn, useContent } from "@/components/admin/ui";
+import { Panel, SaveBar, TimeSelect, input, newId, smallBtn, useContent } from "@/components/admin/ui";
 
 // Jadwal kuliah mingguan. Tampil di halaman Jadwal dan kartu "Kelas berikutnya" di halaman utama.
 export default function ScheduleEditor() {
@@ -17,7 +17,7 @@ export default function ScheduleEditor() {
     <Panel title="Jadwal Kuliah" desc="Satu baris = satu sesi kuliah. Baris tanpa nama mata kuliah atau jam tidak akan disimpan.">
       <div className="space-y-2">
         {sorted.map((s) => (
-          <div key={s.id} className="grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-2.5 sm:grid-cols-[8rem_6.5rem_6.5rem_1fr_7rem_1fr_auto]">
+          <div key={s.id} className="grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-2.5 sm:grid-cols-[8rem_auto_auto_1fr_7rem_1fr_auto] items-center">
             <select value={s.day} onChange={(e) => set(s.id, { day: Number(e.target.value) })} className={input} aria-label="Hari">
               {[1, 2, 3, 4, 5, 6].map((h) => (
                 <option key={h} value={h}>
@@ -25,8 +25,8 @@ export default function ScheduleEditor() {
                 </option>
               ))}
             </select>
-            <input type="time" value={s.start} onChange={(e) => set(s.id, { start: e.target.value })} className={input} aria-label="Mulai" />
-            <input type="time" value={s.end} onChange={(e) => set(s.id, { end: e.target.value })} className={input} aria-label="Selesai" />
+            <TimeSelect value={s.start} onChange={(v) => set(s.id, { start: v })} label="Mulai" />
+            <TimeSelect value={s.end} onChange={(v) => set(s.id, { end: v })} label="Selesai" />
             <input value={s.matkul} onChange={(e) => set(s.id, { matkul: e.target.value })} placeholder="Mata kuliah" className={`${input} col-span-2 sm:col-span-1`} />
             <input value={s.ruang} onChange={(e) => set(s.id, { ruang: e.target.value })} placeholder="Ruang" className={input} />
             <input value={s.dosen} onChange={(e) => set(s.id, { dosen: e.target.value })} placeholder="Dosen" className={input} />

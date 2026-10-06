@@ -5,12 +5,13 @@ import { STUDENTS, resolveName } from "@/lib/students";
 import type { DoaPick } from "@/lib/store";
 import { DEFAULT_PEL, type ActivityLog, type OrgData, type PelOverrides, type ScheduleItem, type SlidesData } from "@/lib/content";
 import type { CalEvent } from "@/lib/acara";
+import type { ActivityType } from "@/lib/changelog";
 
 // Kolom pelanggaran di sheet dideteksi otomatis dari judul kolom.
 // Kalau salah tebak, isi huruf kolomnya di sini (mis. kategori: "D", ket: "E").
 const PEL_COLS = { kategori: "", ket: "" };
 
-export type LogType = "pelanggaran" | "sakit" | "izin" | "acara" | "doa" | "seat";
+export type LogType = "pelanggaran" | "sakit" | "izin" | "acara" | "doa" | ActivityType;
 
 export type LogItem = {
   id: string;
@@ -189,7 +190,7 @@ export function buildPelanggaran(t: Table, ov: PelOverrides = DEFAULT_PEL): Pela
   return { total, students, categories, recent, shame };
 }
 
-const TITLE: Record<Exclude<LogType, "doa" | "seat">, string> = {
+const TITLE: Record<"pelanggaran" | "sakit" | "izin" | "acara", string> = {
   pelanggaran: "Laporan Pelanggaran Terbaru",
   sakit: "Laporan Izin Sakit",
   izin: "Laporan Izin Tidak Hadir / Telat",
@@ -202,12 +203,12 @@ type Sources = { pelanggaran: PelRow[]; sakit: Table; izin: Table; acara: Table 
 export function buildLogs(src: Sources, doa: DoaPick[] = [], activity: ActivityLog[] = [], maxDays = 14): LogItem[] {
   const out: (LogItem & { seq: number })[] = [];
   src.pelanggaran
-    .filter((r) => !r.hidden)
+    .filter((r) => !r.hidden && r.source === "sheet") // catatan tambahan admin sudah muncul di log perubahan admin
     .forEach((r, seq) => {
       if (r.ago === null || r.ago > maxDays) return;
       const d = Math.max(r.ago, 0);
       const detail = `${shortOf(r.nama)}: ${r.ket}${r.kat && r.kat !== r.ket ? ` (${r.kat})` : ""}`;
-      out.push({ id: `pel-${r.id}`, type: "pelanggaran", title: TITLE.pelanggaran, detail: clip(detail), daysAgo: d, time: agoLabel(d), seq });
+      out.push({ id: `pel-${r.id}`, type: "pelanggaran", title: TITLE.pelanggaran, detail: clip(`${detail} · via Google Form`), daysAgo: d, time: agoLabel(d), seq });
     });
   for (const type of ["sakit", "izin", "acara"] as const) {
     const t = src[type];
@@ -218,7 +219,7 @@ export function buildLogs(src: Sources, doa: DoaPick[] = [], activity: ActivityL
       const raw = (r[t.name] ?? "").trim();
       const who = type === "acara" ? raw : shortOf(resolveName(raw));
       const extra = others.map((c) => (r[c.key] ?? "").trim()).filter(Boolean).slice(0, type === "acara" ? 3 : 2);
-      const detail = [who, ...extra].filter(Boolean).join(" · ");
+      const detail = [who, ...extra, "via Google Form"].filter(Boolean).join(" · ");
       const d = Math.max(ago, 0);
       out.push({ id: `${type}-${seq}`, type, title: TITLE[type], detail: clip(detail), daysAgo: d, time: agoLabel(d), seq });
     });
@@ -242,7 +243,7 @@ const jktDate = (iso: string) => new Date(iso).toLocaleDateString("en-GB", { tim
 
 export function doaLog(p: DoaPick, seq = 0): LogItem {
   const d = Math.max(daysAgo(jktDate(p.at)) ?? 0, 0);
-  const jam = new Date(p.at).toLocaleTimeString("id-ID", { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit" });
+  const jam = new Date(p.at).toLocaleTimeString("id-ID", { timeZone: "Asia/Jakarta", hourCycle: "h23", hour: "2-digit", minute: "2-digit" });
   return {
     id: `doa-${p.at}-${seq}`,
     type: "doa",
@@ -255,6 +256,6 @@ export function doaLog(p: DoaPick, seq = 0): LogItem {
 
 export function activityLog(a: ActivityLog, seq = 0): LogItem {
   const d = Math.max(daysAgo(jktDate(a.at)) ?? 0, 0);
-  const jam = new Date(a.at).toLocaleTimeString("id-ID", { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit" });
+  const jam = new Date(a.at).toLocaleTimeString("id-ID", { timeZone: "Asia/Jakarta", hourCycle: "h23", hour: "2-digit", minute: "2-digit" });
   return { id: `act-${a.at}-${seq}`, type: a.type, title: a.title, detail: a.detail, daysAgo: d, time: d === 0 ? `Hari ini, ${jam}` : agoLabel(d) };
 }

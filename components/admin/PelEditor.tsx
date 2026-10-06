@@ -4,7 +4,7 @@ import { Eye, EyeOff, Flame, Pencil, Plus, Trash2 } from "lucide-react";
 import { buildPelanggaran, pelRows } from "@/lib/dashboard";
 import type { PelEdit } from "@/lib/content";
 import type { Table } from "@/lib/sheets";
-import { Panel, SaveBar, StudentSelect, input, inputBase, newId, smallBtn, useContent } from "@/components/admin/ui";
+import { DateSelect, Panel, SaveBar, StudentSelect, input, inputBase, newId, smallBtn, useContent } from "@/components/admin/ui";
 
 const todayYmd = () => new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" });
 
@@ -89,14 +89,14 @@ export default function PelEditor() {
       </Panel>
 
       <Panel title="Tambah pelanggaran" desc="Catatan tambahan dari admin, di luar form Google.">
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
-          <div className="lg:col-span-2">
+        <div className="grid items-center gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_auto_minmax(0,1fr)_5.5rem]">
+          <div>
             <StudentSelect value={form.nama} onChange={(v) => setForm({ ...form, nama: v })} empty="Pilih siswa" />
           </div>
-          <input type="date" value={form.tanggal} onChange={(e) => setForm({ ...form, tanggal: e.target.value })} className={input} />
+          <DateSelect value={form.tanggal} onChange={(v) => v && setForm({ ...form, tanggal: v })} label="Tanggal" />
           <input value={form.kat} onChange={(e) => setForm({ ...form, kat: e.target.value })} placeholder="Jenis (mis. Terlambat)" list="pel-kat" className={input} />
           <input type="number" min={0} max={100} value={form.poin} onChange={(e) => setForm({ ...form, poin: Number(e.target.value) })} className={input} aria-label="Poin" />
-          <input value={form.ket} onChange={(e) => setForm({ ...form, ket: e.target.value })} placeholder="Keterangan (opsional)" className={`${input} sm:col-span-2 lg:col-span-4`} />
+          <input value={form.ket} onChange={(e) => setForm({ ...form, ket: e.target.value })} placeholder="Keterangan (opsional)" className={`${input} sm:col-span-2 lg:col-span-3`} />
           <button onClick={addRow} disabled={!form.nama || !form.kat.trim()} className="flex items-center justify-center gap-1.5 rounded-xl bg-sea-500 px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-40">
             <Plus size={15} /> Tambah
           </button>

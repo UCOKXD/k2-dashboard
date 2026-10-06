@@ -5,6 +5,7 @@ import { hasSkb, holidaysOf, type Holiday } from "@/lib/holidays";
 
 import type { CalEvent } from "@/lib/acara";
 import type { ScheduleItem } from "@/lib/content";
+import { jam } from "@/lib/time";
 import { DIFFICULTY, URGENCY, daysLabel, urgencyOf, type TaskItem } from "@/lib/tasks";
 
 const FIRST_YEAR = 2026;
@@ -196,7 +197,7 @@ export default function YearCalendar({
                       return (
                         <p
                           key={t.id}
-                          title={`${t.judul}${t.matkul ? ` · ${t.matkul}` : ""} · ${DIFFICULTY[t.difficulty].label}${t.jam ? ` · ${t.jam}` : ""} · ${daysLabel(u.days)}`}
+                          title={`${t.judul}${t.matkul ? ` · ${t.matkul}` : ""} · ${DIFFICULTY[t.difficulty].label}${t.jam ? ` · pukul ${jam(t.jam)}` : ""} · ${daysLabel(u.days)}`}
                           className={`mt-1 truncate rounded-md px-1.5 py-0.5 text-[10px] font-bold shadow-sm sm:text-[11px] ${URGENCY[u.level].chip} ${u.level === "urgent" ? "animate-pulse" : ""}`}
                         >
                           {u.level === "urgent" ? "URGENT · " : ""}
@@ -207,10 +208,10 @@ export default function YearCalendar({
                     {kul.slice(0, 3).map((c) => (
                       <p
                         key={c.id}
-                        title={`${c.matkul} · ${c.start}–${c.end}${c.ruang ? ` · ${c.ruang}` : ""}${c.dosen ? ` · ${c.dosen}` : ""}`}
+                        title={`${c.matkul} · ${jam(c.start)}–${jam(c.end)}${c.ruang ? ` · ${c.ruang}` : ""}${c.dosen ? ` · ${c.dosen}` : ""}`}
                         className="mt-1 truncate rounded-md border border-sky-200 bg-sky-50 px-1.5 py-0.5 text-[10px] font-medium text-sky-700 sm:text-[11px]"
                       >
-                        <span className="font-mono">{c.start}</span> {c.matkul}
+                        <span className="font-mono">{jam(c.start)}</span> {c.matkul}
                       </p>
                     ))}
                     {kul.length > 3 && <p className="mt-0.5 text-[10px] font-semibold text-sky-600">+{kul.length - 3} kelas lagi</p>}
