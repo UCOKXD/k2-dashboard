@@ -1,3 +1,4 @@
+import type { BdayInfo } from "@/lib/birthday";
 // Fungsi murni untuk halaman utama: mengubah data Google Sheets (Table) menjadi data siap tampil.
 // Aman dipakai di server maupun browser (tidak menyentuh API key).
 import type { Table } from "@/lib/sheets";
@@ -56,6 +57,7 @@ export type HomeData = {
   logs: LogItem[];
   org: OrgData;
   slides: SlidesData;
+  bday: BdayInfo; // tema ulang tahun (hari ini & bulan ini)
   cards: HomeCards;
 };
 

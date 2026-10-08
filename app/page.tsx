@@ -4,6 +4,7 @@ import { buildLogs, buildPelanggaran, pelRows } from "@/lib/dashboard";
 import { getActivity, getContent } from "@/lib/content-server";
 import { getTable } from "@/lib/sheets";
 import { bannerSlides } from "@/lib/photos";
+import { birthdayInfo } from "@/lib/birthday";
 import { recentDoaPicks } from "@/lib/store";
 import { STUDENTS } from "@/lib/students";
 
@@ -55,6 +56,7 @@ export default async function Home() {
         pelanggaran: buildPelanggaran(pel, ov),
         logs: buildLogs({ pelanggaran: pelRows(pel, ov), sakit, izin, acara }, doa, activity),
         org,
+        bday: await birthdayInfo(birthdays),
         slides: bannerSlides(slides, gallery), // acak dari galeri kalau galeri sudah berisi
         cards: { nextEvent, doaToday, ultah, schedule },
       }}

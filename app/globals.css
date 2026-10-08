@@ -189,6 +189,49 @@ body {
   100% { top: -6%; opacity: 0; }
 }
 
+/* ---------- Tema ulang tahun (aktif lewat kelas k2-bday di <html>) ---------- */
+.k2-bday body {
+  background-color: #fff6f8;
+  background-image:
+    radial-gradient(60rem 40rem at 10% -10%, rgba(240, 140, 163, 0.28), transparent 60%),
+    radial-gradient(50rem 36rem at 95% 15%, rgba(245, 158, 11, 0.16), transparent 60%),
+    radial-gradient(55rem 40rem at 50% 110%, rgba(46, 155, 224, 0.18), transparent 60%);
+}
+/* Versi gelap: navy tua dengan kilau merah muda, bukan latar terang */
+.dark.k2-bday body {
+  background-color: #0a1530;
+  background-image:
+    radial-gradient(60rem 40rem at 10% -10%, rgba(240, 140, 163, 0.2), transparent 60%),
+    radial-gradient(50rem 36rem at 95% 15%, rgba(245, 158, 11, 0.1), transparent 60%),
+    radial-gradient(55rem 40rem at 50% 110%, rgba(46, 155, 224, 0.14), transparent 60%);
+}
+.k2-bd-strip {
+  border: 1px solid rgba(248, 195, 207, 0.9);
+  background: linear-gradient(120deg, rgba(253, 242, 248, 0.9), rgba(255, 241, 242, 0.9), rgba(255, 251, 235, 0.9));
+  backdrop-filter: blur(12px);
+}
+.k2-bd-name { color: #9d174d; }
+.dark .k2-bd-strip { border-color: rgba(240, 140, 163, 0.45); background: linear-gradient(120deg, rgba(80, 30, 60, 0.75), rgba(27, 40, 80, 0.75), rgba(70, 50, 30, 0.6)); }
+.dark .k2-bd-name { color: #f8c3cf; }
+
+.k2-bd-flag { animation: k2BdFlag 4s ease-in-out infinite; transform-origin: 50% 0; }
+@keyframes k2BdFlag { 0%, 100% { transform: rotate(-0.6deg); } 50% { transform: rotate(0.6deg); } }
+.k2-bd-sway { animation: k2BdSway 5s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes k2BdSway { 0%, 100% { transform: rotate(-4deg) translateY(0); } 50% { transform: rotate(4deg) translateY(-8px); } }
+/* Konfeti jatuh pelan di banner ulang tahun */
+.k2-confetti { position: absolute; top: -20px; width: 10px; height: 16px; border-radius: 2px; pointer-events: none; animation: k2Confetti linear infinite; }
+@keyframes k2Confetti {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  8% { opacity: 1; }
+  100% { transform: translateY(680px) rotate(540deg); opacity: 0.2; }
+}
+/* Konfeti meledak dari titik klik */
+.k2-burst { position: absolute; width: 8px; height: 12px; border-radius: 2px; pointer-events: none; animation: k2Burst 0.9s ease-out forwards; }
+@keyframes k2Burst {
+  from { transform: translate(-50%, -50%) rotate(0deg); opacity: 1; }
+  to { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(var(--rot)); opacity: 0; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-wiggle, .animate-ping-once, .animate-toastIn { animation: none; }
   /* Stiker tetap diam saat disorot */
@@ -198,6 +241,9 @@ body {
   .k2-swim--1 { left: 4%; }
   .k2-swim--2 { left: auto; right: 4%; }
   .k2-swim--3, .k2-swim--4, .k2-bubble { display: none; }
+  /* Tema ulang tahun: bunting & balon diam, konfeti tidak tampil */
+  .k2-bd-flag, .k2-bd-sway { animation: none; }
+  .k2-confetti, .k2-burst { display: none; }
 }
 .dark .text-red-700\/80 { color: rgb(254 202 202 / 0.85); }
 .dark .text-red-600 { color: #f87171; }

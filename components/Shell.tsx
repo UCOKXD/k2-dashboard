@@ -9,6 +9,7 @@ import AuthProvider, { useAuth } from "@/components/AuthProvider";
 import ThemeToggle from "@/components/ThemeToggle";
 import NavIsland from "@/components/NavIsland";
 import UpdateToasts from "@/components/UpdateToasts";
+import { BirthdayBadge, BirthdayProvider, BirthdayStrip, BottomBunting, HEADER_BDAY, PartyHat, TopBunting, useBirthday } from "@/components/Birthday";
 
 // Kanan atas: tombol Masuk (pengunjung) atau menu akun (admin).
 function AccountButton() {
@@ -79,22 +80,42 @@ function AccountButton() {
 }
 
 export default function Shell({ children }: { children: React.ReactNode }) {
-  const home = usePathname() === "/";
   return (
     <AuthProvider>
-    <div className="min-h-screen">
+      <BirthdayProvider>
+        <Frame>{children}</Frame>
+      </BirthdayProvider>
+    </AuthProvider>
+  );
+}
+
+function Frame({ children }: { children: React.ReactNode }) {
+  const home = usePathname() === "/";
+  const bday = useBirthday().today.length > 0; // tema ulang tahun aktif hari ini
+  return (
+    <div className="relative min-h-screen">
       {/* Header bernuansa laut, senada dengan gelembung biru di kedua logo.
           Di layar lebar island menu menempel di tengah header, jadi isi kiri & kanan dijaga tetap ramping. */}
-      <header className="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-white/10 bg-gradient-to-r from-navy-900/85 via-navy-700/80 to-sea-600/80 px-4 shadow-[0_10px_30px_rgba(11,30,61,0.35)] backdrop-blur-md md:px-8">
+      <header
+        className="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-white/10 bg-gradient-to-r from-navy-900/85 via-navy-700/80 to-sea-600/80 px-4 shadow-[0_10px_30px_rgba(11,30,61,0.35)] backdrop-blur-md md:px-8"
+        style={bday ? { background: HEADER_BDAY } : undefined}
+      >
         <Link href="/" className="flex min-w-0 items-center gap-2" aria-label="K2 Pusat Informasi, ke halaman utama">
-          <Image src="/logo-k2.png" alt="Logo Divisi K2" width={40} height={41} className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]" priority />
+          <span className="relative inline-flex shrink-0">
+            <Image src="/logo-k2.png" alt="Logo Divisi K2" width={40} height={41} className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]" priority />
+            {bday && <PartyHat />}
+          </span>
           <Image src="/logo-absorbing.png" alt="Logo kelas Absorbing PPTI 28" width={40} height={42} className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]" priority />
           <Image src="/k2-wordmark.png" alt="K2 Pusat Informasi" width={600} height={235} className="ml-1 h-8 w-auto shrink-0" priority />
         </Link>
         <div className="flex shrink-0 items-center gap-2.5">
-          <span className="hidden items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white sm:flex lg:hidden xl:flex">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Siswa Aktif
-          </span>
+          {bday ? (
+            <BirthdayBadge />
+          ) : (
+            <span className="hidden items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white sm:flex lg:hidden xl:flex">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Siswa Aktif
+            </span>
+          )}
           <ThemeToggle />
           <AccountButton />
         </div>
@@ -103,9 +124,16 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       {/* Halaman utama memasang islandnya sendiri (melayang + animasi scroll) di dalam HomeDashboard. */}
       {!home && <NavIsland variant="static" />}
 
-      <main className={home ? "" : "mx-auto max-w-6xl p-4 pt-32 sm:p-8 sm:pt-32 lg:pt-24"}>{children}</main>
+      {bday && <TopBunting big={home} />}
+
+      {/* Saat tema ulang tahun, konten diberi jarak atas lebih supaya bunting menggantung di ruang kosong. */}
+      {/* Di beranda tidak dibuat lapisan baru, supaya island menu yang menempel tetap di atas header. */}
+      <main className={home ? "" : `relative z-[2] mx-auto max-w-6xl p-4 pt-32 sm:p-8 ${bday ? "sm:pt-40 lg:pt-44" : "sm:pt-32 lg:pt-24"}`}>
+        {bday && !home && <BirthdayStrip />}
+        {children}
+        {bday && !home && <BottomBunting />}
+      </main>
       <UpdateToasts />
     </div>
-    </AuthProvider>
   );
 }

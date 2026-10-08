@@ -116,23 +116,14 @@ export default function HomeCards({ cards }: { cards: Cards }) {
         )}
       </Card>
 
-      {ultah.length > 0 && (
+      {/* Ulang tahun hari ini tampil besar di banner beranda; kartu ini untuk yang akan datang. */}
+      {ultah.some((u) => u.days > 0) && (
         <div className="sm:col-span-2 lg:col-span-3">
           <div className="flex flex-wrap items-center gap-4 rounded-3xl border border-pink-200/70 bg-gradient-to-r from-pink-50/80 via-rose-50/80 to-amber-50/80 p-5 shadow-[0_20px_48px_rgba(15,23,42,0.18)] backdrop-blur-md">
             <div className="rounded-2xl border border-pink-200 bg-white/80 p-3 text-pink-500 shadow-md">
               <Cake size={22} />
             </div>
             <div className="min-w-0 flex-1">
-              {ultah.some((u) => u.days === 0) && (
-                <p className="text-lg font-extrabold text-slate-800">
-                  Selamat ulang tahun,{" "}
-                  {ultah
-                    .filter((u) => u.days === 0)
-                    .map((u) => u.nama)
-                    .join(", ")}
-                  !
-                </p>
-              )}
               {ultah.some((u) => u.days > 0) && (
                 <p className="text-sm text-slate-600">
                   Segera ulang tahun:{" "}

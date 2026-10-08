@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import NavIsland from "@/components/NavIsland";
 import Sticker from "@/components/Sticker";
+import { BirthdayHero, BirthdaySection } from "@/components/BirthdayHome";
 import OrgChart from "@/components/OrgChart";
 import { LOCAL_DOA_LOG, doaLog } from "@/lib/dashboard";
 import HomeCards from "@/components/HomeCards";
@@ -648,7 +649,8 @@ export default function HomeDashboard({ data }: { data: HomeData }) {
 
   return (
     <div className="relative min-h-screen overflow-x-clip text-slate-900 selection:bg-blue-100">
-      <Hero slides={data.slides} />
+      {/* Pada hari ada yang ulang tahun, banner foto diganti banner ulang tahun (besoknya kembali normal). */}
+      {data.bday.today.length > 0 ? <BirthdayHero people={data.bday.today} /> : <Hero slides={data.slides} />}
       <NavIsland variant="floating" />
 
       <div className="mx-auto max-w-6xl space-y-12 px-4 pb-32 pt-8 md:px-8">
@@ -670,6 +672,8 @@ export default function HomeDashboard({ data }: { data: HomeData }) {
         </div>
 
         <HomeCards cards={data.cards} />
+
+        {data.bday.today.length > 0 && <BirthdaySection info={data.bday} />}
 
         <LogPanel logs={data.logs} />
         <OrgChart org={data.org} />
