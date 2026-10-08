@@ -83,6 +83,31 @@ function HelpFooter() {
   );
 }
 
+// Chip tanggal & jam (WIB, 24 jam) di banner, mis. "Rabu, 7 Okt 2026 · 09.41 WIB".
+function heroNow() {
+  const d = new Date();
+  const tgl = d.toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta", weekday: "long", day: "numeric", month: "short", year: "numeric" });
+  const jam = d.toLocaleTimeString("id-ID", { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
+  return `${tgl} · ${jam} WIB`;
+}
+
+function HeroClock() {
+  const [text, setText] = useState("");
+  useEffect(() => {
+    const t = setTimeout(() => setText(heroNow()));
+    const id = setInterval(() => setText(heroNow()), 15_000);
+    return () => {
+      clearTimeout(t);
+      clearInterval(id);
+    };
+  }, []);
+  return (
+    <span className="min-h-[30px] self-start rounded-full border border-white/25 bg-white/[0.12] px-3.5 py-1.5 text-[13px] font-semibold text-white backdrop-blur-sm">
+      {text || "\u00a0"}
+    </span>
+  );
+}
+
 function Hero({ slides }: { slides: SlidesData }) {
   const SLIDES = slides.items.map((x) => x.src);
   const ref = useRef<HTMLDivElement>(null);
@@ -111,7 +136,7 @@ function Hero({ slides }: { slides: SlidesData }) {
     <div className="mx-auto max-w-[1000px] px-4 pt-[4.5rem] md:px-0">
       <div
         ref={ref}
-        className="relative flex h-[320px] origin-top items-center justify-center overflow-hidden rounded-[2.5rem] border-4 border-white bg-slate-200 shadow-[0_30px_70px_rgba(15,23,42,0.35)] will-change-transform sm:h-[460px]"
+        className="relative flex h-[440px] origin-top items-end overflow-hidden rounded-[2.5rem] border-4 border-white bg-slate-200 shadow-[0_30px_70px_rgba(15,23,42,0.35)] will-change-transform sm:h-[460px]"
       >
         {SLIDES.map((src, i) => (
           <Image
@@ -125,27 +150,33 @@ function Hero({ slides }: { slides: SlidesData }) {
             className={`object-cover object-[50%_65%] transition-all duration-1000 ease-in-out ${i === slide ? "scale-100 opacity-100" : "scale-105 opacity-0"}`}
           />
         ))}
-        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/10" />
+        {/* Gelap di kiri (tempat tulisan), memudar ke kanan supaya foto tetap terlihat. */}
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{ background: "linear-gradient(100deg, rgba(11,30,61,0.92) 0%, rgba(27,58,107,0.72) 45%, rgba(31,125,186,0.15) 100%)" }}
+        />
 
-        {/* Di ponsel judul dinaikkan sedikit supaya tidak tertutup stiker "Halo!" di pojok kanan bawah. */}
-        <div className="relative z-10 -mt-16 px-6 text-center sm:mt-0">
-          <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-[0_6px_24px_rgba(0,0,0,0.6)] sm:text-5xl md:text-6xl">
-            Pusat Informasi K2
-          </h1>
+        <div className="relative z-10 flex max-w-[640px] flex-col gap-3 px-6 pb-16 sm:gap-4 sm:px-14 sm:pb-[72px]">
+          <HeroClock />
+          <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl">Halo, ABSORBING!</h1>
+          <p className="max-w-[30rem] text-sm leading-relaxed text-white/90 sm:text-lg">
+            Pusat informasi Divisi K2 — Kesiswaan &amp; Kedisiplinan PPTI 28. Jadwal, izin, tugas, dan pengumuman kelas di satu tempat.
+          </p>
         </div>
 
-        <div className="absolute bottom-10 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+        <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 gap-2 sm:bottom-8">
           {SLIDES.map((_, i) => (
             <button
               key={i}
               onClick={() => setSlide(i)}
-              className={`h-2.5 rounded-full transition-all duration-300 ${i === slide ? "w-6 bg-white shadow" : "w-2.5 bg-white/50 hover:bg-white/80"}`}
+              className={`h-2.5 rounded-full transition-all duration-300 ${i === slide ? "w-6 bg-[#ffffff] shadow" : "w-2.5 bg-white/50 hover:bg-white/80"}`}
               aria-label={`Pindah ke slide ${i + 1}`}
             />
           ))}
         </div>
 
-        <Sticker name="halo" size={200} className="absolute bottom-4 right-4 z-20 sm:bottom-10 sm:right-12" />
+        {/* Di ponsel stiker pindah ke pojok kanan atas supaya tidak menutupi tulisan. */}
+        <Sticker name="halo" size={200} className="absolute right-4 top-4 z-20 sm:bottom-10 sm:right-12 sm:top-auto" />
       </div>
     </div>
   );
