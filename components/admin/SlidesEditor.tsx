@@ -33,7 +33,7 @@ export default function SlidesEditor() {
   }
 
   return (
-    <Panel title="Foto Banner Halaman Utama" desc="Foto bergantian di banner besar halaman utama (bukan header). Maksimal 12 foto; foto otomatis diperkecil sebelum diunggah.">
+    <Panel title="Foto Banner Halaman Utama" desc="Foto bergantian di banner besar halaman utama (bukan header). Maksimal 12 foto; foto otomatis diperkecil sebelum diunggah. Kalau Galeri sudah berisi, banner dan latar jam halaman Waktu juga mengambil foto acak dari Galeri.">
       <label className="block space-y-1">
         <span className="text-sm font-semibold text-slate-700">Lama tiap foto: {d.duration} detik</span>
         <input type="range" min={3} max={30} value={d.duration} onChange={(e) => c.setDraft({ ...d, duration: Number(e.target.value) })} className="w-full max-w-md accent-sea-500" />

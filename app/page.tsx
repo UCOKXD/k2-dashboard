@@ -3,13 +3,14 @@ import { daysUntil, eventsFrom, todayJkt } from "@/lib/acara";
 import { buildLogs, buildPelanggaran, pelRows } from "@/lib/dashboard";
 import { getActivity, getContent } from "@/lib/content-server";
 import { getTable } from "@/lib/sheets";
+import { bannerSlides } from "@/lib/photos";
 import { recentDoaPicks } from "@/lib/store";
 import { STUDENTS } from "@/lib/students";
 
 export const revalidate = 30;
 
 export default async function Home() {
-  const [pel, sakit, izin, acara, doa, ov, org, slides, activity, birthdays, schedule] = await Promise.all([
+  const [pel, sakit, izin, acara, doa, ov, org, slides, activity, birthdays, schedule, gallery] = await Promise.all([
     getTable("pelanggaran"),
     getTable("sakit"),
     getTable("izin"),
@@ -21,6 +22,7 @@ export default async function Home() {
     getActivity(),
     getContent("birthdays"),
     getContent("schedule"),
+    getContent("gallery"),
   ]);
 
   const today = todayJkt();
@@ -53,7 +55,7 @@ export default async function Home() {
         pelanggaran: buildPelanggaran(pel, ov),
         logs: buildLogs({ pelanggaran: pelRows(pel, ov), sakit, izin, acara }, doa, activity),
         org,
-        slides,
+        slides: bannerSlides(slides, gallery), // acak dari galeri kalau galeri sudah berisi
         cards: { nextEvent, doaToday, ultah, schedule },
       }}
     />

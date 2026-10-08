@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CheckCircle2, Maximize2, Minimize2, RefreshCw, TriangleAlert } from "lucide-react";
 
@@ -25,6 +26,24 @@ const ZONES = [
   { label: "WIT", tz: "Asia/Jayapura" },
 ];
 
+// Dekorasi panel jam: 4 axolotl berenang (posisi & kecepatan diatur di globals.css) dan 6 gelembung naik.
+const SWIMMERS = [
+  { n: 1, w: 240, h: 137 },
+  { n: 2, w: 250, h: 128 },
+  { n: 3, w: 195, h: 172 },
+  { n: 4, w: 183, h: 175 },
+];
+const BUBBLES = [
+  { left: "8%", size: 14, dur: 9, delay: 0 },
+  { left: "19%", size: 8, dur: 7, delay: -3 },
+  { left: "34%", size: 10, dur: 11, delay: -6 },
+  { left: "63%", size: 12, dur: 10, delay: -2 },
+  { left: "78%", size: 7, dur: 8, delay: -5 },
+  { left: "91%", size: 16, dur: 12, delay: -8 },
+];
+const SHADOW_CLOCK = { textShadow: "0 4px 20px rgba(11,30,61,0.9), 0 2px 4px rgba(11,30,61,0.6)" };
+const SHADOW_TEXT = { textShadow: "0 2px 10px rgba(11,30,61,0.85)" };
+
 const part = (d: Date, tz: string, o: Intl.DateTimeFormatOptions) => d.toLocaleString("id-ID", { timeZone: tz, ...o });
 
 function diffText(ms: number) {
@@ -36,7 +55,7 @@ function diffText(ms: number) {
   return `${m} menit ${s} detik`;
 }
 
-export default function TimeClock() {
+export default function TimeClock({ photo }: { photo: string }) {
   const [sync, setSync] = useState<Sync | null>(null);
   const [failed, setFailed] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -114,36 +133,60 @@ export default function TimeClock() {
     <div className="space-y-4">
       <div
         ref={card}
-        className={`relative bg-gradient-to-br from-navy-900 via-navy-800 to-navy-700 text-center text-white ${
+        className={`k2-clock relative flex flex-col items-center justify-center overflow-hidden bg-navy-900 text-center text-white ${
           full
-            ? "fixed inset-0 z-[100] flex flex-col items-center justify-center p-6"
-            : "rounded-[2rem] border border-slate-200/70 p-6 shadow-[0_28px_70px_rgba(11,30,61,0.45)] sm:p-10"
+            ? "k2-clock--full fixed inset-0 z-[100] p-6"
+            : "min-h-[360px] rounded-[2rem] border border-slate-200/70 p-6 shadow-[0_28px_70px_rgba(11,30,61,0.45)] sm:min-h-[460px] sm:p-10"
         }`}
       >
+        {/* Latar foto kelas + lapisan gelap di tengah supaya angka tetap terbaca. */}
+        <Image src={photo} alt="" fill priority sizes="100vw" unoptimized={photo.startsWith("/api/")} className="pointer-events-none object-cover opacity-90" style={{ objectPosition: "center 62%" }} />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0"
+          style={{ background: "radial-gradient(38rem 15rem at 50% 50%, rgba(11,30,61,0.62), rgba(11,30,61,0.2) 70%, transparent 100%)" }}
+        />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10">
+          {BUBBLES.map((b, i) => (
+            <span
+              key={i}
+              className="k2-bubble border border-sea-100/45 bg-sea-100/10"
+              style={{ left: b.left, width: b.size, height: b.size, animationDuration: `${b.dur}s`, animationDelay: `${b.delay}s` }}
+            />
+          ))}
+          {SWIMMERS.map(({ n, w, h }) => (
+            <Image key={n} src={`/stickers/sticker-berenang-${n}.png`} alt="" aria-hidden="true" width={w} height={h} className={`k2-swim k2-swim--${n}`} />
+          ))}
+        </div>
+
         <button
           type="button"
           onClick={toggleFull}
-          className="absolute right-4 top-4 flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20"
+          className="absolute right-4 top-4 z-30 flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20"
           aria-label={full ? "Keluar dari layar penuh" : "Tampilkan jam layar penuh"}
         >
           {full ? <Minimize2 size={14} /> : <Maximize2 size={14} />} {full ? "Keluar" : "Layar penuh"}
         </button>
-        <p className={`font-semibold uppercase tracking-[0.3em] text-sea-300 ${full ? "text-lg sm:text-2xl" : "text-sm"}`}>Waktu Indonesia Barat</p>
-        <p className={`mt-3 font-mono font-black tabular-nums tracking-tight ${full ? "text-[19vw] leading-none" : "text-6xl sm:text-8xl md:text-9xl"}`}>
-          {now ? part(now, "Asia/Jakarta", { hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }) : "--:--:--"}
-        </p>
-        <p className={`mt-3 font-medium text-sea-100 ${full ? "text-2xl sm:text-4xl" : "text-base sm:text-xl"}`}>
-          {now ? part(now, "Asia/Jakarta", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : " "}
-        </p>
-        <div className={`mx-auto mt-6 grid w-full grid-cols-3 gap-3 ${full ? "max-w-2xl" : "max-w-md"}`}>
-          {ZONES.map((z) => (
-            <div key={z.tz} className="rounded-2xl bg-white/10 px-2 py-2.5 shadow-inner">
-              <p className="text-[11px] font-bold tracking-wider text-sea-300">{z.label}</p>
-              <p className="font-mono text-lg font-bold tabular-nums">
-                {now ? part(now, z.tz, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" }) : "--:--"}
-              </p>
-            </div>
-          ))}
+        <div className="relative z-20 flex w-full flex-col items-center">
+          <p className={`font-semibold uppercase tracking-[0.3em] text-sea-100 ${full ? "text-lg sm:text-2xl" : "text-sm"}`} style={SHADOW_TEXT}>
+            Waktu Indonesia Barat
+          </p>
+          <p className={`mt-3 font-mono font-black tabular-nums tracking-tight ${full ? "text-[19vw] leading-none" : "text-6xl sm:text-8xl md:text-9xl"}`} style={SHADOW_CLOCK}>
+            {now ? part(now, "Asia/Jakarta", { hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }) : "--:--:--"}
+          </p>
+          <p className={`mt-3 font-semibold text-white ${full ? "text-2xl sm:text-4xl" : "text-base sm:text-xl"}`} style={SHADOW_TEXT}>
+            {now ? part(now, "Asia/Jakarta", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : " "}
+          </p>
+          <div className={`mx-auto mt-6 grid w-full grid-cols-3 gap-3 ${full ? "max-w-2xl" : "max-w-md"}`}>
+            {ZONES.map((z) => (
+              <div key={z.tz} className="rounded-2xl bg-[rgba(11,30,61,0.55)] px-2 py-2.5 shadow-inner backdrop-blur-sm">
+                <p className="text-[11px] font-bold tracking-wider text-sea-300">{z.label}</p>
+                <p className="font-mono text-lg font-bold tabular-nums">
+                  {now ? part(now, z.tz, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" }) : "--:--"}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 

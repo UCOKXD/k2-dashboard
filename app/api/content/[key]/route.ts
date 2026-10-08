@@ -226,8 +226,8 @@ function clean(key: ContentKey, b: unknown): [unknown, string] | string {
 
 const PAGES: Record<ContentKey, string[]> = {
   org: ["/"],
-  slides: ["/"],
-  gallery: ["/galeri"],
+  slides: ["/", "/waktu"],
+  gallery: ["/galeri", "/", "/waktu"], // galeri juga dipakai banner beranda & latar jam
   seats: ["/tempat-duduk", "/"],
   pelanggaran: ["/", "/pelanggaran"],
   birthdays: ["/", "/kalender-acara"],

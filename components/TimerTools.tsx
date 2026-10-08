@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { Flag, Pause, Play, RotateCcw, Timer, Watch } from "lucide-react";
+import Sticker from "@/components/Sticker";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 function clock(ms: number, withCenti = false) {
@@ -196,29 +197,32 @@ export default function TimerTools() {
   const [tab, setTab] = useState<"timer" | "stopwatch">("timer");
 
   return (
-    <div className="rounded-[2rem] border border-slate-200/70 bg-white/70 backdrop-blur-md p-5 shadow-[0_24px_60px_rgba(15,23,42,0.22)] sm:p-8">
-      <div className="mx-auto mb-6 flex w-fit gap-1 rounded-full border border-slate-200 bg-slate-100 p-1">
-        {(
-          [
-            ["timer", "Timer", Timer],
-            ["stopwatch", "Stopwatch", Watch],
-          ] as const
-        ).map(([id, label, Icon]) => (
-          <button
-            key={id}
-            onClick={() => setTab(id)}
-            className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition ${tab === id ? "bg-white text-sea-600 shadow" : "text-slate-600"}`}
-          >
-            <Icon size={15} /> {label}
-          </button>
-        ))}
-      </div>
-      {/* Keduanya tetap terpasang supaya timer tidak berhenti saat pindah tab. */}
-      <div className={tab === "timer" ? "" : "hidden"}>
-        <Countdown />
-      </div>
-      <div className={tab === "stopwatch" ? "" : "hidden"}>
-        <Stopwatch />
+    <div className="flex flex-col items-center gap-4 rounded-[2rem] border border-slate-200/70 bg-white/70 p-5 shadow-[0_24px_60px_rgba(15,23,42,0.22)] backdrop-blur-md sm:flex-row sm:gap-8 sm:p-8">
+      <Sticker name="jangan-telat" size={200} className="sm:ml-4" />
+      <div className="w-full min-w-0 flex-1">
+        <div className="mx-auto mb-6 flex w-fit gap-1 rounded-full border border-slate-200 bg-slate-100 p-1">
+          {(
+            [
+              ["timer", "Timer", Timer],
+              ["stopwatch", "Stopwatch", Watch],
+            ] as const
+          ).map(([id, label, Icon]) => (
+            <button
+              key={id}
+              onClick={() => setTab(id)}
+              className={`flex items-center gap-1.5 rounded-full px-4 py-2 text-sm font-semibold transition ${tab === id ? "bg-white text-sea-600 shadow" : "text-slate-600"}`}
+            >
+              <Icon size={15} /> {label}
+            </button>
+          ))}
+        </div>
+        {/* Keduanya tetap terpasang supaya timer tidak berhenti saat pindah tab. */}
+        <div className={tab === "timer" ? "" : "hidden"}>
+          <Countdown />
+        </div>
+        <div className={tab === "stopwatch" ? "" : "hidden"}>
+          <Stopwatch />
+        </div>
       </div>
     </div>
   );
