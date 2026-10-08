@@ -1,13 +1,13 @@
 "use client";
 import { Plus, Trash2 } from "lucide-react";
 import { HARI, type ScheduleItem } from "@/lib/content";
-import { Panel, SaveBar, TimeSelect, input, newId, smallBtn, useContent } from "@/components/admin/ui";
+import { Panel, SaveBar, TimeSelect, input, newId, smallBtn, useContent, Loading } from "@/components/admin/ui";
 
 // Jadwal kuliah mingguan. Tampil di halaman Jadwal dan kartu "Kelas berikutnya" di halaman utama.
 export default function ScheduleEditor() {
   const c = useContent("schedule");
   const d = c.draft;
-  if (!d) return <Panel title="Jadwal Kuliah">Memuat...</Panel>;
+  if (!d) return <Loading title="Jadwal Kuliah" />;
 
   const set = (id: string, patch: Partial<ScheduleItem>) => c.setDraft(d.map((x) => (x.id === id ? { ...x, ...patch } : x)));
   const sorted = [...d].sort((a, b) => a.day - b.day || a.start.localeCompare(b.start));

@@ -1,7 +1,7 @@
 "use client";
 import { Plus, Trash2 } from "lucide-react";
 import type { OrgData } from "@/lib/content";
-import { Panel, SaveBar, StudentSelect, input, smallBtn, useContent } from "@/components/admin/ui";
+import { Panel, SaveBar, StudentSelect, input, smallBtn, useContent, Loading } from "@/components/admin/ui";
 
 const ROLES: [keyof Omit<OrgData, "dpp" | "anggota">, string][] = [
   ["komti", "Komti (Ketua Kelas)"],
@@ -14,7 +14,7 @@ const ROLES: [keyof Omit<OrgData, "dpp" | "anggota">, string][] = [
 export default function OrgEditor() {
   const c = useContent("org");
   const d = c.draft;
-  if (!d) return <Panel title="Struktur Organisasi">Memuat...</Panel>;
+  if (!d) return <Loading title="Struktur Organisasi" />;
   const set = (patch: Partial<OrgData>) => c.setDraft({ ...d, ...patch });
 
   return (

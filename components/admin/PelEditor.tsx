@@ -4,7 +4,7 @@ import { Eye, EyeOff, Flame, Pencil, Plus, Trash2 } from "lucide-react";
 import { buildPelanggaran, pelRows } from "@/lib/dashboard";
 import type { PelEdit } from "@/lib/content";
 import type { Table } from "@/lib/sheets";
-import { DateSelect, Panel, SaveBar, StudentSelect, input, inputBase, newId, smallBtn, useContent } from "@/components/admin/ui";
+import { DateSelect, Panel, SaveBar, StudentSelect, input, inputBase, newId, smallBtn, useContent, Loading } from "@/components/admin/ui";
 
 const todayYmd = () => new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" });
 
@@ -26,7 +26,7 @@ export default function PelEditor() {
   const d = c.draft;
   const rows = useMemo(() => (table && d ? pelRows(table, d).reverse() : []), [table, d]);
   const stats = useMemo(() => (table && d ? buildPelanggaran(table, d) : null), [table, d]);
-  if (!d || !table || !stats) return <Panel title="Pelanggaran & Hall of Shame">Memuat...</Panel>;
+  if (!d || !table || !stats) return <Loading title="Pelanggaran & Hall of Shame" />;
 
   const setEdit = (id: string, patch: PelEdit) => {
     const cur = { ...(d.edits[id] ?? {}), ...patch };

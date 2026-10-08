@@ -1,5 +1,6 @@
 import { AlarmClock, BookOpen, ClipboardList } from "lucide-react";
 import { jam } from "@/lib/time";
+import Sticker from "@/components/Sticker";
 import { DIFFICULTY, URGENCY, daysLabel, urgencyOf, type TaskItem } from "@/lib/tasks";
 
 const BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
@@ -19,25 +20,28 @@ export default function TaskBoard({ tasks, today }: { tasks: TaskItem[]; today: 
   return (
     <div className="space-y-4">
       {urgent.length > 0 && (
-        <div className="rounded-3xl border-2 border-red-400 bg-red-50/90 p-4 shadow-[0_20px_45px_rgba(220,38,38,0.25)] backdrop-blur-md sm:p-5">
-          <p className="mb-2 flex items-center gap-2 text-sm font-black tracking-wider text-red-700">
-            <AlarmClock size={18} className="animate-pulse" /> URGENT: deadline 3 hari lagi atau kurang
-          </p>
-          <ul className="space-y-1.5">
-            {urgent.map((t) => {
-              const u = urgencyOf(t, today);
-              return (
-                <li key={t.id} className="flex flex-wrap items-baseline gap-x-2 text-sm text-red-900">
-                  <b className="text-base">{t.judul}</b>
-                  {t.matkul && <span className="text-red-700">· {t.matkul}</span>}
-                  <span className="font-bold text-red-600">
-                    · {daysLabel(u.days)} ({fmt(t.deadline)}
-                    {t.jam && `, pukul ${jam(t.jam)}`})
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
+        <div className="flex items-center gap-4 rounded-3xl border-2 border-red-400 bg-red-50/90 p-4 shadow-[0_20px_45px_rgba(220,38,38,0.25)] backdrop-blur-md sm:p-5">
+          <div className="min-w-0 flex-1">
+            <p className="mb-2 flex items-center gap-2 text-sm font-black tracking-wider text-red-700">
+              <AlarmClock size={18} className="animate-pulse" /> URGENT: deadline 3 hari lagi atau kurang
+            </p>
+            <ul className="space-y-1.5">
+              {urgent.map((t) => {
+                const u = urgencyOf(t, today);
+                return (
+                  <li key={t.id} className="flex flex-wrap items-baseline gap-x-2 text-sm text-red-900">
+                    <b className="text-base">{t.judul}</b>
+                    {t.matkul && <span className="text-red-700">· {t.matkul}</span>}
+                    <span className="font-bold text-red-600">
+                      · {daysLabel(u.days)} ({fmt(t.deadline)}
+                      {t.jam && `, pukul ${jam(t.jam)}`})
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+          <Sticker name="deadline" size={130} />
         </div>
       )}
 

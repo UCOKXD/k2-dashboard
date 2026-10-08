@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import type { GalleryItem } from "@/lib/content";
+import Sticker from "@/components/Sticker";
 
 const fmt = (iso: string) => (iso ? new Date(iso).toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta", day: "numeric", month: "long", year: "numeric" }) : "");
 
@@ -21,7 +22,12 @@ export default function GalleryView({ items }: { items: GalleryItem[] }) {
   }, [open, items.length]);
 
   if (!items.length)
-    return <p className="rounded-2xl border border-white/60 bg-white/70 p-6 text-sm text-slate-500 shadow-[0_18px_40px_rgba(15,23,42,0.18)] backdrop-blur-md">Belum ada foto di galeri.</p>;
+    return (
+      <div className="flex items-center gap-4 rounded-2xl border border-white/60 bg-white/70 p-5 text-sm text-slate-500 shadow-[0_18px_40px_rgba(15,23,42,0.18)] backdrop-blur-md">
+        <Sticker name="belum-ada-data" size={120} />
+        <p>Foto kegiatan kelas akan muncul di sini setelah admin mengunggahnya.</p>
+      </div>
+    );
 
   const cur = open === null ? null : items[open];
   return (

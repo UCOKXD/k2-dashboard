@@ -4,6 +4,7 @@ import { Save, Undo2 } from "lucide-react";
 import { adminFetch } from "@/components/AuthProvider";
 import type { ContentKey, ContentOf } from "@/lib/content";
 import { STUDENTS } from "@/lib/students";
+import Sticker from "@/components/Sticker";
 
 // Gaya isian tanpa lebar (inputBase) dan versi selebar kolom (input).
 export const inputBase =
@@ -21,6 +22,17 @@ export function Panel({ title, desc, children }: { title: string; desc?: string;
       {children}
     </section>
   );
+}
+
+// Keadaan memuat dengan maskot "Sebentar ya...". Tanpa judul = tanpa kartu.
+export function Loading({ title }: { title?: string }) {
+  const body = (
+    <div role="status" className="flex flex-col items-center gap-2 py-4 text-center">
+      <Sticker name="sebentar-ya" size={120} />
+      <p className="text-sm text-slate-500">Memuat data...</p>
+    </div>
+  );
+  return title ? <Panel title={title}>{body}</Panel> : body;
 }
 
 // Baca satu dokumen konten, ubah sebagai draf, lalu simpan. "dirty" = ada perubahan belum disimpan.
@@ -62,19 +74,23 @@ export function useContent<K extends ContentKey>(key: K) {
 }
 
 export function SaveBar({ dirty, saving, status, onSave, onReset }: { dirty: boolean; saving: boolean; status: { type: "ok" | "err"; text: string } | null; onSave: () => void; onReset: () => void }) {
+  // Maskot "Siap!" di samping tombol simpan; berganti jadi "Waduh!" kalau penyimpanan gagal.
   return (
-    <div className={`${dirty ? "sticky bottom-3" : ""} z-20 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-[0_14px_34px_rgba(15,23,42,0.22)] backdrop-blur-md`}>
-      <p className={`text-sm font-medium ${status?.type === "err" ? "text-rose-600" : status ? "text-emerald-600" : dirty ? "text-amber-700" : "text-slate-400"}`}>
-        {status?.text ?? (dirty ? "Ada perubahan yang belum disimpan." : "Tidak ada perubahan.")}
-      </p>
-      <div className="flex gap-2">
-        <button onClick={onReset} disabled={!dirty || saving} className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 disabled:opacity-40">
-          <Undo2 size={14} /> Batalkan
-        </button>
-        <button onClick={onSave} disabled={!dirty || saving} className="flex items-center gap-1.5 rounded-full bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow disabled:opacity-40">
-          <Save size={14} /> {saving ? "Menyimpan..." : "Simpan"}
-        </button>
+    <div className={`${dirty ? "pointer-events-none sticky bottom-3" : ""} z-20 flex items-center gap-3 sm:gap-4`}>
+      <div className="pointer-events-auto flex flex-1 flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-[0_14px_34px_rgba(15,23,42,0.22)] backdrop-blur-md">
+        <p className={`text-sm font-medium ${status?.type === "err" ? "text-rose-600" : status ? "text-emerald-600" : dirty ? "text-amber-700" : "text-slate-400"}`}>
+          {status?.text ?? (dirty ? "Ada perubahan yang belum disimpan." : "Tidak ada perubahan.")}
+        </p>
+        <div className="flex gap-2">
+          <button onClick={onReset} disabled={!dirty || saving} className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 disabled:opacity-40">
+            <Undo2 size={14} /> Batalkan
+          </button>
+          <button onClick={onSave} disabled={!dirty || saving} className="flex items-center gap-1.5 rounded-full bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow disabled:opacity-40">
+            <Save size={14} /> {saving ? "Menyimpan..." : "Simpan"}
+          </button>
+        </div>
       </div>
+      <Sticker name={status?.type === "err" ? "waduh" : "siap"} size={110} className="pointer-events-auto" />
     </div>
   );
 }

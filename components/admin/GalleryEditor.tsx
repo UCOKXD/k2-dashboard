@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { ImagePlus, Trash2 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
-import { Panel, SaveBar, input, newId, smallBtn, uploadImage, useContent } from "@/components/admin/ui";
+import { Panel, SaveBar, input, newId, smallBtn, uploadImage, useContent, Loading } from "@/components/admin/ui";
 
 export default function GalleryEditor() {
   const { user } = useAuth();
@@ -10,7 +10,7 @@ export default function GalleryEditor() {
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState("");
   const d = c.draft;
-  if (!d) return <Panel title="Galeri">Memuat...</Panel>;
+  if (!d) return <Loading title="Galeri" />;
 
   async function add(files: FileList | null) {
     if (!files?.length) return;

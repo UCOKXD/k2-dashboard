@@ -3,6 +3,7 @@ import { buildPelanggaran, pelRows } from "@/lib/dashboard";
 import { getContent } from "@/lib/content-server";
 import DataTable from "@/components/DataTable";
 import AdminLink from "@/components/AdminLink";
+import Sticker from "@/components/Sticker";
 
 export const revalidate = 30;
 
@@ -49,6 +50,7 @@ export default async function Page() {
       <h3 className="pt-4 text-lg font-bold">Riwayat laporan</h3>
       <DataTable
         head="bg-sea-100 text-navy-900"
+        sticker={<Sticker name="cari-info" size={120} />}
         cols={[
           { key: "tanggal", label: "Tanggal" },
           { key: "nama", label: "Nama" },

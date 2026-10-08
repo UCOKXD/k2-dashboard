@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
+import Sticker from "@/components/Sticker";
 
 export default function LoginForm() {
   const { user, refresh } = useAuth();
@@ -36,8 +37,16 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="mx-auto max-w-md pt-6">
-      <form onSubmit={submit} className="space-y-5 rounded-[2rem] border border-white/60 bg-white/75 p-7 shadow-[0_28px_70px_rgba(15,23,42,0.25)] backdrop-blur-md sm:p-9">
+    <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-6 pt-2 sm:pt-6 lg:gap-12">
+      {/* Maskot menyapa; berganti jadi "Waduh!" kalau login ditolak. */}
+      <div className="flex flex-[0_1_22rem] flex-col items-center gap-2 text-center sm:gap-4">
+        <Sticker name={error ? "waduh" : "halo"} size={220} />
+        <div>
+          <p className="text-xl font-extrabold text-navy-900 sm:text-2xl">Selamat datang kembali</p>
+          <p className="mt-1 text-sm text-slate-600">Masuk untuk memperbarui jadwal, tugas, pelanggaran, galeri, dan struktur kelas.</p>
+        </div>
+      </div>
+      <form onSubmit={submit} className="w-full max-w-md space-y-5 rounded-[2rem] border border-white/60 bg-white/75 p-7 shadow-[0_28px_70px_rgba(15,23,42,0.25)] backdrop-blur-md sm:p-9">
         <div className="flex flex-col items-center gap-3 text-center">
           <div className="flex gap-2">
             <Image src="/logo-k2.png" alt="Logo Divisi K2" width={56} height={57} className="h-14 w-14 object-contain" />

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { MapPin, User } from "lucide-react";
 import { HARI, type ScheduleItem } from "@/lib/content";
 import { jam } from "@/lib/time";
+import Sticker from "@/components/Sticker";
 
 const toMin = (hhmm: string) => {
   const [h, m] = hhmm.split(":").map(Number);
@@ -26,7 +27,12 @@ export default function ScheduleView({ schedule }: { schedule: ScheduleItem[] })
   }, []);
 
   if (!schedule.length)
-    return <p className="rounded-2xl border border-white/60 bg-white/70 p-6 text-sm text-slate-500 shadow-[0_18px_40px_rgba(15,23,42,0.18)] backdrop-blur-md">Jadwal kuliah belum diisi admin.</p>;
+    return (
+      <div className="flex items-center gap-4 rounded-2xl border border-white/60 bg-white/70 p-5 text-sm text-slate-500 shadow-[0_18px_40px_rgba(15,23,42,0.18)] backdrop-blur-md">
+        <Sticker name="belum-ada-data" size={120} />
+        <p>Jadwal kuliah belum diisi admin.</p>
+      </div>
+    );
 
   const days = [1, 2, 3, 4, 5, 6].filter((d) => schedule.some((s) => s.day === d));
   return (

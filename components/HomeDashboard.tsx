@@ -18,6 +18,7 @@ import {
   FileText,
   Filter,
   Flame,
+  MessageCircle,
   PieChart as PieIcon,
   Search,
   Stethoscope,
@@ -26,6 +27,7 @@ import {
   X,
 } from "lucide-react";
 import NavIsland from "@/components/NavIsland";
+import Sticker from "@/components/Sticker";
 import OrgChart from "@/components/OrgChart";
 import { LOCAL_DOA_LOG, doaLog } from "@/lib/dashboard";
 import HomeCards from "@/components/HomeCards";
@@ -55,6 +57,31 @@ const LOG_STYLE: Record<LogType, { icon: typeof Calendar; badge: string; color: 
 };
 
 /* ------------------------------------------------------------------ Hero */
+
+/* ---------------------------------------------------------- Footer bantuan */
+
+const WA_K2 = "https://wa.me/6285134733707";
+
+function HelpFooter() {
+  return (
+    <footer className="flex flex-wrap items-center gap-5 rounded-[2rem] border border-white/10 bg-gradient-to-r from-navy-900/90 via-navy-700/85 to-sea-600/85 px-6 py-6 text-white shadow-[0_24px_60px_rgba(11,30,61,0.4)] backdrop-blur-md sm:px-8">
+      <Sticker name="tanya-k2" size={110} />
+      <div className="min-w-0 flex-[1_1_16rem]">
+        <p className="text-xl font-extrabold">Ada pertanyaan?</p>
+        <p className="mt-1 text-sm text-white/85">Soal izin, jadwal, tugas, tempat duduk, atau pelanggaran, langsung chat Divisi K2 lewat WhatsApp.</p>
+      </div>
+      <a
+        href={WA_K2}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-bold text-white shadow-[0_12px_28px_rgba(16,185,129,0.4)] transition hover:-translate-y-0.5 hover:bg-emerald-600"
+      >
+        <MessageCircle size={17} /> Hubungi K2
+        <span className="font-mono text-xs font-semibold text-white/85">0851-3473-3707</span>
+      </a>
+    </footer>
+  );
+}
 
 function Hero({ slides }: { slides: SlidesData }) {
   const SLIDES = slides.items.map((x) => x.src);
@@ -100,7 +127,8 @@ function Hero({ slides }: { slides: SlidesData }) {
         ))}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/30 to-black/10" />
 
-        <div className="relative z-10 px-6 text-center">
+        {/* Di ponsel judul dinaikkan sedikit supaya tidak tertutup stiker "Halo!" di pojok kanan bawah. */}
+        <div className="relative z-10 -mt-16 px-6 text-center sm:mt-0">
           <h1 className="text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-[0_6px_24px_rgba(0,0,0,0.6)] sm:text-5xl md:text-6xl">
             Pusat Informasi K2
           </h1>
@@ -116,6 +144,8 @@ function Hero({ slides }: { slides: SlidesData }) {
             />
           ))}
         </div>
+
+        <Sticker name="halo" size={200} className="absolute bottom-4 right-4 z-20 sm:bottom-10 sm:right-12" />
       </div>
     </div>
   );
@@ -214,11 +244,14 @@ function LogPanel({ logs }: { logs: HomeData["logs"] }) {
   return (
     <div className={`${CARD} p-6 sm:p-8`}>
       <div className="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-        <div>
-          <h3 className="flex items-center gap-2 text-lg font-bold text-slate-800">
-            <BellRing className="h-5 w-5 animate-bounce text-blue-600" /> Log Aktivitas &amp; Pengumuman Terbaru K2
-          </h3>
-          <p className="text-xs text-slate-400">Semua laporan dari Google Form dan setiap perubahan oleh admin, lengkap dengan nama admin yang mengubah.</p>
+        <div className="flex items-center gap-4">
+          <Sticker name="info-penting" size={130} />
+          <div>
+            <h3 className="flex items-center gap-2 text-lg font-bold text-slate-800">
+              <BellRing className="h-5 w-5 animate-bounce text-blue-600" /> Log Aktivitas &amp; Pengumuman Terbaru K2
+            </h3>
+            <p className="text-xs text-slate-400">Semua laporan dari Google Form dan setiap perubahan oleh admin, lengkap dengan nama admin yang mengubah.</p>
+          </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
@@ -611,6 +644,7 @@ export default function HomeDashboard({ data }: { data: HomeData }) {
         <OrgChart org={data.org} />
         <PieSection pel={pel} />
         <DashboardSection pel={pel} live={live} />
+        <HelpFooter />
       </div>
     </div>
   );

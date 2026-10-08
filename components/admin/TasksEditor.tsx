@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { CheckCircle2, Circle, Plus, Trash2 } from "lucide-react";
 import { DIFFICULTY, URGENCY, daysLabel, urgencyOf, type TaskItem } from "@/lib/tasks";
-import { DateSelect, Panel, SaveBar, TimeSelect, input, inputBase, newId, smallBtn, useContent } from "@/components/admin/ui";
+import { DateSelect, Panel, SaveBar, TimeSelect, input, inputBase, newId, smallBtn, useContent, Loading } from "@/components/admin/ui";
 
 const todayYmd = () => new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" });
 const EMPTY = { judul: "", matkul: "", deadline: "", jam: "", difficulty: 2 as TaskItem["difficulty"], catatan: "" };
@@ -12,7 +12,7 @@ export default function TasksEditor() {
   const c = useContent("tasks");
   const [form, setForm] = useState(EMPTY);
   const d = c.draft;
-  if (!d) return <Panel title="Tugas">Memuat...</Panel>;
+  if (!d) return <Loading title="Tugas" />;
 
   const today = todayYmd();
   const set = (id: string, patch: Partial<TaskItem>) => c.setDraft(d.map((t) => (t.id === id ? { ...t, ...patch } : t)));

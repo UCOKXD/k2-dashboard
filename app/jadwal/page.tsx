@@ -1,5 +1,6 @@
 import AdminLink from "@/components/AdminLink";
 import ScheduleView from "@/components/ScheduleView";
+import Sticker from "@/components/Sticker";
 import { getContent } from "@/lib/content-server";
 
 export const revalidate = 30;
@@ -11,7 +12,11 @@ export default async function Page() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-bold">Jadwal Kuliah</h2>
-        <AdminLink href="/admin?tab=jadwal" label="Ubah jadwal" />
+        <div className="flex items-center gap-3">
+          <AdminLink href="/admin?tab=jadwal" label="Ubah jadwal" />
+          {/* Saat jadwal kosong, maskot "Belum ada data" yang tampil di bawah, jadi yang ini disembunyikan. */}
+          {schedule.length > 0 && <Sticker name="cek-di-sini" size={110} />}
+        </div>
       </div>
       <ScheduleView schedule={schedule} />
     </div>

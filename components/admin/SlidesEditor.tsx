@@ -1,14 +1,14 @@
 "use client";
 import { useState } from "react";
 import { ArrowDown, ArrowUp, ImagePlus, Trash2 } from "lucide-react";
-import { Panel, SaveBar, newId, smallBtn, uploadImage, useContent } from "@/components/admin/ui";
+import { Panel, SaveBar, newId, smallBtn, uploadImage, useContent, Loading } from "@/components/admin/ui";
 
 export default function SlidesEditor() {
   const c = useContent("slides");
   const [uploading, setUploading] = useState(false);
   const [err, setErr] = useState("");
   const d = c.draft;
-  if (!d) return <Panel title="Foto Banner">Memuat...</Panel>;
+  if (!d) return <Loading title="Foto Banner" />;
 
   const move = (i: number, by: number) => {
     const items = [...d.items];

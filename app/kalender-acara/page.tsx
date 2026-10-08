@@ -6,6 +6,7 @@ import AdminLink from "@/components/AdminLink";
 import { eventsFrom, todayJkt } from "@/lib/acara";
 import { getContent } from "@/lib/content-server";
 import { STUDENTS } from "@/lib/students";
+import { urgencyOf } from "@/lib/tasks";
 
 export const revalidate = 30;
 
@@ -16,6 +17,8 @@ export default async function Page() {
   const events = eventsFrom(t);
 
   const today = todayJkt();
+  // Stiker DEADLINE! tampil di kotak URGENT; kalau ada, tabel kosong di bawah tidak memakai stiker lagi.
+  const hasUrgent = tasks.some((x) => urgencyOf(x, today).level === "urgent");
 
   return (
     <div className="space-y-8 pb-16">
@@ -27,7 +30,7 @@ export default async function Page() {
       <YearCalendar events={events} today={today} birthdays={bdays} schedule={schedule} tasks={tasks} />
       <div className="space-y-3">
         <h3 className="text-lg font-bold">Daftar acara dari form</h3>
-        <DataTable head="bg-sea-100 text-navy-900" cols={t.cols} rows={t.rows} />
+        <DataTable head="bg-sea-100 text-navy-900" cols={t.cols} rows={t.rows} emptySticker={!hasUrgent} />
       </div>
       {/* Tombol saran acara untuk semua pengunjung: besar, semi-transparan, melayang di pojok kanan bawah. */}
       <a

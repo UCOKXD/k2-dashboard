@@ -12,6 +12,7 @@ import ScheduleEditor from "@/components/admin/ScheduleEditor";
 import TasksEditor from "@/components/admin/TasksEditor";
 import HistoryTab from "@/components/admin/HistoryTab";
 import AccountTab from "@/components/admin/AccountTab";
+import { Loading } from "@/components/admin/ui";
 
 const TABS = [
   { id: "struktur", label: "Struktur", icon: Network, el: OrgEditor },
@@ -32,7 +33,7 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
   const path = usePathname();
   const tab = TABS.find((t) => t.id === params.get("tab")) ?? TABS[0];
 
-  if (!ready) return <p className="text-sm text-slate-500">Memuat...</p>;
+  if (!ready) return <Loading />;
   if (!user)
     return (
       <div className="mx-auto max-w-md space-y-4 rounded-[2rem] border border-white/60 bg-white/75 p-8 text-center shadow-[0_24px_60px_rgba(15,23,42,0.22)] backdrop-blur-md">

@@ -140,6 +140,8 @@ body {
 .animate-ping-once { animation: pingOnce 0.6s ease-out forwards; }
 @media (prefers-reduced-motion: reduce) {
   .animate-wiggle, .animate-ping-once, .animate-toastIn { animation: none; }
+  /* Stiker tetap diam saat disorot */
+  .k2-sticker { transition: none !important; translate: none !important; scale: none !important; }
 }
 .dark .text-red-700\/80 { color: rgb(254 202 202 / 0.85); }
 .dark .text-red-600 { color: #f87171; }

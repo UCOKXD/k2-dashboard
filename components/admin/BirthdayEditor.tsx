@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { STUDENTS } from "@/lib/students";
-import { Panel, SaveBar, input, inputBase, useContent } from "@/components/admin/ui";
+import { Panel, SaveBar, input, inputBase, useContent, Loading } from "@/components/admin/ui";
 
 const BULAN = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
 
@@ -11,7 +11,7 @@ export default function BirthdayEditor() {
   const [q, setQ] = useState("");
   const [partial, setPartial] = useState<Record<string, { day: string; month: string }>>({}); // pilihan yang baru setengah (tgl atau bulan saja)
   const d = c.draft;
-  if (!d) return <Panel title="Ulang Tahun">Memuat...</Panel>;
+  if (!d) return <Loading title="Ulang Tahun" />;
 
   const set = (nama: string, day: string, month: string) => {
     const next = { ...d };
