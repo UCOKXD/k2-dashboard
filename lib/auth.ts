@@ -46,37 +46,39 @@ function checkHash(pw: string, stored: string) {
 const pwVersion = (stored: string | null) => createHash("sha256").update(stored ?? "temp").digest("base64url").slice(0, 12);
 
 /* ------------------------------------------------------- Batas salah password */
+// Setiap percobaan login "memesan" satu jatah (INCR) SEBELUM password diperiksa, jadi permintaan yang dikirim
+// bersamaan pun tidak bisa melewati batas. Hitungan disimpan di Redis (bukan memori server, yang bisa hilang/berbeda
+// antar-server di Vercel). Dua batas: per akun (5x / 10 menit) dan per alamat IP (20x / 10 menit).
 
-const memFails = new Map<string, { n: number; until: number }>(); // cadangan kalau Redis belum ada
+const MAX_IP = 20;
+const DEV_FALLBACK = process.env.NODE_ENV !== "production"; // tanpa Redis hanya boleh di komputer pengembang
+const memFails = new Map<string, { n: number; until: number }>();
 
-async function lockedFor(username: string): Promise<number> {
-  const k = `k2:fail:${username.toLowerCase()}`;
+// Semua variasi penulisan username (spasi, huruf besar) dihitung sebagai akun yang sama.
+const accountKey = (username: string) => `k2:fail:${(findAdmin(username)?.username ?? username.replace(/\s+/g, "")).toLowerCase().slice(0, 40) || "-"}`;
+const ipKey = (ip: string) => `k2:failip:${ip}`;
+
+async function take(key: string): Promise<{ n: number; ttl: number }> {
   if (storeReady) {
-    const n = Number((await cmd<string | null>("GET", k)) ?? 0);
-    return n >= MAX_FAIL ? Math.max(1, await cmd<number>("TTL", k)) : 0;
+    const n = await cmd<number>("INCR", key);
+    if (n === 1) await cmd("EXPIRE", key, LOCK_SECONDS);
+    const ttl = await cmd<number>("TTL", key);
+    if (ttl < 0) await cmd("EXPIRE", key, LOCK_SECONDS); // jaga-jaga kalau EXPIRE sempat gagal
+    return { n, ttl: ttl > 0 ? ttl : LOCK_SECONDS };
   }
-  const m = memFails.get(k);
-  return m && m.n >= MAX_FAIL && m.until > Date.now() ? Math.ceil((m.until - Date.now()) / 1000) : 0;
-}
-
-async function addFail(username: string) {
-  const k = `k2:fail:${username.toLowerCase()}`;
-  if (storeReady) {
-    const n = await cmd<number>("INCR", k);
-    if (n === 1) await cmd("EXPIRE", k, LOCK_SECONDS);
-    return n;
-  }
-  const m = memFails.get(k);
+  const m = memFails.get(key);
   const next = m && m.until > Date.now() ? { n: m.n + 1, until: m.until } : { n: 1, until: Date.now() + LOCK_SECONDS * 1000 };
-  memFails.set(k, next);
-  return next.n;
+  memFails.set(key, next);
+  return { n: next.n, ttl: Math.ceil((next.until - Date.now()) / 1000) };
 }
 
-async function clearFails(username: string) {
-  const k = `k2:fail:${username.toLowerCase()}`;
-  if (storeReady) await cmd("DEL", k);
-  else memFails.delete(k);
+async function release(key: string) {
+  if (storeReady) await cmd("DEL", key);
+  else memFails.delete(key);
 }
+
+const minutes = (sec: number) => Math.max(1, Math.ceil(sec / 60));
+const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 /* ------------------------------------------------------------------ Sesi */
 
@@ -101,19 +103,23 @@ function toUser(a: Admin, stored: string | null): SessionUser {
   return { username: a.username, nama: a.nama, panggilan: a.panggilan, jabatan: a.jabatan, grup: a.grup, tempPassword: !stored };
 }
 
-export async function login(username: string, password: string): Promise<{ user?: SessionUser; error?: string; token?: string }> {
-  const admin = findAdmin(username);
-  const wait = await lockedFor(username || "-");
-  if (wait) return { error: `Terlalu banyak percobaan salah. Coba lagi dalam ${Math.ceil(wait / 60)} menit.` };
+export async function login(username: string, password: string, ip: string): Promise<{ user?: SessionUser; error?: string; token?: string }> {
+  if (!storeReady && !DEV_FALLBACK) return { error: "Login admin dinonaktifkan sampai penyimpanan (Upstash Redis) dipasang di Vercel." };
 
+  const acc = await take(accountKey(username));
+  const byIp = await take(ipKey(ip));
+  if (acc.n > MAX_FAIL) return { error: `Akun ini dikunci sementara karena terlalu banyak percobaan salah. Coba lagi dalam ${minutes(acc.ttl)} menit.` };
+  if (byIp.n > MAX_IP) return { error: `Terlalu banyak percobaan dari perangkat/jaringan ini. Coba lagi dalam ${minutes(byIp.ttl)} menit.` };
+
+  const admin = findAdmin(username);
   const stored = admin ? await storedHash(admin.username) : null;
   const ok = admin && (stored ? checkHash(password, stored) : eq(password, TEMP_PASSWORD));
   if (!admin || !ok) {
-    const n = await addFail(username || "-");
-    const left = MAX_FAIL - n;
-    return { error: left > 0 ? `Username atau password salah. Sisa ${left} percobaan.` : "Terlalu banyak percobaan salah. Coba lagi dalam 10 menit." };
+    await pause(800); // memperlambat tebak-tebakan otomatis
+    const left = MAX_FAIL - acc.n;
+    return { error: left > 0 ? `Username atau password salah. Sisa ${left} percobaan.` : `Username atau password salah. Akun dikunci ${minutes(acc.ttl)} menit.` };
   }
-  await clearFails(username);
+  await release(accountKey(username)); // berhasil: jatah akun dipulihkan (batas per IP tetap berjalan)
   const token = sign({ u: admin.username, exp: Math.floor(Date.now() / 1000) + MAX_AGE, pv: pwVersion(stored) });
   return { user: toUser(admin, stored), token };
 }
@@ -169,10 +175,14 @@ function sameOrigin(req: Request) {
   }
 }
 
-export async function requireAdmin(req: Request) {
+// allowTemp: boleh dipakai walau masih memakai password sementara (hanya untuk ganti password).
+export async function requireAdmin(req: Request, { allowTemp = false } = {}) {
   if (!sameOrigin(req)) return { error: NextResponse.json({ error: "Permintaan ditolak" }, { status: 403 }) };
   const user = await currentAdmin();
   if (!user) return { error: NextResponse.json({ error: "Silakan masuk sebagai admin dulu" }, { status: 401 }) };
+  // Password sementara (1234#) diketahui semua pengurus, jadi wajib diganti sebelum bisa mengubah apa pun.
+  if (user.tempPassword && !allowTemp)
+    return { error: NextResponse.json({ error: "Ganti password sementara dulu di Panel Admin → Akun sebelum mengubah data." }, { status: 403 }) };
   return { user };
 }
 

@@ -44,6 +44,22 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
       </div>
     );
 
+  // Password sementara wajib diganti dulu sebelum fitur admin lain bisa dipakai.
+  if (user.tempPassword)
+    return (
+      <div className="space-y-6">
+        <div>
+          <h2 className="text-2xl font-bold">Panel Admin</h2>
+          <p className="text-sm text-slate-500">Halo, {user.panggilan} ({user.jabatan}).</p>
+        </div>
+        <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-800">
+          Demi keamanan, ganti password sementara Anda dulu. Password sementara diketahui semua pengurus, jadi fitur admin baru terbuka setelah
+          password diganti. Setelah itu, masuk lagi dengan password baru.
+        </p>
+        <AccountTab />
+      </div>
+    );
+
   const Active = tab.el;
   return (
     <div className="space-y-6">
@@ -67,14 +83,6 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
       {!storeReady && (
         <p className="rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900">
           Penyimpanan (Upstash Redis) belum dipasang di Vercel, jadi perubahan belum bisa disimpan. Pasang dulu di Vercel &gt; Storage &gt; Upstash for Redis.
-        </p>
-      )}
-      {user.tempPassword && tab.id !== "akun" && (
-        <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-800">
-          Anda masih memakai password sementara.{" "}
-          <Link href="/admin?tab=akun" className="font-bold underline">
-            Ganti password sekarang
-          </Link>
         </p>
       )}
 
