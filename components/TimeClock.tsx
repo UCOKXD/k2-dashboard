@@ -55,7 +55,17 @@ function diffText(ms: number) {
   return `${m} menit ${s} detik`;
 }
 
-export default function TimeClock({ photo }: { photo: string }) {
+// Latar jam berganti otomatis ke foto berikutnya (dari galeri) dengan efek memudar.
+const PHOTO_EVERY = 5 * 60_000;
+
+export default function TimeClock({ photos }: { photos: string[] }) {
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    if (photos.length < 2) return;
+    const id = setInterval(() => setShown((i) => (i + 1) % photos.length), PHOTO_EVERY);
+    return () => clearInterval(id);
+  }, [photos.length]);
+
   const [sync, setSync] = useState<Sync | null>(null);
   const [failed, setFailed] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -140,7 +150,24 @@ export default function TimeClock({ photo }: { photo: string }) {
         }`}
       >
         {/* Latar foto kelas + lapisan gelap di tengah supaya angka tetap terbaca. */}
-        <Image src={photo} alt="" fill priority sizes="100vw" unoptimized={photo.startsWith("/api/")} className="pointer-events-none object-cover opacity-90" style={{ objectPosition: "center 62%" }} />
+        {photos.map((src, i) => {
+          // Hanya foto sebelumnya (sedang memudar), sekarang, dan berikutnya (dimuat duluan) yang dipasang.
+          const n = photos.length;
+          if (n > 2 && i !== shown && i !== (shown + 1) % n && i !== (shown - 1 + n) % n) return null;
+          return (
+            <Image
+              key={src}
+              src={src}
+              alt=""
+              fill
+              priority={i === 0}
+              sizes="100vw"
+              unoptimized={src.startsWith("/api/")}
+              className={`pointer-events-none object-cover transition-opacity duration-[2000ms] ${i === shown ? "opacity-90" : "opacity-0"}`}
+              style={{ objectPosition: "center 62%" }}
+            />
+          );
+        })}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0"

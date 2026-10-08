@@ -29,9 +29,8 @@ export function bannerSlides(slides: SlidesData, gallery: GalleryItem[]): Slides
   return { ...slides, items };
 }
 
-// Latar jam halaman Waktu: satu foto acak dari galeri; galeri kosong = foto-2.
-export function clockPhoto(slides: SlidesData, gallery: GalleryItem[]): string {
-  if (!gallery.length) return "/slides/foto-2.jpg";
-  const p = pool(slides, gallery);
-  return p[Math.floor(Math.random() * p.length)];
+// Latar jam halaman Waktu: daftar foto acak dari galeri yang bergantian otomatis; galeri kosong = foto-2.
+export function clockPhotos(slides: SlidesData, gallery: GalleryItem[]): string[] {
+  if (!gallery.length) return ["/slides/foto-2.jpg"];
+  return shuffle(pool(slides, gallery)).slice(0, 12);
 }
