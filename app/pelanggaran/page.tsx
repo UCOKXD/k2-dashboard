@@ -3,6 +3,8 @@ import { buildPelanggaran, pelRows } from "@/lib/dashboard";
 import { getContent } from "@/lib/content-server";
 import DataTable from "@/components/DataTable";
 import AdminLink from "@/components/AdminLink";
+import PelStats from "@/components/PelStats";
+import { pelStats } from "@/lib/pel-stats";
 import Sticker from "@/components/Sticker";
 
 export const revalidate = 30;
@@ -11,6 +13,7 @@ export default async function Page() {
   const [t, ov] = await Promise.all([getTable("pelanggaran"), getContent("pelanggaran")]);
   const pel = buildPelanggaran(t, ov);
   const rows = pelRows(t, ov).filter((r) => !r.hidden).reverse(); // terbaru dulu
+  const stats = pelStats(rows);
 
   return (
     <div className="space-y-6">
@@ -18,6 +21,8 @@ export default async function Page() {
         <h2 className="text-2xl font-bold">Pelanggaran</h2>
         <AdminLink href="/admin?tab=pelanggaran" label="Kelola pelanggaran" />
       </div>
+
+      <PelStats stats={stats} />
 
       {pel.shame.length > 0 && (
         <section className="rounded-2xl border-2 border-red-300 bg-red-50/80 p-5 shadow-[0_20px_45px_rgba(15,23,42,0.18)] backdrop-blur-md">

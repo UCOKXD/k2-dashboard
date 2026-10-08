@@ -5,7 +5,7 @@ import type { Count, IzinStatsData } from "@/lib/izin-stats";
 // Satu seri per grafik = satu warna. Warna dipilih per halaman (accent), teks tetap memakai warna teks biasa.
 const panel = "rounded-3xl border border-white/60 bg-white/70 p-5 shadow-[0_20px_45px_rgba(15,23,42,0.2)] backdrop-blur-md sm:p-6";
 
-function Tile({ label, value }: { label: string; value: number }) {
+export function Tile({ label, value }: { label: string; value: number }) {
   return (
     <div className={panel}>
       <p className="text-sm font-semibold text-slate-500">{label}</p>
@@ -15,7 +15,22 @@ function Tile({ label, value }: { label: string; value: number }) {
 }
 
 // Batang horizontal: label di kiri, nilai di ujung batang, tooltip saat disorot.
-function BarList({ title, data, accent, empty }: { title: string; data: Count[]; accent: string; empty: string }) {
+// restAccent = warna batang "Lainnya" (opsional); footer = isi tambahan di bawah grafik.
+export function BarList({
+  title,
+  data,
+  accent,
+  empty,
+  restAccent,
+  footer,
+}: {
+  title: string;
+  data: Count[];
+  accent: string;
+  empty: string;
+  restAccent?: string;
+  footer?: React.ReactNode;
+}) {
   const [hover, setHover] = useState<number | null>(null);
   const max = Math.max(1, ...data.map((d) => d.n));
   return (
@@ -31,7 +46,7 @@ function BarList({ title, data, accent, empty }: { title: string; data: Count[];
             <div className="flex items-center gap-2">
               <div className="h-4 flex-1 rounded-r">
                 <div
-                  className={`h-4 rounded-r-[4px] transition-[width,opacity] duration-500 ${accent} ${hover !== null && hover !== i ? "opacity-40" : ""}`}
+                  className={`h-4 rounded-r-[4px] transition-[width,opacity] duration-500 ${restAccent && d.label === "Lainnya" ? restAccent : accent} ${hover !== null && hover !== i ? "opacity-40" : ""}`}
                   style={{ width: `${(d.n / max) * 100}%` }}
                 />
               </div>
@@ -45,23 +60,27 @@ function BarList({ title, data, accent, empty }: { title: string; data: Count[];
           </li>
         ))}
       </ul>
+      {footer}
     </div>
   );
 }
 
 // Kolom per bulan (6 bulan terakhir) dengan satu garis dasar.
-function MonthColumns({ title, data, accent }: { title: string; data: Count[]; accent: string }) {
+// currentAccent = warna batang bulan berjalan (batang terakhir); empty = teks kalau semua bulan kosong.
+export function MonthColumns({ title, data, accent, currentAccent, empty }: { title: string; data: Count[]; accent: string; currentAccent?: string; empty?: string }) {
   const [hover, setHover] = useState<number | null>(null);
   const max = Math.max(1, ...data.map((d) => d.n));
+  const none = data.every((d) => !d.n);
   return (
     <div className={panel}>
       <h3 className="mb-4 font-bold text-slate-800">{title}</h3>
-      <div className="flex h-44 items-end gap-3 border-b border-slate-200 px-1">
+      <div className="relative flex h-44 items-end gap-3 border-b border-slate-200 px-1">
+        {none && empty && <p className="absolute inset-0 grid place-items-center text-sm text-slate-400">{empty}</p>}
         {data.map((d, i) => (
           <div key={`${d.label}${d.sub}`} className="relative flex h-full flex-1 flex-col items-center justify-end" onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}>
             <span className="mb-1 text-xs font-bold tabular-nums text-slate-700">{d.n || ""}</span>
             <div
-              className={`w-full max-w-6 rounded-t-[4px] transition-[height,opacity] duration-500 ${accent} ${hover !== null && hover !== i ? "opacity-40" : ""}`}
+              className={`w-full max-w-6 rounded-t-[4px] transition-[height,opacity] duration-500 ${currentAccent && i === data.length - 1 ? currentAccent : accent} ${hover !== null && hover !== i ? "opacity-40" : ""}`}
               style={{ height: `${(d.n / max) * 100}%`, minHeight: d.n ? 4 : 0 }}
             />
             {hover === i && (

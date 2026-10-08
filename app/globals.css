@@ -60,6 +60,8 @@ body {
 .dark .bg-indigo-50 { background-color: rgb(99 102 241 / 0.14); }
 .dark .bg-yellow-100 { background-color: rgb(234 179 8 / 0.18); }
 .dark .bg-navy-900 { background-color: #1b3a6b; }
+/* Batang bulan berjalan di grafik Pelanggaran: di mode gelap dibuat terang supaya tetap beda dari batang lain */
+.dark .k2-bar-now { background-color: #8fcff1; }
 .dark .from-slate-50 { --tw-gradient-from: rgb(30 41 59 / 0.5); }
 .dark .to-blue-50\/40 { --tw-gradient-to: rgb(30 58 138 / 0.25); }
 .dark .from-rose-50 { --tw-gradient-from: rgb(244 63 94 / 0.14); }
