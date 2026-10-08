@@ -1,6 +1,6 @@
 // Foto untuk banner beranda dan latar jam halaman Waktu.
-// Kalau galeri sudah berisi, foto diambil acak dari galeri (ditambah foto banner yang diunggah admin);
-// foto bawaan (foto-1/foto-2) hanya dipakai selama galeri masih kosong.
+// Urutan banner selalu acak. Kalau galeri sudah berisi, foto diambil acak dari galeri (ditambah foto banner
+// yang diunggah admin); foto bawaan (foto-1/foto-2) hanya dipakai selama galeri masih kosong.
 import { DEFAULT_SLIDES, type GalleryItem, type SlidesData } from "@/lib/content";
 
 const BAWAAN = new Set<string>(DEFAULT_SLIDES.items.map((i) => i.src));
@@ -20,9 +20,10 @@ function pool(slides: SlidesData, gallery: GalleryItem[]) {
   return [...new Set([...own, ...gallery.map((g) => g.src)])];
 }
 
-// Banner beranda: urutan acak dari galeri; galeri kosong = banner seperti biasa.
+// Banner beranda: selalu urutan acak. Galeri kosong = foto banner (termasuk bawaan) diacak;
+// galeri berisi = foto acak dari galeri + foto banner unggahan admin.
 export function bannerSlides(slides: SlidesData, gallery: GalleryItem[]): SlidesData {
-  if (!gallery.length) return slides;
+  if (!gallery.length) return { ...slides, items: shuffle(slides.items) };
   const items = shuffle(pool(slides, gallery))
     .slice(0, MAX_BANNER)
     .map((src, i) => ({ id: `acak-${i}`, src }));
