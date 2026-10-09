@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CheckCircle2, Maximize2, Minimize2, RefreshCw, TriangleAlert } from "lucide-react";
+import { ClockAlertsLayer, blinkAt, useClockAlerts } from "@/components/ClockAlerts";
 
 type Sync = { offset: number; accuracy: number }; // offset = waktu server - jam perangkat (ms)
 
@@ -91,6 +92,10 @@ export default function TimeClock({ photos }: { photos: string[] }) {
     return () => clearInterval(again);
   }, []);
 
+  // Bel coffee break, makan siang, dan pulang (Senin–Jumat).
+  const alerts = useClockAlerts();
+  const checkAlerts = alerts.check;
+
   // Detak jam mengikuti pergantian detik yang sebenarnya.
   useEffect(() => {
     let raf = 0;
@@ -101,12 +106,13 @@ export default function TimeClock({ photos }: { photos: string[] }) {
       if (sec !== last) {
         last = sec;
         setNow(new Date(t));
+        checkAlerts(t);
       }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [sync]);
+  }, [sync, checkAlerts]);
 
   // Layar penuh: pakai Fullscreen API; kalau tidak didukung (mis. iPhone), tampilkan menutupi layar dengan CSS.
   const card = useRef<HTMLDivElement>(null);
@@ -186,6 +192,8 @@ export default function TimeClock({ photos }: { photos: string[] }) {
           ))}
         </div>
 
+        <ClockAlertsLayer alerts={alerts} full={full} />
+
         <button
           type="button"
           onClick={toggleFull}
@@ -198,7 +206,10 @@ export default function TimeClock({ photos }: { photos: string[] }) {
           <p className={`font-semibold uppercase tracking-[0.3em] text-sea-100 ${full ? "text-lg sm:text-2xl" : "text-sm"}`} style={SHADOW_TEXT}>
             Waktu Indonesia Barat
           </p>
-          <p className={`mt-3 font-mono font-black tabular-nums tracking-tight ${full ? "text-[19vw] leading-none" : "text-6xl sm:text-8xl md:text-9xl"}`} style={SHADOW_CLOCK}>
+          <p
+          className={`mt-3 font-mono font-black tabular-nums tracking-tight ${full ? "text-[19vw] leading-none" : "text-6xl sm:text-8xl md:text-9xl"} ${now && blinkAt(now.getTime()) ? "text-red-500" : ""}`}
+          style={SHADOW_CLOCK}
+        >
             {now ? part(now, "Asia/Jakarta", { hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }) : "--:--:--"}
           </p>
           <p className={`mt-3 font-semibold text-white ${full ? "text-2xl sm:text-4xl" : "text-base sm:text-xl"}`} style={SHADOW_TEXT}>
