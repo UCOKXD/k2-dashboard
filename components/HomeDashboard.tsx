@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import NavIsland from "@/components/NavIsland";
 import Sticker from "@/components/Sticker";
+import { WA_K2, WA_K2_TEXT } from "@/components/ContactK2";
 import { BirthdayHero, BirthdaySection } from "@/components/BirthdayHome";
 import OrgChart from "@/components/OrgChart";
 import { LOCAL_DOA_LOG, doaLog } from "@/lib/dashboard";
@@ -61,7 +62,6 @@ const LOG_STYLE: Record<LogType, { icon: typeof Calendar; badge: string; color: 
 
 /* ---------------------------------------------------------- Footer bantuan */
 
-const WA_K2 = "https://wa.me/6285134733707";
 
 function HelpFooter() {
   return (
@@ -78,7 +78,7 @@ function HelpFooter() {
         className="flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-bold text-white shadow-[0_12px_28px_rgba(16,185,129,0.4)] transition hover:-translate-y-0.5 hover:bg-emerald-600"
       >
         <MessageCircle size={17} /> Hubungi K2
-        <span className="font-mono text-xs font-semibold text-white/85">0851-3473-3707</span>
+        <span className="font-mono text-xs font-semibold text-white/85">{WA_K2_TEXT}</span>
       </a>
     </footer>
   );

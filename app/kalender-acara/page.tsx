@@ -1,6 +1,7 @@
 import { getTable } from "@/lib/sheets";
 import DataTable from "@/components/DataTable";
 import YearCalendar from "@/components/YearCalendar";
+import WeekCalendar from "@/components/WeekCalendar";
 import TaskBoard from "@/components/TaskBoard";
 import AdminLink from "@/components/AdminLink";
 import { eventsFrom, todayJkt } from "@/lib/acara";
@@ -27,6 +28,7 @@ export default async function Page() {
         <AdminLink href="/admin?tab=tugas" label="Kelola tugas" />
       </div>
       <TaskBoard tasks={tasks} today={today} />
+      <WeekCalendar events={events} today={today} birthdays={bdays} schedule={schedule} tasks={tasks} />
       <YearCalendar events={events} today={today} birthdays={bdays} schedule={schedule} tasks={tasks} />
       <div className="space-y-3">
         <h3 className="text-lg font-bold">Daftar acara dari form</h3>

@@ -34,16 +34,20 @@ const SWIMMERS = [
   { n: 3, w: 195, h: 172 },
   { n: 4, w: 183, h: 175 },
 ];
+// Ukuran gelembung (px) dikali --swim: lebih kecil di ponsel, lebih besar saat layar penuh.
 const BUBBLES = [
-  { left: "8%", size: 14, dur: 9, delay: 0 },
-  { left: "19%", size: 8, dur: 7, delay: -3 },
-  { left: "34%", size: 10, dur: 11, delay: -6 },
-  { left: "63%", size: 12, dur: 10, delay: -2 },
-  { left: "78%", size: 7, dur: 8, delay: -5 },
-  { left: "91%", size: 16, dur: 12, delay: -8 },
+  { left: "6%", size: 34, dur: 10, delay: 0 },
+  { left: "15%", size: 18, dur: 7, delay: -3 },
+  { left: "27%", size: 26, dur: 11, delay: -6 },
+  { left: "41%", size: 14, dur: 8, delay: -1.5 },
+  { left: "56%", size: 30, dur: 12, delay: -4 },
+  { left: "68%", size: 20, dur: 9, delay: -2 },
+  { left: "80%", size: 38, dur: 13, delay: -7 },
+  { left: "92%", size: 22, dur: 10, delay: -8.5 },
 ];
 const SHADOW_CLOCK = { textShadow: "0 4px 20px rgba(11,30,61,0.9), 0 2px 4px rgba(11,30,61,0.6)" };
 const SHADOW_TEXT = { textShadow: "0 2px 10px rgba(11,30,61,0.85)" };
+const SHADOW_LABEL = { textShadow: "0 2px 12px rgba(11,30,61,0.95), 0 1px 3px rgba(0,0,0,0.6)" };
 
 const part = (d: Date, tz: string, o: Intl.DateTimeFormatOptions) => d.toLocaleString("id-ID", { timeZone: tz, ...o });
 
@@ -183,8 +187,14 @@ export default function TimeClock({ photos }: { photos: string[] }) {
           {BUBBLES.map((b, i) => (
             <span
               key={i}
-              className="k2-bubble border border-sea-100/45 bg-sea-100/10"
-              style={{ left: b.left, width: b.size, height: b.size, animationDuration: `${b.dur}s`, animationDelay: `${b.delay}s` }}
+              className="k2-bubble border-2 border-white/55 bg-[radial-gradient(circle_at_32%_30%,rgba(255,255,255,0.7),rgba(214,238,251,0.18)_45%,rgba(214,238,251,0.06)_70%)] shadow-[inset_0_0_8px_rgba(255,255,255,0.35)]"
+              style={{
+                left: b.left,
+                width: `calc(${b.size}px * var(--swim))`,
+                height: `calc(${b.size}px * var(--swim))`,
+                animationDuration: `${b.dur}s`,
+                animationDelay: `${b.delay}s`,
+              }}
             />
           ))}
           {SWIMMERS.map(({ n, w, h }) => (
@@ -203,7 +213,11 @@ export default function TimeClock({ photos }: { photos: string[] }) {
           {full ? <Minimize2 size={14} /> : <Maximize2 size={14} />} {full ? "Keluar" : "Layar penuh"}
         </button>
         <div className="relative z-20 flex w-full flex-col items-center">
-          <p className={`font-semibold uppercase tracking-[0.3em] text-sea-100 ${full ? "text-lg sm:text-2xl" : "text-sm"}`} style={SHADOW_TEXT}>
+          {/* Label diberi latar navy tipis supaya tetap terbaca di atas foto apa pun. */}
+          <p
+            className={`rounded-full bg-[rgba(11,30,61,0.5)] px-4 py-1 font-bold uppercase tracking-[0.3em] text-white backdrop-blur-sm ${full ? "text-lg sm:text-2xl" : "text-sm"}`}
+            style={SHADOW_LABEL}
+          >
             Waktu Indonesia Barat
           </p>
           <p

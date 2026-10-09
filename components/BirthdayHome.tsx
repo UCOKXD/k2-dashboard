@@ -6,7 +6,6 @@ import Sticker from "@/components/Sticker";
 import { adminFetch, useAuth } from "@/components/AuthProvider";
 import { joinNames } from "@/components/Birthday";
 import type { BdayInfo, BdayPerson, Wish } from "@/lib/birthday";
-import { STUDENTS } from "@/lib/students";
 
 const WISH_MAX = 200;
 const COLORS = ["#f8c3cf", "#fbbf24", "#8fcff1", "#ffffff", "#f08ca3"];
@@ -164,13 +163,12 @@ export function BirthdayHero({ people }: { people: BdayPerson[] }) {
 
 const CARD = "rounded-[2rem] border border-white/60 bg-white/70 p-6 shadow-[0_24px_60px_rgba(15,23,42,0.2)] backdrop-blur-md sm:p-7";
 const jamWib = (iso: string) => new Date(iso).toLocaleTimeString("id-ID", { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
-const shortOf = (full: string) => STUDENTS.find((s) => s.full === full)?.short ?? full;
 
-// Kirim ucapan + daftar ucapan hari ini, dan daftar ulang tahun bulan ini.
+// Kirim ucapan (anonim, 1 per perangkat per hari) + daftar ucapan hari ini, dan daftar ulang tahun bulan ini.
 export function BirthdaySection({ info }: { info: BdayInfo }) {
   const { user } = useAuth();
   const [items, setItems] = useState<Wish[] | null>(null);
-  const [from, setFrom] = useState("");
+  const [mine, setMine] = useState(false); // perangkat ini sudah mengirim ucapan hari ini
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState<{ ok: boolean; text: string } | null>(null);
@@ -179,7 +177,10 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
     () =>
       fetch("/api/wishes", { cache: "no-store" })
         .then((r) => r.json())
-        .then((d: { items?: Wish[] }) => setItems(d.items ?? []))
+        .then((d: { items?: Wish[]; mine?: boolean }) => {
+          setItems(d.items ?? []);
+          if (d.mine) setMine(true);
+        })
         .catch(() => setItems([])),
     []
   );
@@ -194,10 +195,12 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
     setBusy(true);
     setStatus(null);
     try {
-      const res = await fetch("/api/wishes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ from, text }) });
+      const res = await fetch("/api/wishes", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ text }) });
       const d = (await res.json().catch(() => ({}))) as { error?: string; wish?: Wish };
+      if (res.status === 429) setMine(true);
       if (!res.ok) throw new Error(d.error ?? "Gagal mengirim ucapan");
       setText("");
+      setMine(true);
       setStatus({ ok: true, text: "Terkirim! Terima kasih sudah memberi ucapan." });
       if (d.wish) setItems((prev) => [d.wish!, ...(prev ?? [])]);
     } catch (err) {
@@ -207,7 +210,7 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
   }
 
   async function remove(w: Wish) {
-    if (!confirm(`Hapus ucapan dari ${w.from}?`)) return;
+    if (!confirm(`Hapus ucapan ini?\n\n"${w.text}"`)) return;
     try {
       await adminFetch("/api/wishes", "DELETE", { id: w.id });
       setItems((prev) => (prev ?? []).filter((x) => x.id !== w.id));
@@ -225,37 +228,28 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
         <h2 className="text-xl font-extrabold text-slate-800">Kirim ucapan</h2>
         <form onSubmit={send} className="space-y-3">
           <label className="block space-y-1.5">
-            <span className="text-sm font-semibold text-slate-700">Nama kamu</span>
-            <select value={from} onChange={(e) => setFrom(e.target.value)} className={field} required>
-              <option value="">— pilih nama —</option>
-              {STUDENTS.map((s) => (
-                <option key={s.full} value={s.full}>
-                  {s.absen}. {s.full}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block space-y-1.5">
             <span className="text-sm font-semibold text-slate-700">Ucapan untuk {names}</span>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value.slice(0, WISH_MAX))}
               rows={3}
               maxLength={WISH_MAX}
-              placeholder="Tulis ucapan singkat..."
-              className={`${field} resize-y`}
+              placeholder={mine ? "Ucapanmu sudah terkirim hari ini." : "Tulis ucapan singkat..."}
+              className={`${field} resize-y disabled:opacity-60`}
+              disabled={mine}
               required
             />
           </label>
+          <p className="text-xs text-slate-500">Ucapan dikirim tanpa nama. Satu perangkat hanya bisa mengirim 1 ucapan.</p>
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-[13px] text-slate-500">
               {items ? `${items.length} ucapan dari teman sekelas` : "Memuat ucapan..."} · {text.length}/{WISH_MAX}
             </p>
             <button
-              disabled={busy || !from || !text.trim()}
+              disabled={busy || mine || !text.trim()}
               className="flex items-center gap-1.5 rounded-full bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(11,30,61,0.35)] transition hover:bg-navy-800 disabled:opacity-50"
             >
-              <Send size={14} /> {busy ? "Mengirim..." : "Kirim ucapan"}
+              <Send size={14} /> {busy ? "Mengirim..." : mine ? "Sudah terkirim" : "Kirim ucapan"}
             </button>
           </div>
           {status && (
@@ -270,13 +264,11 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
             {items.map((w) => (
               <li key={w.id} className="flex items-start justify-between gap-3 rounded-2xl bg-white/80 px-4 py-3 shadow-sm">
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-slate-500">
-                    {shortOf(w.from)} · {jamWib(w.at)}
-                  </p>
+                  <p className="text-xs font-bold text-slate-500">Anonim · {jamWib(w.at)}</p>
                   <p className="mt-0.5 break-words text-sm leading-relaxed text-slate-800">{w.text}</p>
                 </div>
                 {user && (
-                  <button type="button" onClick={() => remove(w)} className="shrink-0 rounded-full p-1.5 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600" aria-label={`Hapus ucapan dari ${w.from}`}>
+                  <button type="button" onClick={() => remove(w)} className="shrink-0 rounded-full p-1.5 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600" aria-label="Hapus ucapan ini">
                     <Trash2 size={15} />
                   </button>
                 )}

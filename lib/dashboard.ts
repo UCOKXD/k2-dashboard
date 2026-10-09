@@ -249,8 +249,10 @@ export function doaLog(p: DoaPick, seq = 0): LogItem {
   return {
     id: `doa-${p.at}-${seq}`,
     type: "doa",
-    title: "Petugas doa hari ini telah diacak admin",
-    detail: `Petugas hari ini : ${p.name} (${p.nim})${p.by ? ` · diacak oleh ${p.by}` : ""}`,
+    title: p.manual ? "Daftar doa bulan ini diperbarui admin" : "Petugas doa hari ini telah diacak admin",
+    detail: p.manual
+      ? `${p.name} (${p.nim}) ditandai sudah berdoa bulan ini${p.by ? ` · ditambahkan oleh ${p.by}` : ""}`
+      : `Petugas hari ini : ${p.name} (${p.nim})${p.by ? ` · diacak oleh ${p.by}` : ""}`,
     daysAgo: d,
     time: d === 0 ? `Hari ini, ${jam}` : agoLabel(d),
   };

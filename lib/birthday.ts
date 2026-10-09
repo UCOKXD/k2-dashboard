@@ -22,8 +22,9 @@ export async function birthdayInfo(data?: Birthdays): Promise<BdayInfo> {
   };
 }
 
-// Ucapan ulang tahun yang dikirim teman sekelas (disimpan per tanggal).
-export type Wish = { id: string; from: string; text: string; at: string };
+// Ucapan ulang tahun dari teman sekelas: anonim (tanpa nama), disimpan per tanggal.
+export type Wish = { id: string; text: string; at: string };
 export const wishKey = (day = todayJkt()) => `k2:wishes:${day}`;
 export const WISH_MAX = 200; // karakter
-export const WISH_PER_DEVICE = 3; // per hari
+export const WISH_PER_DEVICE = 1; // per hari
+export const WISH_PER_IP = 40; // satu jaringan (mis. Wi-Fi kampus) dipakai banyak perangkat

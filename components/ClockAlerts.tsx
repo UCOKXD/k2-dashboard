@@ -100,9 +100,9 @@ export function useClockAlerts() {
   // Dipanggil setiap pergantian detik (dari jam yang sudah disinkronkan dengan server).
   const check = useCallback(
     (ms: number) => {
-      const act = (navigator as Navigator & { userActivation?: { hasBeenActive: boolean } }).userActivation;
-      if (act) setNeedTap(!act.hasBeenActive);
       const { day, weekday, sec } = jkt(ms);
+      const act = (navigator as Navigator & { userActivation?: { hasBeenActive: boolean } }).userActivation;
+      if (act) setNeedTap(DAYS.includes(weekday) && !act.hasBeenActive); // pengingat hanya di hari kerja
       if (!DAYS.includes(weekday)) return;
       for (const e of BELL_EVENTS) {
         const left = secOf(e.at) - sec;

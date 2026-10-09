@@ -58,7 +58,8 @@ export async function listJSON<T>(key: string, count = 300): Promise<T[]> {
 
 /* ------------------------------------------------------------ Doa harian */
 
-export type DoaPick = { name: string; nim: string; at: string; by?: string }; // at = ISO waktu acak, by = panggilan admin
+// at = ISO waktu acak, by = panggilan admin, manual = ditambahkan admin di luar acak (sudah berdoa sebelumnya)
+export type DoaPick = { name: string; nim: string; at: string; by?: string; manual?: boolean };
 
 // Bulan berjalan di zona Jakarta, mis. "2026-10".
 export function monthId(offset = 0) {

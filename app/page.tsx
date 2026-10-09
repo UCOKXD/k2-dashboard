@@ -36,7 +36,7 @@ export default async function Home() {
       .sort((a, b) => a.days - b.days)[0] ?? null;
 
   // Petugas doa hari ini = hasil acak terakhir yang tanggalnya hari ini.
-  const doaToday = [...doa].reverse().find((p) => new Date(p.at).toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" }) === today) ?? null;
+  const doaToday = [...doa].reverse().find((p) => !p.manual && new Date(p.at).toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" }) === today) ?? null;
 
   // Ulang tahun hari ini & 7 hari ke depan.
   const year = Number(today.slice(0, 4));
