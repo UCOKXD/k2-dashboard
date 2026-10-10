@@ -25,13 +25,9 @@ export const DEFAULT_ORG: OrgData = {
 export type Slide = { id: string; src: string };
 export type SlidesData = { duration: number; items: Slide[] }; // duration dalam detik
 
-export const DEFAULT_SLIDES: SlidesData = {
-  duration: 8,
-  items: [
-    { id: "bawaan-1", src: "/slides/foto-1.jpg" },
-    { id: "bawaan-2", src: "/slides/foto-2.jpg" },
-  ],
-};
+// Data lama panel "Foto Banner" (panelnya sudah dihapus; banner & jam kini memakai foto Galeri).
+// Tetap disimpan supaya foto yang dulu diunggah lewat panel itu tidak ikut terhapus dari penyimpanan.
+export const DEFAULT_SLIDES: SlidesData = { duration: 6, items: [] };
 
 export type GalleryItem = { id: string; src: string; caption: string; at: string; by: string };
 

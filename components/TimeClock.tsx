@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CheckCircle2, Maximize2, Minimize2, RefreshCw, TriangleAlert } from "lucide-react";
 import { ClockAlertsLayer, blinkAt, useClockAlerts } from "@/components/ClockAlerts";
+import { PHOTO_EVERY_MS } from "@/lib/photos";
 
 type Sync = { offset: number; accuracy: number }; // offset = waktu server - jam perangkat (ms)
 
@@ -60,14 +61,13 @@ function diffText(ms: number) {
   return `${m} menit ${s} detik`;
 }
 
-// Latar jam berganti otomatis ke foto berikutnya (dari galeri) dengan efek memudar.
-const PHOTO_EVERY = 5 * 60_000;
-
+// Latar jam berganti otomatis ke foto Galeri berikutnya setiap 6 detik dengan efek memudar.
+// Galeri kosong = latar polos (tanpa foto).
 export default function TimeClock({ photos }: { photos: string[] }) {
   const [shown, setShown] = useState(0);
   useEffect(() => {
     if (photos.length < 2) return;
-    const id = setInterval(() => setShown((i) => (i + 1) % photos.length), PHOTO_EVERY);
+    const id = setInterval(() => setShown((i) => (i + 1) % photos.length), PHOTO_EVERY_MS);
     return () => clearInterval(id);
   }, [photos.length]);
 

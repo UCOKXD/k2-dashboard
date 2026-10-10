@@ -1,10 +1,9 @@
-// Foto untuk banner beranda dan latar jam halaman Waktu.
-// Urutan banner selalu acak. Kalau galeri sudah berisi, foto diambil acak dari galeri (ditambah foto banner
-// yang diunggah admin); foto bawaan (foto-1/foto-2) hanya dipakai selama galeri masih kosong.
-import { DEFAULT_SLIDES, type GalleryItem, type SlidesData } from "@/lib/content";
+// Foto untuk banner beranda dan latar jam halaman Waktu: semuanya diambil dari Galeri.
+// Galeri kosong = tidak ada foto (banner & jam tampil polos, tanpa foto bawaan).
+import type { GalleryItem } from "@/lib/content";
 
-const BAWAAN = new Set<string>(DEFAULT_SLIDES.items.map((i) => i.src));
-const MAX_BANNER = 8; // dibatasi supaya beranda tidak memuat terlalu banyak foto sekaligus
+export const PHOTO_EVERY_MS = 6_000; // banner & jam berganti foto setiap 6 detik
+const MAX_PHOTOS = 12; // dibatasi supaya halaman tidak memuat terlalu banyak foto sekaligus
 
 function shuffle<T>(list: T[]): T[] {
   const a = [...list];
@@ -15,23 +14,7 @@ function shuffle<T>(list: T[]): T[] {
   return a;
 }
 
-function pool(slides: SlidesData, gallery: GalleryItem[]) {
-  const own = slides.items.map((s) => s.src).filter((src) => !BAWAAN.has(src));
-  return [...new Set([...own, ...gallery.map((g) => g.src)])];
-}
-
-// Banner beranda: selalu urutan acak. Galeri kosong = foto banner (termasuk bawaan) diacak;
-// galeri berisi = foto acak dari galeri + foto banner unggahan admin.
-export function bannerSlides(slides: SlidesData, gallery: GalleryItem[]): SlidesData {
-  if (!gallery.length) return { ...slides, items: shuffle(slides.items) };
-  const items = shuffle(pool(slides, gallery))
-    .slice(0, MAX_BANNER)
-    .map((src, i) => ({ id: `acak-${i}`, src }));
-  return { ...slides, items };
-}
-
-// Latar jam halaman Waktu: daftar foto acak dari galeri yang bergantian otomatis; galeri kosong = foto-2.
-export function clockPhotos(slides: SlidesData, gallery: GalleryItem[]): string[] {
-  if (!gallery.length) return ["/slides/foto-2.jpg"];
-  return shuffle(pool(slides, gallery)).slice(0, 12);
+// Daftar foto acak dari Galeri (dipakai banner beranda dan latar jam).
+export function galleryPhotos(gallery: GalleryItem[]): string[] {
+  return shuffle([...new Set(gallery.map((g) => g.src))]).slice(0, MAX_PHOTOS);
 }

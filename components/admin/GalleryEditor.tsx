@@ -29,7 +29,7 @@ export default function GalleryEditor() {
   }
 
   return (
-    <Panel title="Galeri Kelas" desc="Foto dokumentasi kegiatan di halaman Galeri. Tambahkan keterangan singkat, lalu Simpan. Foto galeri juga tampil acak di banner beranda dan latar jam halaman Waktu.">
+    <Panel title="Galeri Kelas" desc="Foto dokumentasi kegiatan di halaman Galeri. Tambahkan keterangan singkat, lalu Simpan. Foto galeri juga otomatis tampil bergantian (setiap 6 detik) di banner beranda dan latar jam halaman Waktu.">
       <label className={`flex cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-sea-300 bg-sea-50/60 py-6 text-sm font-semibold text-sea-600 ${uploading ? "opacity-60" : "hover:bg-sea-50"}`}>
         <ImagePlus size={20} /> {uploading ? "Mengunggah..." : "Pilih foto (bisa beberapa sekaligus)"}
         <input type="file" accept="image/*" multiple hidden disabled={uploading} onChange={(e) => add(e.target.files)} />

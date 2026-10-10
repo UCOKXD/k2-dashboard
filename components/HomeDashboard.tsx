@@ -33,7 +33,7 @@ import { BirthdayHero, BirthdaySection } from "@/components/BirthdayHome";
 import OrgChart from "@/components/OrgChart";
 import { LOCAL_DOA_LOG, doaLog } from "@/lib/dashboard";
 import HomeCards from "@/components/HomeCards";
-import type { SlidesData } from "@/lib/content";
+import { PHOTO_EVERY_MS } from "@/lib/photos";
 import { STUDENTS } from "@/lib/students";
 import type { DoaPick } from "@/lib/store";
 import type { HomeData, LogType, PelanggaranData, StudentStat } from "@/lib/dashboard";
@@ -109,16 +109,16 @@ function HeroClock() {
   );
 }
 
-function Hero({ slides }: { slides: SlidesData }) {
-  const SLIDES = slides.items.map((x) => x.src);
+function Hero({ photos: SLIDES }: { photos: string[] }) {
   const ref = useRef<HTMLDivElement>(null);
   const [slide, setSlide] = useState(0);
 
   useEffect(() => {
-    // Lama tiap foto diatur admin (Panel Admin > Foto Banner).
-    const id = setInterval(() => setSlide((s) => (s + 1) % SLIDES.length), slides.duration * 1000);
+    // Foto Galeri bergantian setiap 6 detik (tidak berganti kalau fotonya cuma satu atau kosong).
+    if (SLIDES.length < 2) return;
+    const id = setInterval(() => setSlide((s) => (s + 1) % SLIDES.length), PHOTO_EVERY_MS);
     return () => clearInterval(id);
-  }, [SLIDES.length, slides.duration]);
+  }, [SLIDES.length]);
 
   // Banner memudar dan menyusut mengikuti scroll. Hanya transform/opacity, jadi tinggi halaman tidak berubah.
   useEffect(() => {
@@ -137,7 +137,7 @@ function Hero({ slides }: { slides: SlidesData }) {
     <div className="mx-auto max-w-[1000px] px-4 pt-[4.5rem] md:px-0">
       <div
         ref={ref}
-        className="relative flex h-[440px] origin-top items-end overflow-hidden rounded-[2.5rem] border-4 border-white bg-slate-200 shadow-[0_30px_70px_rgba(15,23,42,0.35)] will-change-transform sm:h-[460px]"
+        className="relative flex h-[440px] origin-top items-end overflow-hidden rounded-[2.5rem] border-4 border-white bg-[#1f7dba] shadow-[0_30px_70px_rgba(15,23,42,0.35)] will-change-transform sm:h-[460px]"
       >
         {SLIDES.map((src, i) => (
           <Image
@@ -166,7 +166,7 @@ function Hero({ slides }: { slides: SlidesData }) {
         </div>
 
         <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 gap-2 sm:bottom-8">
-          {SLIDES.map((_, i) => (
+          {SLIDES.length > 1 && SLIDES.map((_, i) => (
             <button
               key={i}
               onClick={() => setSlide(i)}
@@ -650,7 +650,7 @@ export default function HomeDashboard({ data }: { data: HomeData }) {
   return (
     <div className="relative min-h-screen overflow-x-clip text-slate-900 selection:bg-blue-100">
       {/* Pada hari ada yang ulang tahun, banner foto diganti banner ulang tahun (besoknya kembali normal). */}
-      {data.bday.today.length > 0 ? <BirthdayHero people={data.bday.today} /> : <Hero slides={data.slides} />}
+      {data.bday.today.length > 0 ? <BirthdayHero people={data.bday.today} /> : <Hero photos={data.photos} />}
       <NavIsland variant="floating" />
 
       <div className="mx-auto max-w-6xl space-y-12 px-4 pb-32 pt-8 md:px-8">

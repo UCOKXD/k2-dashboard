@@ -4,7 +4,7 @@ import type { BdayInfo } from "@/lib/birthday";
 import type { Table } from "@/lib/sheets";
 import { STUDENTS, resolveName } from "@/lib/students";
 import type { DoaPick } from "@/lib/store";
-import { DEFAULT_PEL, type ActivityLog, type OrgData, type PelOverrides, type ScheduleItem, type SlidesData } from "@/lib/content";
+import { DEFAULT_PEL, type ActivityLog, type OrgData, type PelOverrides, type ScheduleItem } from "@/lib/content";
 import type { CalEvent } from "@/lib/acara";
 import type { ActivityType } from "@/lib/changelog";
 
@@ -56,7 +56,7 @@ export type HomeData = {
   pelanggaran: PelanggaranData;
   logs: LogItem[];
   org: OrgData;
-  slides: SlidesData;
+  photos: string[]; // foto banner dari Galeri (boleh kosong)
   bday: BdayInfo; // tema ulang tahun (hari ini & bulan ini)
   cards: HomeCards;
 };

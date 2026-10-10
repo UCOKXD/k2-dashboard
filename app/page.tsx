@@ -3,7 +3,7 @@ import { daysUntil, eventsFrom, todayJkt } from "@/lib/acara";
 import { buildLogs, buildPelanggaran, pelRows } from "@/lib/dashboard";
 import { getActivity, getContent } from "@/lib/content-server";
 import { getTable } from "@/lib/sheets";
-import { bannerSlides } from "@/lib/photos";
+import { galleryPhotos } from "@/lib/photos";
 import { birthdayInfo } from "@/lib/birthday";
 import { recentDoaPicks } from "@/lib/store";
 import { STUDENTS } from "@/lib/students";
@@ -11,7 +11,7 @@ import { STUDENTS } from "@/lib/students";
 export const revalidate = 30;
 
 export default async function Home() {
-  const [pel, sakit, izin, acara, doa, ov, org, slides, activity, birthdays, schedule, gallery] = await Promise.all([
+  const [pel, sakit, izin, acara, doa, ov, org, activity, birthdays, schedule, gallery] = await Promise.all([
     getTable("pelanggaran"),
     getTable("sakit"),
     getTable("izin"),
@@ -19,7 +19,6 @@ export default async function Home() {
     recentDoaPicks(),
     getContent("pelanggaran"),
     getContent("org"),
-    getContent("slides"),
     getActivity(),
     getContent("birthdays"),
     getContent("schedule"),
@@ -57,7 +56,7 @@ export default async function Home() {
         logs: buildLogs({ pelanggaran: pelRows(pel, ov), sakit, izin, acara }, doa, activity),
         org,
         bday: await birthdayInfo(birthdays),
-        slides: bannerSlides(slides, gallery), // acak dari galeri kalau galeri sudah berisi
+        photos: galleryPhotos(gallery), // foto banner = foto Galeri (kosong kalau Galeri kosong)
         cards: { nextEvent, doaToday, ultah, schedule },
       }}
     />

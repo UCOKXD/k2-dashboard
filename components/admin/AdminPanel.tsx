@@ -1,11 +1,10 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { AlertTriangle, ClipboardList, BookOpen, Cake, GraduationCap, History, Images, KeyRound, Lock, Network, Presentation, Armchair } from "lucide-react";
+import { AlertTriangle, ClipboardList, BookOpen, Cake, GraduationCap, History, Images, KeyRound, Lock, Network, Armchair } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import OrgEditor from "@/components/admin/OrgEditor";
 import PelEditor from "@/components/admin/PelEditor";
-import SlidesEditor from "@/components/admin/SlidesEditor";
 import GalleryEditor from "@/components/admin/GalleryEditor";
 import BirthdayEditor from "@/components/admin/BirthdayEditor";
 import ScheduleEditor from "@/components/admin/ScheduleEditor";
@@ -17,7 +16,6 @@ import { Loading } from "@/components/admin/ui";
 const TABS = [
   { id: "struktur", label: "Struktur", icon: Network, el: OrgEditor },
   { id: "pelanggaran", label: "Pelanggaran", icon: AlertTriangle, el: PelEditor },
-  { id: "banner", label: "Foto Banner", icon: Presentation, el: SlidesEditor },
   { id: "galeri", label: "Galeri", icon: Images, el: GalleryEditor },
   { id: "ultah", label: "Ulang Tahun", icon: Cake, el: BirthdayEditor },
   { id: "jadwal", label: "Jadwal", icon: GraduationCap, el: ScheduleEditor },
