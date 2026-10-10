@@ -66,7 +66,7 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
         <div>
           <h2 className="text-2xl font-bold">Panel Admin</h2>
           <p className="text-sm text-slate-500">
-            Halo, {user.panggilan} ({user.jabatan}). Perubahan di sini langsung terlihat oleh semua pengunjung setelah disimpan.
+            Halo, {user.panggilan} ({user.jabatan}{user.webAdmin ? " · Admin Website" : ""}). Perubahan di sini langsung terlihat oleh semua pengunjung setelah disimpan.
           </p>
         </div>
         <div className="flex gap-2 text-sm">

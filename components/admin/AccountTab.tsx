@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import { CheckCircle2, Circle, RotateCcw, TriangleAlert } from "lucide-react";
 import { adminFetch, useAuth } from "@/components/AuthProvider";
 import PasswordForm from "@/components/PasswordForm";
-import { ACCOUNTS, isAdminAccount } from "@/lib/admins";
+import { ACCOUNTS, type Grup } from "@/lib/admins";
 import { Panel, smallBtn } from "@/components/admin/ui";
 
 const CAN_RESET = ["Komti", "Koordinator K2"];
-type Status = { username: string; changed: boolean; birthday: boolean };
+type Status = { username: string; jabatan: string; grup: Grup; webAdmin: boolean; changed: boolean; birthday: boolean };
 
 export default function AccountTab() {
   const { user } = useAuth();
@@ -15,7 +15,7 @@ export default function AccountTab() {
   const [resetMsg, setResetMsg] = useState("");
   const [filter, setFilter] = useState<"semua" | "admin" | "siswa">("semua");
 
-  const canReset = !!user && CAN_RESET.includes(user.jabatan) && !user.tempPassword;
+  const canReset = !!user && (user.webAdmin || CAN_RESET.includes(user.jabatan)) && !user.tempPassword;
 
   useEffect(() => {
     if (!user || user.tempPassword) return;
@@ -38,7 +38,9 @@ export default function AccountTab() {
   }
 
   if (!user) return null;
-  const list = ACCOUNTS.filter((a) => (filter === "semua" ? true : filter === "admin" ? isAdminAccount(a) : !isAdminAccount(a)));
+  // Peran terbaru dari server (mengikuti tab Struktur); sebelum termuat pakai struktur bawaan.
+  const rows = ACCOUNTS.map((a) => ({ ...a, ...(status?.[a.username] ?? {}) }));
+  const list = rows.filter((a) => (filter === "semua" ? true : filter === "admin" ? a.grup !== "Siswa" : a.grup === "Siswa"));
   const vals = status ? Object.values(status) : [];
   const belum = vals.filter((s) => !s.changed).length;
   const tanpaTgl = vals.filter((s) => !s.birthday).length;
@@ -52,7 +54,7 @@ export default function AccountTab() {
       {!user.tempPassword && (
         <Panel
           title="Semua Akun"
-          desc="Setiap siswa punya akun: username = panggilan + nomor absen. Password awal siswa = nomor absen + tanggal lahir (DDMM), mis. absen 5 lahir 9 Maret → 50903; password awal admin tetap password sementara admin. Semua wajib mengganti password saat pertama masuk."
+          desc="Setiap siswa punya akun: username = panggilan + nomor absen. Password awal = nomor absen + tanggal lahir (DDMM), mis. absen 5 lahir 9 Maret → 50903 (akun admin juga masih bisa memakai password sementara admin). Semua wajib mengganti password saat pertama masuk. Peran admin mengikuti tab Struktur."
         >
           {status && (
             <div className="flex flex-wrap gap-2 text-xs font-semibold">
@@ -87,7 +89,10 @@ export default function AccountTab() {
                     <tr key={a.username} className="border-t border-slate-100">
                       <td className="px-3 py-2 font-mono text-slate-500">{a.absen}</td>
                       <td className="px-3 py-2">{a.nama}</td>
-                      <td className="px-3 py-2 text-slate-500">{isAdminAccount(a) ? `${a.jabatan} · ${a.grup}` : "Siswa"}</td>
+                      <td className="px-3 py-2 text-slate-500">
+                        {a.grup !== "Siswa" ? `${a.jabatan} · ${a.grup}` : "Siswa"}
+                        {a.webAdmin && <span className="ml-1.5 rounded-full bg-navy-900 px-2 py-0.5 text-[11px] font-semibold text-white">Admin Website</span>}
+                      </td>
                       <td className="px-3 py-2 font-mono">{a.username}</td>
                       <td className="px-3 py-2 text-xs font-semibold">
                         {!s ? (
@@ -108,8 +113,8 @@ export default function AccountTab() {
                       </td>
                       {canReset && (
                         <td className="px-3 py-2 text-right">
-                          {a.username !== user.username && (
-                            <button onClick={() => reset(a.username, a.panggilan, isAdminAccount(a))} className={`${smallBtn} inline-flex items-center gap-1`}>
+                          {a.username !== user.username && !a.webAdmin && (
+                            <button onClick={() => reset(a.username, a.panggilan, a.grup !== "Siswa")} className={`${smallBtn} inline-flex items-center gap-1`}>
                               <RotateCcw size={12} /> Reset
                             </button>
                           )}
@@ -122,7 +127,7 @@ export default function AccountTab() {
             </table>
           </div>
           {resetMsg && <p className="text-sm font-medium text-slate-700">{resetMsg}</p>}
-          {!canReset && <p className="text-xs text-slate-500">Lupa password? Komti atau Koordinator K2 bisa mereset password akun mana pun ke password awal.</p>}
+          {!canReset && <p className="text-xs text-slate-500">Lupa password? Admin Website, Komti, atau Koordinator K2 bisa mereset password ke password awal.</p>}
         </Panel>
       )}
     </div>

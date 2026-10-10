@@ -43,7 +43,7 @@ export default function AccountPage() {
             <div>
               <dt className="sr-only">Nama</dt>
               <dd className="font-semibold text-slate-800">{user.nama}</dd>
-              <dd className="text-xs text-slate-500">{user.admin ? `${user.jabatan} · ${GRUP_LABEL[user.grup]}` : GRUP_LABEL.Siswa}</dd>
+              <dd className="text-xs text-slate-500">{user.admin ? `${user.jabatan} · ${GRUP_LABEL[user.grup]}${user.webAdmin ? " · Admin Website" : ""}` : GRUP_LABEL.Siswa}</dd>
             </div>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">

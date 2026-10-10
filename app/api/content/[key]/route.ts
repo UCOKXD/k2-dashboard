@@ -254,6 +254,9 @@ export async function PUT(
     return NextResponse.json({ error: "Tidak dikenal" }, { status: 404 });
   const { user, error } = await requireAdmin(req);
   if (error) return error;
+  // Struktur menentukan siapa yang menjadi admin (BPH & K2), jadi hanya Admin Website yang boleh mengubahnya.
+  if (key === "org" && !user.webAdmin)
+    return NextResponse.json({ error: "Struktur hanya bisa diubah Admin Website, karena struktur menentukan siapa yang bisa membuka Panel Admin." }, { status: 403 });
   if (!storeReady)
     return NextResponse.json({ error: NOT_READY }, { status: 503 });
 

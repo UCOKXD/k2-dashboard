@@ -54,7 +54,7 @@ function AccountButton() {
         <div className="animate-fadeIn absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white text-sm text-slate-700 shadow-[0_18px_40px_rgba(15,23,42,0.3)]">
           <div className="border-b border-slate-100 px-4 py-3">
             <p className="font-bold text-slate-900">{user.nama}</p>
-            <p className="text-xs text-slate-500">{user.admin ? `${user.jabatan} · ${GRUP_LABEL[user.grup]}` : `${GRUP_LABEL.Siswa} · absen ${user.absen}`}</p>
+            <p className="text-xs text-slate-500">{user.admin ? `${user.jabatan} · ${GRUP_LABEL[user.grup]}${user.webAdmin ? " · Admin Website" : ""}` : `${GRUP_LABEL.Siswa} · absen ${user.absen}`}</p>
           </div>
           {user.admin && (
             <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 hover:bg-slate-50">

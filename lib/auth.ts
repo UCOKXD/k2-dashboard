@@ -4,6 +4,7 @@ import { createHash, createHmac, randomBytes, scryptSync, timingSafeEqual } from
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import { type Account, type SessionUser, findAccount, isAdminAccount } from "@/lib/admins";
+import { DEFAULT_ORG } from "@/lib/content";
 import { getContent } from "@/lib/content-server";
 import { NOT_READY, cmd, pushJSON, storeReady } from "@/lib/store";
 
@@ -101,16 +102,24 @@ function unsign(token: string): { u: string; exp: number; pv: string } | null {
   }
 }
 
+// Akun lengkap dengan peran terbaru dari tab Struktur (hak admin mengikuti struktur).
+async function accountOf(username: string): Promise<Account | undefined> {
+  const org = await getContent("org").catch(() => DEFAULT_ORG);
+  return findAccount(username, org);
+}
+
 /* --------------------------------------------------------- Password awal */
-// Berlaku sampai pemilik akun menggantinya. Admin: password sementara bersama (1234#).
-// Siswa: nomor absen + tanggal lahir DDMM dari data Ulang Tahun, mis. absen 5 lahir 9 Maret → "50903"
-// (absen boleh ditulis 2 digit: "050903"). Tanpa data tanggal lahir, akun siswa belum bisa dipakai.
+// Berlaku sampai pemilik akun menggantinya. Semua akun: nomor absen + tanggal lahir DDMM dari data Ulang Tahun,
+// mis. absen 5 lahir 9 Maret → "50903" (absen boleh ditulis 2 digit: "050903").
+// Akun admin juga masih bisa memakai password sementara bersama (1234#) seperti sebelumnya.
 async function initialPasswords(a: Account): Promise<string[]> {
-  if (isAdminAccount(a)) return [TEMP_PASSWORD];
+  const out = isAdminAccount(a) ? [TEMP_PASSWORD] : [];
   const mmdd = (await getContent("birthdays"))[a.nama];
-  if (!mmdd || !/^\d{2}-\d{2}$/.test(mmdd)) return [];
-  const ddmm = mmdd.slice(3) + mmdd.slice(0, 2);
-  return [...new Set([`${a.absen}${ddmm}`, `${String(a.absen).padStart(2, "0")}${ddmm}`])];
+  if (mmdd && /^\d{2}-\d{2}$/.test(mmdd)) {
+    const ddmm = mmdd.slice(3) + mmdd.slice(0, 2);
+    out.push(`${a.absen}${ddmm}`, `${String(a.absen).padStart(2, "0")}${ddmm}`);
+  }
+  return [...new Set(out)];
 }
 
 export async function initialPassword(a: Account): Promise<string | null> {
@@ -129,6 +138,7 @@ function toUser(a: Account, stored: string | null): SessionUser {
     absen: a.absen,
     jabatan: a.jabatan,
     grup: a.grup,
+    webAdmin: a.webAdmin,
     admin: isAdminAccount(a),
     tempPassword: !stored,
   };
@@ -142,7 +152,7 @@ export async function login(username: string, password: string, ip: string): Pro
   if (acc.n > MAX_FAIL) return { error: `Akun ini dikunci sementara karena terlalu banyak percobaan salah. Coba lagi dalam ${minutes(acc.ttl)} menit.` };
   if (byIp.n > MAX_IP) return { error: `Terlalu banyak percobaan dari perangkat/jaringan ini. Coba lagi dalam ${minutes(byIp.ttl)} menit.` };
 
-  const account = findAccount(username);
+  const account = await accountOf(username);
   const stored = account ? await storedHash(account.username) : null;
   const ok = account ? (stored ? checkHash(password, stored) : await checkInitial(account, password)) : false;
   if (!account || !ok) {
@@ -170,8 +180,9 @@ export async function currentUser(): Promise<SessionUser | null> {
   const token = (await cookies()).get(COOKIE)?.value;
   if (!token) return null;
   const p = unsign(token);
-  const account = p && findAccount(p.u);
-  if (!p || !account) return null;
+  if (!p) return null;
+  const account = await accountOf(p.u).catch(() => undefined);
+  if (!account) return null;
   let stored: string | null = null;
   try {
     stored = await storedHash(account.username);
@@ -184,7 +195,7 @@ export async function currentUser(): Promise<SessionUser | null> {
 
 export async function changePassword(username: string, oldPw: string, newPw: string): Promise<string | null> {
   if (!storeReady) return NOT_READY;
-  const account = findAccount(username);
+  const account = await accountOf(username);
   if (!account) return "Akun tidak ditemukan";
   const stored = await storedHash(account.username);
   const ok = stored ? checkHash(oldPw, stored) : await checkInitial(account, oldPw);
