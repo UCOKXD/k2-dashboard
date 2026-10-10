@@ -3,9 +3,9 @@
 import type { GalleryItem } from "@/lib/content";
 
 export const PHOTO_EVERY_MS = 6_000; // banner & jam berganti foto setiap 6 detik
-const MAX_PHOTOS = 12; // dibatasi supaya halaman tidak memuat terlalu banyak foto sekaligus
+export const MAX_PHOTOS = 12; // dibatasi supaya halaman tidak memuat terlalu banyak foto sekaligus
 
-function shuffle<T>(list: T[]): T[] {
+export function shuffle<T>(list: T[]): T[] {
   const a = [...list];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));

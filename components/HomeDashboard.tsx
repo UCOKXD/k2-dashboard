@@ -34,6 +34,7 @@ import OrgChart from "@/components/OrgChart";
 import { LOCAL_DOA_LOG, doaLog } from "@/lib/dashboard";
 import HomeCards from "@/components/HomeCards";
 import { PHOTO_EVERY_MS } from "@/lib/photos";
+import { useGalleryPhotos } from "@/components/useGalleryPhotos";
 import { STUDENTS } from "@/lib/students";
 import type { DoaPick } from "@/lib/store";
 import type { HomeData, LogType, PelanggaranData, StudentStat } from "@/lib/dashboard";
@@ -109,9 +110,11 @@ function HeroClock() {
   );
 }
 
-function Hero({ photos: SLIDES }: { photos: string[] }) {
+function Hero({ photos }: { photos: string[] }) {
+  const SLIDES = useGalleryPhotos(photos);
   const ref = useRef<HTMLDivElement>(null);
-  const [slide, setSlide] = useState(0);
+  const [step, setSlide] = useState(0);
+  const slide = SLIDES.length ? step % SLIDES.length : 0;
 
   useEffect(() => {
     // Foto Galeri bergantian setiap 6 detik (tidak berganti kalau fotonya cuma satu atau kosong).
