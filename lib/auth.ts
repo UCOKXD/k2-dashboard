@@ -1,11 +1,13 @@
-// Login admin: password di-hash (scrypt) di Redis, sesi berupa cookie yang ditandatangani (HMAC). Hanya untuk server.
+// Login akun (siswa & admin): password di-hash (scrypt) di Redis, sesi berupa cookie yang ditandatangani (HMAC).
+// Hanya untuk server.
 import { createHash, createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { type Admin, type SessionUser, findAdmin } from "@/lib/admins";
+import { type Account, type SessionUser, findAccount, isAdminAccount } from "@/lib/admins";
+import { getContent } from "@/lib/content-server";
 import { NOT_READY, cmd, pushJSON, storeReady } from "@/lib/store";
 
-export const TEMP_PASSWORD = "1234#"; // password awal semua admin sampai diganti
+export const TEMP_PASSWORD = "1234#"; // password awal akun admin sampai diganti
 const COOKIE = "k2_session";
 const MAX_AGE = 7 * 24 * 3600; // 7 hari
 const MAX_FAIL = 5;
@@ -50,12 +52,12 @@ const pwVersion = (stored: string | null) => createHash("sha256").update(stored 
 // bersamaan pun tidak bisa melewati batas. Hitungan disimpan di Redis (bukan memori server, yang bisa hilang/berbeda
 // antar-server di Vercel). Dua batas: per akun (5x / 10 menit) dan per alamat IP (20x / 10 menit).
 
-const MAX_IP = 20;
+const MAX_IP = 60; // satu kelas bisa masuk bersamaan dari Wi-Fi kampus yang sama (IP sama)
 const DEV_FALLBACK = process.env.NODE_ENV !== "production"; // tanpa Redis hanya boleh di komputer pengembang
 const memFails = new Map<string, { n: number; until: number }>();
 
 // Semua variasi penulisan username (spasi, huruf besar) dihitung sebagai akun yang sama.
-const accountKey = (username: string) => `k2:fail:${(findAdmin(username)?.username ?? username.replace(/\s+/g, "")).toLowerCase().slice(0, 40) || "-"}`;
+const accountKey = (username: string) => `k2:fail:${(findAccount(username)?.username ?? username.replace(/\s+/g, "")).toLowerCase().slice(0, 40) || "-"}`;
 const ipKey = (ip: string) => `k2:failip:${ip}`;
 
 async function take(key: string): Promise<{ n: number; ttl: number }> {
@@ -99,29 +101,60 @@ function unsign(token: string): { u: string; exp: number; pv: string } | null {
   }
 }
 
-function toUser(a: Admin, stored: string | null): SessionUser {
-  return { username: a.username, nama: a.nama, panggilan: a.panggilan, jabatan: a.jabatan, grup: a.grup, tempPassword: !stored };
+/* --------------------------------------------------------- Password awal */
+// Berlaku sampai pemilik akun menggantinya. Admin: password sementara bersama (1234#).
+// Siswa: nomor absen + tanggal lahir DDMM dari data Ulang Tahun, mis. absen 5 lahir 9 Maret → "50903"
+// (absen boleh ditulis 2 digit: "050903"). Tanpa data tanggal lahir, akun siswa belum bisa dipakai.
+async function initialPasswords(a: Account): Promise<string[]> {
+  if (isAdminAccount(a)) return [TEMP_PASSWORD];
+  const mmdd = (await getContent("birthdays"))[a.nama];
+  if (!mmdd || !/^\d{2}-\d{2}$/.test(mmdd)) return [];
+  const ddmm = mmdd.slice(3) + mmdd.slice(0, 2);
+  return [...new Set([`${a.absen}${ddmm}`, `${String(a.absen).padStart(2, "0")}${ddmm}`])];
+}
+
+export async function initialPassword(a: Account): Promise<string | null> {
+  return (await initialPasswords(a))[0] ?? null;
+}
+
+async function checkInitial(a: Account, pw: string) {
+  return (await initialPasswords(a)).some((p) => eq(pw, p));
+}
+
+function toUser(a: Account, stored: string | null): SessionUser {
+  return {
+    username: a.username,
+    nama: a.nama,
+    panggilan: a.panggilan,
+    absen: a.absen,
+    jabatan: a.jabatan,
+    grup: a.grup,
+    admin: isAdminAccount(a),
+    tempPassword: !stored,
+  };
 }
 
 export async function login(username: string, password: string, ip: string): Promise<{ user?: SessionUser; error?: string; token?: string }> {
-  if (!storeReady && !DEV_FALLBACK) return { error: "Login admin dinonaktifkan sampai penyimpanan (Upstash Redis) dipasang di Vercel." };
+  if (!storeReady && !DEV_FALLBACK) return { error: "Login dinonaktifkan sampai penyimpanan (Upstash Redis) dipasang di Vercel." };
 
   const acc = await take(accountKey(username));
   const byIp = await take(ipKey(ip));
   if (acc.n > MAX_FAIL) return { error: `Akun ini dikunci sementara karena terlalu banyak percobaan salah. Coba lagi dalam ${minutes(acc.ttl)} menit.` };
   if (byIp.n > MAX_IP) return { error: `Terlalu banyak percobaan dari perangkat/jaringan ini. Coba lagi dalam ${minutes(byIp.ttl)} menit.` };
 
-  const admin = findAdmin(username);
-  const stored = admin ? await storedHash(admin.username) : null;
-  const ok = admin && (stored ? checkHash(password, stored) : eq(password, TEMP_PASSWORD));
-  if (!admin || !ok) {
+  const account = findAccount(username);
+  const stored = account ? await storedHash(account.username) : null;
+  const ok = account ? (stored ? checkHash(password, stored) : await checkInitial(account, password)) : false;
+  if (!account || !ok) {
     await pause(800); // memperlambat tebak-tebakan otomatis
+    if (account && !stored && !(await initialPasswords(account)).length)
+      return { error: "Tanggal lahirmu belum terdata, jadi password awal belum bisa dipakai. Minta Divisi K2 mengisinya dulu." };
     const left = MAX_FAIL - acc.n;
     return { error: left > 0 ? `Username atau password salah. Sisa ${left} percobaan.` : `Username atau password salah. Akun dikunci ${minutes(acc.ttl)} menit.` };
   }
   await release(accountKey(username)); // berhasil: jatah akun dipulihkan (batas per IP tetap berjalan)
-  const token = sign({ u: admin.username, exp: Math.floor(Date.now() / 1000) + MAX_AGE, pv: pwVersion(stored) });
-  return { user: toUser(admin, stored), token };
+  const token = sign({ u: account.username, exp: Math.floor(Date.now() / 1000) + MAX_AGE, pv: pwVersion(stored) });
+  return { user: toUser(account, stored), token };
 }
 
 export function setSessionCookie(res: NextResponse, token: string) {
@@ -132,34 +165,41 @@ export function clearSessionCookie(res: NextResponse) {
   res.cookies.set(COOKIE, "", { httpOnly: true, sameSite: "lax", path: "/", maxAge: 0 });
 }
 
-// Admin yang sedang login (atau null). Dipakai di route API.
-export async function currentAdmin(): Promise<(SessionUser & { admin: Admin }) | null> {
+// Akun yang sedang login (siswa atau admin), atau null. Dipakai di route API.
+export async function currentUser(): Promise<SessionUser | null> {
   const token = (await cookies()).get(COOKIE)?.value;
   if (!token) return null;
   const p = unsign(token);
-  const admin = p && findAdmin(p.u);
-  if (!p || !admin) return null;
+  const account = p && findAccount(p.u);
+  if (!p || !account) return null;
   let stored: string | null = null;
   try {
-    stored = await storedHash(admin.username);
+    stored = await storedHash(account.username);
   } catch {
     return null;
   }
   if (p.pv !== pwVersion(stored)) return null;
-  return { ...toUser(admin, stored), admin };
+  return toUser(account, stored);
 }
 
 export async function changePassword(username: string, oldPw: string, newPw: string): Promise<string | null> {
   if (!storeReady) return NOT_READY;
-  const admin = findAdmin(username);
-  if (!admin) return "Akun tidak ditemukan";
-  const stored = await storedHash(admin.username);
-  const ok = stored ? checkHash(oldPw, stored) : eq(oldPw, TEMP_PASSWORD);
+  const account = findAccount(username);
+  if (!account) return "Akun tidak ditemukan";
+  const stored = await storedHash(account.username);
+  const ok = stored ? checkHash(oldPw, stored) : await checkInitial(account, oldPw);
   if (!ok) return "Password lama salah";
   if (newPw.length < 6) return "Password baru minimal 6 karakter";
-  if (newPw === TEMP_PASSWORD) return "Password baru tidak boleh sama dengan password sementara";
-  await cmd("SET", pwKey(admin.username), hashPassword(newPw));
+  if (newPw === TEMP_PASSWORD || (await initialPasswords(account)).includes(newPw)) return "Password baru tidak boleh sama dengan password awal";
+  await cmd("SET", pwKey(account.username), hashPassword(newPw));
   return null;
+}
+
+// Akun mana saja yang sudah mengganti password awal (untuk Panel Admin → Akun).
+export async function changedAccounts(usernames: string[]): Promise<Set<string>> {
+  if (!storeReady || !usernames.length) return new Set();
+  const vals = await cmd<(string | null)[]>("MGET", ...usernames.map(pwKey));
+  return new Set(usernames.filter((_, i) => !!vals[i]));
 }
 
 /* --------------------------------------------- Penjaga untuk route API admin */
@@ -175,11 +215,23 @@ function sameOrigin(req: Request) {
   }
 }
 
-// allowTemp: boleh dipakai walau masih memakai password sementara (hanya untuk ganti password).
+// Akun siswa/admin yang sedang login. allowTemp: boleh walau masih memakai password awal (hanya untuk ganti password).
+export async function requireUser(req: Request, { allowTemp = false } = {}) {
+  if (!sameOrigin(req)) return { error: NextResponse.json({ error: "Permintaan ditolak" }, { status: 403 }) };
+  const user = await currentUser();
+  if (!user) return { error: NextResponse.json({ error: "Silakan masuk dulu" }, { status: 401 }) };
+  // Password awal mudah ditebak (sama untuk semua admin / absen + tanggal lahir), jadi wajib diganti dulu.
+  if (user.tempPassword && !allowTemp)
+    return { error: NextResponse.json({ error: "Ganti password awal dulu di halaman Akun." }, { status: 403 }) };
+  return { user };
+}
+
+// Khusus admin (BPH & Divisi K2).
 export async function requireAdmin(req: Request, { allowTemp = false } = {}) {
   if (!sameOrigin(req)) return { error: NextResponse.json({ error: "Permintaan ditolak" }, { status: 403 }) };
-  const user = await currentAdmin();
+  const user = await currentUser();
   if (!user) return { error: NextResponse.json({ error: "Silakan masuk sebagai admin dulu" }, { status: 401 }) };
+  if (!user.admin) return { error: NextResponse.json({ error: "Fitur ini khusus admin (BPH & Divisi K2)" }, { status: 403 }) };
   // Password sementara (1234#) diketahui semua pengurus, jadi wajib diganti sebelum bisa mengubah apa pun.
   if (user.tempPassword && !allowTemp)
     return { error: NextResponse.json({ error: "Ganti password sementara dulu di Panel Admin → Akun sebelum mengubah data." }, { status: 403 }) };

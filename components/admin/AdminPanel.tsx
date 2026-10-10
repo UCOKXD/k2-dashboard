@@ -32,13 +32,13 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
   const tab = TABS.find((t) => t.id === params.get("tab")) ?? TABS[0];
 
   if (!ready) return <Loading />;
-  if (!user)
+  if (!user || !user.admin)
     return (
       <div className="mx-auto max-w-md space-y-4 rounded-[2rem] border border-white/60 bg-white/75 p-8 text-center shadow-[0_24px_60px_rgba(15,23,42,0.22)] backdrop-blur-md">
         <Lock className="mx-auto text-slate-400" />
         <p className="font-semibold text-slate-700">Halaman ini khusus admin (BPH & Divisi K2).</p>
-        <Link href="/masuk" className="inline-block rounded-full bg-navy-900 px-6 py-2.5 text-sm font-semibold text-white shadow">
-          Masuk
+        <Link href={user ? "/akun" : "/masuk"} className="inline-block rounded-full bg-navy-900 px-6 py-2.5 text-sm font-semibold text-white shadow">
+          {user ? "Ke halaman akun" : "Masuk"}
         </Link>
       </div>
     );

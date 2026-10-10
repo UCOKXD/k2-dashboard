@@ -13,7 +13,13 @@ const Ctx = createContext<Auth>({ user: null, ready: false, refresh: async () =>
 
 export const useAuth = () => useContext(Ctx);
 
-// Status login admin untuk seluruh halaman. Server tetap memeriksa ulang di setiap aksi admin.
+// Akun admin (BPH & Divisi K2) yang sedang login, atau null untuk pengunjung dan akun siswa.
+export function useAdmin() {
+  const { user } = useContext(Ctx);
+  return user?.admin ? user : null;
+}
+
+// Status login (siswa & admin) untuk seluruh halaman. Server tetap memeriksa ulang di setiap aksi admin.
 export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<SessionUser | null>(null);
   const [ready, setReady] = useState(false);

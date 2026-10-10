@@ -1,99 +1,130 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { KeyRound, RotateCcw } from "lucide-react";
+import { useEffect, useState } from "react";
+import { CheckCircle2, Circle, RotateCcw, TriangleAlert } from "lucide-react";
 import { adminFetch, useAuth } from "@/components/AuthProvider";
-import { ADMINS } from "@/lib/admins";
-import { Panel, input, smallBtn } from "@/components/admin/ui";
+import PasswordForm from "@/components/PasswordForm";
+import { ACCOUNTS, isAdminAccount } from "@/lib/admins";
+import { Panel, smallBtn } from "@/components/admin/ui";
 
 const CAN_RESET = ["Komti", "Koordinator K2"];
+type Status = { username: string; changed: boolean; birthday: boolean };
 
 export default function AccountTab() {
-  const { user, refresh } = useAuth();
-  const router = useRouter();
-  const [oldPw, setOldPw] = useState("");
-  const [newPw, setNewPw] = useState("");
-  const [again, setAgain] = useState("");
-  const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
-  const [busy, setBusy] = useState(false);
+  const { user } = useAuth();
+  const [status, setStatus] = useState<Record<string, Status> | null>(null);
   const [resetMsg, setResetMsg] = useState("");
+  const [filter, setFilter] = useState<"semua" | "admin" | "siswa">("semua");
 
-  async function change(e: React.FormEvent) {
-    e.preventDefault();
-    setMsg(null);
-    if (newPw !== again) return setMsg({ ok: false, text: "Konfirmasi password baru tidak sama" });
-    setBusy(true);
-    try {
-      await adminFetch("/api/auth/password", "POST", { oldPassword: oldPw, newPassword: newPw });
-      setMsg({ ok: true, text: "Password diganti. Silakan masuk lagi dengan password baru." });
-      await refresh();
-      setTimeout(() => router.push("/masuk"), 1500);
-    } catch (err) {
-      setMsg({ ok: false, text: (err as Error).message });
-    }
-    setBusy(false);
-  }
+  const canReset = !!user && CAN_RESET.includes(user.jabatan) && !user.tempPassword;
 
-  async function reset(username: string, panggilan: string) {
-    if (!confirm(`Reset password ${panggilan} ke password sementara?`)) return;
+  useEffect(() => {
+    if (!user || user.tempPassword) return;
+    fetch("/api/auth/reset", { cache: "no-store" })
+      .then((r) => r.json())
+      .then((d: { items?: Status[] }) => d.items && setStatus(Object.fromEntries(d.items.map((s) => [s.username, s]))))
+      .catch(() => {});
+  }, [user]);
+
+  async function reset(username: string, panggilan: string, admin: boolean) {
+    const awal = admin ? "password sementara admin" : "password awal (nomor absen + tanggal lahir)";
+    if (!confirm(`Reset password ${panggilan} ke ${awal}?`)) return;
     try {
-      const r = await adminFetch<{ temp: string }>("/api/auth/reset", "POST", { username });
-      setResetMsg(`Password ${panggilan} sekarang: ${r.temp}`);
+      const r = await adminFetch<{ temp: string | null }>("/api/auth/reset", "POST", { username });
+      setResetMsg(r.temp ? `Password ${panggilan} sekarang: ${r.temp} — minta ${panggilan} segera menggantinya.` : `Password ${panggilan} direset, tapi tanggal lahirnya belum terdata di tab Ulang Tahun.`);
+      setStatus((s) => (s && s[username] ? { ...s, [username]: { ...s[username], changed: false } } : s));
     } catch (err) {
       setResetMsg((err as Error).message);
     }
   }
 
   if (!user) return null;
+  const list = ACCOUNTS.filter((a) => (filter === "semua" ? true : filter === "admin" ? isAdminAccount(a) : !isAdminAccount(a)));
+  const vals = status ? Object.values(status) : [];
+  const belum = vals.filter((s) => !s.changed).length;
+  const tanpaTgl = vals.filter((s) => !s.birthday).length;
+
   return (
     <div className="space-y-6">
       <Panel title="Ganti Password" desc={`Masuk sebagai ${user.username} (${user.jabatan}).`}>
-        <form onSubmit={change} className="grid max-w-md gap-3">
-          <input type="password" value={oldPw} onChange={(e) => setOldPw(e.target.value)} placeholder="Password lama" autoComplete="current-password" className={input} />
-          <input type="password" value={newPw} onChange={(e) => setNewPw(e.target.value)} placeholder="Password baru (minimal 6 karakter)" autoComplete="new-password" className={input} />
-          <input type="password" value={again} onChange={(e) => setAgain(e.target.value)} placeholder="Ulangi password baru" autoComplete="new-password" className={input} />
-          <button disabled={busy || !oldPw || !newPw} className="flex w-fit items-center gap-1.5 rounded-full bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow disabled:opacity-40">
-            <KeyRound size={14} /> {busy ? "Menyimpan..." : "Ganti password"}
-          </button>
-          {msg && <p className={`text-sm font-medium ${msg.ok ? "text-emerald-600" : "text-rose-600"}`}>{msg.text}</p>}
-        </form>
+        <PasswordForm />
       </Panel>
 
-      <Panel title="Akun Admin" desc="Username = panggilan + nomor absen. Komti dan Koordinator K2 dapat mereset password admin lain yang lupa.">
-        <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
-          <table className="w-full min-w-[520px] text-left text-sm">
-            <thead className="bg-slate-100 text-xs uppercase tracking-wider text-slate-500">
-              <tr>
-                <th className="px-3 py-2.5">Nama</th>
-                <th className="px-3 py-2.5">Jabatan</th>
-                <th className="px-3 py-2.5">Username</th>
-                {CAN_RESET.includes(user.jabatan) && <th className="px-3 py-2.5" />}
-              </tr>
-            </thead>
-            <tbody>
-              {ADMINS.map((a) => (
-                <tr key={a.username} className="border-t border-slate-100">
-                  <td className="px-3 py-2">{a.nama}</td>
-                  <td className="px-3 py-2 text-slate-500">
-                    {a.jabatan} · {a.grup}
-                  </td>
-                  <td className="px-3 py-2 font-mono">{a.username}</td>
-                  {CAN_RESET.includes(user.jabatan) && (
-                    <td className="px-3 py-2 text-right">
-                      {a.username !== user.username && (
-                        <button onClick={() => reset(a.username, a.panggilan)} className={`${smallBtn} inline-flex items-center gap-1`}>
-                          <RotateCcw size={12} /> Reset
-                        </button>
-                      )}
-                    </td>
-                  )}
+      {!user.tempPassword && (
+        <Panel
+          title="Semua Akun"
+          desc="Setiap siswa punya akun: username = panggilan + nomor absen. Password awal siswa = nomor absen + tanggal lahir (DDMM), mis. absen 5 lahir 9 Maret → 50903; password awal admin tetap password sementara admin. Semua wajib mengganti password saat pertama masuk."
+        >
+          {status && (
+            <div className="flex flex-wrap gap-2 text-xs font-semibold">
+              <span className="rounded-full bg-emerald-50 px-3 py-1 text-emerald-700">{vals.length - belum} sudah ganti password</span>
+              <span className="rounded-full bg-amber-50 px-3 py-1 text-amber-700">{belum} masih password awal</span>
+              {tanpaTgl > 0 && <span className="rounded-full bg-rose-50 px-3 py-1 text-rose-700">{tanpaTgl} belum ada tanggal lahir (belum bisa masuk)</span>}
+            </div>
+          )}
+          <div className="flex gap-1.5">
+            {(["semua", "admin", "siswa"] as const).map((f) => (
+              <button key={f} onClick={() => setFilter(f)} className={`rounded-full px-3 py-1.5 text-xs font-semibold capitalize ${filter === f ? "bg-navy-900 text-white" : "border border-slate-200 bg-white text-slate-600"}`}>
+                {f}
+              </button>
+            ))}
+          </div>
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+            <table className="w-full min-w-[640px] text-left text-sm">
+              <thead className="bg-slate-100 text-xs uppercase tracking-wider text-slate-500">
+                <tr>
+                  <th className="px-3 py-2.5">Absen</th>
+                  <th className="px-3 py-2.5">Nama</th>
+                  <th className="px-3 py-2.5">Peran</th>
+                  <th className="px-3 py-2.5">Username</th>
+                  <th className="px-3 py-2.5">Password</th>
+                  {canReset && <th className="px-3 py-2.5" />}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {resetMsg && <p className="text-sm font-medium text-slate-700">{resetMsg}</p>}
-      </Panel>
+              </thead>
+              <tbody>
+                {list.map((a) => {
+                  const s = status?.[a.username];
+                  return (
+                    <tr key={a.username} className="border-t border-slate-100">
+                      <td className="px-3 py-2 font-mono text-slate-500">{a.absen}</td>
+                      <td className="px-3 py-2">{a.nama}</td>
+                      <td className="px-3 py-2 text-slate-500">{isAdminAccount(a) ? `${a.jabatan} · ${a.grup}` : "Siswa"}</td>
+                      <td className="px-3 py-2 font-mono">{a.username}</td>
+                      <td className="px-3 py-2 text-xs font-semibold">
+                        {!s ? (
+                          <span className="text-slate-400">…</span>
+                        ) : !s.birthday && !s.changed ? (
+                          <span className="flex items-center gap-1 text-rose-600">
+                            <TriangleAlert size={13} /> Isi tgl lahir dulu
+                          </span>
+                        ) : s.changed ? (
+                          <span className="flex items-center gap-1 text-emerald-600">
+                            <CheckCircle2 size={13} /> Sudah diganti
+                          </span>
+                        ) : (
+                          <span className="flex items-center gap-1 text-amber-600">
+                            <Circle size={13} /> Masih awal
+                          </span>
+                        )}
+                      </td>
+                      {canReset && (
+                        <td className="px-3 py-2 text-right">
+                          {a.username !== user.username && (
+                            <button onClick={() => reset(a.username, a.panggilan, isAdminAccount(a))} className={`${smallBtn} inline-flex items-center gap-1`}>
+                              <RotateCcw size={12} /> Reset
+                            </button>
+                          )}
+                        </td>
+                      )}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          {resetMsg && <p className="text-sm font-medium text-slate-700">{resetMsg}</p>}
+          {!canReset && <p className="text-xs text-slate-500">Lupa password? Komti atau Koordinator K2 bisa mereset password akun mana pun ke password awal.</p>}
+        </Panel>
+      )}
     </div>
   );
 }

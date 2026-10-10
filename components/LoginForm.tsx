@@ -5,6 +5,10 @@ import { useEffect, useState } from "react";
 import { Eye, EyeOff, LogIn } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import Sticker from "@/components/Sticker";
+import type { SessionUser } from "@/lib/admins";
+
+// Sesudah masuk: admin ke Panel Admin; siswa ke halaman Akun (wajib ganti password awal) atau beranda.
+const home = (u: SessionUser) => (u.admin ? "/admin" : u.tempPassword ? "/akun" : "/");
 
 export default function LoginForm() {
   const { user, refresh } = useAuth();
@@ -16,7 +20,7 @@ export default function LoginForm() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    if (user) router.replace("/admin");
+    if (user) router.replace(home(user));
   }, [user, router]);
 
   async function submit(e: React.FormEvent) {
@@ -25,10 +29,10 @@ export default function LoginForm() {
     setError("");
     try {
       const res = await fetch("/api/auth/login", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ username, password }) });
-      const d = (await res.json()) as { error?: string };
-      if (!res.ok) throw new Error(d.error ?? "Gagal masuk");
+      const d = (await res.json()) as { error?: string; user?: SessionUser };
+      if (!res.ok || !d.user) throw new Error(d.error ?? "Gagal masuk");
       await refresh();
-      router.replace("/admin");
+      router.replace(home(d.user));
       router.refresh();
     } catch (err) {
       setError((err as Error).message);
@@ -43,7 +47,7 @@ export default function LoginForm() {
         <Sticker name={error ? "waduh" : "halo"} size={220} />
         <div>
           <p className="text-xl font-extrabold text-navy-900 sm:text-2xl">Selamat datang kembali</p>
-          <p className="mt-1 text-sm text-slate-600">Masuk untuk memperbarui jadwal, tugas, pelanggaran, galeri, dan struktur kelas.</p>
+          <p className="mt-1 text-sm text-slate-600">Setiap siswa ABSORBING punya akun sendiri. Pengurus (BPH &amp; K2) juga bisa membuka Panel Admin.</p>
         </div>
       </div>
       <form onSubmit={submit} className="w-full max-w-md space-y-5 rounded-[2rem] border border-white/60 bg-white/75 p-7 shadow-[0_28px_70px_rgba(15,23,42,0.25)] backdrop-blur-md sm:p-9">
@@ -53,8 +57,8 @@ export default function LoginForm() {
             <Image src="/logo-absorbing.png" alt="Logo kelas Absorbing" width={56} height={59} className="h-14 w-14 object-contain" />
           </div>
           <div>
-            <h2 className="text-2xl font-extrabold text-navy-900">Masuk Admin</h2>
-            <p className="text-sm text-slate-500">Khusus BPH dan Divisi K2. Pengunjung lain cukup melihat tanpa masuk.</p>
+            <h2 className="text-2xl font-extrabold text-navy-900">Masuk</h2>
+            <p className="text-sm text-slate-500">Untuk siswa ABSORBING. Melihat info kelas tetap bisa tanpa masuk.</p>
           </div>
         </div>
 
@@ -90,7 +94,7 @@ export default function LoginForm() {
         <button disabled={busy || !username || !password} className="flex w-full items-center justify-center gap-2 rounded-xl bg-navy-900 py-3 font-bold text-white shadow-[0_12px_28px_rgba(11,30,61,0.4)] transition hover:bg-navy-800 disabled:opacity-50">
           <LogIn size={17} /> {busy ? "Memeriksa..." : "Masuk"}
         </button>
-        <p className="text-center text-xs text-slate-400">Username = nama panggilan + nomor absen. Lupa password? Minta Komti atau Koordinator K2 untuk mereset.</p>
+        <p className="text-center text-xs text-slate-400">Username = nama panggilan + nomor absen, mis. Ancis18. Password awal dibagikan Divisi K2 dan wajib diganti saat pertama masuk. Lupa password? Minta Komti atau Koordinator K2 untuk mereset.</p>
       </form>
     </div>
   );

@@ -1,26 +1,45 @@
-// Akun admin: BPH (Badan Pengurus Harian) dan Divisi K2. Aman dipakai di browser (tanpa password).
-// Username = panggilan + nomor absen (tidak membedakan huruf besar/kecil saat login).
+// Akun situs: setiap siswa punya satu akun. Sebagian juga admin (BPH = Badan Pengurus Harian, dan Divisi K2).
+// Aman dipakai di browser (tanpa password). Username = panggilan + nomor absen (tidak membedakan huruf besar/kecil).
 import { STUDENTS } from "@/lib/students";
 
-export type Admin = { username: string; nama: string; panggilan: string; absen: number; jabatan: string; grup: "BPH" | "K2" };
+export type Grup = "BPH" | "K2" | "Siswa";
+export type Account = { username: string; nama: string; panggilan: string; absen: number; jabatan: string; grup: Grup };
+export type Admin = Account & { grup: "BPH" | "K2" };
 
-const LIST: [full: string, panggilan: string, jabatan: string, grup: Admin["grup"]][] = [
-  ["Maria Godeliva Alexandra", "Maria", "Komti", "BPH"],
-  ["Michael Aristo Bima Putra", "Michael", "Wakomti", "BPH"],
-  ["Bernadeth Lidwina Hadibrata", "Ina", "Bendahara", "BPH"],
-  ["Davita Calista Putrijaya", "Davita", "Sekretaris", "BPH"],
-  ["Francis Demetrio Villanova", "Ancis", "Koordinator K2", "K2"],
-  ["Celine Jessica", "Celine", "Anggota K2", "K2"],
-  ["Demetra Sandrea Suniadji", "Dea", "Anggota K2", "K2"],
-  ["Tania Audrey Susanto", "Tania", "Anggota K2", "K2"],
+// Pengurus yang boleh membuka Panel Admin.
+const ROLES: [full: string, jabatan: string, grup: Admin["grup"]][] = [
+  ["Maria Godeliva Alexandra", "Komti", "BPH"],
+  ["Michael Aristo Bima Putra", "Wakomti", "BPH"],
+  ["Bernadeth Lidwina Hadibrata", "Bendahara", "BPH"],
+  ["Davita Calista Putrijaya", "Sekretaris", "BPH"],
+  ["Francis Demetrio Villanova", "Koordinator K2", "K2"],
+  ["Celine Jessica", "Anggota K2", "K2"],
+  ["Demetra Sandrea Suniadji", "Anggota K2", "K2"],
+  ["Tania Audrey Susanto", "Anggota K2", "K2"],
 ];
 
-export const ADMINS: Admin[] = LIST.map(([nama, panggilan, jabatan, grup]) => {
-  const absen = STUDENTS.find((s) => s.full === nama)?.absen ?? 0;
-  return { username: `${panggilan}${absen}`, nama, panggilan, absen, jabatan, grup };
+export const ACCOUNTS: Account[] = STUDENTS.map((s) => {
+  const role = ROLES.find(([full]) => full === s.full);
+  return {
+    username: `${s.short.replace(/\s+/g, "")}${s.absen}`,
+    nama: s.full,
+    panggilan: s.short,
+    absen: s.absen,
+    jabatan: role?.[1] ?? "Siswa",
+    grup: role?.[2] ?? "Siswa",
+  };
 });
 
-export const findAdmin = (username: string) => ADMINS.find((a) => a.username.toLowerCase() === username.trim().toLowerCase());
+export const isAdminAccount = (a: Pick<Account, "grup">): a is Admin => a.grup !== "Siswa";
+export const ADMINS = ACCOUNTS.filter(isAdminAccount);
 
-// Info sesi yang dikirim ke browser.
-export type SessionUser = Pick<Admin, "username" | "nama" | "panggilan" | "jabatan" | "grup"> & { tempPassword: boolean };
+export const findAccount = (username: string) => ACCOUNTS.find((a) => a.username.toLowerCase() === username.trim().toLowerCase());
+export const findAdmin = (username: string) => {
+  const a = findAccount(username);
+  return a && isAdminAccount(a) ? a : undefined;
+};
+
+export const GRUP_LABEL: Record<Grup, string> = { BPH: "Badan Pengurus Harian", K2: "Divisi K2", Siswa: "Siswa ABSORBING" };
+
+// Info sesi yang dikirim ke browser. admin = boleh membuka Panel Admin.
+export type SessionUser = Pick<Account, "username" | "nama" | "panggilan" | "absen" | "jabatan" | "grup"> & { admin: boolean; tempPassword: boolean };

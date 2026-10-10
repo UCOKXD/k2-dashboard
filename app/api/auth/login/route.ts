@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     if (!r.user || !r.token) return NextResponse.json({ error: r.error }, { status: 401 });
     const res = NextResponse.json({ user: r.user });
     setSessionCookie(res, r.token);
-    await recordHistory(r.user, "Masuk ke panel admin");
+    if (r.user.admin) await recordHistory(r.user, "Masuk ke panel admin"); // riwayat admin hanya mencatat pengurus
     return res;
   } catch {
     return NextResponse.json({ error: "Login sedang bermasalah, coba lagi" }, { status: 500 });

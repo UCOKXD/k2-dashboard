@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, Plus } from "lucide-react";
-import { adminFetch, useAuth } from "@/components/AuthProvider";
+import { adminFetch, useAdmin, useAuth } from "@/components/AuthProvider";
 import { LOCAL_DOA_LOG } from "@/lib/dashboard";
 import { STUDENTS } from "@/lib/students";
 import type { DoaPick } from "@/lib/store";
@@ -39,7 +39,8 @@ function localHistory(): DoaPick[] {
 
 // Semua orang bisa melihat riwayat; hanya admin yang sudah masuk yang bisa mengacak.
 export default function DoaRandomizer({ names }: { names: string[] }) {
-  const { user } = useAuth();
+  const user = useAdmin(); // tombol admin hanya untuk BPH & K2
+  const signedIn = !!useAuth().user;
   const [history, setHistory] = useState<DoaPick[]>([]);
   const [stored, setStored] = useState(true); // true = riwayat tersimpan di server (terlihat semua orang)
   const [error, setError] = useState("");
@@ -151,9 +152,11 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
         ) : (
           <p className="mx-auto mt-5 flex max-w-xs items-center justify-center gap-1.5 text-sm text-navy-700">
             <Lock size={14} /> Pengacakan dilakukan oleh admin.{" "}
-            <Link href="/masuk" className="font-semibold text-sea-600 underline">
-              Masuk
-            </Link>
+            {!signedIn && (
+              <Link href="/masuk" className="font-semibold text-sea-600 underline">
+                Masuk
+              </Link>
+            )}
           </p>
         )}
         {error && <p className="mt-3 text-sm font-medium text-rose-600">{error}</p>}

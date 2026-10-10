@@ -6,12 +6,13 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, KeyRound, LayoutDashboard, LogIn, LogOut } from "lucide-react";
 import AuthProvider, { useAuth } from "@/components/AuthProvider";
+import { GRUP_LABEL } from "@/lib/admins";
 import ThemeToggle from "@/components/ThemeToggle";
 import NavIsland from "@/components/NavIsland";
 import UpdateToasts from "@/components/UpdateToasts";
 import { BirthdayBadge, BirthdayProvider, BirthdayStrip, BottomBunting, HEADER_BDAY, PartyHat, TopBunting, useBirthday } from "@/components/Birthday";
 
-// Kanan atas: tombol Masuk (pengunjung) atau menu akun (admin).
+// Kanan atas: tombol Masuk (pengunjung) atau menu akun (siswa & admin).
 function AccountButton() {
   const { user, ready, logout } = useAuth();
   const [open, setOpen] = useState(false);
@@ -41,8 +42,9 @@ function AccountButton() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 rounded-full bg-white py-1 pl-1 pr-2 text-xs font-bold sm:gap-2 sm:pr-3 text-navy-900 shadow-[0_6px_18px_rgba(0,0,0,0.35)] sm:text-sm"
+        className="relative flex items-center gap-1.5 rounded-full bg-white py-1 pl-1 pr-2 text-xs font-bold sm:gap-2 sm:pr-3 text-navy-900 shadow-[0_6px_18px_rgba(0,0,0,0.35)] sm:text-sm"
       >
+        {user.tempPassword && <span aria-label="Password awal belum diganti" className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-white" />}
         <span className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-sea-500 to-navy-700 text-[11px] text-white">{user.panggilan[0]}</span>
         {/* Nama disembunyikan di layar sempit & saat island menu menempel di header (1024-1279px) supaya tidak bertabrakan. */}
         <span className="hidden sm:inline lg:hidden xl:inline">{user.panggilan}</span>
@@ -52,15 +54,15 @@ function AccountButton() {
         <div className="animate-fadeIn absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white text-sm text-slate-700 shadow-[0_18px_40px_rgba(15,23,42,0.3)]">
           <div className="border-b border-slate-100 px-4 py-3">
             <p className="font-bold text-slate-900">{user.nama}</p>
-            <p className="text-xs text-slate-500">
-              {user.jabatan} · {user.grup === "BPH" ? "Badan Pengurus Harian" : "Divisi K2"}
-            </p>
+            <p className="text-xs text-slate-500">{user.admin ? `${user.jabatan} · ${GRUP_LABEL[user.grup]}` : `${GRUP_LABEL.Siswa} · absen ${user.absen}`}</p>
           </div>
-          <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 hover:bg-slate-50">
-            <LayoutDashboard size={15} /> Panel Admin
-          </Link>
-          <Link href="/admin?tab=akun" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 hover:bg-slate-50">
-            <KeyRound size={15} /> Ganti password
+          {user.admin && (
+            <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 hover:bg-slate-50">
+              <LayoutDashboard size={15} /> Panel Admin
+            </Link>
+          )}
+          <Link href="/akun" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 hover:bg-slate-50">
+            <KeyRound size={15} /> {user.tempPassword ? <span className="font-semibold text-rose-600">Ganti password awal</span> : "Ganti password"}
           </Link>
           <button
             type="button"
