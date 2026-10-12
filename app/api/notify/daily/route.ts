@@ -17,7 +17,7 @@ export async function GET(req: Request) {
   if (!people.length) return NextResponse.json({ ok: true, birthdays: 0 });
   const queued = await notify(
     "ulang_tahun",
-    { nama: people.map((p) => p.nama).join(", "), panggilan: people.map((p) => p.short).join(", ") },
+    { nama: people.map((p) => p.nama).join(", "), panggilan: people.map((p) => p.short).join(", "), link: "/" },
     "Sistem K2 (otomatis)",
     { expires: endOfTodayWib(), dedupe: `ultah|${today}` },
   );

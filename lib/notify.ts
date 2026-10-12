@@ -119,7 +119,7 @@ export function compose(items: QItem[], s: NotifSettings, origin: string): { mes
   const text = (it: QItem) =>
     render(s.templates[it.type], {
       ...it.data,
-      link: it.data.link?.startsWith("/") ? `${origin}${it.data.link}` : (it.data.link ?? ""),
+      link: it.data.link === "/" ? origin : it.data.link?.startsWith("/") ? `${origin}${it.data.link}` : (it.data.link ?? ""),
       dilaporkan_oleh: it.by,
       waktu_laporan: fmtWib(it.at),
     });

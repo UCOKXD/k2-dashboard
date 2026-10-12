@@ -32,7 +32,7 @@ export const NOTIF_DEFS: Def[] = [
       ...COMMON,
     ],
     sample: { nama: "Aditya Yoga Eka Saputra", panggilan: "Adit", pelanggaran: "Terlambat", keterangan: "Datang 08.20", poin: "1", tanggal: "12/10/2026" },
-    template: "⚠️ *Pelanggaran baru*\nNama: {nama}\nPelanggaran: {pelanggaran}\nKeterangan: {keterangan}\nPoin: +{poin}\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+    template: "⚠️ *PELANGGARAN BARU*\n\nNama: *{nama}*\nPelanggaran: {pelanggaran}\nKeterangan: {keterangan}\nPoin: +{poin}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
   },
   {
     type: "izin_tidak_masuk",
@@ -47,7 +47,7 @@ export const NOTIF_DEFS: Def[] = [
       ...COMMON,
     ],
     sample: { nama: "Callista Anastasya", panggilan: "Tasya", jenis: "Tidak hadir", alasan: "Acara keluarga", tanggal: "13/10/2026" },
-    template: "📝 *Izin tidak masuk*\nNama: {nama}\nJenis izin: {jenis}\nAlasan: {alasan}\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+    template: "📝 *IZIN TIDAK MASUK*\n\nNama: *{nama}*\nJenis izin: {jenis}\nAlasan: {alasan}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
   },
   {
     type: "izin_sakit",
@@ -63,7 +63,7 @@ export const NOTIF_DEFS: Def[] = [
       ...COMMON,
     ],
     sample: { nama: "Calvin Ramana Putra", panggilan: "Calvin", keluhan: "Demam", surat_dokter: "Ada", catatan: "", tanggal: "12/10/2026" },
-    template: "🤒 *Izin sakit*\nNama: {nama}\nKeluhan: {keluhan}\nSurat dokter: {surat_dokter}\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+    template: "🤒 *IZIN SAKIT*\n\nNama: *{nama}*\nKeluhan: {keluhan}\nSurat dokter: {surat_dokter}\nCatatan: {catatan}\n\nSemoga lekas sembuh, {panggilan}! 🙏\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
   },
   {
     type: "petugas_doa",
@@ -71,7 +71,7 @@ export const NOTIF_DEFS: Def[] = [
     plural: "info petugas doa",
     fields: [{ key: "nama", label: "Nama lengkap" }, { key: "panggilan", label: "Panggilan" }, ...COMMON],
     sample: { nama: "Grady Wiendy Koesnadi", panggilan: "Grady" },
-    template: "🙏 *Petugas doa hari ini*\n{nama}\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+    template: "🙏 *PETUGAS DOA HARI INI*\n\n*{nama}*\nSiapkan doa untuk kelas hari ini ya, {panggilan}!\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
   },
   {
     type: "tempat_duduk",
@@ -79,15 +79,15 @@ export const NOTIF_DEFS: Def[] = [
     plural: "info tempat duduk",
     fields: [{ key: "link", label: "Link halaman tempat duduk" }, ...COMMON],
     sample: { link: "https://k2-dashboard-eight.vercel.app/tempat-duduk" },
-    template: "🪑 *Tempat duduk diperbarui*\nCek denah terbaru: {link}\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+    template: "🪑 *TEMPAT DUDUK DIPERBARUI*\n\nDenah tempat duduk terbaru sudah keluar. Cek posisimu di sini:\n{link}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
   },
   {
     type: "ulang_tahun",
     label: "Ulang tahun hari ini",
     plural: "info ulang tahun",
-    fields: [{ key: "nama", label: "Nama lengkap (dipisah koma)" }, { key: "panggilan", label: "Panggilan (dipisah koma)" }, ...COMMON],
-    sample: { nama: "Evelyn Davina", panggilan: "Eve" },
-    template: "🎂 *Selamat ulang tahun, {panggilan}!*\nHari ini {nama} berulang tahun. Jangan lupa kirim ucapan di web K2 ya!\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+    fields: [{ key: "nama", label: "Nama lengkap (dipisah koma)" }, { key: "panggilan", label: "Panggilan (dipisah koma)" }, { key: "link", label: "Link web K2" }, ...COMMON],
+    sample: { nama: "Evelyn Davina", panggilan: "Eve", link: "https://k2-dashboard-eight.vercel.app" },
+    template: "🎂 *SELAMAT ULANG TAHUN!* 🎉\n\nHari ini *{nama}* berulang tahun.\nSelamat ulang tahun, {panggilan}! Semoga sehat, sukses, dan makin semangat 🥳\n\nKirim ucapan lewat web K2:\n{link}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
   },
   {
     type: "tes",
@@ -95,7 +95,7 @@ export const NOTIF_DEFS: Def[] = [
     plural: "pesan uji",
     fields: [{ key: "isi", label: "Isi pesan" }, ...COMMON],
     sample: { isi: "Bot notifikasi K2 tersambung." },
-    template: "✅ *Pesan uji dari web K2*\n{isi}\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+    template: "✅ *PESAN UJI DARI WEB K2*\n\n{isi}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
   },
 ];
 
@@ -139,5 +139,6 @@ export function render(template: string, data: Record<string, string>) {
       return empty ? [] : [out];
     })
     .join("\n")
+    .replace(/\n{3,}/g, "\n\n") // baris kosong ganda setelah baris dihapus
     .trim();
 }
