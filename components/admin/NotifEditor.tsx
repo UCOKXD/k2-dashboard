@@ -80,6 +80,7 @@ export default function NotifEditor() {
   const [saving, setSaving] = useState(false);
   const [saveStatus, setSaveStatus] = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const [msg, setMsg] = useState("");
+  const [samples, setSamples] = useState<Partial<Record<NotifType, string>>>({});
 
   const load = () =>
     fetchAdmin()
@@ -134,6 +135,19 @@ export default function NotifEditor() {
       load();
     } catch (e) {
       setMsg((e as Error).message);
+    }
+  }
+
+  // Kirim contoh satu jenis pesan ke grup (pakai template yang sudah DISIMPAN, diberi tanda PESAN UJI).
+  async function sample(type: NotifType) {
+    if (dirty) return setSamples((m) => ({ ...m, [type]: "Simpan dulu perubahan template, baru kirim contoh." }));
+    setSamples((m) => ({ ...m, [type]: "Mengirim ke antrian..." }));
+    try {
+      await adminFetch("/api/notify/admin", "POST", { action: "sample", type });
+      setSamples((m) => ({ ...m, [type]: online ? "Masuk antrian — terkirim ke grup dalam ±30 detik." : "Masuk antrian. Akan terkirim begitu bot di laptop menyala." }));
+      load();
+    } catch (e) {
+      setSamples((m) => ({ ...m, [type]: (e as Error).message }));
     }
   }
 
@@ -192,12 +206,20 @@ export default function NotifEditor() {
                   />
                   {d.label}
                 </label>
-                {draft.templates[d.type] !== d.template && (
-                  <button onClick={() => setDraft({ ...draft, templates: { ...draft.templates, [d.type]: d.template } })} className={`${smallBtn} inline-flex items-center gap-1`}>
-                    <RotateCcw size={12} /> Kembalikan bawaan
-                  </button>
-                )}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {draft.templates[d.type] !== d.template && (
+                    <button onClick={() => setDraft({ ...draft, templates: { ...draft.templates, [d.type]: d.template } })} className={`${smallBtn} inline-flex items-center gap-1`}>
+                      <RotateCcw size={12} /> Kembalikan bawaan
+                    </button>
+                  )}
+                  {d.type !== "tes" && (
+                    <button onClick={() => sample(d.type)} className={`${smallBtn} inline-flex items-center gap-1`}>
+                      <Send size={12} /> Kirim contoh ke grup
+                    </button>
+                  )}
+                </div>
               </div>
+              {samples[d.type] && <p className="text-xs font-medium text-slate-600">{samples[d.type]}</p>}
               <div className={`grid gap-3 lg:grid-cols-2 ${draft.enabled[d.type] ? "" : "opacity-50"}`}>
                 <div className="space-y-2">
                   <textarea

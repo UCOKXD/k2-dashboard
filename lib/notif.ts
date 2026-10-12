@@ -31,7 +31,7 @@ export const NOTIF_DEFS: Def[] = [
       { key: "tanggal", label: "Tanggal kejadian" },
       ...COMMON,
     ],
-    sample: { nama: "Aditya Yoga Eka Saputra", panggilan: "Adit", pelanggaran: "Terlambat", keterangan: "Datang 08.20", poin: "1", tanggal: "12/10/2026" },
+    sample: { nama: "Siswa Contoh", panggilan: "Contoh", pelanggaran: "Terlambat", keterangan: "Datang 08.20", poin: "1", tanggal: "12/10/2026" },
     template: "⚠️ *PELANGGARAN BARU*\n\nNama: *{nama}*\nPelanggaran: {pelanggaran}\nKeterangan: {keterangan}\nPoin: +{poin}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
   },
   {
@@ -46,7 +46,7 @@ export const NOTIF_DEFS: Def[] = [
       { key: "tanggal", label: "Tanggal izin" },
       ...COMMON,
     ],
-    sample: { nama: "Callista Anastasya", panggilan: "Tasya", jenis: "Tidak hadir", alasan: "Acara keluarga", tanggal: "13/10/2026" },
+    sample: { nama: "Siswa Contoh", panggilan: "Contoh", jenis: "Tidak hadir", alasan: "Acara keluarga", tanggal: "13/10/2026" },
     template: "📝 *IZIN TIDAK MASUK*\n\nNama: *{nama}*\nJenis izin: {jenis}\nAlasan: {alasan}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
   },
   {
@@ -62,7 +62,7 @@ export const NOTIF_DEFS: Def[] = [
       { key: "tanggal", label: "Tanggal sakit" },
       ...COMMON,
     ],
-    sample: { nama: "Calvin Ramana Putra", panggilan: "Calvin", keluhan: "Demam", surat_dokter: "Ada", catatan: "", tanggal: "12/10/2026" },
+    sample: { nama: "Siswa Contoh", panggilan: "Contoh", keluhan: "Demam", surat_dokter: "Ada", catatan: "", tanggal: "12/10/2026" },
     template: "🤒 *IZIN SAKIT*\n\nNama: *{nama}*\nKeluhan: {keluhan}\nSurat dokter: {surat_dokter}\nCatatan: {catatan}\n\nSemoga lekas sembuh, {panggilan}! 🙏\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
   },
   {
@@ -70,7 +70,7 @@ export const NOTIF_DEFS: Def[] = [
     label: "Petugas doa hari ini",
     plural: "info petugas doa",
     fields: [{ key: "nama", label: "Nama lengkap" }, { key: "panggilan", label: "Panggilan" }, ...COMMON],
-    sample: { nama: "Grady Wiendy Koesnadi", panggilan: "Grady" },
+    sample: { nama: "Siswa Contoh", panggilan: "Contoh" },
     template: "🙏 *PETUGAS DOA HARI INI*\n\n*{nama}*\nSiapkan doa untuk kelas hari ini ya, {panggilan}!\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
   },
   {
@@ -83,10 +83,10 @@ export const NOTIF_DEFS: Def[] = [
   },
   {
     type: "ulang_tahun",
-    label: "Ulang tahun hari ini",
+    label: "Ulang tahun hari ini (dikirim 07.30–17.00 WIB)",
     plural: "info ulang tahun",
     fields: [{ key: "nama", label: "Nama lengkap (dipisah koma)" }, { key: "panggilan", label: "Panggilan (dipisah koma)" }, { key: "link", label: "Link web K2" }, ...COMMON],
-    sample: { nama: "Evelyn Davina", panggilan: "Eve", link: "https://k2-dashboard-eight.vercel.app" },
+    sample: { nama: "Siswa Contoh", panggilan: "Contoh", link: "https://k2-dashboard-eight.vercel.app" },
     template: "🎂 *SELAMAT ULANG TAHUN!* 🎉\n\nHari ini *{nama}* berulang tahun.\nSelamat ulang tahun, {panggilan}! Semoga sehat, sukses, dan makin semangat 🥳\n\nKirim ucapan lewat web K2:\n{link}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
   },
   {

@@ -22,7 +22,9 @@ export type QItem = {
   by: string; // dilaporkan oleh
   at: string; // waktu laporan (ISO), dicatat saat laporan masuk ke web
   expires?: string; // lewat dari ini tidak dikirim (mis. petugas doa kemarin)
+  notBefore?: string; // belum boleh dikirim sebelum waktu ini (tetap menunggu di antrian)
   collapse?: string; // event dengan kunci sama yang menumpuk: hanya yang terbaru dikirim
+  test?: boolean; // contoh dari Panel Admin: diberi tanda "PESAN UJI", tetap dikirim walau jenisnya dimatikan
 };
 export type NotifLog = { at: string; type: NotifType; n: number; preview: string; skipped?: boolean };
 export type NotifKeys = { form: string; bot: string };
@@ -53,7 +55,11 @@ export async function rotateKeys(): Promise<NotifKeys> {
 
 // Akhir hari ini (WIB) — untuk event yang hanya berlaku hari ini.
 export function endOfTodayWib() {
-  return new Date(`${todayJkt()}T23:59:59+07:00`).toISOString();
+  return todayAtWib("23:59:59");
+}
+// Jam tertentu hari ini dalam WIB, mis. todayAtWib("07:30").
+export function todayAtWib(hhmm: string) {
+  return new Date(`${todayJkt()}T${hhmm.length === 5 ? `${hhmm}:00` : hhmm}+07:00`).toISOString();
 }
 
 // Masukkan event ke antrian. dedupe: kunci unik supaya event yang terkirim dua kali hanya dicatat sekali.
@@ -61,17 +67,17 @@ export async function notify(
   type: NotifType,
   data: Record<string, string>,
   by: string,
-  opts: { expires?: string; collapse?: string; dedupe?: string } = {},
+  opts: { expires?: string; notBefore?: string; collapse?: string; dedupe?: string; test?: boolean } = {},
 ): Promise<boolean> {
   if (!storeReady) return false;
   try {
     const s = await getSettings();
-    if (!s.enabled[type]) return false;
+    if (!s.enabled[type] && !opts.test) return false;
     if (opts.dedupe) {
       const first = await cmd<string | null>("SET", `k2:notif:dedupe:${createHash("sha256").update(opts.dedupe).digest("base64url").slice(0, 24)}`, "1", "NX", "EX", 7 * 86_400);
       if (first !== "OK") return false;
     }
-    const item: QItem = { id: randomUUID(), type, data, by: by || "-", at: new Date().toISOString(), ...(opts.expires ? { expires: opts.expires } : {}), ...(opts.collapse ? { collapse: opts.collapse } : {}) };
+    const item: QItem = { id: randomUUID(), type, data, by: by || "-", at: new Date().toISOString(), ...(opts.expires ? { expires: opts.expires } : {}), ...(opts.notBefore ? { notBefore: opts.notBefore } : {}), ...(opts.collapse ? { collapse: opts.collapse } : {}), ...(opts.test ? { test: true } : {}) };
     const n = await cmd<number>("RPUSH", Q, JSON.stringify(item));
     if (n > MAX_QUEUE) await cmd("LTRIM", Q, -MAX_QUEUE, -1); // bot lama mati: buang yang paling lama
     return true;
@@ -98,7 +104,8 @@ export function compose(items: QItem[], s: NotifSettings, origin: string): { mes
   const drop: QItem[] = [];
   const live: QItem[] = [];
   for (const it of items) {
-    if ((it.expires && Date.parse(it.expires) < now) || !s.enabled[it.type]) drop.push(it);
+    if ((it.expires && Date.parse(it.expires) < now) || (!s.enabled[it.type] && !it.test)) drop.push(it);
+    else if (it.notBefore && Date.parse(it.notBefore) > now) continue; // belum waktunya: tetap menunggu di antrian
     else live.push(it);
   }
   // collapse: id event lama ikut dikonfirmasi bersama event terbaru (tidak dikirim terpisah).
@@ -114,7 +121,7 @@ export function compose(items: QItem[], s: NotifSettings, origin: string): { mes
   });
 
   const groups = new Map<NotifType, QItem[]>();
-  for (const it of kept) groups.set(it.type, [...(groups.get(it.type) ?? []), it]);
+  for (const it of kept) if (!it.test) groups.set(it.type, [...(groups.get(it.type) ?? []), it]);
 
   const text = (it: QItem) =>
     render(s.templates[it.type], {
@@ -133,6 +140,9 @@ export function compose(items: QItem[], s: NotifSettings, origin: string): { mes
       messages.push({ ids, type, text: list.length > 1 ? `📋 *${list.length} ${NOTIF_DEF[type].plural}*\n\n${body}` : body });
     }
   }
+  // Contoh dari Panel Admin dikirim satu per satu (tidak digabung dengan laporan asli).
+  for (const it of kept.filter((x) => x.test))
+    messages.push({ ids: [it.id], type: it.type, text: `🧪 *PESAN UJI — abaikan*\n\n${text(it)}` });
   return { messages, drop };
 }
 
