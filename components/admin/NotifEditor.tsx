@@ -6,7 +6,7 @@ import { Loading, Panel, SaveBar, input, smallBtn } from "@/components/admin/ui"
 import { NOTIF_DEF, NOTIF_DEFS, type NotifSettings, type NotifType, fmtWib, render } from "@/lib/notif";
 
 type Log = { at: string; type: NotifType; n: number; preview: string; skipped?: boolean };
-type Data = { settings: NotifSettings; keys: { form: string; bot: string }; status: { seen: string | null; length: number; log: Log[] }; now: number };
+type Data = { settings: NotifSettings; keys: { form: string; bot: string }; status: { seen: string | null; length: number; log: Log[] }; sheetId: string; now: number };
 
 const REPO = "https://github.com/UCOKXD/k2-dashboard/tree/main/bot";
 
@@ -35,10 +35,11 @@ function CopyBox({ text, label }: { text: string; label: string }) {
   );
 }
 
-const appsScript = (url: string, key: string) => `// Notifikasi WhatsApp Divisi K2 — kirim setiap jawaban Google Form ke web K2.
+const appsScript = (url: string, key: string, sheetId: string) => `// Notifikasi WhatsApp Divisi K2 — kirim setiap jawaban Google Form ke web K2.
 // Jangan bagikan kode ini: berisi kunci rahasia.
 const URL_K2 = "${url}/api/notify/form";
 const KUNCI = "${key}";
+const ID_SPREADSHEET = "${sheetId}"; // spreadsheet jawaban Google Form
 
 function kirimKeK2(e) {
   try {
@@ -56,11 +57,12 @@ function kirimKeK2(e) {
 
 // Jalankan SEKALI untuk memasang pemicu "saat form dikirim".
 function pasangPemicu() {
-  const ss = SpreadsheetApp.getActive();
+  const id = ID_SPREADSHEET || SpreadsheetApp.getActive().getId();
   ScriptApp.getProjectTriggers()
     .filter((t) => t.getHandlerFunction() === "kirimKeK2")
     .forEach((t) => ScriptApp.deleteTrigger(t));
-  ScriptApp.newTrigger("kirimKeK2").forSpreadsheet(ss).onFormSubmit().create();
+  ScriptApp.newTrigger("kirimKeK2").forSpreadsheet(id).onFormSubmit().create();
+  console.log("Pemicu terpasang untuk spreadsheet " + id);
 }`;
 
 async function fetchAdmin(): Promise<Data> {
@@ -251,14 +253,16 @@ export default function NotifEditor() {
         <div className="space-y-3">
           <h4 className="font-bold text-slate-800">1. Google Form → web (Apps Script)</h4>
           <ol className="list-decimal space-y-1 pl-5 text-sm text-slate-600">
-            <li>Buka spreadsheet jawaban Google Form → menu <b>Ekstensi (Extensions) → Apps Script</b>.</li>
+            <li>
+              Buka spreadsheet jawaban Google Form → menu <b>Ekstensi (Extensions) → Apps Script</b> (boleh juga project baru di script.google.com).
+            </li>
             <li>Hapus isi editor, tempel kode di bawah, lalu klik <b>Simpan</b>.</li>
             <li>
               Pilih fungsi <b>pasangPemicu</b> di bagian atas, klik <b>Jalankan</b>, lalu izinkan akses dengan akun Google kamu (cukup sekali).
             </li>
             <li>Kirim satu jawaban form untuk mencoba; pesannya muncul di antrian di atas.</li>
           </ol>
-          <CopyBox label="kode Apps Script" text={appsScript(origin, data.keys.form)} />
+          <CopyBox label="kode Apps Script" text={appsScript(origin, data.keys.form, data.sheetId)} />
         </div>
         <div className="space-y-3">
           <h4 className="font-bold text-slate-800">2. Bot WhatsApp di laptop</h4>

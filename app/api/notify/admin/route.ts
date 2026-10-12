@@ -19,7 +19,8 @@ export async function GET(req: Request) {
   const { error } = await guard(req);
   if (error) return error;
   const [settings, keys, st] = await Promise.all([getSettings(), getKeys(true), status()]);
-  return NextResponse.json({ settings, keys, status: st }, { headers: { "Cache-Control": "no-store" } });
+  // ID spreadsheet jawaban form (dipakai kode Apps Script untuk memasang pemicu, walau script dibuat terpisah).
+  return NextResponse.json({ settings, keys, status: st, sheetId: process.env.SHEET_ID ?? "" }, { headers: { "Cache-Control": "no-store" } });
 }
 
 export async function PUT(req: Request) {
