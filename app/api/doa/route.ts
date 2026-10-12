@@ -6,6 +6,7 @@ import { todayJkt } from "@/lib/acara";
 import { TITLES, sentence } from "@/lib/changelog";
 import type { ActivityLog } from "@/lib/content";
 import { revalidatePath } from "next/cache";
+import { endOfTodayWib, notify } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,9 @@ export async function POST(req: Request) {
       if ((await getDoaPicks()).some((p) => p.name === s.full)) return NextResponse.json({ error: `${s.full} sudah tercatat bulan ini` }, { status: 409 });
       await addDoaPick(pick);
       await recordHistory(user, manual ? `Menandai sudah berdoa bulan ini (di luar acak): ${s.full}` : `Mengacak petugas doa: ${s.full}`);
+      // Kabari grup WhatsApp: hanya hasil acak hari ini (diacak ulang = yang terbaru saja yang dikirim).
+      if (!manual)
+        await notify("petugas_doa", { nama: s.full, panggilan: s.short }, user.panggilan, { expires: endOfTodayWib(), collapse: `doa|${todayJkt()}` });
     } catch {
       return NextResponse.json({ error: "Gagal menyimpan" }, { status: 502 });
     }

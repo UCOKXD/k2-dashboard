@@ -18,6 +18,7 @@ import { DEFAULT_ORDER, valid } from "@/lib/seats";
 import type { TaskItem } from "@/lib/tasks";
 import { NOT_READY, cmd, pushJSON, setJSON, storeReady } from "@/lib/store";
 import { STUDENTS } from "@/lib/students";
+import { notify } from "@/lib/notify";
 
 export const dynamic = "force-dynamic";
 
@@ -277,6 +278,7 @@ export async function PUT(
     });
     await setJSON(CONTENT[key].key, data);
     if (key === "gallery" || key === "slides") await dropUnusedMedia();
+    await notifyGroup(key, before, data, user.panggilan);
     if (parts.length) {
       const detail = sentence(user, parts);
       await recordHistory(user, detail);
@@ -299,6 +301,24 @@ export async function PUT(
   }
   for (const p of PAGES[key]) revalidatePath(p);
   return NextResponse.json({ ok: true, data });
+}
+
+// Kabari grup WhatsApp: tempat duduk diperbarui, dan pelanggaran yang ditambahkan admin lewat Panel Admin.
+async function notifyGroup(key: ContentKey, before: unknown, after: unknown, by: string) {
+  if (key === "seats" && JSON.stringify((before as SeatsData)?.order) !== JSON.stringify((after as SeatsData)?.order))
+    await notify("tempat_duduk", { link: "/tempat-duduk" }, by, { collapse: "seats" });
+  if (key === "pelanggaran") {
+    const old = new Set(((before as PelOverrides)?.added ?? []).map((a) => a.id));
+    for (const a of (after as PelOverrides).added.filter((x) => !old.has(x.id))) {
+      const [y, m, d] = a.tanggal.split("-");
+      await notify(
+        "pelanggaran",
+        { nama: a.nama, panggilan: STUDENTS.find((x) => x.full === a.nama)?.short ?? a.nama, pelanggaran: a.kat, keterangan: a.ket, poin: String(a.poin), tanggal: `${d}/${m}/${y}` },
+        by,
+        { dedupe: `pel|${a.id}` },
+      );
+    }
+  }
 }
 
 // Hapus foto yang sudah tidak dipakai di banner maupun galeri supaya penyimpanan tidak penuh.

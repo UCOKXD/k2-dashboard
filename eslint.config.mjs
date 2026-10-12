@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Bot WhatsApp berjalan terpisah di laptop (bukan bagian dari web).
+    "bot/**",
   ]),
 ]);
 

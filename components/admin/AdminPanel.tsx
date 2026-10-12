@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { AlertTriangle, ClipboardList, BookOpen, Cake, GraduationCap, History, Images, KeyRound, Lock, Network, Armchair } from "lucide-react";
+import { AlertTriangle, ClipboardList, BookOpen, Cake, GraduationCap, History, Images, KeyRound, Lock, MessageCircle, Network, Armchair } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import OrgEditor from "@/components/admin/OrgEditor";
 import PelEditor from "@/components/admin/PelEditor";
@@ -11,6 +11,7 @@ import ScheduleEditor from "@/components/admin/ScheduleEditor";
 import TasksEditor from "@/components/admin/TasksEditor";
 import HistoryTab from "@/components/admin/HistoryTab";
 import AccountTab from "@/components/admin/AccountTab";
+import NotifEditor from "@/components/admin/NotifEditor";
 import { Loading } from "@/components/admin/ui";
 
 const TABS = [
@@ -22,6 +23,7 @@ const TABS = [
   { id: "tugas", label: "Tugas", icon: ClipboardList, el: TasksEditor },
   { id: "riwayat", label: "Riwayat", icon: History, el: HistoryTab },
   { id: "akun", label: "Akun", icon: KeyRound, el: AccountTab },
+  { id: "notifikasi", label: "Notifikasi WA", icon: MessageCircle, el: NotifEditor, webAdmin: true },
 ] as const;
 
 export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
@@ -29,7 +31,9 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
   const params = useSearchParams();
   const router = useRouter();
   const path = usePathname();
-  const tab = TABS.find((t) => t.id === params.get("tab")) ?? TABS[0];
+  // Tab bertanda webAdmin (mis. Notifikasi WA, berisi kunci rahasia) hanya untuk Admin Website.
+  const tabs = TABS.filter((t) => !("webAdmin" in t) || user?.webAdmin);
+  const tab = tabs.find((t) => t.id === params.get("tab")) ?? tabs[0];
 
   if (!ready) return <Loading />;
   if (!user || !user.admin)
@@ -86,7 +90,7 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
       )}
 
       <div className="no-scrollbar flex gap-1.5 overflow-x-auto rounded-full border border-white/60 bg-white/70 p-1.5 shadow-[0_14px_34px_rgba(15,23,42,0.16)] backdrop-blur-md">
-        {TABS.map((t) => (
+        {tabs.map((t) => (
           <button
             key={t.id}
             onClick={() => router.replace(`${path}?tab=${t.id}`, { scroll: false })}

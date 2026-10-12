@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# bot WhatsApp (dijalankan di laptop): sesi login & konfigurasi rahasia jangan di-commit
+bot/node_modules
+bot/sesi-wa
+bot/bot-log.txt

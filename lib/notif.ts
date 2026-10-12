@@ -1,0 +1,143 @@
+// Notifikasi WhatsApp ke grup kelas: jenis event, template bawaan, dan perakit pesan.
+// Aman dipakai di browser (dipakai juga untuk pratinjau di Panel Admin).
+
+export type NotifType = "pelanggaran" | "izin_tidak_masuk" | "izin_sakit" | "petugas_doa" | "tempat_duduk" | "ulang_tahun" | "tes";
+
+type Def = {
+  type: NotifType;
+  label: string; // nama jenis di Panel Admin
+  plural: string; // untuk judul rangkuman, mis. "3 laporan pelanggaran baru"
+  fields: { key: string; label: string }[]; // isian yang bisa dipakai di template, mis. {nama}
+  sample: Record<string, string>;
+  template: string;
+};
+
+const COMMON = [
+  { key: "dilaporkan_oleh", label: "Nama pelapor" },
+  { key: "waktu_laporan", label: "Waktu laporan (WIB)" },
+];
+
+export const NOTIF_DEFS: Def[] = [
+  {
+    type: "pelanggaran",
+    label: "Pelanggaran baru",
+    plural: "laporan pelanggaran baru",
+    fields: [
+      { key: "nama", label: "Nama lengkap" },
+      { key: "panggilan", label: "Panggilan" },
+      { key: "pelanggaran", label: "Jenis pelanggaran" },
+      { key: "keterangan", label: "Keterangan" },
+      { key: "poin", label: "Poin" },
+      { key: "tanggal", label: "Tanggal kejadian" },
+      ...COMMON,
+    ],
+    sample: { nama: "Aditya Yoga Eka Saputra", panggilan: "Adit", pelanggaran: "Terlambat", keterangan: "Datang 08.20", poin: "1", tanggal: "12/10/2026" },
+    template: "⚠️ *Pelanggaran baru*\nNama: {nama}\nPelanggaran: {pelanggaran}\nKeterangan: {keterangan}\nPoin: +{poin}\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+  },
+  {
+    type: "izin_tidak_masuk",
+    label: "Izin tidak masuk / telat / pulang awal",
+    plural: "izin tidak masuk baru",
+    fields: [
+      { key: "nama", label: "Nama lengkap" },
+      { key: "panggilan", label: "Panggilan" },
+      { key: "jenis", label: "Jenis izin" },
+      { key: "alasan", label: "Alasan" },
+      { key: "tanggal", label: "Tanggal izin" },
+      ...COMMON,
+    ],
+    sample: { nama: "Callista Anastasya", panggilan: "Tasya", jenis: "Tidak hadir", alasan: "Acara keluarga", tanggal: "13/10/2026" },
+    template: "📝 *Izin tidak masuk*\nNama: {nama}\nJenis izin: {jenis}\nAlasan: {alasan}\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+  },
+  {
+    type: "izin_sakit",
+    label: "Izin sakit",
+    plural: "izin sakit baru",
+    fields: [
+      { key: "nama", label: "Nama lengkap" },
+      { key: "panggilan", label: "Panggilan" },
+      { key: "keluhan", label: "Keluhan" },
+      { key: "surat_dokter", label: "Surat dokter (Ada/Tidak ada)" },
+      { key: "catatan", label: "Catatan" },
+      { key: "tanggal", label: "Tanggal sakit" },
+      ...COMMON,
+    ],
+    sample: { nama: "Calvin Ramana Putra", panggilan: "Calvin", keluhan: "Demam", surat_dokter: "Ada", catatan: "", tanggal: "12/10/2026" },
+    template: "🤒 *Izin sakit*\nNama: {nama}\nKeluhan: {keluhan}\nSurat dokter: {surat_dokter}\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+  },
+  {
+    type: "petugas_doa",
+    label: "Petugas doa hari ini",
+    plural: "info petugas doa",
+    fields: [{ key: "nama", label: "Nama lengkap" }, { key: "panggilan", label: "Panggilan" }, ...COMMON],
+    sample: { nama: "Grady Wiendy Koesnadi", panggilan: "Grady" },
+    template: "🙏 *Petugas doa hari ini*\n{nama}\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+  },
+  {
+    type: "tempat_duduk",
+    label: "Tempat duduk diperbarui",
+    plural: "info tempat duduk",
+    fields: [{ key: "link", label: "Link halaman tempat duduk" }, ...COMMON],
+    sample: { link: "https://k2-dashboard-eight.vercel.app/tempat-duduk" },
+    template: "🪑 *Tempat duduk diperbarui*\nCek denah terbaru: {link}\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+  },
+  {
+    type: "ulang_tahun",
+    label: "Ulang tahun hari ini",
+    plural: "info ulang tahun",
+    fields: [{ key: "nama", label: "Nama lengkap (dipisah koma)" }, { key: "panggilan", label: "Panggilan (dipisah koma)" }, ...COMMON],
+    sample: { nama: "Evelyn Davina", panggilan: "Eve" },
+    template: "🎂 *Selamat ulang tahun, {panggilan}!*\nHari ini {nama} berulang tahun. Jangan lupa kirim ucapan di web K2 ya!\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+  },
+  {
+    type: "tes",
+    label: "Pesan uji",
+    plural: "pesan uji",
+    fields: [{ key: "isi", label: "Isi pesan" }, ...COMMON],
+    sample: { isi: "Bot notifikasi K2 tersambung." },
+    template: "✅ *Pesan uji dari web K2*\n{isi}\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+  },
+];
+
+export const NOTIF_DEF = Object.fromEntries(NOTIF_DEFS.map((d) => [d.type, d])) as Record<NotifType, Def>;
+export const isNotifType = (t: unknown): t is NotifType => typeof t === "string" && t in NOTIF_DEF;
+
+export type NotifSettings = {
+  enabled: Record<NotifType, boolean>;
+  templates: Record<NotifType, string>;
+  interval: number; // detik antar-pengecekan antrian oleh bot
+};
+
+export const DEFAULT_INTERVAL = 30;
+export const defaultSettings = (): NotifSettings => ({
+  enabled: Object.fromEntries(NOTIF_DEFS.map((d) => [d.type, true])) as Record<NotifType, boolean>,
+  templates: Object.fromEntries(NOTIF_DEFS.map((d) => [d.type, d.template])) as Record<NotifType, string>,
+  interval: DEFAULT_INTERVAL,
+});
+
+const HARI = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+const BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
+
+// "Senin, 12 Okt 2026, 14.15 WIB" (WIB = UTC+7, tanpa musim panas).
+export function fmtWib(iso: string) {
+  const d = new Date(new Date(iso).getTime() + 7 * 3600_000);
+  const p = (n: number) => String(n).padStart(2, "0");
+  return `${HARI[d.getUTCDay()]}, ${d.getUTCDate()} ${BULAN[d.getUTCMonth()]} ${d.getUTCFullYear()}, ${p(d.getUTCHours())}.${p(d.getUTCMinutes())} WIB`;
+}
+
+// Isi template: {kunci} diganti data. Baris yang isiannya kosong dihapus (mis. "Keterangan: " tanpa keterangan).
+export function render(template: string, data: Record<string, string>) {
+  return template
+    .split("\n")
+    .flatMap((line) => {
+      let empty = false;
+      const out = line.replace(/\{(\w+)\}/g, (_, k: string) => {
+        const v = (data[k] ?? "").trim();
+        if (!v) empty = true;
+        return v;
+      });
+      return empty ? [] : [out];
+    })
+    .join("\n")
+    .trim();
+}
