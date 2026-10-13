@@ -1,8 +1,9 @@
-import { BookOpen, Crown, Shield, User, Users, Wallet } from "lucide-react";
+import { BookOpen, Camera, Crown, GraduationCap, Laptop, Shield, User, Users, Wallet } from "lucide-react";
 import type { OrgData } from "@/lib/content";
+import { DIV_KEYS, ROLE_DEF, type DivKey } from "@/lib/roles";
 import { STUDENTS } from "@/lib/students";
 
-// Isi struktur diatur admin di Panel Admin > Struktur. Nama disimpan sebagai nama lengkap siswa.
+// Isi struktur diatur Admin Website di Panel Admin > Struktur & Peran. Nama disimpan sebagai nama lengkap siswa.
 type Person = { nama: string; panggilan: string };
 const person = (full: string): Person | undefined =>
   full ? { nama: full, panggilan: STUDENTS.find((s) => s.full === full)?.short ?? "" } : undefined;
@@ -30,8 +31,40 @@ function Box({ role, icon: Icon, person: p, text, className }: { role: string; i
   );
 }
 
+const DIV_STYLE: Record<DivKey, { icon: typeof User; box: string; tag: string }> = {
+  k2: { icon: Shield, box: "border-emerald-400 bg-gradient-to-r from-emerald-600 to-teal-600", tag: "text-emerald-600" },
+  kurikulum: { icon: GraduationCap, box: "border-orange-400 bg-gradient-to-r from-orange-500 to-rose-500", tag: "text-orange-600" },
+  itl: { icon: Laptop, box: "border-slate-500 bg-gradient-to-r from-slate-600 to-slate-800", tag: "text-slate-600" },
+  pubdok: { icon: Camera, box: "border-pink-400 bg-gradient-to-r from-pink-500 to-fuchsia-600", tag: "text-pink-600" },
+};
+
+function Division({ k, org }: { k: DivKey; org: OrgData }) {
+  const d = k === "k2" ? { koordinator: org.koordinator, anggota: org.anggota } : org[k];
+  const s = DIV_STYLE[k];
+  const anggota = d.anggota.map(person).filter((p): p is Person => !!p);
+  const name = k === "k2" ? "K2" : ROLE_DEF[k].label;
+  return (
+    <div className="flex min-w-0 flex-col gap-2.5 rounded-3xl border border-slate-200/80 bg-white/60 p-4 shadow-[0_14px_34px_rgba(15,23,42,0.12)]">
+      <p className="text-center text-[11px] font-bold uppercase tracking-widest text-slate-400">{ROLE_DEF[k].label}</p>
+      <Box role={`Koordinator ${name}`} icon={s.icon} person={person(d.koordinator)} text="Belum diisi" className={s.box} />
+      {anggota.length > 0 && (
+        <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          {anggota.map((p) => (
+            <li key={p.nama} className="min-w-0 rounded-2xl border border-slate-200 bg-white/80 px-3 py-2 text-center shadow-[0_8px_18px_rgba(15,23,42,0.12)]">
+              <p className={`text-[10px] font-bold uppercase tracking-wider ${s.tag}`}>Anggota</p>
+              <p className="truncate text-sm font-bold text-slate-800" title={p.nama}>
+                {p.nama}
+              </p>
+              <p className="text-[11px] text-slate-400">({p.panggilan})</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export default function OrgChart({ org }: { org: OrgData }) {
-  const anggota = org.anggota.map(person).filter((p): p is Person => !!p);
   return (
     <section id="organisasi" className="scroll-mt-32">
       <div className="space-y-5 rounded-[2.5rem] border border-white/60 bg-white/70 p-6 shadow-[0_30px_80px_rgba(15,23,42,0.24)] backdrop-blur-md md:p-8">
@@ -39,7 +72,7 @@ export default function OrgChart({ org }: { org: OrgData }) {
           <span className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
             <Users size={14} /> Struktur Kepengurusan
           </span>
-          <h2 className="text-2xl font-extrabold text-slate-800">Struktur K2 ABSORBING</h2>
+          <h2 className="text-2xl font-extrabold text-slate-800">Pengurus Kelas ABSORBING</h2>
         </div>
 
         {/* Tiap level disambung garis vertikal. */}
@@ -56,22 +89,12 @@ export default function OrgChart({ org }: { org: OrgData }) {
           </div>
           <Connector />
 
-          <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-slate-400">Kesiswaan &amp; Kedisiplinan (K2)</p>
-          <Box role="Koordinator K2" icon={Shield} person={person(org.koordinator)} className="w-full max-w-sm border-emerald-400 bg-gradient-to-r from-emerald-600 to-teal-600" />
-          {anggota.length > 0 && (
-            <>
-              <Connector />
-              <div className={`grid w-full max-w-2xl grid-cols-1 gap-3 ${anggota.length >= 3 ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
-                {anggota.map((p) => (
-                  <div key={p.nama} className="min-w-0 rounded-2xl border border-slate-200 bg-white/80 px-3 py-2.5 text-center shadow-[0_10px_24px_rgba(15,23,42,0.16)] transition-all hover:border-blue-400">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-blue-600">Anggota K2</p>
-                    <p className="text-sm font-bold text-slate-800">{p.nama}</p>
-                    <p className="text-[11px] text-slate-400">({p.panggilan})</p>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-slate-400">Divisi</p>
+          <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
+            {DIV_KEYS.map((k) => (
+              <Division key={k} k={k} org={org} />
+            ))}
+          </div>
         </div>
       </div>
     </section>

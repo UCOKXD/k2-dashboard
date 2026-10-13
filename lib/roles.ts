@@ -1,0 +1,42 @@
+// Peran pengurus kelas dan hak akses (izin) tiap peran. Aman dipakai di browser.
+// Siapa memegang peran apa diatur Admin Website di Panel Admin → Struktur & Peran; izin tiap peran juga diatur di sana.
+
+// Divisi (selain BPH yang punya 4 jabatan tetap). "k2" memakai field lama koordinator/anggota di OrgData.
+export type DivKey = "k2" | "kurikulum" | "itl" | "pubdok";
+export type RoleKey = "bph" | DivKey;
+export type Divisi = { koordinator: string; anggota: string[] };
+
+export const ROLE_DEFS: { key: RoleKey; label: string; short: string }[] = [
+  { key: "bph", label: "Badan Pengurus Harian", short: "BPH" },
+  { key: "k2", label: "Kesiswaan & Kedisiplinan", short: "K2" },
+  { key: "kurikulum", label: "Kurikulum", short: "Kurikulum" },
+  { key: "itl", label: "IT & Logistik", short: "IT & Logistik" },
+  { key: "pubdok", label: "Publikasi & Dokumentasi", short: "PubDok" },
+];
+export const ROLE_DEF = Object.fromEntries(ROLE_DEFS.map((r) => [r.key, r])) as Record<RoleKey, (typeof ROLE_DEFS)[number]>;
+export const DIV_KEYS: DivKey[] = ["k2", "kurikulum", "itl", "pubdok"];
+
+// Hak akses yang bisa diberikan ke peran. Struktur & Peran serta Notifikasi WA (bot) selalu khusus Admin Website.
+export type PermKey = "pelanggaran" | "galeri" | "ultah" | "jadwal" | "tugas" | "doa" | "tempat_duduk" | "riwayat" | "akun";
+export const PERMS: { key: PermKey; label: string; desc: string }[] = [
+  { key: "pelanggaran", label: "Pelanggaran", desc: "Tambah, koreksi, dan sembunyikan data pelanggaran" },
+  { key: "galeri", label: "Galeri", desc: "Unggah dan hapus foto galeri (juga foto banner & latar jam)" },
+  { key: "ultah", label: "Ulang Tahun", desc: "Data tanggal lahir dan hapus ucapan ulang tahun" },
+  { key: "jadwal", label: "Jadwal", desc: "Jadwal kuliah" },
+  { key: "tugas", label: "Tugas", desc: "Daftar tugas dan tenggat" },
+  { key: "doa", label: "Acak Doa", desc: "Mengacak petugas doa harian" },
+  { key: "tempat_duduk", label: "Tempat Duduk", desc: "Mengacak dan menyimpan denah tempat duduk" },
+  { key: "riwayat", label: "Riwayat", desc: "Melihat riwayat perubahan admin" },
+  { key: "akun", label: "Akun", desc: "Melihat status semua akun dan mereset password" },
+];
+export const ALL_PERMS: PermKey[] = PERMS.map((p) => p.key);
+export const isPermKey = (k: unknown): k is PermKey => typeof k === "string" && (ALL_PERMS as string[]).includes(k);
+
+// Izin bawaan (CAWU 1): BPH & K2 penuh (kecuali bot), Kurikulum tugas & jadwal, PubDok galeri, IT & Logistik belum ada.
+export const DEFAULT_IZIN: Record<RoleKey, PermKey[]> = {
+  bph: [...ALL_PERMS],
+  k2: [...ALL_PERMS],
+  kurikulum: ["jadwal", "tugas"],
+  itl: [],
+  pubdok: ["galeri"],
+};

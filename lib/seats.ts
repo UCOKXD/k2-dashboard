@@ -10,8 +10,8 @@ export const SEATS = [
 
 // Susunan awal = denah yang sekarang dipakai (dibaca per baris, kiri lalu kanan).
 export const DEFAULT_ORDER = (
-  "Justine Tegar Ancis Yere Calvin Carol " +
-  "Maria Edward Tasya Samuel Celine Michael Dea " +
+  "Justine Tegar Ancis Yeremia Calvin Carol " +
+  "Maria Edward Tasya Samuel Celine Michael Sandy " +
   "Alex Ina Naren Sasa Aloy Tania Bryan " +
   "Davita Fahri Eve Grady Kallista Joevans William " +
   "Teguh Zaqi Adit Diipa Radin Tiop Rizky"

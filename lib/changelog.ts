@@ -32,13 +32,18 @@ export const TITLES: Record<ActivityType, string> = {
   "doa-reset": "Riwayat petugas doa direset",
 };
 
-const ROLE: [keyof Omit<OrgData, "anggota">, string][] = [
+const ROLE: [keyof Pick<OrgData, "dpp" | "komti" | "wakomti" | "bendahara" | "sekretaris" | "koordinator">, string][] = [
   ["dpp", "DPP"],
   ["komti", "Komti"],
   ["wakomti", "Wakomti"],
   ["bendahara", "Bendahara"],
   ["sekretaris", "Sekretaris"],
   ["koordinator", "Koordinator K2"],
+];
+const DIVS: [keyof Pick<OrgData, "kurikulum" | "itl" | "pubdok">, string][] = [
+  ["kurikulum", "Kurikulum"],
+  ["itl", "IT & Logistik"],
+  ["pubdok", "Publikasi & Dokumentasi"],
 ];
 
 // Daftar kalimat perubahan (tanpa subjek). Kosong = tidak ada yang berubah.
@@ -53,6 +58,16 @@ export function describe(key: ContentKey, before: unknown, after: unknown, extra
       const del = a.anggota.filter((x) => !b.anggota.includes(x));
       if (add.length) out.push(`menambahkan anggota K2: ${names(add.map(short))}`);
       if (del.length) out.push(`mengeluarkan dari anggota K2: ${names(del.map(short))}`);
+      for (const [k, label] of DIVS) {
+        const x = a[k];
+        const y = b[k];
+        if (x.koordinator !== y.koordinator) out.push(`mengganti Koordinator ${label} menjadi ${y.koordinator ? `${y.koordinator} (${short(y.koordinator)})` : "kosong"}`);
+        const plus = y.anggota.filter((n) => !x.anggota.includes(n));
+        const min = x.anggota.filter((n) => !y.anggota.includes(n));
+        if (plus.length) out.push(`menambahkan anggota ${label}: ${names(plus.map(short))}`);
+        if (min.length) out.push(`mengeluarkan dari anggota ${label}: ${names(min.map(short))}`);
+      }
+      if (JSON.stringify(a.izin) !== JSON.stringify(b.izin)) out.push("mengubah hak akses pengurus");
       break;
     }
     case "slides": {

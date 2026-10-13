@@ -25,7 +25,7 @@ export default async function Page() {
     <div className="space-y-8 pb-16">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-bold">Kalender Acara</h2>
-        <AdminLink href="/admin?tab=tugas" label="Kelola tugas" />
+        <AdminLink href="/admin?tab=tugas" label="Kelola tugas" perm="tugas" />
       </div>
       <TaskBoard tasks={tasks} today={today} />
       <WeekCalendar events={events} today={today} birthdays={bdays} schedule={schedule} tasks={tasks} />

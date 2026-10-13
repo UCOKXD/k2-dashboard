@@ -8,9 +8,8 @@ export const dynamic = "force-dynamic";
 
 // Pengaturan notifikasi WhatsApp: khusus Admin Website (berisi kunci Apps Script & bot).
 async function guard(req: Request) {
-  const r = await requireAdmin(req);
+  const r = await requireAdmin(req, { perm: "web" });
   if (r.error) return r;
-  if (!r.user.webAdmin) return { error: NextResponse.json({ error: "Khusus Admin Website" }, { status: 403 }) };
   if (!storeReady) return { error: NextResponse.json({ error: NOT_READY }, { status: 503 }) };
   return r;
 }

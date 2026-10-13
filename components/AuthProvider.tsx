@@ -1,6 +1,7 @@
 "use client";
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
-import type { SessionUser } from "@/lib/admins";
+import { can, type SessionUser } from "@/lib/admins";
+import type { PermKey } from "@/lib/roles";
 
 type Auth = {
   user: SessionUser | null;
@@ -13,10 +14,16 @@ const Ctx = createContext<Auth>({ user: null, ready: false, refresh: async () =>
 
 export const useAuth = () => useContext(Ctx);
 
-// Akun admin (BPH & Divisi K2) yang sedang login, atau null untuk pengunjung dan akun siswa.
+// Akun pengurus yang sedang login (boleh membuka Panel Admin), atau null untuk pengunjung dan akun siswa.
 export function useAdmin() {
   const { user } = useContext(Ctx);
   return user?.admin ? user : null;
+}
+
+// Akun yang sedang login kalau perannya boleh memakai fitur ini (lihat lib/roles.ts), selain itu null.
+export function usePerm(p: PermKey) {
+  const { user } = useContext(Ctx);
+  return can(user, p) ? user : null;
 }
 
 // Status login (siswa & admin) untuk seluruh halaman. Server tetap memeriksa ulang di setiap aksi admin.

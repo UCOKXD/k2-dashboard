@@ -80,7 +80,7 @@ export async function POST(req: Request) {
 
 // { id }: hapus ucapan yang tidak pantas. Hanya admin.
 export async function DELETE(req: Request) {
-  const { user, error } = await requireAdmin(req);
+  const { user, error } = await requireAdmin(req, { perm: "ultah" });
   if (error) return error;
   const { id } = (await req.json().catch(() => ({}))) as { id?: unknown };
   try {

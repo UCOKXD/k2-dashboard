@@ -3,7 +3,8 @@
 import { createHash, createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { type Account, type SessionUser, findAccount, isAdminAccount } from "@/lib/admins";
+import { type Account, type SessionUser, can, findAccount } from "@/lib/admins";
+import type { PermKey } from "@/lib/roles";
 import { DEFAULT_ORG } from "@/lib/content";
 import { getContent } from "@/lib/content-server";
 import { NOT_READY, cmd, pushJSON, storeReady } from "@/lib/store";
@@ -29,9 +30,10 @@ function eq(a: Buffer | string, b: Buffer | string) {
   return x.length === y.length && timingSafeEqual(x, y);
 }
 
-async function storedHash(username: string): Promise<string | null> {
+// key = Account.key (kunci penyimpanan, tetap walau panggilan/username berubah).
+async function storedHash(key: string): Promise<string | null> {
   if (!storeReady) return null;
-  return cmd<string | null>("GET", pwKey(username));
+  return cmd<string | null>("GET", pwKey(key));
 }
 
 function hashPassword(pw: string) {
@@ -58,7 +60,7 @@ const DEV_FALLBACK = process.env.NODE_ENV !== "production"; // tanpa Redis hanya
 const memFails = new Map<string, { n: number; until: number }>();
 
 // Semua variasi penulisan username (spasi, huruf besar) dihitung sebagai akun yang sama.
-const accountKey = (username: string) => `k2:fail:${(findAccount(username)?.username ?? username.replace(/\s+/g, "")).toLowerCase().slice(0, 40) || "-"}`;
+const accountKey = (username: string) => `k2:fail:${(findAccount(username)?.key ?? username.replace(/\s+/g, "")).toLowerCase().slice(0, 40) || "-"}`;
 const ipKey = (ip: string) => `k2:failip:${ip}`;
 
 async function take(key: string): Promise<{ n: number; ttl: number }> {
@@ -111,9 +113,21 @@ async function accountOf(username: string): Promise<Account | undefined> {
 /* --------------------------------------------------------- Password awal */
 // Berlaku sampai pemilik akun menggantinya. Semua akun: nomor absen + tanggal lahir DDMM dari data Ulang Tahun,
 // mis. absen 5 lahir 9 Maret → "50903" (absen boleh ditulis 2 digit: "050903").
-// Akun admin juga masih bisa memakai password sementara bersama (1234#) seperti sebelumnya.
+// Pengurus awal (8 admin pertama) juga masih bisa memakai password sementara bersama (1234#) seperti sebelumnya.
+// Pengurus baru tidak: 1234# diketahui banyak orang.
+const LEGACY_TEMP = new Set([
+  "Maria Godeliva Alexandra",
+  "Michael Aristo Bima Putra",
+  "Bernadeth Lidwina Hadibrata",
+  "Davita Calista Putrijaya",
+  "Francis Demetrio Villanova",
+  "Celine Jessica",
+  "Demetra Sandrea Suniadji",
+  "Tania Audrey Susanto",
+]);
+export const usesTempPassword = (a: Account) => a.admin && LEGACY_TEMP.has(a.nama);
 async function initialPasswords(a: Account): Promise<string[]> {
-  const out = isAdminAccount(a) ? [TEMP_PASSWORD] : [];
+  const out = usesTempPassword(a) ? [TEMP_PASSWORD] : [];
   const mmdd = (await getContent("birthdays"))[a.nama];
   if (mmdd && /^\d{2}-\d{2}$/.test(mmdd)) {
     const ddmm = mmdd.slice(3) + mmdd.slice(0, 2);
@@ -139,7 +153,8 @@ function toUser(a: Account, stored: string | null): SessionUser {
     jabatan: a.jabatan,
     grup: a.grup,
     webAdmin: a.webAdmin,
-    admin: isAdminAccount(a),
+    perms: a.perms,
+    admin: a.admin,
     tempPassword: !stored,
   };
 }
@@ -153,7 +168,7 @@ export async function login(username: string, password: string, ip: string): Pro
   if (byIp.n > MAX_IP) return { error: `Terlalu banyak percobaan dari perangkat/jaringan ini. Coba lagi dalam ${minutes(byIp.ttl)} menit.` };
 
   const account = await accountOf(username);
-  const stored = account ? await storedHash(account.username) : null;
+  const stored = account ? await storedHash(account.key) : null;
   const ok = account ? (stored ? checkHash(password, stored) : await checkInitial(account, password)) : false;
   if (!account || !ok) {
     await pause(800); // memperlambat tebak-tebakan otomatis
@@ -185,7 +200,7 @@ export async function currentUser(): Promise<SessionUser | null> {
   if (!account) return null;
   let stored: string | null = null;
   try {
-    stored = await storedHash(account.username);
+    stored = await storedHash(account.key);
   } catch {
     return null;
   }
@@ -197,20 +212,20 @@ export async function changePassword(username: string, oldPw: string, newPw: str
   if (!storeReady) return NOT_READY;
   const account = await accountOf(username);
   if (!account) return "Akun tidak ditemukan";
-  const stored = await storedHash(account.username);
+  const stored = await storedHash(account.key);
   const ok = stored ? checkHash(oldPw, stored) : await checkInitial(account, oldPw);
   if (!ok) return "Password lama salah";
   if (newPw.length < 6) return "Password baru minimal 6 karakter";
   if (newPw === TEMP_PASSWORD || (await initialPasswords(account)).includes(newPw)) return "Password baru tidak boleh sama dengan password awal";
-  await cmd("SET", pwKey(account.username), hashPassword(newPw));
+  await cmd("SET", pwKey(account.key), hashPassword(newPw));
   return null;
 }
 
-// Akun mana saja yang sudah mengganti password awal (untuk Panel Admin → Akun).
-export async function changedAccounts(usernames: string[]): Promise<Set<string>> {
-  if (!storeReady || !usernames.length) return new Set();
-  const vals = await cmd<(string | null)[]>("MGET", ...usernames.map(pwKey));
-  return new Set(usernames.filter((_, i) => !!vals[i]));
+// Akun mana saja yang sudah mengganti password awal (untuk Panel Admin → Akun). keys = Account.key.
+export async function changedAccounts(keys: string[]): Promise<Set<string>> {
+  if (!storeReady || !keys.length) return new Set();
+  const vals = await cmd<(string | null)[]>("MGET", ...keys.map(pwKey));
+  return new Set(keys.filter((_, i) => !!vals[i]));
 }
 
 /* --------------------------------------------- Penjaga untuk route API admin */
@@ -237,12 +252,14 @@ export async function requireUser(req: Request, { allowTemp = false } = {}) {
   return { user };
 }
 
-// Khusus admin (BPH & Divisi K2).
-export async function requireAdmin(req: Request, { allowTemp = false } = {}) {
+// Khusus pengurus. perm: izin yang dibutuhkan (lihat lib/roles.ts); "web" = khusus Admin Website.
+export async function requireAdmin(req: Request, { allowTemp = false, perm }: { allowTemp?: boolean; perm?: PermKey | "web" } = {}) {
   if (!sameOrigin(req)) return { error: NextResponse.json({ error: "Permintaan ditolak" }, { status: 403 }) };
   const user = await currentUser();
   if (!user) return { error: NextResponse.json({ error: "Silakan masuk sebagai admin dulu" }, { status: 401 }) };
-  if (!user.admin) return { error: NextResponse.json({ error: "Fitur ini khusus admin (BPH & Divisi K2)" }, { status: 403 }) };
+  if (!user.admin) return { error: NextResponse.json({ error: "Fitur ini khusus pengurus kelas" }, { status: 403 }) };
+  if (perm === "web" ? !user.webAdmin : perm && !can(user, perm))
+    return { error: NextResponse.json({ error: perm === "web" ? "Khusus Admin Website" : "Peranmu tidak punya akses ke fitur ini" }, { status: 403 }) };
   // Password sementara (1234#) diketahui semua pengurus, jadi wajib diganti sebelum bisa mengubah apa pun.
   if (user.tempPassword && !allowTemp)
     return { error: NextResponse.json({ error: "Ganti password sementara dulu di Panel Admin → Akun sebelum mengubah data." }, { status: 403 }) };

@@ -19,6 +19,7 @@ import type { TaskItem } from "@/lib/tasks";
 import { NOT_READY, cmd, pushJSON, setJSON, storeReady } from "@/lib/store";
 import { STUDENTS } from "@/lib/students";
 import { notify } from "@/lib/notify";
+import { ALL_PERMS, DEFAULT_IZIN, ROLE_DEFS, type PermKey } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
 
@@ -39,9 +40,15 @@ function clean(key: ContentKey, b: unknown): [unknown, string] | string {
   const o = (b ?? {}) as Record<string, unknown>;
   switch (key) {
     case "org": {
-      const anggota = Array.isArray(o.anggota)
-        ? o.anggota.slice(0, 6).map(student).filter(Boolean)
-        : [];
+      const list = (v: unknown) => (Array.isArray(v) ? [...new Set(v.slice(0, 8).map(student).filter(Boolean))] : []);
+      const div = (v: unknown) => {
+        const x = (v ?? {}) as Record<string, unknown>;
+        return { koordinator: student(x.koordinator), anggota: list(x.anggota) };
+      };
+      const iz = (o.izin ?? {}) as Record<string, unknown>;
+      const izin = Object.fromEntries(
+        ROLE_DEFS.map((r) => [r.key, Array.isArray(iz[r.key]) ? ALL_PERMS.filter((p) => (iz[r.key] as unknown[]).includes(p)) : DEFAULT_IZIN[r.key]]),
+      ) as OrgData["izin"];
       const d: OrgData = {
         dpp: str(o.dpp, 80),
         komti: student(o.komti),
@@ -49,9 +56,13 @@ function clean(key: ContentKey, b: unknown): [unknown, string] | string {
         bendahara: student(o.bendahara),
         sekretaris: student(o.sekretaris),
         koordinator: student(o.koordinator),
-        anggota,
+        anggota: list(o.anggota),
+        kurikulum: div(o.kurikulum),
+        itl: div(o.itl),
+        pubdok: div(o.pubdok),
+        izin,
       };
-      return [d, "Mengubah struktur organisasi"];
+      return [d, "Mengubah struktur & peran pengurus"];
     }
     case "slides": {
       const items = Array.isArray(o.items)
@@ -225,6 +236,17 @@ function clean(key: ContentKey, b: unknown): [unknown, string] | string {
   }
 }
 
+const PERM_OF: Record<ContentKey, PermKey | "web"> = {
+  org: "web",
+  slides: "galeri",
+  gallery: "galeri",
+  seats: "tempat_duduk",
+  pelanggaran: "pelanggaran",
+  birthdays: "ultah",
+  schedule: "jadwal",
+  tasks: "tugas",
+};
+
 const PAGES: Record<ContentKey, string[]> = {
   org: ["/"],
   slides: ["/", "/waktu"],
@@ -253,11 +275,9 @@ export async function PUT(
   const { key } = await params;
   if (!isKey(key))
     return NextResponse.json({ error: "Tidak dikenal" }, { status: 404 });
-  const { user, error } = await requireAdmin(req);
+  // Izin tiap jenis konten. Struktur & Peran menentukan hak akses semua orang, jadi khusus Admin Website.
+  const { user, error } = await requireAdmin(req, { perm: PERM_OF[key] });
   if (error) return error;
-  // Struktur menentukan siapa yang menjadi admin (BPH & K2), jadi hanya Admin Website yang boleh mengubahnya.
-  if (key === "org" && !user.webAdmin)
-    return NextResponse.json({ error: "Struktur hanya bisa diubah Admin Website, karena struktur menentukan siapa yang bisa membuka Panel Admin." }, { status: 403 });
   if (!storeReady)
     return NextResponse.json({ error: NOT_READY }, { status: 503 });
 

@@ -13,7 +13,7 @@ export default async function Page() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-bold">Galeri Kelas</h2>
         <div className="flex items-center gap-3">
-          <AdminLink href="/admin?tab=galeri" label="Unggah foto" />
+          <AdminLink href="/admin?tab=galeri" label="Unggah foto" perm="galeri" />
           {/* Saat galeri kosong, maskot "Belum ada data" yang tampil di bawah, jadi yang ini disembunyikan. */}
           {gallery.length > 0 && <Sticker name="cekrek" size={150} />}
         </div>

@@ -13,26 +13,29 @@ import HistoryTab from "@/components/admin/HistoryTab";
 import AccountTab from "@/components/admin/AccountTab";
 import NotifEditor from "@/components/admin/NotifEditor";
 import { Loading } from "@/components/admin/ui";
+import { can } from "@/lib/admins";
+import type { PermKey } from "@/lib/roles";
 
-const TABS = [
-  { id: "struktur", label: "Struktur", icon: Network, el: OrgEditor },
-  { id: "pelanggaran", label: "Pelanggaran", icon: AlertTriangle, el: PelEditor },
-  { id: "galeri", label: "Galeri", icon: Images, el: GalleryEditor },
-  { id: "ultah", label: "Ulang Tahun", icon: Cake, el: BirthdayEditor },
-  { id: "jadwal", label: "Jadwal", icon: GraduationCap, el: ScheduleEditor },
-  { id: "tugas", label: "Tugas", icon: ClipboardList, el: TasksEditor },
-  { id: "riwayat", label: "Riwayat", icon: History, el: HistoryTab },
-  { id: "akun", label: "Akun", icon: KeyRound, el: AccountTab },
-  { id: "notifikasi", label: "Notifikasi WA", icon: MessageCircle, el: NotifEditor, webAdmin: true },
-] as const;
+// perm: izin yang dibutuhkan (lib/roles.ts); "web" = khusus Admin Website; null = semua pengurus (ganti password sendiri).
+const TABS: { id: string; label: string; icon: typeof Network; el: () => React.ReactNode; perm: PermKey | "web" | null }[] = [
+  { id: "struktur", label: "Struktur & Peran", icon: Network, el: OrgEditor, perm: "web" },
+  { id: "pelanggaran", label: "Pelanggaran", icon: AlertTriangle, el: PelEditor, perm: "pelanggaran" },
+  { id: "galeri", label: "Galeri", icon: Images, el: GalleryEditor, perm: "galeri" },
+  { id: "ultah", label: "Ulang Tahun", icon: Cake, el: BirthdayEditor, perm: "ultah" },
+  { id: "jadwal", label: "Jadwal", icon: GraduationCap, el: ScheduleEditor, perm: "jadwal" },
+  { id: "tugas", label: "Tugas", icon: ClipboardList, el: TasksEditor, perm: "tugas" },
+  { id: "riwayat", label: "Riwayat", icon: History, el: HistoryTab, perm: "riwayat" },
+  { id: "akun", label: "Akun", icon: KeyRound, el: AccountTab, perm: null },
+  { id: "notifikasi", label: "Notifikasi WA", icon: MessageCircle, el: NotifEditor, perm: "web" },
+];
 
 export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
   const { user, ready } = useAuth();
   const params = useSearchParams();
   const router = useRouter();
   const path = usePathname();
-  // Tab bertanda webAdmin (mis. Notifikasi WA, berisi kunci rahasia) hanya untuk Admin Website.
-  const tabs = TABS.filter((t) => !("webAdmin" in t) || user?.webAdmin);
+  // Hanya tab yang boleh dipakai peran akun ini yang ditampilkan.
+  const tabs = TABS.filter((t) => (t.perm === "web" ? user?.webAdmin : t.perm ? can(user, t.perm) : true));
   const tab = tabs.find((t) => t.id === params.get("tab")) ?? tabs[0];
 
   if (!ready) return <Loading />;
@@ -40,7 +43,7 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
     return (
       <div className="mx-auto max-w-md space-y-4 rounded-[2rem] border border-white/60 bg-white/75 p-8 text-center shadow-[0_24px_60px_rgba(15,23,42,0.22)] backdrop-blur-md">
         <Lock className="mx-auto text-slate-400" />
-        <p className="font-semibold text-slate-700">Halaman ini khusus admin (BPH & Divisi K2).</p>
+        <p className="font-semibold text-slate-700">Halaman ini khusus pengurus kelas.</p>
         <Link href={user ? "/akun" : "/masuk"} className="inline-block rounded-full bg-navy-900 px-6 py-2.5 text-sm font-semibold text-white shadow">
           {user ? "Ke halaman akun" : "Masuk"}
         </Link>
@@ -74,12 +77,16 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
           </p>
         </div>
         <div className="flex gap-2 text-sm">
-          <Link href="/doa-harian" className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/80 px-4 py-2 font-semibold text-slate-700 shadow-sm">
-            <BookOpen size={15} /> Acak Doa
-          </Link>
-          <Link href="/tempat-duduk" className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/80 px-4 py-2 font-semibold text-slate-700 shadow-sm">
-            <Armchair size={15} /> Atur Tempat Duduk
-          </Link>
+          {can(user, "doa") && (
+            <Link href="/doa-harian" className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/80 px-4 py-2 font-semibold text-slate-700 shadow-sm">
+              <BookOpen size={15} /> Acak Doa
+            </Link>
+          )}
+          {can(user, "tempat_duduk") && (
+            <Link href="/tempat-duduk" className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white/80 px-4 py-2 font-semibold text-slate-700 shadow-sm">
+              <Armchair size={15} /> Atur Tempat Duduk
+            </Link>
+          )}
         </div>
       </div>
 

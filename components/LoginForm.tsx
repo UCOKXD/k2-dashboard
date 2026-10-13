@@ -94,7 +94,7 @@ export default function LoginForm() {
         <button disabled={busy || !username || !password} className="flex w-full items-center justify-center gap-2 rounded-xl bg-navy-900 py-3 font-bold text-white shadow-[0_12px_28px_rgba(11,30,61,0.4)] transition hover:bg-navy-800 disabled:opacity-50">
           <LogIn size={17} /> {busy ? "Memeriksa..." : "Masuk"}
         </button>
-        <p className="text-center text-xs text-slate-400">Username = nama panggilan + nomor absen, mis. Ancis18. Password awal dibagikan Divisi K2 dan wajib diganti saat pertama masuk. Lupa password? Minta Komti atau Koordinator K2 untuk mereset.</p>
+        <p className="text-center text-xs text-slate-400">Username = nama panggilan + nomor absen, mis. Ancis18. Password awal dibagikan Divisi K2 dan wajib diganti saat pertama masuk. Lupa password? Minta pengurus BPH atau K2 untuk mereset.</p>
       </form>
     </div>
   );

@@ -19,7 +19,7 @@ export default async function Page() {
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-bold">Pelanggaran</h2>
-        <AdminLink href="/admin?tab=pelanggaran" label="Kelola pelanggaran" />
+        <AdminLink href="/admin?tab=pelanggaran" label="Kelola pelanggaran" perm="pelanggaran" />
       </div>
 
       <PelStats stats={stats} />

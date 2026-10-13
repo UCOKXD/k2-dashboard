@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, Save, Star, Undo2, X } from "lucide-react";
-import { adminFetch, useAdmin } from "@/components/AuthProvider";
+import { adminFetch, usePerm } from "@/components/AuthProvider";
 import type { SeatsData } from "@/lib/content";
 import { DEFAULT_ORDER, SEATS, ensureFront, frontRows, shuffleWithFront, valid } from "@/lib/seats";
 import { STUDENTS } from "@/lib/students";
@@ -12,7 +12,7 @@ const fmt = (iso: string) =>
 
 // Denah yang dipublikasikan admin terlihat semua orang. Hanya admin yang bisa mengacak, menukar, dan mengatur prioritas.
 export default function SeatPlanner({ initial }: { initial: SeatsData }) {
-  const user = useAdmin(); // tombol admin hanya untuk BPH & K2
+  const user = usePerm("tempat_duduk"); // tombol admin hanya untuk peran yang punya izin "tempat_duduk"
   const [saved, setSaved] = useState(initial); // versi yang sudah dipublikasikan
   const [order, setOrder] = useState(initial?.order ?? DEFAULT_ORDER); // order[kursi] = indeks siswa
   const [prio, setPrio] = useState<number[]>(initial?.prio ?? []); // indeks siswa yang wajib duduk depan

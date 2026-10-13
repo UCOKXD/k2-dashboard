@@ -1,5 +1,5 @@
-// Siswa ABSORBING PPTI 28: [nama lengkap, panggilan di denah], urut sesuai nomor absen.
-// Panggilan Ina masih tebakan dari denah, mohon dicek.
+// Siswa ABSORBING PPTI 28: [nama lengkap, panggilan], urut sesuai nomor absen.
+// Panggilan mengikuti Data Pengurus Kelas CAWU 1.
 const RAW: [string, string][] = [
   ["Aditya Yoga Eka Saputra", "Adit"],
   ["Ahmad Zaqi", "Zaqi"],
@@ -14,7 +14,7 @@ const RAW: [string, string][] = [
   ["Caroline Fiona Agatha Kandiawan", "Carol"],
   ["Celine Jessica", "Celine"],
   ["Davita Calista Putrijaya", "Davita"],
-  ["Demetra Sandrea Suniadji", "Dea"],
+  ["Demetra Sandrea Suniadji", "Sandy"],
   ["Edward Devon Kosasih", "Edward"],
   ["Evelyn Davina", "Eve"],
   ["Fahri Roiza", "Fahri"],
@@ -34,13 +34,19 @@ const RAW: [string, string][] = [
   ["Teguh Iman Samaeri Gea", "Teguh"],
   ["Tiop Syalom Pakpahan", "Tiop"],
   ["William Moses", "William"],
-  ["Yeremia Theofilus Handoyo", "Yere"],
+  ["Yeremia Theofilus Handoyo", "Yeremia"],
 ];
 
 // NIM sementara masih dummy. Ganti isi NIM di sini (urut absen 1-34) kalau data asli sudah ada.
 const NIM: string[] = RAW.map((_, i) => `0000000${String(i + 1).padStart(3, "0")}`);
 
-export const STUDENTS = RAW.map(([full, short], i) => ({ full, short, absen: i + 1, nim: NIM[i] }));
+// Panggilan lama yang masih mungkin ditulis di Google Form (tetap dikenali sebagai siswa yang sama).
+const ALIAS: Record<string, string[]> = {
+  "Demetra Sandrea Suniadji": ["Dea"],
+  "Yeremia Theofilus Handoyo": ["Yere"],
+};
+
+export const STUDENTS = RAW.map(([full, short], i) => ({ full, short, alias: ALIAS[full] ?? [], absen: i + 1, nim: NIM[i] }));
 
 // Ubah nama dari form (nama lengkap, panggilan, atau nama depan) menjadi nama lengkap siswa.
 // Nama yang tidak dikenali dikembalikan apa adanya; string kosong tetap kosong.
@@ -48,7 +54,11 @@ export function resolveName(raw: string) {
   const n = raw.trim().toLowerCase();
   if (!n) return "";
   const s = STUDENTS.find(
-    (x) => x.full.toLowerCase() === n || x.short.toLowerCase() === n || x.full.toLowerCase().startsWith(n + " ")
+    (x) =>
+      x.full.toLowerCase() === n ||
+      x.short.toLowerCase() === n ||
+      x.alias.some((a) => a.toLowerCase() === n) ||
+      x.full.toLowerCase().startsWith(n + " ")
   );
   return s ? s.full : raw.trim();
 }

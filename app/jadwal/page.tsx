@@ -13,7 +13,7 @@ export default async function Page() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-2xl font-bold">Jadwal Kuliah</h2>
         <div className="flex items-center gap-3">
-          <AdminLink href="/admin?tab=jadwal" label="Ubah jadwal" />
+          <AdminLink href="/admin?tab=jadwal" label="Ubah jadwal" perm="jadwal" />
           {/* Saat jadwal kosong, maskot "Belum ada data" yang tampil di bawah, jadi yang ini disembunyikan. */}
           {schedule.length > 0 && <Sticker name="cek-di-sini" size={110} />}
         </div>

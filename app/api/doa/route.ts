@@ -23,7 +23,7 @@ export async function GET() {
 // { name }: catat petugas doa hasil acak. { name, manual: true, date }: tandai sudah berdoa bulan ini
 // di luar acak (mis. sebelum website dipakai). Hanya admin yang sudah masuk.
 export async function POST(req: Request) {
-  const { user, error } = await requireAdmin(req);
+  const { user, error } = await requireAdmin(req, { perm: "doa" });
   if (error) return error;
   const body = (await req.json().catch(() => ({}))) as { name?: unknown; manual?: unknown; date?: unknown };
   const s = STUDENTS.find((x) => x.full === body.name);
@@ -55,7 +55,7 @@ export async function POST(req: Request) {
 }
 
 export async function DELETE(req: Request) {
-  const { user, error } = await requireAdmin(req);
+  const { user, error } = await requireAdmin(req, { perm: "doa" });
   if (error) return error;
   if (storeReady) {
     try {

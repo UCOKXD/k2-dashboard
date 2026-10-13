@@ -7,7 +7,7 @@ const MAX_BYTES = 1_500_000; // foto sudah dikompres di browser sebelum dikirim
 
 // Unggah foto (JPEG/PNG/WebP base64). Foto baru "dipakai" setelah dimasukkan ke banner atau galeri.
 export async function POST(req: Request) {
-  const { error } = await requireAdmin(req);
+  const { error } = await requireAdmin(req, { perm: "galeri" }); // unggah foto untuk galeri
   if (error) return error;
   if (!storeReady) return NextResponse.json({ error: NOT_READY }, { status: 503 });
   const { data } = (await req.json().catch(() => ({}))) as { data?: string };

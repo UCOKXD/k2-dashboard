@@ -44,6 +44,7 @@ body {
 .dark .bg-white\/80 { background-color: rgb(17 28 51 / 0.8); }
 .dark .bg-white\/75 { background-color: rgb(17 28 51 / 0.75); }
 .dark .bg-white\/70 { background-color: rgb(17 28 51 / 0.7); }
+.dark .bg-white\/60 { background-color: rgb(17 28 51 / 0.6); }
 .dark .bg-slate-50, .dark .bg-slate-50\/80, .dark .bg-slate-50\/50 { background-color: rgb(30 41 59 / 0.55); }
 .dark .bg-slate-100 { background-color: #1e293b; }
 .dark .bg-slate-200, .dark .bg-slate-200\/90 { background-color: #334155; }
@@ -118,6 +119,7 @@ body {
 .dark .border-violet-200, .dark .border-pink-200 { border-color: rgb(167 139 250 / 0.3); }
 .dark .text-violet-600 { color: #c4b5fd; }
 .dark .text-pink-600 { color: #f9a8d4; }
+.dark .text-orange-600 { color: #fdba74; }
 /* Judul kolom tabel selalu putih di tema gelap (warna terang bawaan tiap tabel tidak terbaca). */
 .dark thead { color: #f8fafc !important; }
 .dark thead.bg-emerald-100, .dark thead.bg-yellow-100, .dark thead.bg-sea-100 { background-color: #1e3a5f; }

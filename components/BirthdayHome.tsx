@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Send, Trash2 } from "lucide-react";
 import Sticker from "@/components/Sticker";
-import { adminFetch, useAdmin } from "@/components/AuthProvider";
+import { adminFetch, usePerm } from "@/components/AuthProvider";
 import { joinNames } from "@/components/Birthday";
 import type { BdayInfo, BdayPerson, Wish } from "@/lib/birthday";
 
@@ -166,7 +166,7 @@ const jamWib = (iso: string) => new Date(iso).toLocaleTimeString("id-ID", { time
 
 // Kirim ucapan (anonim, 1 per perangkat per hari) + daftar ucapan hari ini, dan daftar ulang tahun bulan ini.
 export function BirthdaySection({ info }: { info: BdayInfo }) {
-  const user = useAdmin(); // tombol admin hanya untuk BPH & K2
+  const user = usePerm("ultah"); // tombol admin hanya untuk peran yang punya izin "ultah"
   const [items, setItems] = useState<Wish[] | null>(null);
   const [mine, setMine] = useState(false); // perangkat ini sudah mengirim ucapan hari ini
   const [text, setText] = useState("");

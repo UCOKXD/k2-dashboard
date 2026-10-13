@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Lock, Plus } from "lucide-react";
-import { adminFetch, useAdmin, useAuth } from "@/components/AuthProvider";
+import { adminFetch, usePerm, useAuth } from "@/components/AuthProvider";
 import { LOCAL_DOA_LOG } from "@/lib/dashboard";
 import { STUDENTS } from "@/lib/students";
 import type { DoaPick } from "@/lib/store";
@@ -39,7 +39,7 @@ function localHistory(): DoaPick[] {
 
 // Semua orang bisa melihat riwayat; hanya admin yang sudah masuk yang bisa mengacak.
 export default function DoaRandomizer({ names }: { names: string[] }) {
-  const user = useAdmin(); // tombol admin hanya untuk BPH & K2
+  const user = usePerm("doa"); // tombol admin hanya untuk peran yang punya izin "doa"
   const signedIn = !!useAuth().user;
   const [history, setHistory] = useState<DoaPick[]>([]);
   const [stored, setStored] = useState(true); // true = riwayat tersimpan di server (terlihat semua orang)
