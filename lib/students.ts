@@ -23,7 +23,7 @@ const RAW: [string, string][] = [
   ["Joevans Rafael Kosasih", "Joevans"],
   ["Justine Taniardi", "Justine"],
   ["Kadek Pradiipa Maheshvara", "Diipa"],
-  ["Kalissta Clarindajaya", "Kallista"],
+  ["Kalissta Clarindajaya", "Kalissta"],
   ["La Radin Wahyu Novalino", "Radin"],
   ["Maria Godeliva Alexandra", "Maria"],
   ["Michael Aristo Bima Putra", "Michael"],
@@ -44,6 +44,7 @@ const NIM: string[] = RAW.map((_, i) => `0000000${String(i + 1).padStart(3, "0")
 const ALIAS: Record<string, string[]> = {
   "Demetra Sandrea Suniadji": ["Dea"],
   "Yeremia Theofilus Handoyo": ["Yere"],
+  "Kalissta Clarindajaya": ["Kallista"],
 };
 
 export const STUDENTS = RAW.map(([full, short], i) => ({ full, short, alias: ALIAS[full] ?? [], absen: i + 1, nim: NIM[i] }));

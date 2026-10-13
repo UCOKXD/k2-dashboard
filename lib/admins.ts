@@ -30,6 +30,7 @@ export const WEB_ADMIN = "Francis Demetrio Villanova"; // pemilik & Admin Websit
 const LEGACY_USERNAME: Record<string, string> = {
   "Demetra Sandrea Suniadji": "Dea14",
   "Yeremia Theofilus Handoyo": "Yere34",
+  "Kalissta Clarindajaya": "Kallista23",
 };
 
 const GRUP_OF: Record<RoleKey, Grup> = { bph: "BPH", k2: "K2", kurikulum: "Kurikulum", itl: "ITL", pubdok: "PubDok" };

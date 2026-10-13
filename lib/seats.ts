@@ -13,7 +13,7 @@ export const DEFAULT_ORDER = (
   "Justine Tegar Ancis Yeremia Calvin Carol " +
   "Maria Edward Tasya Samuel Celine Michael Sandy " +
   "Alex Ina Naren Sasa Aloy Tania Bryan " +
-  "Davita Fahri Eve Grady Kallista Joevans William " +
+  "Davita Fahri Eve Grady Kalissta Joevans William " +
   "Teguh Zaqi Adit Diipa Radin Tiop Rizky"
 )
   .split(" ")
