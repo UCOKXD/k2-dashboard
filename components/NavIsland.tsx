@@ -13,6 +13,7 @@ import {
   Stethoscope,
   GraduationCap,
   Images,
+  MessageCircleHeart,
 } from "lucide-react";
 
 const MENU = [
@@ -26,6 +27,7 @@ const MENU = [
   { name: "Pelanggaran", icon: AlertTriangle, href: "/pelanggaran", match: "/pelanggaran" },
   { name: "Tempat Duduk", icon: Armchair, href: "/tempat-duduk", match: "/tempat-duduk" },
   { name: "Galeri", icon: Images, href: "/galeri", match: "/galeri" },
+  { name: "NGL", icon: MessageCircleHeart, href: "/ngl", match: "/ngl" },
 ] as const;
 
 // floating: halaman utama. Island melayang di bawah banner, lalu menempel di tengah atas layar saat di-scroll.

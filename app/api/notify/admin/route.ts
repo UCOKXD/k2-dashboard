@@ -50,7 +50,8 @@ export async function POST(req: Request) {
   }
   // Kirim contoh satu jenis pesan (data contoh, diberi tanda PESAN UJI) untuk mencoba template di grup.
   if (action === "sample" && isNotifType(type)) {
-    const sample = { ...NOTIF_DEF[type].sample, ...(type === "tempat_duduk" ? { link: "/tempat-duduk" } : type === "ulang_tahun" ? { link: "/" } : {}) };
+    const LINK: Partial<Record<NotifType, string>> = { tempat_duduk: "/tempat-duduk", ulang_tahun: "/", ngl_buka: "/ngl", ngl_tutup: "/ngl", ngl_progres: "/ngl" };
+    const sample = { ...NOTIF_DEF[type].sample, ...(LINK[type] ? { link: LINK[type] } : {}) };
     const ok = await notify(type, sample, user.panggilan, { test: true });
     return ok ? NextResponse.json({ ok }) : NextResponse.json({ error: "Penyimpanan bermasalah" }, { status: 502 });
   }

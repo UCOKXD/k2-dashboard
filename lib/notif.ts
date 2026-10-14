@@ -1,7 +1,17 @@
 // Notifikasi WhatsApp ke grup kelas: jenis event, template bawaan, dan perakit pesan.
 // Aman dipakai di browser (dipakai juga untuk pratinjau di Panel Admin).
 
-export type NotifType = "pelanggaran" | "izin_tidak_masuk" | "izin_sakit" | "petugas_doa" | "tempat_duduk" | "ulang_tahun" | "tes";
+export type NotifType =
+  | "pelanggaran"
+  | "izin_tidak_masuk"
+  | "izin_sakit"
+  | "petugas_doa"
+  | "tempat_duduk"
+  | "ulang_tahun"
+  | "ngl_buka"
+  | "ngl_tutup"
+  | "ngl_progres"
+  | "tes";
 
 type Def = {
   type: NotifType;
@@ -88,6 +98,41 @@ export const NOTIF_DEFS: Def[] = [
     fields: [{ key: "nama", label: "Nama lengkap (dipisah koma)" }, { key: "panggilan", label: "Panggilan (dipisah koma)" }, { key: "link", label: "Link web K2" }, ...COMMON],
     sample: { nama: "Siswa Contoh", panggilan: "Contoh", link: "https://k2-dashboard-eight.vercel.app" },
     template: "🎂 *SELAMAT ULANG TAHUN!* 🎉\n\nHari ini *{nama}* berulang tahun.\nSelamat ulang tahun, {panggilan}! Semoga sehat, sukses, dan makin semangat 🥳\n\nKirim ucapan lewat web K2:\n{link}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+  },
+  {
+    type: "ngl_buka",
+    label: "Sesi NGL dibuka",
+    plural: "info sesi NGL",
+    fields: [{ key: "link", label: "Link halaman NGL" }, ...COMMON],
+    sample: { link: "https://k2-dashboard-eight.vercel.app/ngl" },
+    template: "💌 *SESI NGL DIBUKA!*\n\nSaatnya kirim apresiasi dan masukan untuk teman sekelas. Isi untuk semua teman ya, boleh anonim atau pakai nama.\n\nIsi di sini:\n{link}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+  },
+  {
+    type: "ngl_tutup",
+    label: "Sesi NGL ditutup",
+    plural: "info sesi NGL",
+    fields: [
+      { key: "persen", label: "Persen terisi" },
+      { key: "jumlah", label: "Jumlah pesan" },
+      { key: "link", label: "Link halaman NGL" },
+      ...COMMON,
+    ],
+    sample: { persen: "92", jumlah: "1032", link: "https://k2-dashboard-eight.vercel.app/ngl" },
+    template: "📬 *SESI NGL DITUTUP*\n\nTerima kasih sudah mengisi! Total {jumlah} pesan terkirim ({persen}% terisi).\nPesan untukmu sudah bisa dibaca di:\n{link}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+  },
+  {
+    type: "ngl_progres",
+    label: "Progres pengisian NGL (50/70/90/100%)",
+    plural: "info progres NGL",
+    fields: [
+      { key: "persen", label: "Persen terisi" },
+      { key: "jumlah", label: "Jumlah pesan" },
+      { key: "total", label: "Total pesan yang harus diisi" },
+      { key: "link", label: "Link halaman NGL" },
+      ...COMMON,
+    ],
+    sample: { persen: "70", jumlah: "786", total: "1122", link: "https://k2-dashboard-eight.vercel.app/ngl" },
+    template: "📊 *NGL SUDAH {persen}% TERISI*\n\n{jumlah} dari {total} pesan sudah terkirim. Yang belum, yuk lengkapi untuk semua teman:\n{link}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
   },
   {
     type: "tes",

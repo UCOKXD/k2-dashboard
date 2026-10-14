@@ -61,6 +61,7 @@ function clean(key: ContentKey, b: unknown): [unknown, string] | string {
         itl: div(o.itl),
         pubdok: div(o.pubdok),
         izin,
+        izinKeys: ALL_PERMS,
       };
       return [d, "Mengubah struktur & peran pengurus"];
     }

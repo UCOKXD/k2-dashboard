@@ -120,6 +120,7 @@ body {
 .dark .text-violet-600 { color: #c4b5fd; }
 .dark .text-pink-600 { color: #f9a8d4; }
 .dark .text-orange-600 { color: #fdba74; }
+.dark .text-pink-500 { color: #f9a8d4; }
 /* Judul kolom tabel selalu putih di tema gelap (warna terang bawaan tiap tabel tidak terbaca). */
 .dark thead { color: #f8fafc !important; }
 .dark thead.bg-emerald-100, .dark thead.bg-yellow-100, .dark thead.bg-sea-100 { background-color: #1e3a5f; }

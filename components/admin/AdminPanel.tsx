@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { AlertTriangle, ClipboardList, BookOpen, Cake, GraduationCap, History, Images, KeyRound, Lock, MessageCircle, Network, Armchair } from "lucide-react";
+import { AlertTriangle, ClipboardList, BookOpen, Cake, GraduationCap, History, Images, KeyRound, Lock, MessageCircle, MessageCircleHeart, Network, Armchair } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import OrgEditor from "@/components/admin/OrgEditor";
 import PelEditor from "@/components/admin/PelEditor";
@@ -12,6 +12,7 @@ import TasksEditor from "@/components/admin/TasksEditor";
 import HistoryTab from "@/components/admin/HistoryTab";
 import AccountTab from "@/components/admin/AccountTab";
 import NotifEditor from "@/components/admin/NotifEditor";
+import NglAdmin from "@/components/admin/NglAdmin";
 import { Loading } from "@/components/admin/ui";
 import { can } from "@/lib/admins";
 import type { PermKey } from "@/lib/roles";
@@ -24,6 +25,7 @@ const TABS: { id: string; label: string; icon: typeof Network; el: () => React.R
   { id: "ultah", label: "Ulang Tahun", icon: Cake, el: BirthdayEditor, perm: "ultah" },
   { id: "jadwal", label: "Jadwal", icon: GraduationCap, el: ScheduleEditor, perm: "jadwal" },
   { id: "tugas", label: "Tugas", icon: ClipboardList, el: TasksEditor, perm: "tugas" },
+  { id: "ngl", label: "NGL", icon: MessageCircleHeart, el: NglAdmin, perm: "ngl" },
   { id: "riwayat", label: "Riwayat", icon: History, el: HistoryTab, perm: "riwayat" },
   { id: "akun", label: "Akun", icon: KeyRound, el: AccountTab, perm: null },
   { id: "notifikasi", label: "Notifikasi WA", icon: MessageCircle, el: NotifEditor, perm: "web" },

@@ -1,7 +1,7 @@
 // Konten yang bisa diubah admin dari website (disimpan di Redis). Tipe & nilai awal; aman dipakai di browser.
 import type { TaskItem } from "@/lib/tasks";
 import type { ActivityType } from "@/lib/changelog";
-import { DEFAULT_IZIN, type Divisi, type PermKey, type RoleKey } from "@/lib/roles";
+import { ALL_PERMS, DEFAULT_IZIN, PERMS_V1, type Divisi, type PermKey, type RoleKey } from "@/lib/roles";
 
 export type OrgData = {
   dpp: string; // teks bebas, boleh kosong
@@ -15,6 +15,7 @@ export type OrgData = {
   itl: Divisi; // IT & Logistik
   pubdok: Divisi; // Publikasi & Dokumentasi
   izin: Record<RoleKey, PermKey[]>; // hak akses tiap peran (diatur Admin Website)
+  izinKeys?: PermKey[]; // daftar izin yang dikenal saat disimpan (izin yang lebih baru memakai nilai bawaan)
 };
 
 // Pengurus kelas CAWU 1.
@@ -43,7 +44,9 @@ export function normOrg(o: Partial<OrgData> | null | undefined): OrgData {
   const d = DEFAULT_ORG;
   const div = (x: Partial<Divisi> | undefined, def: Divisi): Divisi => (x ? { koordinator: x.koordinator ?? "", anggota: Array.isArray(x.anggota) ? x.anggota : [] } : def);
   const izin = { ...d.izin };
-  for (const r of Object.keys(izin) as RoleKey[]) if (Array.isArray(o?.izin?.[r])) izin[r] = o!.izin![r];
+  const known = o?.izinKeys ?? PERMS_V1;
+  for (const r of Object.keys(izin) as RoleKey[])
+    if (Array.isArray(o?.izin?.[r])) izin[r] = [...o!.izin![r], ...d.izin[r].filter((p) => !known.includes(p) && !o!.izin![r].includes(p))];
   return {
     dpp: o?.dpp ?? d.dpp,
     komti: o?.komti ?? d.komti,
@@ -56,6 +59,7 @@ export function normOrg(o: Partial<OrgData> | null | undefined): OrgData {
     itl: div(o?.itl, d.itl),
     pubdok: div(o?.pubdok, d.pubdok),
     izin,
+    izinKeys: ALL_PERMS,
   };
 }
 
