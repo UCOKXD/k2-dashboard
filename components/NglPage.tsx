@@ -5,6 +5,7 @@ import { ArrowLeft, Check, EyeOff, Flag, Lock, MessageCircleHeart, Search, Send,
 import { adminFetch, useAuth } from "@/components/AuthProvider";
 import { Loading } from "@/components/admin/ui";
 import { STUDENTS } from "@/lib/students";
+import { avatarSrc, useAvatars } from "@/components/useAvatars";
 
 const MIN = 10;
 const MAX = 500;
@@ -102,6 +103,7 @@ export default function NglPage() {
       .catch((e: Error) => setErr(e.message));
   }, [canUse]);
 
+  const avatars = useAvatars();
   const others = useMemo(() => STUDENTS.filter((s) => s.absen !== user?.absen), [user?.absen]);
   const list = others.filter((s) => !q.trim() || `${s.full} ${s.short} ${s.absen}`.toLowerCase().includes(q.trim().toLowerCase()));
   const totalMsgs = data?.received.reduce((n, g) => n + g.messages.length, 0) ?? 0;
@@ -236,8 +238,20 @@ export default function NglPage() {
                       isDone ? "border-emerald-200 bg-emerald-50/80" : "border-slate-200 bg-white hover:-translate-y-0.5 hover:border-sea-300 hover:shadow-md"
                     }`}
                   >
-                    <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full text-xs font-bold ${isDone ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-600"}`}>
-                      {isDone ? <Check size={16} /> : s.absen}
+                    <span className="relative shrink-0">
+                      {avatarSrc(avatars, s.absen) ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={avatarSrc(avatars, s.absen)} alt="" loading="lazy" className="h-9 w-9 rounded-full object-cover" />
+                      ) : (
+                        <span className={`grid h-9 w-9 place-items-center rounded-full font-mono text-xs font-bold ${isDone ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-600"}`}>
+                          {isDone ? <Check size={16} /> : s.absen}
+                        </span>
+                      )}
+                      {isDone && avatarSrc(avatars, s.absen) && (
+                        <span className="absolute -bottom-0.5 -right-0.5 grid h-4 w-4 place-items-center rounded-full bg-emerald-500 text-white ring-2 ring-white">
+                          <Check size={10} strokeWidth={3} />
+                        </span>
+                      )}
                     </span>
                     <span className="min-w-0">
                       <span className="block truncate text-sm font-semibold text-slate-800">{s.full}</span>

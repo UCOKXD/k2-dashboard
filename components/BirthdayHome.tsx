@@ -5,6 +5,7 @@ import { Send, Trash2 } from "lucide-react";
 import Sticker from "@/components/Sticker";
 import { adminFetch, usePerm } from "@/components/AuthProvider";
 import { joinNames } from "@/components/Birthday";
+import { avatarSrc, useAvatars } from "@/components/useAvatars";
 import type { BdayInfo, BdayPerson, Wish } from "@/lib/birthday";
 
 const WISH_MAX = 200;
@@ -36,7 +37,7 @@ const initials = (nama: string) =>
 function Avatar({ nama, photo }: { nama: string; photo?: string }) {
   return (
     <span className="relative grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full border-2 border-white/70 bg-gradient-to-br from-axo-500 to-sea-500 text-lg font-black text-white shadow-[0_8px_20px_rgba(11,30,61,0.35)] sm:h-[72px] sm:w-[72px] sm:text-2xl">
-      {photo ? <Image src={photo} alt="" fill sizes="72px" className="object-cover" /> : initials(nama)}
+      {photo ? <Image src={photo} alt="" fill sizes="72px" unoptimized className="object-cover" /> : initials(nama)}
     </span>
   );
 }
@@ -45,6 +46,7 @@ type Piece = { id: number; x: number; y: number; dx: number; dy: number; rot: nu
 
 // Banner pengganti foto beranda, hanya pada hari ada yang ulang tahun.
 export function BirthdayHero({ people }: { people: BdayPerson[] }) {
+  const avatars = useAvatars();
   const [pieces, setPieces] = useState<Piece[]>([]);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const nextId = useRef(0);
@@ -122,7 +124,7 @@ export function BirthdayHero({ people }: { people: BdayPerson[] }) {
                   people.length > 3 ? "min-w-[40%] sm:min-w-0" : ""
                 } ${people.length >= 3 ? "sm:flex-[0_1_280px]" : "max-w-[340px] sm:flex-[0_1_340px]"}`}
               >
-                <Avatar nama={p.nama} />
+                <Avatar nama={p.nama} photo={avatarSrc(avatars, p.absen)} />
                 <div className="min-w-0">
                   <p
                     className={`break-words font-display font-extrabold leading-tight tracking-[-0.02em] ${people.length >= 3 ? "text-sm sm:text-2xl" : people.length === 2 ? "text-base sm:text-3xl" : "text-2xl sm:text-3xl"}`}

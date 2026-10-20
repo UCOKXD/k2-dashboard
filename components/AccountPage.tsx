@@ -3,6 +3,7 @@ import Link from "next/link";
 import { LayoutDashboard, Lock, ShieldAlert, UserRound } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import PasswordForm from "@/components/PasswordForm";
+import ProfilePhoto from "@/components/ProfilePhoto";
 import { Loading, Panel } from "@/components/admin/ui";
 import { GRUP_LABEL } from "@/lib/admins";
 
@@ -60,6 +61,10 @@ export default function AccountPage() {
             <LayoutDashboard size={15} /> Buka Panel Admin
           </Link>
         )}
+      </Panel>
+
+      <Panel title="Foto Profil" desc="Tampil di tombol akun, daftar teman di NGL, dan banner ulang tahun.">
+        <ProfilePhoto />
       </Panel>
 
       <Panel title="Ganti Password" desc="Minimal 6 karakter. Setelah diganti, kamu akan diminta masuk lagi.">

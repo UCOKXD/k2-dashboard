@@ -8,6 +8,7 @@ import { ChevronDown, KeyRound, LayoutDashboard, LogIn, LogOut } from "lucide-re
 import AuthProvider, { useAuth } from "@/components/AuthProvider";
 import { GRUP_LABEL } from "@/lib/admins";
 import ThemeToggle from "@/components/ThemeToggle";
+import { avatarSrc, useAvatars } from "@/components/useAvatars";
 import NavIsland from "@/components/NavIsland";
 import UpdateToasts from "@/components/UpdateToasts";
 import MobileNav from "@/components/MobileNav";
@@ -20,6 +21,7 @@ function AccountButton() {
   const [open, setOpen] = useState(false);
   const router = useRouter();
   const box = useRef<HTMLDivElement>(null);
+  const avatars = useAvatars();
 
   useEffect(() => {
     if (!open) return;
@@ -47,7 +49,12 @@ function AccountButton() {
         className="relative flex min-h-9 items-center gap-1.5 rounded-full bg-[#fff] py-1 pl-1 pr-2 text-xs font-semibold text-[#0b1e3d] sm:gap-2 sm:pr-3 sm:text-sm"
       >
         {user.tempPassword && <span aria-label="Password awal belum diganti" className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-white" />}
-        <span className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-sea-500 to-navy-700 text-[11px] text-white">{user.panggilan[0]}</span>
+        {avatarSrc(avatars, user.absen) ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={avatarSrc(avatars, user.absen)} alt="" className="h-7 w-7 rounded-full object-cover" />
+        ) : (
+          <span className="grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-sea-500 to-navy-700 text-[11px] text-white">{user.panggilan[0]}</span>
+        )}
         {/* Nama disembunyikan di layar sempit & saat island menu menempel di header (1024-1279px) supaya tidak bertabrakan. */}
         <span className="hidden sm:inline lg:hidden xl:inline">{user.panggilan}</span>
         <ChevronDown size={14} />

@@ -1,10 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { CheckCircle2, Circle, RotateCcw, TriangleAlert } from "lucide-react";
+import { CheckCircle2, Circle, ImageOff, RotateCcw, TriangleAlert } from "lucide-react";
 import { adminFetch, useAuth } from "@/components/AuthProvider";
 import PasswordForm from "@/components/PasswordForm";
 import { ACCOUNTS, can, type Grup } from "@/lib/admins";
 import { Panel, smallBtn } from "@/components/admin/ui";
+import { avatarSrc, refreshAvatars, useAvatars } from "@/components/useAvatars";
 
 type Status = { username: string; jabatan: string; grup: Grup; admin: boolean; webAdmin: boolean; changed: boolean; birthday: boolean };
 
@@ -25,6 +26,19 @@ export default function AccountTab() {
       .then((d: { items?: Status[] }) => d.items && setStatus(Object.fromEntries(d.items.map((s) => [s.username, s]))))
       .catch(() => {});
   }, [user]);
+
+  const avatars = useAvatars();
+  // Hapus foto profil yang tidak pantas (izin "Akun").
+  async function removePhoto(absen: number, panggilan: string) {
+    if (!confirm(`Hapus foto profil ${panggilan}?`)) return;
+    try {
+      await adminFetch(`/api/avatar?absen=${absen}`, "DELETE");
+      await refreshAvatars();
+      setResetMsg(`Foto profil ${panggilan} dihapus.`);
+    } catch (e) {
+      setResetMsg((e as Error).message);
+    }
+  }
 
   async function reset(username: string, panggilan: string) {
     const awal = "password awal (nomor absen + tanggal lahir)";
@@ -89,7 +103,15 @@ export default function AccountTab() {
                   return (
                     <tr key={a.username} className="border-t border-slate-100">
                       <td className="px-3 py-2 font-mono text-slate-500">{a.absen}</td>
-                      <td className="px-3 py-2">{a.nama}</td>
+                      <td className="px-3 py-2">
+                        <span className="flex items-center gap-2">
+                          {avatarSrc(avatars, a.absen) && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={avatarSrc(avatars, a.absen)} alt="" className="h-7 w-7 shrink-0 rounded-full object-cover" />
+                          )}
+                          {a.nama}
+                        </span>
+                      </td>
                       <td className="px-3 py-2 text-slate-500">
                         {a.jabatan}
                         {a.webAdmin && <span className="ml-1.5 rounded-full bg-navy-900 px-2 py-0.5 text-[11px] font-semibold text-white">Admin Website</span>}
@@ -113,7 +135,12 @@ export default function AccountTab() {
                         )}
                       </td>
                       {canReset && (
-                        <td className="px-3 py-2 text-right">
+                        <td className="space-x-1.5 whitespace-nowrap px-3 py-2 text-right">
+                          {avatarSrc(avatars, a.absen) && (
+                            <button onClick={() => removePhoto(a.absen, a.panggilan)} className={`${smallBtn} inline-flex items-center gap-1`} title="Hapus foto profil">
+                              <ImageOff size={12} /> Foto
+                            </button>
+                          )}
                           {a.username !== user.username && !a.webAdmin && (
                             <button onClick={() => reset(a.username, a.panggilan)} className={`${smallBtn} inline-flex items-center gap-1`}>
                               <RotateCcw size={12} /> Reset
