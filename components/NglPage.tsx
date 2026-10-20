@@ -185,13 +185,6 @@ export default function NglPage() {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
-      <div>
-        <h2 className="flex items-center gap-2 text-2xl font-bold">
-          <MessageCircleHeart className="text-pink-500" /> NGL Kelas
-        </h2>
-        <p className="text-sm text-slate-500">Kirim apresiasi dan masukan untuk tiap teman sekelas. Kamu bisa memilih anonim atau menampilkan panggilanmu.</p>
-      </div>
-
       {view === "menu" && (
         <div className="grid gap-4 sm:grid-cols-2">
           <button onClick={() => data.open && setView("isi")} disabled={!data.open} className={`${CARD} space-y-4 text-left transition enabled:hover:-translate-y-1 disabled:opacity-70`}>

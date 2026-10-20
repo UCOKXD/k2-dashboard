@@ -5,6 +5,7 @@ import { BookOpenCheck, CalendarClock, Cake, GraduationCap } from "lucide-react"
 import { HARI, type ScheduleItem } from "@/lib/content";
 import { jam } from "@/lib/time";
 import type { HomeCards as Cards } from "@/lib/dashboard";
+import { jktParts, useServerOffset } from "@/components/useServerOffset";
 
 const BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 const fmtDate = (ymd: string) => {
@@ -12,11 +13,6 @@ const fmtDate = (ymd: string) => {
   return `${d} ${BULAN[m - 1]} ${y}`;
 };
 
-// Waktu Jakarta sekarang: hari (0 = Minggu) dan menit sejak tengah malam.
-function jktNow() {
-  const n = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Jakarta" }));
-  return { day: n.getDay(), min: n.getHours() * 60 + n.getMinutes() };
-}
 const toMin = (hhmm: string) => {
   const [h, m] = hhmm.split(":").map(Number);
   return h * 60 + m;
@@ -38,87 +34,94 @@ function nextClass(list: ScheduleItem[], now: { day: number; min: number }) {
   return null;
 }
 
-function Card({ icon: Icon, tone, label, href, children }: { icon: typeof Cake; tone: string; label: string; href?: string; children: React.ReactNode }) {
-  const body = (
-    <div className="flex h-full gap-3.5 k2-card p-5 transition hover:-translate-y-0.5 hover:shadow-3">
-      <div className={`h-fit shrink-0 rounded-2xl border p-3 shadow-md ${tone}`}>
+// Satu kolom di strip "Hari ini" (desain v2): ikon, label mono, isi, seluruhnya bisa diklik.
+function Card({ icon: Icon, label, href, children }: { icon: typeof Cake; label: string; href: string; children: React.ReactNode }) {
+  return (
+    <Link
+      href={href}
+      className="flex min-w-0 gap-4 border-line p-[clamp(18px,2.4vw,28px)] transition-colors hover:bg-surface-2 [&+&]:border-t min-[900px]:[&+&]:border-l min-[900px]:[&+&]:border-t-0"
+    >
+      <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-ink">
         <Icon size={22} />
-      </div>
-      <div className="min-w-0">
-        <p className="text-xs font-bold uppercase tracking-wider text-slate-500">{label}</p>
+      </span>
+      <span className="min-w-0">
+        <span className="block font-mono text-[11px] font-semibold uppercase leading-tight tracking-[0.1em] text-ink-3">{label}</span>
         {children}
-      </div>
-    </div>
-  );
-  return href ? (
-    <Link href={href} className="block h-full">
-      {body}
+      </span>
     </Link>
-  ) : (
-    body
   );
 }
 
+const VAL = "mt-1.5 block truncate font-display text-[19px] font-bold leading-tight tracking-[-0.01em] text-ink";
+const META = "mt-1 block text-[13.5px] text-ink-3";
+
 export default function HomeCards({ cards }: { cards: Cards }) {
-  const [now, setNow] = useState<{ day: number; min: number } | null>(null);
+  // Jam Jakarta dari server (bukan jam perangkat), diperbarui tiap 30 detik.
+  const offset = useServerOffset();
+  const [tick, setTick] = useState<number | null>(null);
   useEffect(() => {
-    const t = setTimeout(() => setNow(jktNow()));
-    const id = setInterval(() => setNow(jktNow()), 30_000);
+    const t = setTimeout(() => setTick(Date.now()));
+    const id = setInterval(() => setTick(Date.now()), 30_000);
     return () => {
       clearTimeout(t);
       clearInterval(id);
     };
   }, []);
+  const now = tick === null ? null : jktParts(tick + offset);
 
   const kelas = now ? nextClass(cards.schedule, now) : null;
   const { nextEvent, doaToday, ultah } = cards;
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      <Card icon={GraduationCap} tone="bg-sky-50 text-sky-600 border-sky-200" label="Kelas berikutnya" href="/jadwal">
-        {!cards.schedule.length ? (
-          <p className="mt-1 text-sm text-slate-500">Jadwal kuliah belum diisi admin.</p>
-        ) : kelas ? (
-          <>
-            <p className="mt-1 truncate text-lg font-extrabold text-slate-800">{kelas.s.matkul}</p>
-            <p className="text-sm text-slate-600">
-              <span className={kelas.live ? "font-bold text-emerald-600" : "font-semibold text-sky-600"}>{kelas.when}</span> · {jam(kelas.s.start)}–{jam(kelas.s.end)}
-              {kelas.s.ruang && ` · ${kelas.s.ruang}`}
-            </p>
-          </>
-        ) : (
-          <p className="mt-1 text-sm text-slate-500">{now ? "Tidak ada kelas minggu ini." : "Memuat..."}</p>
-        )}
-      </Card>
+    <div className="space-y-4">
+      <div className="grid grid-cols-1 overflow-hidden rounded-k2-xl border border-line bg-surface shadow-3 min-[900px]:grid-cols-3">
+        <Card icon={GraduationCap} label="Kelas berikutnya" href="/jadwal">
+          {!cards.schedule.length ? (
+            <span className={META}>Jadwal kuliah belum diisi admin.</span>
+          ) : kelas ? (
+            <>
+              <span className={VAL}>{kelas.s.matkul}</span>
+              <span className={META}>
+                <b className={kelas.live ? "font-bold text-ok" : "font-semibold text-accent-ink"}>{kelas.when}</b> · <span className="font-mono">{jam(kelas.s.start)}–{jam(kelas.s.end)}</span>
+                {kelas.s.ruang && ` · ${kelas.s.ruang}`}
+              </span>
+            </>
+          ) : (
+            <span className={META}>{now ? "Tidak ada kelas minggu ini." : "Memuat..."}</span>
+          )}
+        </Card>
 
-      <Card icon={CalendarClock} tone="bg-indigo-50 text-indigo-600 border-indigo-200" label="Acara terdekat" href="/kalender-acara">
-        {nextEvent ? (
-          <>
-            <p className="mt-1 truncate text-lg font-extrabold text-slate-800">{nextEvent.title}</p>
-            <p className="text-sm text-slate-600">
-              <span className="font-bold text-indigo-600">{nextEvent.days === 0 ? "Hari ini!" : nextEvent.days === 1 ? "Besok" : `${nextEvent.days} hari lagi`}</span> ·{" "}
-              {fmtDate(nextEvent.date)}
-            </p>
-          </>
-        ) : (
-          <p className="mt-1 text-sm text-slate-500">Belum ada acara mendatang.</p>
-        )}
-      </Card>
+        <Card icon={CalendarClock} label="Acara terdekat" href="/kalender-acara">
+          {nextEvent ? (
+            <>
+              <span className={VAL}>{nextEvent.title}</span>
+              <span className={META}>
+                <b className="font-bold text-accent-ink">{nextEvent.days === 0 ? "Hari ini!" : nextEvent.days === 1 ? "Besok" : `${nextEvent.days} hari lagi`}</b> ·{" "}
+                <span className="font-mono">{fmtDate(nextEvent.date)}</span>
+              </span>
+            </>
+          ) : (
+            <span className={META}>Belum ada acara mendatang.</span>
+          )}
+        </Card>
 
-      <Card icon={BookOpenCheck} tone="bg-emerald-50 text-emerald-600 border-emerald-200" label="Petugas doa hari ini" href="/doa-harian">
-        {doaToday ? (
-          <>
-            <p className="mt-1 truncate text-lg font-extrabold text-slate-800">{doaToday.name}</p>
-            <p className="text-sm text-slate-600">NIM {doaToday.nim}</p>
-          </>
-        ) : (
-          <p className="mt-1 text-sm text-slate-500">Belum diacak hari ini.</p>
-        )}
-      </Card>
+        <Card icon={BookOpenCheck} label="Petugas doa hari ini" href="/doa-harian">
+          {doaToday ? (
+            <>
+              <span className={VAL}>{doaToday.name}</span>
+              <span className={META}>
+                NIM <span className="font-mono">{doaToday.nim}</span>
+              </span>
+            </>
+          ) : (
+            <span className={META}>Belum diacak hari ini.</span>
+          )}
+        </Card>
+      </div>
 
       {/* Ulang tahun hari ini tampil besar di banner beranda; kartu ini untuk yang akan datang. */}
       {ultah.some((u) => u.days > 0) && (
-        <div className="sm:col-span-2 lg:col-span-3">
+        <div>
           <div className="flex flex-wrap items-center gap-4 rounded-k2-lg border border-pink-200/70 bg-gradient-to-r from-pink-50 via-rose-50 to-amber-50 p-5 shadow-2">
             <div className="rounded-2xl border border-pink-200 bg-surface p-3 text-pink-500 shadow-md">
               <Cake size={22} />

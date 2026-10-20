@@ -218,13 +218,13 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
         <div className="relative z-20 flex w-full flex-col items-center">
           {/* Label diberi latar navy tipis supaya tetap terbaca di atas foto apa pun. */}
           <p
-            className={`rounded-full bg-[rgba(11,30,61,0.5)] px-4 py-1 font-bold uppercase tracking-[0.3em] text-white backdrop-blur-sm ${full ? "text-lg sm:text-2xl" : "text-sm"}`}
+            className={`rounded-full bg-[rgba(11,30,61,0.5)] px-4 py-1 font-mono font-semibold uppercase tracking-[0.32em] text-sea-100 backdrop-blur-sm ${full ? "text-lg sm:text-2xl" : "text-[12.5px]"}`}
             style={SHADOW_LABEL}
           >
             Waktu Indonesia Barat
           </p>
           <p
-          className={`mt-3 font-mono font-black tabular-nums tracking-tight ${full ? "text-[19vw] leading-none" : "text-6xl sm:text-8xl md:text-9xl"} ${now && blinkAt(now.getTime()) ? "text-red-500" : ""}`}
+          className={`mt-3.5 font-mono font-extrabold leading-none tabular-nums tracking-[-0.04em] ${full ? "text-[19vw]" : "text-[clamp(64px,14vw,156px)]"} ${now && blinkAt(now.getTime()) ? "text-red-500" : ""}`}
           style={SHADOW_CLOCK}
         >
             {now ? part(now, "Asia/Jakarta", { hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }) : "--:--:--"}
@@ -234,9 +234,9 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
           </p>
           <div className={`mx-auto mt-6 grid w-full grid-cols-3 gap-3 ${full ? "max-w-2xl" : "max-w-md"}`}>
             {ZONES.map((z) => (
-              <div key={z.tz} className="rounded-2xl bg-[rgba(11,30,61,0.55)] px-2 py-2.5 shadow-inner backdrop-blur-sm">
-                <p className="text-[11px] font-bold tracking-wider text-sea-300">{z.label}</p>
-                <p className="font-mono text-lg font-bold tabular-nums">
+              <div key={z.tz} className="rounded-xl border border-white/[0.12] bg-[rgba(6,18,39,0.6)] px-2 py-2.5 backdrop-blur-sm">
+                <p className="font-mono text-[11px] font-bold tracking-[0.12em] text-sea-300">{z.label}</p>
+                <p className="mt-1.5 font-mono text-[19px] font-bold tabular-nums">
                   {now ? part(now, z.tz, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" }) : "--:--"}
                 </p>
               </div>
@@ -265,8 +265,8 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
                     : `Jam perangkat Anda ${offset > 0 ? "terlambat" : "lebih cepat"} ${diffText(offset)}.`}
             </p>
             {sync && !failed && (
-              <p className="text-xs text-slate-500">
-                Selisih {offset > 0 ? "−" : "+"}
+              <p className="mt-0.5 font-mono text-xs text-ink-3">
+                Jam di atas mengikuti waktu server · selisih jam perangkat {offset > 0 ? "−" : "+"}
                 {(Math.abs(offset) / 1000).toFixed(3).replace(".", ",")} detik · akurasi ±{(sync.accuracy / 1000).toFixed(3).replace(".", ",")} detik
               </p>
             )}
@@ -275,7 +275,7 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
         <button
           onClick={resync}
           disabled={busy}
-          className="flex shrink-0 items-center gap-1.5 rounded-full border border-sea-300 bg-white px-4 py-2 text-sm font-semibold text-navy-900 shadow-sm transition hover:bg-sea-50 disabled:opacity-50"
+          className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink transition hover:border-ink-3 disabled:opacity-50"
         >
           <RefreshCw size={14} className={busy ? "animate-spin" : ""} /> Cek ulang
         </button>

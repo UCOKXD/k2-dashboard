@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import {
   Activity,
@@ -19,6 +20,8 @@ import {
   Filter,
   Flame,
   PieChart as PieIcon,
+  Pause,
+  Play,
   Search,
   Stethoscope,
   UserCheck,
@@ -31,6 +34,10 @@ import { BirthdayHero, BirthdaySection } from "@/components/BirthdayHome";
 import OrgChart from "@/components/OrgChart";
 import { LOCAL_DOA_LOG, doaLog } from "@/lib/dashboard";
 import HomeCards from "@/components/HomeCards";
+import TaskBoard from "@/components/TaskBoard";
+import SectionHead from "@/components/SectionHead";
+import { StatGroup } from "@/components/IzinStats";
+import type { TaskItem } from "@/lib/tasks";
 import { PHOTO_EVERY_MS } from "@/lib/photos";
 import { useGalleryPhotos } from "@/components/useGalleryPhotos";
 import { STUDENTS } from "@/lib/students";
@@ -78,85 +85,111 @@ function HeroClock() {
     };
   }, []);
   return (
-    <span className="min-h-[30px] self-start rounded-full border border-white/25 bg-white/[0.12] px-3.5 py-1.5 text-[13px] font-semibold text-white backdrop-blur-sm">
+    <span className="inline-flex min-h-[32px] items-center gap-2.5 self-start rounded-full border border-white/[0.18] bg-white/10 px-3.5 font-mono text-[12.5px] font-semibold tracking-[0.04em] text-sea-100 backdrop-blur-[6px]">
+      <span className="h-[7px] w-[7px] rounded-full bg-[#4fd1a1]" aria-hidden="true" />
       {text || "\u00a0"}
     </span>
   );
 }
 
+const reducedMotion = () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+// Sampul beranda v2: foto kelas selebar layar (foto Galeri bergantian), teks di kiri, stiker HALO! di kanan.
 function Hero({ photos }: { photos: string[] }) {
   const SLIDES = useGalleryPhotos(photos);
   const ref = useRef<HTMLDivElement>(null);
   const [step, setSlide] = useState(0);
+  const [paused, setPaused] = useState(false);
   const slide = SLIDES.length ? step % SLIDES.length : 0;
 
   useEffect(() => {
-    // Foto Galeri bergantian setiap 6 detik (tidak berganti kalau fotonya cuma satu atau kosong).
-    if (SLIDES.length < 2) return;
+    // Foto Galeri bergantian setiap 6 detik; berhenti kalau dijeda, fotonya cuma satu, atau pengguna memilih gerak dikurangi.
+    if (SLIDES.length < 2 || paused || reducedMotion()) return;
     const id = setInterval(() => setSlide((s) => (s + 1) % SLIDES.length), PHOTO_EVERY_MS);
     return () => clearInterval(id);
-  }, [SLIDES.length]);
+  }, [SLIDES.length, paused]);
 
-  // Banner memudar dan menyusut mengikuti scroll. Hanya transform/opacity, jadi tinggi halaman tidak berubah.
+  // Isi sampul memudar pelan mengikuti scroll (hanya opacity/transform, tinggi halaman tidak berubah).
   useEffect(() => {
+    if (reducedMotion()) return;
     const onScroll = () => {
       const el = ref.current;
       if (!el) return;
-      const p = Math.min(window.scrollY / 380, 1);
-      el.style.opacity = String(1 - p * 0.85);
-      el.style.transform = `translateY(${-p * 24}px) scale(${1 - p * 0.05})`;
+      const p = Math.min(window.scrollY / 480, 1);
+      el.style.opacity = String(1 - p * 0.6);
+      el.style.transform = `translateY(${-p * 24}px)`;
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
-    <div className="mx-auto max-w-[1000px] px-4 pt-20 md:px-0">
-      <div
-        ref={ref}
-        className="relative flex h-[440px] origin-top items-end overflow-hidden rounded-[2.5rem] border-4 border-white bg-[#1f7dba] shadow-[0_30px_70px_rgba(15,23,42,0.35)] will-change-transform sm:h-[460px]"
-      >
-        {SLIDES.map((src, i) => (
-          <Image
-            key={src}
-            src={src}
-            alt={`Slide foto ${i + 1}`}
-            fill
-            unoptimized={src.startsWith("/api/")}
-            priority={i === 0}
-            sizes="1000px"
-            className={`object-cover object-[50%_65%] transition-all duration-1000 ease-in-out ${i === slide ? "scale-100 opacity-100" : "scale-105 opacity-0"}`}
-          />
-        ))}
-        {/* Gelap di kiri (tempat tulisan), memudar ke kanan supaya foto tetap terlihat. */}
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{ background: "linear-gradient(100deg, rgba(11,30,61,0.92) 0%, rgba(27,58,107,0.72) 45%, rgba(31,125,186,0.15) 100%)" }}
+    <section className="relative isolate flex items-end overflow-hidden bg-[#0b1e3d] text-white md:min-h-[clamp(520px,72vh,720px)]" aria-label="Sampul beranda">
+      {SLIDES.map((src, i) => (
+        <Image
+          key={src}
+          src={src}
+          alt=""
+          fill
+          unoptimized={src.startsWith("/api/")}
+          priority={i === 0}
+          sizes="100vw"
+          className={`-z-20 object-cover object-[62%_70%] transition-opacity duration-1000 ease-in-out md:object-[50%_58%] ${i === slide ? "opacity-100" : "opacity-0"}`}
         />
+      ))}
+      {/* Gelap di kiri (tempat tulisan) dan di bawah, memudar ke kanan supaya foto tetap terlihat. */}
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(0deg,rgba(6,18,39,.96)_0%,rgba(11,30,61,.75)_55%,rgba(11,30,61,.35)_100%)] md:bg-[linear-gradient(90deg,rgba(6,18,39,.94)_0%,rgba(11,30,61,.78)_38%,rgba(11,30,61,.22)_72%,rgba(11,30,61,.05)_100%),linear-gradient(0deg,rgba(6,18,39,.9)_0%,transparent_42%)]" />
 
-        <div className="relative z-10 flex max-w-[640px] flex-col gap-3 px-6 pb-16 sm:gap-4 sm:px-14 sm:pb-[72px]">
+      <div className="relative mx-auto w-full max-w-[calc(var(--wadah)+var(--gutter)*2)] px-[var(--gutter)]">
+        <div ref={ref} className="relative flex max-w-[760px] flex-col pb-24 pt-[150px] md:pb-[clamp(88px,10vw,128px)] md:pt-[140px]">
           <HeroClock />
-          <h1 className="text-4xl font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl md:text-6xl">Halo, ABSORBING!</h1>
-          <p className="max-w-[30rem] text-sm leading-relaxed text-white/90 sm:text-lg">
+          <h1 className="mt-[22px] text-[clamp(48px,8.4vw,112px)] font-extrabold leading-[0.94] tracking-[-0.035em]">
+            Halo, <em className="not-italic text-sea-300">ABSORBING!</em>
+          </h1>
+          <p className="mt-5 max-w-[50ch] text-[clamp(16px,1.6vw,19px)] leading-[1.55] text-[#d2deeb]">
             Pusat informasi Divisi K2 — Kesiswaan &amp; Kedisiplinan PPTI 28. Jadwal, izin, tugas, dan pengumuman kelas di satu tempat.
           </p>
+          <div className="mt-7 flex flex-wrap gap-2.5">
+            <Link href="/jadwal" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#fff] px-5 text-[15px] font-semibold text-[#0b1e3d] transition hover:bg-[#f1f8fd]">
+              <GraduationCap size={17} /> Lihat jadwal
+            </Link>
+            <Link href="/kalender-acara" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/35 px-5 text-[15px] font-semibold text-white transition hover:border-white hover:bg-white/[0.06]">
+              <ClipboardList size={17} /> Tugas aktif
+            </Link>
+          </div>
         </div>
+      </div>
 
-        <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 gap-2 sm:bottom-8">
-          {SLIDES.length > 1 && SLIDES.map((_, i) => (
+      {SLIDES.length > 1 && (
+        <div className="absolute bottom-16 right-[var(--gutter)] z-20 flex items-center gap-2 md:bottom-12 md:left-[max(var(--gutter),calc((100vw-var(--wadah))/2))] md:right-auto">
+          {SLIDES.map((_, i) => (
             <button
               key={i}
               onClick={() => setSlide(i)}
               className={`h-2.5 rounded-full transition-all duration-300 ${i === slide ? "w-6 bg-[#ffffff] shadow" : "w-2.5 bg-white/50 hover:bg-white/80"}`}
-              aria-label={`Pindah ke slide ${i + 1}`}
+              aria-label={`Tampilkan foto ${i + 1}`}
+              aria-current={i === slide ? "true" : undefined}
             />
           ))}
+          <button
+            type="button"
+            onClick={() => setPaused((v) => !v)}
+            aria-pressed={paused}
+            aria-label={paused ? "Lanjutkan pergantian foto" : "Jeda pergantian foto"}
+            className="ml-1 grid h-8 w-8 place-items-center rounded-full border border-white/25 bg-white/10 text-white backdrop-blur-[6px] hover:bg-white/20"
+          >
+            {paused ? <Play size={13} /> : <Pause size={13} />}
+          </button>
         </div>
+      )}
 
-        {/* Di ponsel stiker pindah ke pojok kanan atas supaya tidak menutupi tulisan. */}
-        <Sticker name="halo" size={200} className="absolute right-4 top-4 z-20 sm:bottom-10 sm:right-12 sm:top-auto" />
-      </div>
-    </div>
+      {/* Di ponsel stiker pindah ke kanan atas (lebih kecil) supaya tidak menutupi tulisan. */}
+      <Sticker
+        name="halo"
+        size={200}
+        className="absolute right-[var(--gutter)] top-20 z-10 !h-[104px] md:bottom-[72px] md:top-auto md:!h-[clamp(120px,15vw,196px)] min-[1280px]:right-[calc((100vw-var(--wadah))/2)]"
+      />
+    </section>
   );
 }
 
@@ -594,7 +627,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
 
 /* ------------------------------------------------------------ Halaman */
 
-export default function HomeDashboard({ data }: { data: HomeData }) {
+export default function HomeDashboard({ data, tasks, today }: { data: HomeData; tasks: TaskItem[]; today: string }) {
   const [pel, setPel] = useState(data.pelanggaran);
   const [live, setLive] = useState(true);
 
@@ -624,38 +657,45 @@ export default function HomeDashboard({ data }: { data: HomeData }) {
 
   const { stats } = data;
 
+  const bdayToday = data.bday.today.length > 0;
+
   return (
-    <div className="relative min-h-screen overflow-x-clip text-slate-900 selection:bg-blue-100">
+    <div className="relative min-h-screen overflow-x-clip text-ink selection:bg-sea-100">
       {/* Pada hari ada yang ulang tahun, banner foto diganti banner ulang tahun (besoknya kembali normal). */}
-      {data.bday.today.length > 0 ? <BirthdayHero people={data.bday.today} /> : <Hero photos={data.photos} />}
+      {bdayToday ? <BirthdayHero people={data.bday.today} /> : <Hero photos={data.photos} />}
+      {/* Menu pulau melayang di tepi bawah sampul, lalu naik menempel di header saat di-scroll (tablet & desktop). */}
       <NavIsland variant="floating" />
 
-      <div className="mx-auto max-w-6xl space-y-12 px-4 pb-4 pt-8 md:px-8">
-        <div className="grid gap-4 sm:grid-cols-2">
-          {[
-            { label: "Total Pelanggaran", value: pel.total, icon: AlertTriangle, tone: "bg-rose-50 text-rose-600 border-rose-200" },
-            { label: "Total Izin Sakit", value: stats.totalSakit, icon: Stethoscope, tone: "bg-amber-50 text-amber-600 border-amber-200" },
-          ].map(({ label, value, icon: Icon, tone }) => (
-            <div key={label} className="flex items-center justify-between gap-4 k2-card p-6 transition-shadow hover:shadow-3 sm:p-7">
-              <div>
-                <p className="text-base font-semibold text-slate-600 sm:text-lg">{label}</p>
-                <p className="mt-1 text-5xl font-extrabold text-blue-600">{value}</p>
-              </div>
-              <div className={`rounded-2xl border p-4 shadow-md ${tone}`}>
-                <Icon size={28} />
-              </div>
-            </div>
-          ))}
+      <div className="mx-auto max-w-[calc(var(--wadah)+var(--gutter)*2)] space-y-[clamp(48px,6vw,72px)] px-[var(--gutter)] pb-4">
+        {/* Strip "Hari ini": di ponsel menumpang di bawah sampul, di tablet/desktop di bawah menu pulau. */}
+        <div className={`relative z-[3] ${bdayToday ? "mt-8" : "-mt-10 md:mt-6"}`}>
+          <HomeCards cards={data.cards} />
         </div>
 
-        <HomeCards cards={data.cards} />
+        {bdayToday && <BirthdaySection info={data.bday} />}
 
-        {data.bday.today.length > 0 && <BirthdaySection info={data.bday} />}
+        <section aria-labelledby="judul-minggu-ini" className="space-y-5">
+          <SectionHead no="01" label="Minggu ini" title="Tugas & pengumuman" id="judul-minggu-ini" />
+          <TaskBoard tasks={tasks} today={today} />
+          <LogPanel logs={data.logs} />
+        </section>
 
-        <LogPanel logs={data.logs} />
-        <OrgChart org={data.org} />
-        <PieSection pel={pel} />
-        <DashboardSection pel={pel} live={live} />
+        <section aria-labelledby="judul-struktur">
+          <SectionHead no="02" label="Struktur" title="Pengurus kelas ABSORBING" id="judul-struktur" />
+          <OrgChart org={data.org} />
+        </section>
+
+        <section aria-labelledby="judul-statistik" className="space-y-5">
+          <SectionHead no="03" label="Statistik" title="Kedisiplinan kelas" id="judul-statistik" />
+          <StatGroup
+            items={[
+              { label: "Total pelanggaran", value: pel.total, unit: "kasus", sub: "Semua laporan", bad: true },
+              { label: "Total izin sakit", value: stats.totalSakit, unit: "izin", sub: "Semua laporan" },
+            ]}
+          />
+          <PieSection pel={pel} />
+          <DashboardSection pel={pel} live={live} />
+        </section>
       </div>
     </div>
   );

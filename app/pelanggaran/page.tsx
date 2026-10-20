@@ -5,9 +5,11 @@ import DataTable from "@/components/DataTable";
 import AdminLink from "@/components/AdminLink";
 import PelStats from "@/components/PelStats";
 import { pelStats } from "@/lib/pel-stats";
-import Sticker from "@/components/Sticker";
+import PageHero from "@/components/PageHero";
+import SectionHead from "@/components/SectionHead";
 
 export const revalidate = 30;
+export const metadata = { title: "Pelanggaran | K2 PPTI 28" };
 
 export default async function Page() {
   const [t, ov] = await Promise.all([getTable("pelanggaran"), getContent("pelanggaran")]);
@@ -16,55 +18,66 @@ export default async function Page() {
   const stats = pelStats(rows);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-2xl font-bold">Pelanggaran</h2>
-        <AdminLink href="/admin?tab=pelanggaran" label="Kelola pelanggaran" perm="pelanggaran" />
-      </div>
-
-      <PelStats stats={stats} />
-
-      {pel.shame.length > 0 && (
-        <section className="rounded-k2-lg border border-bad/35 bg-bad-soft p-5 shadow-2">
-          <h3 className="mb-4 text-lg font-bold text-red-700">Hall of Shame</h3>
-          <div className="grid gap-4 sm:grid-cols-3">
-            {pel.shame.map((r, i) => (
-              <div key={r.nama} className="rounded-xl border-2 border-dashed border-red-400 bg-amber-50 p-4 text-center shadow transition-transform hover:-rotate-1 hover:scale-105">
-                <p className="text-sm font-bold text-red-600">#{i + 1}</p>
-                <p className="my-2 text-lg font-extrabold">{r.nama}</p>
-                <p className="text-3xl font-black text-red-600">
-                  {r.jumlah} <span className="text-sm font-semibold">poin</span>
-                </p>
-                <p className="text-xs text-red-500">{r.kasus} pelanggaran</p>
-              </div>
-            ))}
-          </div>
+    <>
+      <PageHero
+        eyebrow="Kedisiplinan"
+        title="Pelanggaran"
+        lede="Catatan kedisiplinan kelas ABSORBING, diperbarui oleh Divisi K2."
+        sticker="cari-info"
+        actions={<AdminLink href="/admin?tab=pelanggaran" label="Kelola pelanggaran" perm="pelanggaran" />}
+      />
+      <div className="space-y-12 py-[clamp(32px,5vw,56px)]">
+        <section>
+          <SectionHead no="01" label="Ringkasan" title="Angka pelanggaran" />
+          <PelStats stats={stats} />
         </section>
-      )}
 
-      <DataTable
-        head="bg-navy-900 text-white"
-        cols={[
-          { key: "nama", label: "Nama" },
-          { key: "kasus", label: "Jumlah pelanggaran" },
-          { key: "poin", label: "Total poin" },
-        ]}
-        rows={pel.students.map((r) => ({ nama: r.nama, kasus: String(r.kasus), poin: String(r.jumlah) }))}
-      />
+        {pel.shame.length > 0 && (
+          <section className="rounded-k2-lg border border-bad/35 bg-bad-soft p-5 shadow-2">
+            <h3 className="mb-4 text-lg font-bold text-red-700">Hall of Shame</h3>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {pel.shame.map((r, i) => (
+                <div key={r.nama} className="rounded-xl border-2 border-dashed border-red-400 bg-amber-50 p-4 text-center shadow transition-transform hover:-rotate-1 hover:scale-105">
+                  <p className="font-mono text-sm font-bold text-red-600">#{i + 1}</p>
+                  <p className="my-2 text-lg font-extrabold">{r.nama}</p>
+                  <p className="font-display text-3xl font-black text-red-600">
+                    {r.jumlah} <span className="font-sans text-sm font-semibold">poin</span>
+                  </p>
+                  <p className="text-xs text-red-500">{r.kasus} pelanggaran</p>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
-      <h3 className="pt-4 text-lg font-bold">Riwayat laporan</h3>
-      <DataTable
-        head="bg-sea-100 text-navy-900"
-        sticker={<Sticker name="cari-info" size={120} />}
-        cols={[
-          { key: "tanggal", label: "Tanggal" },
-          { key: "nama", label: "Nama" },
-          { key: "kat", label: "Jenis pelanggaran" },
-          { key: "ket", label: "Keterangan" },
-          { key: "poin", label: "Poin" },
-        ]}
-        rows={rows.map((r) => ({ tanggal: r.tanggal, nama: r.nama, kat: r.kat, ket: r.ket, poin: String(r.poin) }))}
-      />
-    </div>
+        <section>
+          <SectionHead no="02" label="Rekap" title="Per siswa" />
+          <DataTable
+            label="rekap per siswa"
+            cols={[
+              { key: "nama", label: "Nama" },
+              { key: "kasus", label: "Jumlah pelanggaran" },
+              { key: "poin", label: "Total poin" },
+            ]}
+            rows={pel.students.map((r) => ({ nama: r.nama, kasus: String(r.kasus), poin: String(r.jumlah) }))}
+          />
+        </section>
+
+        <section>
+          <SectionHead no="03" label="Detail" title="Riwayat laporan" />
+          <DataTable
+            label="riwayat laporan"
+            cols={[
+              { key: "tanggal", label: "Tanggal" },
+              { key: "nama", label: "Nama" },
+              { key: "kat", label: "Jenis pelanggaran" },
+              { key: "ket", label: "Keterangan" },
+              { key: "poin", label: "Poin" },
+            ]}
+            rows={rows.map((r) => ({ tanggal: r.tanggal, nama: r.nama, kat: r.kat, ket: r.ket, poin: String(r.poin) }))}
+          />
+        </section>
+      </div>
+    </>
   );
 }

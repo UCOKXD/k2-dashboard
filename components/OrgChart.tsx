@@ -1,4 +1,4 @@
-import { BookOpen, Camera, Crown, GraduationCap, Laptop, Shield, User, Users, Wallet } from "lucide-react";
+import { BookOpen, Camera, Crown, GraduationCap, Laptop, Shield, User, Wallet } from "lucide-react";
 import type { OrgData } from "@/lib/content";
 import { DIV_KEYS, ROLE_DEF, type DivKey } from "@/lib/roles";
 import { STUDENTS } from "@/lib/students";
@@ -68,13 +68,6 @@ export default function OrgChart({ org }: { org: OrgData }) {
   return (
     <section id="organisasi" className="scroll-mt-32">
       <div className="k2-card space-y-5 p-6 md:p-8">
-        <div className="text-center">
-          <span className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
-            <Users size={14} /> Struktur Kepengurusan
-          </span>
-          <h2 className="text-2xl font-extrabold text-slate-800">Pengurus Kelas ABSORBING</h2>
-        </div>
-
         {/* Tiap level disambung garis vertikal. */}
         <div className="flex flex-col items-center">
           <Box role="DPP" icon={Crown} text={org.dpp} className="w-full max-w-[16rem] justify-center border-amber-400 bg-gradient-to-r from-amber-500 to-orange-500" />

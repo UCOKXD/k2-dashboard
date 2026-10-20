@@ -2,60 +2,65 @@
 import { useState } from "react";
 import type { Count, IzinStatsData } from "@/lib/izin-stats";
 
-// Satu seri per grafik = satu warna. Warna dipilih per halaman (accent), teks tetap memakai warna teks biasa.
-const panel = "k2-card p-5 sm:p-6";
+// Grafik div + flex (tanpa pustaka). Desain v2: satu seri = sea-600, bulan berjalan navy (gelap: sea-300),
+// "Lainnya" abu tinta. Kelas warnanya ada di app/globals.css (.k2-bar).
+const panel = "k2-card min-w-0 p-5 sm:p-6";
 
-export function Tile({ label, value }: { label: string; value: number }) {
+export type StatItem = { label: string; value: number | string; unit?: string; sub?: string; bad?: boolean };
+
+// Tiga angka dalam satu kartu bersekat.
+export function StatGroup({ items }: { items: StatItem[] }) {
   return (
-    <div className={panel}>
-      <p className="text-sm font-semibold text-slate-500">{label}</p>
-      <p className="mt-1 text-4xl font-extrabold text-slate-800">{value}</p>
+    <div className="k2-stats" style={{ "--n": items.length } as React.CSSProperties}>
+      {items.map((s) => (
+        <div key={s.label} className={`k2-stat ${s.bad ? "k2-stat--bad" : ""}`}>
+          <p className="k2-stat__label">{s.label}</p>
+          <p className="k2-stat__nilai">
+            {s.value}
+            {s.unit && <small className="ml-1 font-sans text-[15px] font-medium tracking-normal text-ink-3">{s.unit}</small>}
+          </p>
+          {s.sub && <p className="k2-stat__sub">{s.sub}</p>}
+        </div>
+      ))}
     </div>
   );
 }
 
-// Batang horizontal: label di kiri, nilai di ujung batang, tooltip saat disorot.
-// restAccent = warna batang "Lainnya" (opsional); footer = isi tambahan di bawah grafik.
-export function BarList({
-  title,
-  data,
-  accent,
-  empty,
-  restAccent,
-  footer,
-}: {
-  title: string;
-  data: Count[];
-  accent: string;
-  empty: string;
-  restAccent?: string;
-  footer?: React.ReactNode;
-}) {
+function Tip({ children, className }: { children: React.ReactNode; className: string }) {
+  return <span className={`pointer-events-none absolute z-10 whitespace-nowrap rounded-k2-md bg-navy-950 px-2.5 py-1 font-mono text-xs text-white shadow-3 ${className}`}>{children}</span>;
+}
+
+// Batang horizontal: label di kiri, nilai di kanan, tooltip saat disorot.
+// footer = isi tambahan di bawah grafik.
+export function BarList({ title, data, empty, footer }: { title: string; data: Count[]; empty: string; footer?: React.ReactNode }) {
   const [hover, setHover] = useState<number | null>(null);
   const max = Math.max(1, ...data.map((d) => d.n));
   return (
     <div className={panel}>
-      <h3 className="mb-4 font-bold text-slate-800">{title}</h3>
-      {data.length === 0 && <p className="text-sm text-slate-400">{empty}</p>}
-      <ul className="space-y-2.5">
+      <h3 className="mb-5 text-lg font-bold sm:text-xl">{title}</h3>
+      {data.length === 0 && <p className="text-sm text-ink-3">{empty}</p>}
+      <ul className="flex flex-col gap-3.5">
         {data.map((d, i) => (
-          <li key={d.label} className="relative grid grid-cols-[9rem_1fr] items-center gap-3" onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}>
-            <span className="truncate text-sm font-medium text-slate-700" title={d.sub ?? d.label}>
+          <li
+            key={d.label}
+            className="relative grid grid-cols-[minmax(96px,38%)_minmax(0,1fr)_32px] items-center gap-3 text-sm"
+            onMouseEnter={() => setHover(i)}
+            onMouseLeave={() => setHover(null)}
+          >
+            <span className="truncate font-medium text-ink-2" title={d.sub ?? d.label}>
               {d.label}
             </span>
-            <div className="flex items-center gap-2">
-              <div className="h-4 flex-1 rounded-r">
-                <div
-                  className={`h-4 rounded-r-[4px] transition-[width,opacity] duration-500 ${restAccent && d.label === "Lainnya" ? restAccent : accent} ${hover !== null && hover !== i ? "opacity-40" : ""}`}
-                  style={{ width: `${(d.n / max) * 100}%` }}
-                />
-              </div>
-              <span className="w-7 shrink-0 text-right text-sm font-bold tabular-nums text-slate-700">{d.n}</span>
-            </div>
+            <span className="h-3 overflow-hidden rounded-[6px] bg-surface-2">
+              <span
+                className={`block h-full rounded-[6px] transition-[width,opacity] duration-500 ${d.label === "Lainnya" ? "k2-bar--lain" : "k2-bar"} ${hover !== null && hover !== i ? "opacity-40" : ""}`}
+                style={{ width: `${(d.n / max) * 100}%` }}
+              />
+            </span>
+            <span className="text-right font-mono text-[13px] font-semibold text-ink">{d.n}</span>
             {hover === i && (
-              <span className="pointer-events-none absolute -top-8 left-36 z-10 whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1 text-xs text-white shadow-lg">
+              <Tip className="-top-8 left-24">
                 {d.sub ?? d.label}: {d.n} kali
-              </span>
+              </Tip>
             )}
           </li>
         ))}
@@ -65,35 +70,42 @@ export function BarList({
   );
 }
 
-// Kolom per bulan (6 bulan terakhir) dengan satu garis dasar.
-// currentAccent = warna batang bulan berjalan (batang terakhir); empty = teks kalau semua bulan kosong.
-export function MonthColumns({ title, data, accent, currentAccent, empty }: { title: string; data: Count[]; accent: string; currentAccent?: string; empty?: string }) {
+// Kolom per bulan (6 bulan terakhir) dengan garis bantu; batang terakhir = bulan berjalan.
+export function MonthColumns({ title, data, empty }: { title: string; data: Count[]; empty?: string }) {
   const [hover, setHover] = useState<number | null>(null);
   const max = Math.max(1, ...data.map((d) => d.n));
   const none = data.every((d) => !d.n);
   return (
     <div className={panel}>
-      <h3 className="mb-4 font-bold text-slate-800">{title}</h3>
-      <div className="relative flex h-44 items-end gap-3 border-b border-slate-200 px-1">
-        {none && empty && <p className="absolute inset-0 grid place-items-center text-sm text-slate-400">{empty}</p>}
+      <h3 className="mb-5 text-lg font-bold sm:text-xl">{title}</h3>
+      <div
+        className="relative flex h-48 items-end gap-[clamp(8px,2vw,18px)] border-b border-line-strong px-1"
+        style={{ backgroundImage: "linear-gradient(var(--line) 1px, transparent 1px)", backgroundSize: "100% 50%" }}
+      >
+        {none && empty && <p className="absolute inset-0 grid place-items-center text-sm text-ink-3">{empty}</p>}
         {data.map((d, i) => (
-          <div key={`${d.label}${d.sub}`} className="relative flex h-full flex-1 flex-col items-center justify-end" onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)}>
-            <span className="mb-1 text-xs font-bold tabular-nums text-slate-700">{d.n || ""}</span>
+          <div
+            key={`${d.label}${d.sub}`}
+            className="relative flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-1.5"
+            onMouseEnter={() => setHover(i)}
+            onMouseLeave={() => setHover(null)}
+          >
+            <span className="font-mono text-xs font-semibold text-ink-2">{d.n || ""}</span>
             <div
-              className={`w-full max-w-6 rounded-t-[4px] transition-[height,opacity] duration-500 ${currentAccent && i === data.length - 1 ? currentAccent : accent} ${hover !== null && hover !== i ? "opacity-40" : ""}`}
-              style={{ height: `${(d.n / max) * 100}%`, minHeight: d.n ? 4 : 0 }}
+              className={`w-full max-w-11 rounded-t-[4px] transition-[height,opacity] duration-500 ${i === data.length - 1 ? "k2-bar--now" : "k2-bar"} ${hover !== null && hover !== i ? "opacity-40" : ""}`}
+              style={{ height: `${(d.n / max) * 82}%`, minHeight: d.n ? 4 : 0 }}
             />
             {hover === i && (
-              <span className="pointer-events-none absolute -top-7 z-10 whitespace-nowrap rounded-lg bg-slate-900 px-2.5 py-1 text-xs text-white shadow-lg">
+              <Tip className="-top-7">
                 {d.label} {d.sub}: {d.n}
-              </span>
+              </Tip>
             )}
           </div>
         ))}
       </div>
-      <div className="mt-2 flex gap-3 px-1">
-        {data.map((d) => (
-          <span key={`${d.label}${d.sub}`} className="flex-1 text-center text-xs text-slate-500">
+      <div className="mt-2 flex gap-[clamp(8px,2vw,18px)] px-1">
+        {data.map((d, i) => (
+          <span key={`${d.label}${d.sub}`} className={`min-w-0 flex-1 text-center font-mono text-xs ${i === data.length - 1 ? "font-bold text-ink" : "text-ink-3"}`}>
             {d.label}
           </span>
         ))}
@@ -102,19 +114,23 @@ export function MonthColumns({ title, data, accent, currentAccent, empty }: { ti
   );
 }
 
-export default function IzinStats({ stats, accent, unit }: { stats: IzinStatsData; accent: string; unit: string }) {
+const bulanIni = () => new Date().toLocaleDateString("id-ID", { timeZone: "Asia/Jakarta", month: "long", year: "numeric" });
+
+export default function IzinStats({ stats, unit }: { stats: IzinStatsData; unit: string }) {
   return (
-    <div className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Tile label={`Total ${unit}`} value={stats.total} />
-        <Tile label={`${unit[0].toUpperCase()}${unit.slice(1)} bulan ini`} value={stats.monthTotal} />
-        <Tile label="Jumlah siswa" value={stats.students} />
+    <div className="space-y-5">
+      <StatGroup
+        items={[
+          { label: `Total ${unit}`, value: stats.total, sub: "Semua data di spreadsheet" },
+          { label: "Bulan ini", value: stats.monthTotal, sub: bulanIni() },
+          { label: `Siswa yang pernah ${unit}`, value: stats.students, sub: "Dari seluruh kelas" },
+        ]}
+      />
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-5 min-[900px]:grid-cols-2">
+        <BarList title={`Siswa paling sering ${unit}`} data={stats.byName} empty="Belum ada data." />
+        <MonthColumns title={`Jumlah ${unit} per bulan`} data={stats.byMonth} />
       </div>
-      <div className="grid gap-4 lg:grid-cols-2">
-        <BarList title={`Siswa paling sering ${unit}`} data={stats.byName} accent={accent} empty="Belum ada data." />
-        <MonthColumns title={`Jumlah ${unit} per bulan (6 bulan terakhir)`} data={stats.byMonth} accent={accent} />
-      </div>
-      {stats.byCategory.length > 0 && <BarList title={stats.categoryLabel} data={stats.byCategory} accent={accent} empty="Belum ada data." />}
+      {stats.byCategory.length > 0 && <BarList title={stats.categoryLabel} data={stats.byCategory} empty="Belum ada data." />}
     </div>
   );
 }

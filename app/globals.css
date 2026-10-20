@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @config "../tailwind.config.ts";
+/* Varian dark: mengikuti kelas .dark di <html> (bukan pengaturan sistem). */
+@custom-variant dark (&:where(.dark, .dark *));
 
 /* ------------------------------------------------------------------ Token desain v2
    "Laut Dalam, Buletin Kelas". Sumber kebenaran: desain-web-k2-v2/aset/k2.css.
@@ -360,3 +362,73 @@ html { scroll-padding-top: calc(var(--header-h) + 72px); }
 @keyframes k2SheetUp { from { transform: translateY(100%); } to { transform: none; } }
 .k2-sheet { animation: k2SheetUp 0.28s var(--ease); }
 @media (prefers-reduced-motion: reduce) { .k2-sheet { animation: none; } }
+
+/* ------------------------------------------------------------------ Halaman v2 (Fase C) */
+:root { --art-laut: none; --art-ulang-tahun: none; } /* slot latar Higgsfield (Fase F), kosong dulu */
+
+/* Kepala halaman biru: navy + cahaya laut + pola gelombang halus. Lebar penuh layar. */
+.k2-page-hero {
+  position: relative; overflow: hidden; isolation: isolate; color: #fff; background: #0b1e3d;
+  width: 100vw; margin-left: calc(50% - 50vw);
+}
+.k2-page-hero::before {
+  content: ""; position: absolute; inset: 0; z-index: -1;
+  background-image: var(--art-laut), radial-gradient(120% 140% at 85% 0%, rgba(46,155,224,.38), transparent 55%), radial-gradient(80% 120% at 0% 100%, rgba(27,58,107,.9), transparent 60%);
+  background-size: cover; background-position: center;
+}
+.k2-page-hero::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; opacity: .5;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120' viewBox='0 0 240 120'%3E%3Cpath d='M0 60c40-24 80-24 120 0s80 24 120 0' fill='none' stroke='%238fcff1' stroke-opacity='.12' stroke-width='1.2'/%3E%3Cpath d='M0 90c40-24 80-24 120 0s80 24 120 0' fill='none' stroke='%238fcff1' stroke-opacity='.07' stroke-width='1'/%3E%3C/svg%3E");
+}
+.k2-page-hero__in {
+  display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 24px;
+  max-width: calc(var(--wadah) + var(--gutter) * 2); margin-inline: auto; padding-inline: var(--gutter);
+  padding-block: clamp(84px, 9vw, 112px) clamp(32px, 4vw, 48px);
+}
+.k2-page-hero .k2-eyebrow { color: var(--sea-300, #8fcff1); }
+.k2-page-hero .k2-eyebrow::after { background: rgba(143,207,241,.4); }
+.k2-page-hero h1 { font-size: clamp(38px, 6vw, 72px); font-weight: 800; line-height: 1; letter-spacing: -.03em; margin-top: 14px; }
+.k2-page-hero__lede { margin-top: 14px; max-width: 56ch; color: #c9d6e6; font-size: clamp(15px, 1.4vw, 17px); text-wrap: pretty; }
+.k2-page-hero__host { margin-bottom: -6px; filter: drop-shadow(0 14px 22px rgba(0,0,0,.35)); }
+@media (max-width: 767px) {
+  .k2-page-hero__in { grid-template-columns: 1fr; padding-top: 40px; }
+  .k2-page-hero__host { position: absolute; right: var(--gutter); top: 18px; }
+  .k2-page-hero h1 { padding-right: 96px; }
+}
+
+/* Statistik: tiga angka dalam satu kartu bersekat */
+.k2-stats { display: grid; grid-template-columns: repeat(var(--n, 3), minmax(0, 1fr)); background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--shadow-1); }
+.k2-stat { padding: clamp(18px, 2.4vw, 28px); min-width: 0; }
+.k2-stat + .k2-stat { border-left: 1px solid var(--line); }
+.k2-stat__label { font: 600 11.5px/1.3 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.k2-stat__nilai { font: 700 clamp(30px, 4vw, 44px)/1 var(--font-display); letter-spacing: -.02em; margin-top: 12px; font-variant-numeric: tabular-nums; color: var(--ink); }
+.k2-stat__sub { margin-top: 8px; font-size: 13px; color: var(--ink-3); }
+.k2-stat--bad .k2-stat__nilai { color: var(--bad); }
+@media (max-width: 720px) { .k2-stats { grid-template-columns: 1fr; } .k2-stat + .k2-stat { border-left: 0; border-top: 1px solid var(--line); } }
+
+/* Tabel: kepala mono, baris bergaris; di ponsel jadi kartu bertumpuk "LABEL — nilai" */
+.k2-tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
+.k2-tbl th { text-align: left; font: 600 11px/1.2 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); padding: 14px 18px; background: var(--surface-2); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 1; }
+.k2-tbl td { padding: 14px 18px; border-bottom: 1px solid var(--line); color: var(--ink-2); vertical-align: top; }
+.k2-tbl tbody tr:last-child td { border-bottom: 0; }
+.k2-tbl tbody tr:hover td { background: color-mix(in srgb, var(--accent-soft) 55%, transparent); }
+.k2-tbl td:first-child { color: var(--ink); font-weight: 600; }
+.k2-tbl .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; }
+.dark .k2-tbl thead { color: var(--ink-3) !important; }
+@media (max-width: 720px) {
+  .k2-tbl thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .k2-tbl, .k2-tbl tbody, .k2-tbl tr, .k2-tbl td { display: block; width: 100%; }
+  .k2-tbl tr { padding: 12px 16px; border-bottom: 1px solid var(--line); }
+  .k2-tbl tbody tr:last-child { border-bottom: 0; }
+  .k2-tbl td { display: grid; grid-template-columns: 40% minmax(0, 1fr); gap: 12px; padding: 6px 0; border: 0; text-align: left !important; overflow-wrap: anywhere; }
+  .k2-tbl td::before { content: attr(data-label); font: 600 11px/1.5 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+  .k2-tbl tbody tr:hover td { background: none; }
+}
+
+/* Batang grafik: warna seri tunggal sea-600, bulan berjalan navy (gelap: sea-300), "Lainnya" ink-3 */
+.k2-bar { background: #1f7dba; }
+.k2-bar--now { background: #0b1e3d; }
+.k2-bar--lain { background: var(--ink-3); }
+.dark .k2-bar { background: #2e9be0; }
+.dark .k2-bar--now { background: #8fcff1; }
+.dark .k2-bar--lain { background: var(--ink-3); }

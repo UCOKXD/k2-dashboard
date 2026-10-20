@@ -1,20 +1,20 @@
 import SeatPlanner from "@/components/SeatPlanner";
 import TapReminder from "@/components/TapReminder";
-import Sticker from "@/components/Sticker";
+import PageHero from "@/components/PageHero";
 import { getContent } from "@/lib/content-server";
 
 export const revalidate = 30;
+export const metadata = { title: "Tempat Duduk | K2 PPTI 28" };
 
 export default async function Page() {
   const seats = await getContent("seats");
   return (
-    <div className="space-y-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-2xl font-bold">Tempat Duduk</h2>
-        <Sticker name="duduk-sini" size={150} />
+    <>
+      <PageHero eyebrow="Tempat duduk" title="Tempat Duduk" lede="Denah tempat duduk kelas ABSORBING yang diatur Divisi K2." sticker="duduk-sini" />
+      <div className="space-y-6 py-[clamp(32px,5vw,56px)]">
+        <TapReminder />
+        <SeatPlanner initial={seats} />
       </div>
-      <TapReminder />
-      <SeatPlanner initial={seats} />
-    </div>
+    </>
   );
 }

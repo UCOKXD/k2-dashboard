@@ -11,7 +11,7 @@ import { STUDENTS } from "@/lib/students";
 export const revalidate = 30;
 
 export default async function Home() {
-  const [pel, sakit, izin, acara, doa, ov, org, activity, birthdays, schedule, gallery] = await Promise.all([
+  const [pel, sakit, izin, acara, doa, ov, org, activity, birthdays, schedule, gallery, tasks] = await Promise.all([
     getTable("pelanggaran"),
     getTable("sakit"),
     getTable("izin"),
@@ -23,6 +23,7 @@ export default async function Home() {
     getContent("birthdays"),
     getContent("schedule"),
     getContent("gallery"),
+    getContent("tasks"),
   ]);
 
   const today = todayJkt();
@@ -50,6 +51,8 @@ export default async function Home() {
 
   return (
     <HomeDashboard
+      tasks={tasks}
+      today={today}
       data={{
         stats: { totalSakit: sakit.rows.length },
         pelanggaran: buildPelanggaran(pel, ov),

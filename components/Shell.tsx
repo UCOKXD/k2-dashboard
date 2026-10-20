@@ -93,12 +93,16 @@ export default function Shell({ children }: { children: React.ReactNode }) {
   );
 }
 
+// Halaman publik yang memakai kepala halaman biru (components/PageHero.tsx).
+const HERO_PAGES = ["/jadwal", "/izin", "/izin-sakit", "/pelanggaran", "/doa-harian", "/kalender-acara", "/tempat-duduk", "/galeri", "/ngl"];
+
 function Frame({ children }: { children: React.ReactNode }) {
   const path = usePathname();
   const home = path === "/";
+  const hero = HERO_PAGES.includes(path); // halaman dengan kepala halaman biru (PageHero) di paling atas
   const bday = useBirthday().today.length > 0; // tema ulang tahun aktif hari ini
   return (
-    <div className="relative flex min-h-screen flex-col pb-[calc(68px+env(safe-area-inset-bottom))] md:pb-0">
+    <div className="relative flex min-h-screen flex-col overflow-x-clip pb-[calc(68px+env(safe-area-inset-bottom))] md:pb-0">
       <a
         href="#isi"
         className="fixed left-3 top-[-60px] z-[100] rounded-k2-md bg-surface px-4 py-2.5 font-bold text-ink shadow-3 transition-[top] focus:top-3"
@@ -141,9 +145,11 @@ function Frame({ children }: { children: React.ReactNode }) {
       <main
         id="isi"
         tabIndex={-1}
-        className={`flex-1 outline-none ${home ? "" : `relative z-[2] mx-auto w-full max-w-6xl p-4 sm:p-8 ${bday ? "pt-32 sm:pt-36 md:pt-44" : "pt-[88px] sm:pt-24 md:pt-36 lg:pt-28"}`}`}
+        className={`flex-1 outline-none ${
+          home ? "" : hero ? "relative mx-auto w-full max-w-[calc(var(--wadah)+var(--gutter)*2)] px-[var(--gutter)] pt-16" : `relative z-[2] mx-auto w-full max-w-6xl p-4 sm:p-8 ${bday ? "pt-32 sm:pt-36 md:pt-44" : "pt-[88px] sm:pt-24 md:pt-36 lg:pt-28"}`
+        }`}
       >
-        {bday && !home && <BirthdayStrip />}
+        {bday && !home && !hero && <BirthdayStrip />}
         {children}
         {bday && !home && <BottomBunting />}
       </main>
