@@ -25,7 +25,7 @@ export default async function Page() {
       <PelStats stats={stats} />
 
       {pel.shame.length > 0 && (
-        <section className="rounded-2xl border-2 border-red-300 bg-red-50/80 p-5 shadow-[0_20px_45px_rgba(15,23,42,0.18)] backdrop-blur-md">
+        <section className="rounded-k2-lg border border-bad/35 bg-bad-soft p-5 shadow-2">
           <h3 className="mb-4 text-lg font-bold text-red-700">Hall of Shame</h3>
           <div className="grid gap-4 sm:grid-cols-3">
             {pel.shame.map((r, i) => (

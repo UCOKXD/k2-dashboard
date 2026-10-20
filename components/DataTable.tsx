@@ -33,15 +33,15 @@ export default function DataTable({
       </div>
       {shown.length === 0 ? (
         !rows.length && emptySticker ? (
-          <div className="flex items-center gap-4 rounded-xl bg-white/75 p-5 text-sm text-slate-600 backdrop-blur-md">
+          <div className="k2-card flex items-center gap-4 p-5 text-sm text-slate-600">
             <Sticker name="belum-ada-data" size={120} />
             <p>Laporan dari Google Form akan muncul di sini setelah ada yang mengisi.</p>
           </div>
         ) : (
-          <p className="rounded-xl bg-white/75 p-6 text-sm backdrop-blur-md">{rows.length ? "Tidak ada yang cocok." : "Belum ada data."}</p>
+          <p className="k2-card p-6 text-sm">{rows.length ? "Tidak ada yang cocok." : "Belum ada data."}</p>
         )
       ) : (
-        <div className="max-h-[70vh] overflow-auto rounded-xl border border-white/60 bg-white/75 shadow-[0_18px_40px_rgba(15,23,42,0.18)] backdrop-blur-md">
+        <div className="k2-card max-h-[70vh] overflow-auto">
           <table className="w-full text-left text-sm">
             <thead className={`sticky top-0 ${head}`}>
               <tr>

@@ -39,7 +39,7 @@ export default async function Page() {
         href="https://forms.gle/w9G7tBxWwaLBW6y59"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-30 flex items-center gap-2 rounded-full border border-white/30 bg-navy-900/70 px-7 py-4 text-base font-bold text-white shadow-[0_16px_40px_rgba(11,30,61,0.45)] backdrop-blur-md transition hover:scale-105 hover:bg-sea-600/85"
+        className="fixed bottom-6 right-6 z-30 flex items-center gap-2 rounded-full border border-white/15 bg-navy-900 px-7 py-4 text-base font-bold text-white shadow-3 transition hover:scale-105 hover:bg-sea-600"
       >
         <span className="text-xl leading-none">+</span> Saran acara
       </a>

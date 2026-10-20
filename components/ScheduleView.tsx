@@ -28,7 +28,7 @@ export default function ScheduleView({ schedule }: { schedule: ScheduleItem[] })
 
   if (!schedule.length)
     return (
-      <div className="flex items-center gap-4 rounded-2xl border border-white/60 bg-white/70 p-5 text-sm text-slate-500 shadow-[0_18px_40px_rgba(15,23,42,0.18)] backdrop-blur-md">
+      <div className="k2-card flex items-center gap-4 p-5 text-sm text-slate-500">
         <Sticker name="belum-ada-data" size={120} />
         <p>Jadwal kuliah belum diisi admin.</p>
       </div>
@@ -43,7 +43,7 @@ export default function ScheduleView({ schedule }: { schedule: ScheduleItem[] })
         return (
           <div
             key={d}
-            className={`rounded-3xl border p-5 shadow-[0_20px_45px_rgba(15,23,42,0.2)] backdrop-blur-md ${isToday ? "border-sea-300 bg-sea-50/80" : "border-white/60 bg-white/70"}`}
+            className={`k2-card p-5 ${isToday ? "border-accent bg-accent-soft" : ""}`}
           >
             <p className="mb-3 flex items-center justify-between text-lg font-extrabold text-navy-900">
               {HARI[d]}
@@ -56,7 +56,7 @@ export default function ScheduleView({ schedule }: { schedule: ScheduleItem[] })
                 return (
                   <li
                     key={s.id}
-                    className={`rounded-2xl border p-3 shadow-sm ${live ? "border-emerald-300 bg-emerald-50" : "border-slate-200 bg-white/80"} ${done ? "opacity-55" : ""}`}
+                    className={`rounded-2xl border p-3 shadow-sm ${live ? "border-emerald-300 bg-emerald-50" : "border-line bg-surface"} ${done ? "opacity-55" : ""}`}
                   >
                     <div className="flex items-start justify-between gap-2">
                       <p className="font-bold text-slate-800">{s.matkul}</p>

@@ -12,7 +12,7 @@ export default function AccountPage() {
   if (!ready) return <Loading />;
   if (!user)
     return (
-      <div className="mx-auto max-w-md space-y-4 rounded-[2rem] border border-white/60 bg-white/75 p-8 text-center shadow-[0_24px_60px_rgba(15,23,42,0.22)] backdrop-blur-md">
+      <div className="k2-card mx-auto max-w-md space-y-4 p-8 text-center">
         <Lock className="mx-auto text-slate-400" />
         <p className="font-semibold text-slate-700">Masuk dulu untuk membuka halaman akun.</p>
         <Link href="/masuk" className="inline-block rounded-full bg-navy-900 px-6 py-2.5 text-sm font-semibold text-white shadow">

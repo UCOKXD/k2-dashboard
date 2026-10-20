@@ -60,7 +60,7 @@ export default function TasksEditor() {
                 <button onClick={() => set(t.id, { done: !t.done })} className="text-slate-400 hover:text-emerald-600" title={t.done ? "Tandai belum selesai" : "Tandai selesai"}>
                   {t.done ? <CheckCircle2 size={20} className="text-emerald-600" /> : <Circle size={20} />}
                 </button>
-                <span className={`rounded-md px-2 py-0.5 text-[10px] font-black tracking-wider ${URGENCY[u.level].chip}`}>{URGENCY[u.level].label}</span>
+                <span className={`rounded-k2-sm px-2 py-0.5 font-mono text-[11px] font-bold uppercase tracking-[0.08em] ${URGENCY[u.level].chip}`}>{URGENCY[u.level].label}</span>
                 <input value={t.judul} onChange={(e) => set(t.id, { judul: e.target.value })} className={`${inputBase} min-w-[8rem] flex-1 py-1.5`} aria-label="Judul" />
                 <input value={t.matkul} onChange={(e) => set(t.id, { matkul: e.target.value })} placeholder="Mata kuliah" className={`${inputBase} w-32 py-1.5`} aria-label="Mata kuliah" />
                 <DateSelect value={t.deadline} onChange={(v) => v && set(t.id, { deadline: v })} label="Deadline" />

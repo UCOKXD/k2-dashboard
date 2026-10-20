@@ -40,7 +40,7 @@ import type { DoaPick } from "@/lib/store";
 import type { HomeData, LogType, PelanggaranData, StudentStat } from "@/lib/dashboard";
 
 // Bayangan sengaja agak gelap supaya kartu terlihat timbul (3D).
-const CARD = "rounded-[2.5rem] border border-slate-200/70 bg-white/70 backdrop-blur-md shadow-[0_30px_80px_rgba(15,23,42,0.24)]";
+const CARD = "k2-card";
 const PIE_COLORS = ["#2563eb", "#6366f1", "#38bdf8", "#f59e0b", "#10b981", "#94a3b8"];
 
 const LOG_STYLE: Record<LogType, { icon: typeof Calendar; badge: string; color: string }> = {
@@ -440,7 +440,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
   return (
     <section id="dashboard" className="scroll-mt-32">
       <TipBox tip={tip} />
-      <div className="space-y-10 rounded-[2.5rem] border border-slate-200/70 bg-white/70 backdrop-blur-md p-8 shadow-[0_30px_80px_rgba(15,23,42,0.28)] md:p-10">
+      <div className="k2-card space-y-10 p-8 md:p-10">
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div>
             <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-800 sm:text-3xl">
@@ -466,7 +466,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
             ) : (
               <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3">
                 {topThree.map((s, i) => (
-                  <div key={s.nama} className="relative flex flex-col justify-between overflow-hidden rounded-2xl border border-rose-100 bg-white/70 backdrop-blur-md p-4 shadow-[0_10px_28px_rgba(15,23,42,0.16)] transition-transform hover:scale-[1.02]">
+                  <div key={s.nama} className="relative flex flex-col justify-between overflow-hidden rounded-k2-md border border-rose-100 bg-surface p-4 shadow-1 transition-transform hover:scale-[1.02]">
                     <div className="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-600">#{i + 1}</div>
                     <div>
                       <span className="inline-block max-w-[calc(100%-2rem)] truncate rounded-md border border-rose-100 bg-rose-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-rose-600">
@@ -583,7 +583,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
               {filtered.map((s, i) => (
                 <div
                   key={s.nama}
-                  className="flex items-center justify-between gap-2 rounded-2xl border border-blue-100/60 bg-white/70 backdrop-blur-md p-3.5 shadow-[0_8px_22px_rgba(15,23,42,0.14)] transition-all hover:border-blue-300"
+                  className="flex items-center justify-between gap-2 rounded-k2-md border border-line bg-surface p-3.5 shadow-1 transition-all hover:border-accent"
                 >
                   <div className="flex min-w-0 items-center gap-3">
                     <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shadow-md shadow-blue-500/30">{i + 1}</span>
@@ -662,7 +662,7 @@ export default function HomeDashboard({ data }: { data: HomeData }) {
             { label: "Total Pelanggaran", value: pel.total, icon: AlertTriangle, tone: "bg-rose-50 text-rose-600 border-rose-200" },
             { label: "Total Izin Sakit", value: stats.totalSakit, icon: Stethoscope, tone: "bg-amber-50 text-amber-600 border-amber-200" },
           ].map(({ label, value, icon: Icon, tone }) => (
-            <div key={label} className="flex items-center justify-between gap-4 rounded-3xl border border-slate-200/70 bg-white/70 backdrop-blur-md p-6 shadow-[0_22px_50px_rgba(15,23,42,0.22)] transition-shadow hover:shadow-[0_26px_60px_rgba(15,23,42,0.3)] sm:p-7">
+            <div key={label} className="flex items-center justify-between gap-4 k2-card p-6 transition-shadow hover:shadow-3 sm:p-7">
               <div>
                 <p className="text-base font-semibold text-slate-600 sm:text-lg">{label}</p>
                 <p className="mt-1 text-5xl font-extrabold text-blue-600">{value}</p>

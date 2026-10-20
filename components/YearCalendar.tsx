@@ -146,9 +146,9 @@ export default function YearCalendar({
         <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-pink-500" /> Ulang tahun</span>
         {tasks.length > 0 && (
           <span className="flex items-center gap-1">
-            Deadline tugas: <span className="rounded bg-red-600 px-1 text-[10px] font-black text-white">URGENT</span> ≤3 hari ·{" "}
-            <span className="rounded bg-amber-500 px-1 text-[10px] font-black text-white">MEDIUM</span> 4–10 ·{" "}
-            <span className="rounded bg-emerald-600 px-1 text-[10px] font-black text-white">LOW</span> &gt;10
+            Deadline tugas: <span className={`rounded px-1 font-mono text-[10px] font-bold ${URGENCY.urgent.chip}`}>URGENT</span> ≤3 hari ·{" "}
+            <span className={`rounded px-1 font-mono text-[10px] font-bold ${URGENCY.medium.chip}`}>MEDIUM</span> 4–10 ·{" "}
+            <span className={`rounded px-1 font-mono text-[10px] font-bold ${URGENCY.low.chip}`}>LOW</span> &gt;10
           </span>
         )}
         {schedule.length > 0 && (
@@ -162,7 +162,7 @@ export default function YearCalendar({
 
       {view === "bulan" ? (
         <>
-          <div className="overflow-hidden rounded-[1.75rem] border border-slate-200/70 bg-white/70 backdrop-blur-md shadow-[0_24px_60px_rgba(15,23,42,0.22)]">
+          <div className="k2-card overflow-hidden">
             <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50">
               {DAYS.map((d, i) => (
                 <div key={d} className={`py-2.5 text-center text-xs font-bold uppercase tracking-wider ${i === 0 ? "text-red-600" : "text-slate-500"}`}>
@@ -225,7 +225,7 @@ export default function YearCalendar({
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-slate-200/70 bg-white/70 backdrop-blur-md p-5 shadow-[0_18px_40px_rgba(15,23,42,0.18)]">
+            <div className="k2-card p-5">
               <h3 className="mb-3 font-bold text-slate-800">Acara & ulang tahun bulan ini</h3>
               {monthEv.length === 0 && monthBd.length === 0 && <p className="text-sm text-slate-400">Belum ada acara.</p>}
               <ul className="space-y-2">
@@ -252,7 +252,7 @@ export default function YearCalendar({
                   ))}
               </ul>
             </div>
-            <div className="rounded-2xl border border-slate-200/70 bg-white/70 backdrop-blur-md p-5 shadow-[0_18px_40px_rgba(15,23,42,0.18)]">
+            <div className="k2-card p-5">
               <h3 className="mb-3 font-bold text-slate-800">Libur & cuti bersama bulan ini</h3>
               {monthHol.length === 0 && <p className="text-sm text-slate-400">Tidak ada libur nasional.</p>}
               <ul className="space-y-2">
@@ -275,7 +275,7 @@ export default function YearCalendar({
                 setMonth(m);
                 setView("bulan");
               }}
-              className="rounded-2xl border border-slate-200/70 bg-white/70 backdrop-blur-md p-3 text-left shadow-[0_16px_36px_rgba(15,23,42,0.18)] transition hover:-translate-y-0.5 hover:border-sea-300"
+              className="k2-card p-3 text-left transition hover:-translate-y-0.5 hover:border-accent"
             >
               <p className="mb-2 font-bold text-navy-900">{name}</p>
               <div className="grid grid-cols-7 gap-y-0.5 text-center text-[11px]">

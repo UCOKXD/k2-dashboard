@@ -120,7 +120,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
                 setMsg("");
               }}
               disabled={busy}
-              className={`${btn} border border-sea-300 bg-white/80 hover:bg-sea-100`}
+              className={`${btn} border border-sea-300 bg-surface hover:bg-sea-100`}
             >
               Kembali ke denah awal
             </button>
@@ -153,7 +153,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
       {msg && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700">{msg}</p>}
       {ok && !dirty && <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700">{ok}</p>}
 
-      <div className="overflow-x-auto rounded-2xl border border-white/60 bg-white/70 p-4 shadow-[0_20px_45px_rgba(15,23,42,0.2)] backdrop-blur-md">
+      <div className="k2-card overflow-x-auto p-4">
         <div className="grid min-w-[900px] grid-cols-11 gap-2" style={{ gridTemplateRows: "auto repeat(4, 3.25rem)" }}>
           <div style={{ gridRow: 1, gridColumn: "4 / 8" }} className="rounded-lg bg-navy-900 py-2 text-center text-sm font-semibold text-white">Papan</div>
           <div style={{ gridRow: 1, gridColumn: "10 / 12" }} className="rounded-lg bg-sea-500 py-2 text-center text-sm font-semibold text-white">Dosen</div>
@@ -194,7 +194,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
 
       {/* Prioritas duduk depan (admin) */}
       {admin && (
-        <div className="space-y-3 rounded-2xl border border-white/60 bg-white/70 p-5 shadow-[0_20px_45px_rgba(15,23,42,0.2)] backdrop-blur-md">
+        <div className="k2-card space-y-3 p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h3 className="flex items-center gap-1.5 font-bold text-navy-900">

@@ -197,7 +197,7 @@ export default function TimerTools() {
   const [tab, setTab] = useState<"timer" | "stopwatch">("timer");
 
   return (
-    <div className="flex flex-col items-center gap-4 rounded-[2rem] border border-slate-200/70 bg-white/70 p-5 shadow-[0_24px_60px_rgba(15,23,42,0.22)] backdrop-blur-md sm:flex-row sm:gap-8 sm:p-8">
+    <div className="k2-card flex flex-col items-center gap-4 p-5 sm:flex-row sm:gap-8 sm:p-8">
       <Sticker name="jangan-telat" size={200} className="sm:ml-4" />
       <div className="w-full min-w-0 flex-1">
         <div className="mx-auto mb-6 flex w-fit gap-1 rounded-full border border-slate-200 bg-slate-100 p-1">

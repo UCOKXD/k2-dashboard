@@ -14,7 +14,7 @@ export const smallBtn = "rounded-full border border-slate-200 bg-white px-3 py-1
 
 export function Panel({ title, desc, children }: { title: string; desc?: string; children: React.ReactNode }) {
   return (
-    <section className="space-y-4 rounded-[2rem] border border-white/60 bg-white/75 p-5 shadow-[0_24px_60px_rgba(15,23,42,0.22)] backdrop-blur-md sm:p-7">
+    <section className="k2-card space-y-4 p-5 sm:p-7">
       <div>
         <h3 className="text-lg font-extrabold text-navy-900">{title}</h3>
         {desc && <p className="text-sm text-slate-500">{desc}</p>}
@@ -77,7 +77,7 @@ export function SaveBar({ dirty, saving, status, onSave, onReset }: { dirty: boo
   // Maskot "Siap!" di samping tombol simpan; berganti jadi "Waduh!" kalau penyimpanan gagal.
   return (
     <div className={`${dirty ? "pointer-events-none sticky bottom-3" : ""} z-20 flex items-center gap-3 sm:gap-4`}>
-      <div className="pointer-events-auto flex flex-1 flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white/90 px-4 py-3 shadow-[0_14px_34px_rgba(15,23,42,0.22)] backdrop-blur-md">
+      <div className="pointer-events-auto flex flex-1 flex-wrap items-center justify-between gap-3 rounded-k2-lg border border-line bg-surface px-4 py-3 shadow-2">
         <p className={`text-sm font-medium ${status?.type === "err" ? "text-rose-600" : status ? "text-emerald-600" : dirty ? "text-amber-700" : "text-slate-400"}`}>
           {status?.text ?? (dirty ? "Ada perubahan yang belum disimpan." : "Tidak ada perubahan.")}
         </p>

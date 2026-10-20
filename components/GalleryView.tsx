@@ -23,7 +23,7 @@ export default function GalleryView({ items }: { items: GalleryItem[] }) {
 
   if (!items.length)
     return (
-      <div className="flex items-center gap-4 rounded-2xl border border-white/60 bg-white/70 p-5 text-sm text-slate-500 shadow-[0_18px_40px_rgba(15,23,42,0.18)] backdrop-blur-md">
+      <div className="k2-card flex items-center gap-4 p-5 text-sm text-slate-500">
         <Sticker name="belum-ada-data" size={120} />
         <p>Foto kegiatan kelas akan muncul di sini setelah admin mengunggahnya.</p>
       </div>
@@ -37,7 +37,7 @@ export default function GalleryView({ items }: { items: GalleryItem[] }) {
           <button
             key={it.id}
             onClick={() => setOpen(i)}
-            className="group mb-4 block w-full break-inside-avoid overflow-hidden rounded-3xl border border-white/60 bg-white/70 text-left shadow-[0_20px_45px_rgba(15,23,42,0.22)] backdrop-blur-md"
+            className="group mb-4 block w-full break-inside-avoid k2-card overflow-hidden text-left"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={it.src} alt={it.caption || "Foto kelas"} loading="lazy" className="w-full transition duration-500 group-hover:scale-[1.03]" />

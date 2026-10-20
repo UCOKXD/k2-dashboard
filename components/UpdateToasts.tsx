@@ -68,7 +68,7 @@ export default function UpdateToasts() {
       {toasts.map((t) => (
         <div
           key={t.id}
-          className={`pointer-events-auto flex gap-3 rounded-2xl border border-white/30 bg-navy-900/70 p-3.5 text-white shadow-[0_18px_44px_rgba(11,30,61,0.45)] backdrop-blur-md transition-all duration-700 ${
+          className={`pointer-events-auto flex gap-3 rounded-k2-lg border border-white/10 bg-navy-900 p-3.5 text-white shadow-3 transition-all duration-700 ${
             t.leaving ? "translate-y-2 opacity-0" : "animate-toastIn opacity-100"
           }`}
         >

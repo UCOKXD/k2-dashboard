@@ -1,0 +1,9 @@
+Font di folder app/fonts/ dibagikan dengan SIL Open Font License 1.1 (OFL-1.1).
+Boleh dipakai, disematkan di web, dan dibagikan bersama proyek ini, tetapi tidak boleh dijual tersendiri.
+Teks lisensi lengkap: https://openfontlicense.org/open-font-license-official-text/
+
+- Bricolage Grotesque  — Copyright 2022 The Bricolage Grotesque Project Authors (https://github.com/ateliertriay/bricolage)
+- Plus Jakarta Sans    — Copyright 2020 The Plus Jakarta Sans Project Authors (https://github.com/tokotype/PlusJakartaSans)
+- JetBrains Mono       — Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
+
+Berkas diambil dari paket @fontsource (subset latin).

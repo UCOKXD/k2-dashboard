@@ -46,7 +46,7 @@ export default function WeekCalendar({
   const range = `${label(days[0])} – ${label(days[6])} ${days[6].slice(0, 4)}`;
 
   return (
-    <section className="space-y-4 rounded-3xl border border-white/60 bg-white/70 p-5 shadow-[0_20px_45px_rgba(15,23,42,0.2)] backdrop-blur-md sm:p-6">
+    <section className="k2-card space-y-4 p-5 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <h3 className="flex items-center gap-2 text-lg font-extrabold text-navy-900">
           <CalendarDays size={20} className="text-sea-600" /> {offset === 0 ? "Minggu ini" : offset === 1 ? "Minggu depan" : offset === -1 ? "Minggu lalu" : "Minggu"}
@@ -80,7 +80,7 @@ export default function WeekCalendar({
           return (
             <div
               key={d}
-              className={`flex min-h-[9rem] flex-col gap-1.5 rounded-2xl border p-3 ${isToday ? "border-sea-300 bg-sea-50/80 shadow-[0_10px_24px_rgba(31,125,186,0.2)]" : "border-slate-200 bg-white/80"}`}
+              className={`flex min-h-[9rem] flex-col gap-1.5 rounded-2xl border p-3 ${isToday ? "border-accent bg-accent-soft" : "border-line bg-surface"}`}
             >
               <div className="flex items-baseline justify-between gap-2">
                 <p className={`text-sm font-bold ${dow === 0 || holiday ? "text-red-600" : "text-slate-800"}`}>{HARI[dow]}</p>
@@ -103,7 +103,7 @@ export default function WeekCalendar({
                   <p key={t.id} className="flex items-start gap-1 text-xs font-semibold text-slate-700">
                     <ClipboardList size={12} className="mt-0.5 shrink-0" />
                     <span>
-                      <span className={`mr-1 rounded px-1 py-px text-[10px] font-bold ${u.chip}`}>{u.label}</span>
+                      <span className={`mr-1 rounded px-1 py-px font-mono text-[10px] font-bold ${u.chip}`}>{u.label}</span>
                       {t.judul}
                       {t.jam && ` · ${jam(t.jam)}`}
                     </span>

@@ -40,7 +40,7 @@ function nextClass(list: ScheduleItem[], now: { day: number; min: number }) {
 
 function Card({ icon: Icon, tone, label, href, children }: { icon: typeof Cake; tone: string; label: string; href?: string; children: React.ReactNode }) {
   const body = (
-    <div className="flex h-full gap-3.5 rounded-3xl border border-white/60 bg-white/70 p-5 shadow-[0_20px_48px_rgba(15,23,42,0.2)] backdrop-blur-md transition hover:-translate-y-0.5 hover:shadow-[0_26px_60px_rgba(15,23,42,0.28)]">
+    <div className="flex h-full gap-3.5 k2-card p-5 transition hover:-translate-y-0.5 hover:shadow-3">
       <div className={`h-fit shrink-0 rounded-2xl border p-3 shadow-md ${tone}`}>
         <Icon size={22} />
       </div>
@@ -119,8 +119,8 @@ export default function HomeCards({ cards }: { cards: Cards }) {
       {/* Ulang tahun hari ini tampil besar di banner beranda; kartu ini untuk yang akan datang. */}
       {ultah.some((u) => u.days > 0) && (
         <div className="sm:col-span-2 lg:col-span-3">
-          <div className="flex flex-wrap items-center gap-4 rounded-3xl border border-pink-200/70 bg-gradient-to-r from-pink-50/80 via-rose-50/80 to-amber-50/80 p-5 shadow-[0_20px_48px_rgba(15,23,42,0.18)] backdrop-blur-md">
-            <div className="rounded-2xl border border-pink-200 bg-white/80 p-3 text-pink-500 shadow-md">
+          <div className="flex flex-wrap items-center gap-4 rounded-k2-lg border border-pink-200/70 bg-gradient-to-r from-pink-50 via-rose-50 to-amber-50 p-5 shadow-2">
+            <div className="rounded-2xl border border-pink-200 bg-surface p-3 text-pink-500 shadow-md">
               <Cake size={22} />
             </div>
             <div className="min-w-0 flex-1">

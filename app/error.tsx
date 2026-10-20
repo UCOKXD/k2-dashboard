@@ -38,7 +38,7 @@ export default function Error({ error, retry }: { error: Error & { digest?: stri
             Kembali ke beranda
           </Link>
         </div>
-        <details className="mt-2 rounded-2xl border border-slate-200 bg-white/70 px-4 py-3 backdrop-blur-md">
+        <details className="mt-2 rounded-k2-md border border-line bg-surface px-4 py-3">
           <summary className="cursor-pointer text-sm font-semibold text-slate-700">Detail untuk admin</summary>
           <div className="mt-2 space-y-1.5 font-mono text-xs leading-relaxed text-slate-600">
             <p className="break-words">{error.message || "Tidak ada pesan error."}</p>

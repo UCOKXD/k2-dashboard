@@ -44,13 +44,13 @@ function Division({ k, org }: { k: DivKey; org: OrgData }) {
   const anggota = d.anggota.map(person).filter((p): p is Person => !!p);
   const name = k === "k2" ? "K2" : ROLE_DEF[k].label;
   return (
-    <div className="flex min-w-0 flex-col gap-2.5 rounded-3xl border border-slate-200/80 bg-white/60 p-4 shadow-[0_14px_34px_rgba(15,23,42,0.12)]">
+    <div className="flex min-w-0 flex-col gap-2.5 rounded-k2-lg border border-line bg-surface-2 p-4">
       <p className="text-center text-[11px] font-bold uppercase tracking-widest text-slate-400">{ROLE_DEF[k].label}</p>
       <Box role={`Koordinator ${name}`} icon={s.icon} person={person(d.koordinator)} text="Belum diisi" className={s.box} />
       {anggota.length > 0 && (
         <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {anggota.map((p) => (
-            <li key={p.nama} className="min-w-0 rounded-2xl border border-slate-200 bg-white/80 px-3 py-2 text-center shadow-[0_8px_18px_rgba(15,23,42,0.12)]">
+            <li key={p.nama} className="min-w-0 rounded-k2-md border border-line bg-surface px-3 py-2 text-center shadow-1">
               <p className={`text-[10px] font-bold uppercase tracking-wider ${s.tag}`}>Anggota</p>
               <p className="truncate text-sm font-bold text-slate-800" title={p.nama}>
                 {p.nama}
@@ -67,7 +67,7 @@ function Division({ k, org }: { k: DivKey; org: OrgData }) {
 export default function OrgChart({ org }: { org: OrgData }) {
   return (
     <section id="organisasi" className="scroll-mt-32">
-      <div className="space-y-5 rounded-[2.5rem] border border-white/60 bg-white/70 p-6 shadow-[0_30px_80px_rgba(15,23,42,0.24)] backdrop-blur-md md:p-8">
+      <div className="k2-card space-y-5 p-6 md:p-8">
         <div className="text-center">
           <span className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
             <Users size={14} /> Struktur Kepengurusan

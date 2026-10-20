@@ -20,7 +20,7 @@ export default function TaskBoard({ tasks, today }: { tasks: TaskItem[]; today: 
   return (
     <div className="space-y-4">
       {urgent.length > 0 && (
-        <div className="flex items-center gap-4 rounded-3xl border-2 border-red-400 bg-red-50/90 p-4 shadow-[0_20px_45px_rgba(220,38,38,0.25)] backdrop-blur-md sm:p-5">
+        <div className="flex items-center gap-4 rounded-k2-lg border border-bad/35 bg-bad-soft p-4 shadow-2 sm:p-5">
           <div className="min-w-0 flex-1">
             <p className="mb-2 flex items-center gap-2 text-sm font-black tracking-wider text-red-700">
               <AlarmClock size={18} className="animate-pulse" /> URGENT: deadline 3 hari lagi atau kurang
@@ -45,7 +45,7 @@ export default function TaskBoard({ tasks, today }: { tasks: TaskItem[]; today: 
         </div>
       )}
 
-      <div className="rounded-3xl border border-white/60 bg-white/70 p-5 shadow-[0_20px_45px_rgba(15,23,42,0.2)] backdrop-blur-md">
+      <div className="k2-card p-5">
         <h3 className="mb-3 flex items-center gap-2 font-bold text-slate-800">
           <ClipboardList size={18} className="text-sea-600" /> Tugas aktif ({active.length})
         </h3>
@@ -53,9 +53,9 @@ export default function TaskBoard({ tasks, today }: { tasks: TaskItem[]; today: 
           {active.map((t) => {
             const u = urgencyOf(t, today);
             return (
-              <div key={t.id} className={`rounded-2xl border bg-white/80 p-3.5 shadow-sm ${u.level === "urgent" ? "border-red-300" : "border-slate-200"}`}>
+              <div key={t.id} className={`rounded-k2-md border bg-surface p-3.5 ${u.level === "urgent" ? "border-bad/45" : "border-line"}`}>
                 <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
-                  <span className={`rounded-md px-2 py-0.5 text-[10px] font-black tracking-wider ${URGENCY[u.level].chip}`}>{URGENCY[u.level].label}</span>
+                  <span className={`rounded-k2-sm px-2 py-0.5 font-mono text-[11px] font-bold uppercase tracking-[0.08em] ${URGENCY[u.level].chip}`}>{URGENCY[u.level].label}</span>
                   <span className={`rounded-md border px-2 py-0.5 text-[10px] font-bold ${DIFFICULTY[t.difficulty].cls}`}>{DIFFICULTY[t.difficulty].label}</span>
                 </div>
                 <p className="font-bold text-slate-800">{t.judul}</p>

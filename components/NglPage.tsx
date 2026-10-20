@@ -40,7 +40,7 @@ async function fetchNgl(): Promise<Data> {
   return d;
 }
 
-const CARD = "rounded-3xl border border-white/60 bg-white/70 p-5 shadow-[0_20px_45px_rgba(15,23,42,0.18)] backdrop-blur-md sm:p-6";
+const CARD = "k2-card p-5 sm:p-6";
 
 function Progress({ done, total }: { done: number; total: number }) {
   const p = total ? Math.round((done / total) * 100) : 0;
@@ -109,7 +109,7 @@ export default function NglPage() {
   if (!ready) return <Loading />;
   if (!user)
     return (
-      <div className="mx-auto max-w-md space-y-4 rounded-[2rem] border border-white/60 bg-white/75 p-8 text-center shadow-[0_24px_60px_rgba(15,23,42,0.22)] backdrop-blur-md">
+      <div className="k2-card mx-auto max-w-md space-y-4 p-8 text-center">
         <MessageCircleHeart className="mx-auto text-pink-500" size={32} />
         <p className="font-semibold text-slate-700">Masuk dulu dengan akunmu untuk memakai NGL.</p>
         <Link href="/masuk" className="inline-block rounded-full bg-navy-900 px-6 py-2.5 text-sm font-semibold text-white shadow">
@@ -119,7 +119,7 @@ export default function NglPage() {
     );
   if (user.tempPassword)
     return (
-      <div className="mx-auto max-w-md space-y-4 rounded-[2rem] border border-white/60 bg-white/75 p-8 text-center shadow-[0_24px_60px_rgba(15,23,42,0.22)] backdrop-blur-md">
+      <div className="k2-card mx-auto max-w-md space-y-4 p-8 text-center">
         <Lock className="mx-auto text-slate-400" />
         <p className="font-semibold text-slate-700">Ganti password awalmu dulu sebelum memakai NGL, supaya tidak ada yang bisa mengisi atas namamu.</p>
         <Link href="/akun" className="inline-block rounded-full bg-navy-900 px-6 py-2.5 text-sm font-semibold text-white shadow">

@@ -30,11 +30,12 @@ export function urgencyOf(t: TaskItem, today: string): { level: Urgency; days: n
   return { level: "low", days };
 }
 
+// Warna chip desain v2 (lolos WCAG AA dengan teks putih); nilainya di --chip-* pada app/globals.css.
 export const URGENCY: Record<Urgency, { label: string; chip: string; dot: string }> = {
-  urgent: { label: "URGENT", chip: "bg-red-600 text-white", dot: "bg-red-600" },
-  medium: { label: "MEDIUM", chip: "bg-amber-500 text-white", dot: "bg-amber-500" },
-  low: { label: "LOW", chip: "bg-emerald-600 text-white", dot: "bg-emerald-600" },
-  lewat: { label: "LEWAT", chip: "bg-slate-400 text-white", dot: "bg-slate-400" },
+  urgent: { label: "URGENT", chip: "bg-[var(--chip-urgent)] text-white", dot: "bg-[var(--chip-urgent)]" },
+  medium: { label: "MEDIUM", chip: "bg-[var(--chip-medium)] text-white", dot: "bg-[var(--chip-medium)]" },
+  low: { label: "LOW", chip: "bg-[var(--chip-low)] text-white", dot: "bg-[var(--chip-low)]" },
+  lewat: { label: "LEWAT", chip: "bg-[var(--chip-lewat)] text-white", dot: "bg-[var(--chip-lewat)]" },
   selesai: { label: "SELESAI", chip: "bg-slate-300 text-slate-700 line-through", dot: "bg-slate-300" },
 };
 

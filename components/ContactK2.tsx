@@ -7,7 +7,7 @@ export const WA_K2_TEXT = "0851-3473-3707";
 // Baris kontak di bawah judul halaman Izin & Izin Sakit.
 export default function ContactK2({ text }: { text: string }) {
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50/80 px-5 py-3.5 shadow-[0_14px_34px_rgba(15,23,42,0.12)] backdrop-blur-md">
+    <div className="flex flex-wrap items-center justify-between gap-3 rounded-k2-lg border border-ok/30 bg-ok-soft px-5 py-3.5 shadow-1">
       <p className="text-sm font-medium text-emerald-900">{text}</p>
       <a
         href={WA_K2}

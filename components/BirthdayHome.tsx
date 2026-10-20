@@ -161,7 +161,7 @@ export function BirthdayHero({ people }: { people: BdayPerson[] }) {
   );
 }
 
-const CARD = "rounded-[2rem] border border-white/60 bg-white/70 p-6 shadow-[0_24px_60px_rgba(15,23,42,0.2)] backdrop-blur-md sm:p-7";
+const CARD = "k2-card p-6 sm:p-7";
 const jamWib = (iso: string) => new Date(iso).toLocaleTimeString("id-ID", { timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit", hourCycle: "h23" });
 
 // Kirim ucapan (anonim, 1 per perangkat per hari) + daftar ucapan hari ini, dan daftar ulang tahun bulan ini.
@@ -262,7 +262,7 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
         {items && items.length > 0 && (
           <ul className="custom-scrollbar max-h-[360px] space-y-2.5 overflow-y-auto pr-1">
             {items.map((w) => (
-              <li key={w.id} className="flex items-start justify-between gap-3 rounded-2xl bg-white/80 px-4 py-3 shadow-sm">
+              <li key={w.id} className="flex items-start justify-between gap-3 rounded-k2-md bg-surface-2 px-4 py-3">
                 <div className="min-w-0">
                   <p className="text-xs font-bold text-slate-500">Anonim · {jamWib(w.at)}</p>
                   <p className="mt-0.5 break-words text-sm leading-relaxed text-slate-800">{w.text}</p>

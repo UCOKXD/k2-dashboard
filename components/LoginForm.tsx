@@ -50,7 +50,7 @@ export default function LoginForm() {
           <p className="mt-1 text-sm text-slate-600">Setiap siswa ABSORBING punya akun sendiri. Pengurus (BPH &amp; K2) juga bisa membuka Panel Admin.</p>
         </div>
       </div>
-      <form onSubmit={submit} className="w-full max-w-md space-y-5 rounded-[2rem] border border-white/60 bg-white/75 p-7 shadow-[0_28px_70px_rgba(15,23,42,0.25)] backdrop-blur-md sm:p-9">
+      <form onSubmit={submit} className="k2-card w-full max-w-md space-y-5 p-7 shadow-3 sm:p-9">
         <div className="flex flex-col items-center gap-3 text-center">
           <div className="flex gap-2">
             <Image src="/logo-k2.png" alt="Logo Divisi K2" width={56} height={57} className="h-14 w-14 object-contain" />
