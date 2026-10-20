@@ -54,7 +54,7 @@ export default function ThemeToggle() {
       onClick={toggle}
       aria-label={dark ? "Ganti ke tema terang" : "Ganti ke tema gelap"}
       title={dark ? "Tema terang" : "Tema gelap"}
-      className="grid h-8 w-8 place-items-center rounded-full border border-white/20 bg-white/10 text-white transition hover:bg-white/20"
+      className="grid h-10 w-10 place-items-center rounded-full border border-white/[0.18] text-white transition hover:bg-white/10"
     >
       {dark ? <Sun size={16} /> : <Moon size={16} />}
     </button>

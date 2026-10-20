@@ -64,7 +64,7 @@ export default function UpdateToasts() {
 
   if (!toasts.length) return null;
   return (
-    <div className="pointer-events-none fixed bottom-4 left-4 z-[90] flex w-[min(22rem,calc(100vw-2rem))] flex-col gap-2" aria-live="polite">
+    <div className="pointer-events-none fixed bottom-[calc(80px+env(safe-area-inset-bottom))] left-4 z-[90] md:bottom-4 flex w-[min(22rem,calc(100vw-2rem))] flex-col gap-2" aria-live="polite">
       {toasts.map((t) => (
         <div
           key={t.id}

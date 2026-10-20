@@ -16,7 +16,7 @@ import {
   MessageCircleHeart,
 } from "lucide-react";
 
-const MENU = [
+export const MENU = [
   { name: "Dashboard", icon: LayoutDashboard, href: "/", match: "/" },
   { name: "Doa Harian", icon: BookOpen, href: "/doa-harian", match: "/doa-harian" },
   { name: "Izin Sakit", icon: Stethoscope, href: "/izin-sakit", match: "/izin-sakit" },
@@ -30,8 +30,9 @@ const MENU = [
   { name: "NGL", icon: MessageCircleHeart, href: "/ngl", match: "/ngl" },
 ] as const;
 
-// floating: halaman utama. Island melayang di bawah banner, lalu menempel di tengah atas layar saat di-scroll.
+// floating: halaman utama. Island melayang di bawah banner, lalu naik menempel di tengah atas layar saat di-scroll.
 // static: halaman lain. Island selalu menempel di atas, tanpa animasi scroll.
+// Hanya di tablet & desktop (>=768px); di ponsel diganti bar bawah (MobileNav).
 export default function NavIsland({ variant }: { variant: "floating" | "static" }) {
   const path = usePathname();
   const ref = useRef<HTMLDivElement>(null);
@@ -58,33 +59,30 @@ export default function NavIsland({ variant }: { variant: "floating" | "static" 
 
   const nav = (
     <nav
-      className={`pointer-events-auto flex max-w-[calc(100vw-1rem)] items-center gap-1 overflow-x-auto rounded-full border border-white/20 bg-slate-950/60 p-2 text-white shadow-[0_20px_60px_rgba(0,0,0,0.4)] backdrop-blur-xl backdrop-saturate-150 no-scrollbar
-        transition-all duration-[600ms] ease-[cubic-bezier(0.76,0,0.24,1)] sm:gap-2 ${docked ? "scale-95 sm:px-4" : "scale-100 sm:px-3"}`}
+      className={`pointer-events-auto flex max-w-[calc(100vw-2rem)] items-center gap-0.5 overflow-x-auto rounded-full border border-white/[0.12] bg-[rgba(6,18,39,0.86)] p-1.5 text-white shadow-[0_18px_40px_-16px_rgba(6,18,39,0.6)] backdrop-blur-[16px] backdrop-saturate-[1.4] no-scrollbar
+        transition-all duration-[600ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${docked ? "scale-95" : "scale-100"}`}
       aria-label="Menu utama"
     >
       {MENU.map((item) => {
         const Icon = item.icon;
         const active = path === item.match;
-        // Docked: nama menu terlihat semua hanya di layar sangat lebar supaya tidak menutupi logo/tombol header;
-        // selain itu hanya menu aktif / saat hover.
-        // Melayang: nama menu hanya muncul saat hover.
+        // Menempel di header: nama menu aktif saja (semua nama di layar sangat lebar) supaya tidak menutupi logo/tombol header.
+        // Melayang di bawah banner: nama menu aktif selalu tampil, semua nama tampil mulai 1300px.
         const label = docked
-          ? `${active ? "ml-1 max-w-[160px] opacity-100 lg:ml-0 lg:max-w-0 lg:opacity-0 min-[1120px]:ml-1 min-[1120px]:max-w-[160px] min-[1120px]:opacity-100" : "max-w-0 opacity-0"} min-[1900px]:ml-1 min-[1900px]:max-w-[160px] min-[1900px]:opacity-100 group-hover:ml-1 group-hover:max-w-[160px] group-hover:opacity-100`
-          : "max-w-0 opacity-0 sm:group-hover:ml-1 sm:group-hover:max-w-[160px] sm:group-hover:opacity-100";
+          ? `${active ? "ml-2 max-w-[160px] opacity-100 lg:ml-0 lg:max-w-0 lg:opacity-0 min-[1120px]:ml-2 min-[1120px]:max-w-[160px] min-[1120px]:opacity-100" : "max-w-0 opacity-0"} min-[1900px]:ml-2 min-[1900px]:max-w-[160px] min-[1900px]:opacity-100 group-hover:ml-2 group-hover:max-w-[160px] group-hover:opacity-100`
+          : `${active ? "ml-2 max-w-[160px] opacity-100" : "max-w-0 opacity-0"} min-[1300px]:ml-2 min-[1300px]:max-w-[160px] min-[1300px]:opacity-100 group-hover:ml-2 group-hover:max-w-[160px] group-hover:opacity-100`;
         return (
           <Link
             key={item.name}
             href={item.href}
             title={item.name}
             aria-current={active ? "page" : undefined}
-            className={`group flex shrink-0 cursor-pointer items-center rounded-full px-2.5 py-2 transition-all duration-300 hover:scale-105 hover:bg-white/15 hover:text-white sm:px-3 ${
-              active ? "bg-white/15 text-white" : "text-gray-300"
+            className={`group flex h-10 shrink-0 cursor-pointer items-center rounded-full px-3 text-[13px] font-semibold transition-colors duration-200 ${
+              active ? "bg-white text-navy-900" : "text-[#c9d6e6] hover:bg-white/10 hover:text-white"
             }`}
           >
-            <Icon size={18} className="shrink-0 text-blue-400 transition-transform duration-300 group-hover:scale-125" />
-            <span className={`overflow-hidden whitespace-nowrap text-xs font-medium tracking-wide transition-all duration-300 sm:text-sm ${label}`}>
-              {item.name}
-            </span>
+            <Icon size={17} className={`shrink-0 ${active ? "text-sea-600" : "text-sea-300"}`} />
+            <span className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${label}`}>{item.name}</span>
           </Link>
         );
       })}
@@ -93,12 +91,12 @@ export default function NavIsland({ variant }: { variant: "floating" | "static" 
 
   if (variant === "static") {
     return (
-      <div className="pointer-events-none fixed inset-x-0 top-[62px] z-[60] flex justify-center lg:top-[2px]">{nav}</div>
+      <div className="pointer-events-none fixed inset-x-0 top-[76px] z-[60] hidden justify-center md:flex lg:top-[6px]">{nav}</div>
     );
   }
   // sticky: menempel otomatis saat posisinya sampai di atas layar, tanpa mengubah tinggi halaman
   return (
-    <div ref={ref} className="pointer-events-none sticky top-[62px] z-[60] -mt-7 flex h-14 justify-center lg:top-[2px]">
+    <div ref={ref} className="pointer-events-none sticky top-[76px] z-[60] -mt-7 hidden h-14 justify-center md:flex lg:top-[6px]">
       {nav}
     </div>
   );

@@ -41,7 +41,7 @@ export function joinNames(names: string[]) {
   return names.length < 2 ? (names[0] ?? "") : `${names.slice(0, -1).join(", ")} & ${names[names.length - 1]}`;
 }
 
-export const HEADER_BDAY = "linear-gradient(90deg, rgba(11,30,61,0.92), rgba(27,58,107,0.85) 45%, rgba(240,140,163,0.88))";
+export const HEADER_BDAY = "linear-gradient(90deg, #0b1e3d 0%, #1b3a6b 48%, #b4577a 100%)";
 
 // Topi pesta kecil di atas logo K2.
 export function PartyHat() {
@@ -68,7 +68,7 @@ export function BirthdayBadge() {
 // Tiga bunting menggantung di bawah header. Beranda sedikit lebih besar.
 export function TopBunting({ big }: { big: boolean }) {
   return (
-    <div aria-hidden="true" className="k2-bd-flag pointer-events-none absolute inset-x-0 top-14 z-[1] flex items-start justify-between px-3">
+    <div aria-hidden="true" className="k2-bd-flag pointer-events-none absolute inset-x-0 top-16 z-[1] flex items-start justify-between px-3">
       <Image src="/perayaan/bunting-pink.png" alt="" width={531} height={159} className="h-auto" style={{ width: big ? "32%" : "26%" }} />
       <Image src="/perayaan/bunting-pastel.png" alt="" width={549} height={181} className="h-auto" style={{ width: big ? "30%" : "24%", marginTop: big ? 10 : 8 }} />
       <Image src="/perayaan/bunting-pink.png" alt="" width={531} height={159} className="h-auto -scale-x-100" style={{ width: big ? "32%" : "26%" }} />

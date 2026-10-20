@@ -76,7 +76,7 @@ export function useContent<K extends ContentKey>(key: K) {
 export function SaveBar({ dirty, saving, status, onSave, onReset }: { dirty: boolean; saving: boolean; status: { type: "ok" | "err"; text: string } | null; onSave: () => void; onReset: () => void }) {
   // Maskot "Siap!" di samping tombol simpan; berganti jadi "Waduh!" kalau penyimpanan gagal.
   return (
-    <div className={`${dirty ? "pointer-events-none sticky bottom-3" : ""} z-20 flex items-center gap-3 sm:gap-4`}>
+    <div className={`${dirty ? "pointer-events-none sticky bottom-[calc(80px+env(safe-area-inset-bottom))] md:bottom-3" : ""} z-20 flex items-center gap-3 sm:gap-4`}>
       <div className="pointer-events-auto flex flex-1 flex-wrap items-center justify-between gap-3 rounded-k2-lg border border-line bg-surface px-4 py-3 shadow-2">
         <p className={`text-sm font-medium ${status?.type === "err" ? "text-rose-600" : status ? "text-emerald-600" : dirty ? "text-amber-700" : "text-slate-400"}`}>
           {status?.text ?? (dirty ? "Ada perubahan yang belum disimpan." : "Tidak ada perubahan.")}

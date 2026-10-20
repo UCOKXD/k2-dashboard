@@ -10,6 +10,8 @@ import { GRUP_LABEL } from "@/lib/admins";
 import ThemeToggle from "@/components/ThemeToggle";
 import NavIsland from "@/components/NavIsland";
 import UpdateToasts from "@/components/UpdateToasts";
+import MobileNav from "@/components/MobileNav";
+import SiteFooter from "@/components/SiteFooter";
 import { BirthdayBadge, BirthdayProvider, BirthdayStrip, BottomBunting, HEADER_BDAY, PartyHat, TopBunting, useBirthday } from "@/components/Birthday";
 
 // Kanan atas: tombol Masuk (pengunjung) atau menu akun (siswa & admin).
@@ -92,30 +94,36 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 }
 
 function Frame({ children }: { children: React.ReactNode }) {
-  const home = usePathname() === "/";
+  const path = usePathname();
+  const home = path === "/";
   const bday = useBirthday().today.length > 0; // tema ulang tahun aktif hari ini
   return (
-    <div className="relative min-h-screen">
-      {/* Header bernuansa laut, senada dengan gelembung biru di kedua logo.
-          Di layar lebar island menu menempel di tengah header, jadi isi kiri & kanan dijaga tetap ramping. */}
+    <div className="relative flex min-h-screen flex-col pb-[calc(68px+env(safe-area-inset-bottom))] md:pb-0">
+      <a
+        href="#isi"
+        className="fixed left-3 top-[-60px] z-[100] rounded-k2-md bg-surface px-4 py-2.5 font-bold text-ink shadow-3 transition-[top] focus:top-3"
+      >
+        Lompat ke isi
+      </a>
+      {/* Header navy solid. Di layar lebar island menu menempel di tengah header, jadi isi kiri & kanan dijaga tetap ramping. */}
       <header
-        className="fixed inset-x-0 top-0 z-40 flex h-14 items-center justify-between border-b border-white/10 bg-gradient-to-r from-navy-900/85 via-navy-700/80 to-sea-600/80 px-4 shadow-[0_10px_30px_rgba(11,30,61,0.35)] backdrop-blur-md md:px-8"
+        className="fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between gap-4 border-b border-white/[0.08] bg-[#0b1e3d] px-[var(--gutter)] text-white print:hidden"
         style={bday ? { background: HEADER_BDAY } : undefined}
       >
         <Link href="/" className="flex min-w-0 items-center gap-2" aria-label="K2 Pusat Informasi, ke halaman utama">
           <span className="relative inline-flex shrink-0">
-            <Image src="/logo-k2.png" alt="Logo Divisi K2" width={40} height={41} className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]" priority />
+            <Image src="/logo-k2.png" alt="Logo Divisi K2" width={40} height={41} className="h-[38px] w-[38px] shrink-0 object-contain" priority />
             {bday && <PartyHat />}
           </span>
-          <Image src="/logo-absorbing.png" alt="Logo kelas Absorbing PPTI 28" width={40} height={42} className="h-10 w-10 shrink-0 object-contain drop-shadow-[0_3px_6px_rgba(0,0,0,0.35)]" priority />
-          <Image src="/k2-wordmark.png" alt="K2 Pusat Informasi" width={600} height={235} className="ml-1 h-8 w-auto shrink-0" priority />
+          <Image src="/logo-absorbing.png" alt="Logo kelas Absorbing PPTI 28" width={40} height={42} className="h-[38px] w-[38px] shrink-0 object-contain" priority />
+          <Image src="/k2-wordmark.png" alt="K2 Pusat Informasi" width={600} height={235} className="ml-1.5 h-7 w-auto shrink-0" priority />
         </Link>
-        <div className="flex shrink-0 items-center gap-2.5">
+        <div className="flex shrink-0 items-center gap-2">
           {bday ? (
             <BirthdayBadge />
           ) : (
-            <span className="hidden items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white sm:flex lg:hidden xl:flex">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Siswa Aktif
+            <span className="hidden items-center gap-2 rounded-full border border-white/[0.14] px-3 py-2 font-mono text-xs font-semibold uppercase tracking-[0.04em] text-sea-100 xl:inline-flex">
+              <span className="h-[7px] w-[7px] rounded-full bg-[#4fd1a1] shadow-[0_0_0_3px_rgba(79,209,161,0.22)]" /> Siswa aktif
             </span>
           )}
           <ThemeToggle />
@@ -123,18 +131,24 @@ function Frame({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      {/* Halaman utama memasang islandnya sendiri (melayang + animasi scroll) di dalam HomeDashboard. */}
+      {/* Halaman utama memasang islandnya sendiri (melayang lalu naik menempel saat di-scroll) di dalam HomeDashboard. */}
       {!home && <NavIsland variant="static" />}
 
       {bday && <TopBunting big={home} />}
 
       {/* Saat tema ulang tahun, konten diberi jarak atas lebih supaya bunting menggantung di ruang kosong. */}
       {/* Di beranda tidak dibuat lapisan baru, supaya island menu yang menempel tetap di atas header. */}
-      <main className={home ? "" : `relative z-[2] mx-auto max-w-6xl p-4 pt-32 sm:p-8 ${bday ? "sm:pt-40 lg:pt-44" : "sm:pt-32 lg:pt-24"}`}>
+      <main
+        id="isi"
+        tabIndex={-1}
+        className={`flex-1 outline-none ${home ? "" : `relative z-[2] mx-auto w-full max-w-6xl p-4 sm:p-8 ${bday ? "pt-32 sm:pt-36 md:pt-44" : "pt-[88px] sm:pt-24 md:pt-36 lg:pt-28"}`}`}
+      >
         {bday && !home && <BirthdayStrip />}
         {children}
         {bday && !home && <BottomBunting />}
       </main>
+      <SiteFooter />
+      <MobileNav />
       <UpdateToasts />
     </div>
   );

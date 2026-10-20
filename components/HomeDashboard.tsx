@@ -18,7 +18,6 @@ import {
   FileText,
   Filter,
   Flame,
-  MessageCircle,
   PieChart as PieIcon,
   Search,
   Stethoscope,
@@ -28,7 +27,6 @@ import {
 } from "lucide-react";
 import NavIsland from "@/components/NavIsland";
 import Sticker from "@/components/Sticker";
-import { WA_K2, WA_K2_TEXT } from "@/components/ContactK2";
 import { BirthdayHero, BirthdaySection } from "@/components/BirthdayHome";
 import OrgChart from "@/components/OrgChart";
 import { LOCAL_DOA_LOG, doaLog } from "@/lib/dashboard";
@@ -60,30 +58,6 @@ const LOG_STYLE: Record<LogType, { icon: typeof Calendar; badge: string; color: 
 };
 
 /* ------------------------------------------------------------------ Hero */
-
-/* ---------------------------------------------------------- Footer bantuan */
-
-
-function HelpFooter() {
-  return (
-    <footer className="flex flex-wrap items-center gap-5 rounded-[2rem] border border-white/10 bg-gradient-to-r from-navy-900/90 via-navy-700/85 to-sea-600/85 px-6 py-6 text-white shadow-[0_24px_60px_rgba(11,30,61,0.4)] backdrop-blur-md sm:px-8">
-      <Sticker name="tanya-k2" size={110} />
-      <div className="min-w-0 flex-[1_1_16rem]">
-        <p className="text-xl font-extrabold">Ada pertanyaan?</p>
-        <p className="mt-1 text-sm text-white/85">Soal izin, jadwal, tugas, tempat duduk, atau pelanggaran, langsung chat Divisi K2 lewat WhatsApp.</p>
-      </div>
-      <a
-        href={WA_K2}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-2.5 text-sm font-bold text-white shadow-[0_12px_28px_rgba(16,185,129,0.4)] transition hover:-translate-y-0.5 hover:bg-emerald-600"
-      >
-        <MessageCircle size={17} /> Hubungi K2
-        <span className="font-mono text-xs font-semibold text-white/85">{WA_K2_TEXT}</span>
-      </a>
-    </footer>
-  );
-}
 
 // Chip tanggal & jam (WIB, 24 jam) di banner, mis. "Rabu, 7 Okt 2026 · 09.41 WIB".
 function heroNow() {
@@ -137,7 +111,7 @@ function Hero({ photos }: { photos: string[] }) {
   }, []);
 
   return (
-    <div className="mx-auto max-w-[1000px] px-4 pt-[4.5rem] md:px-0">
+    <div className="mx-auto max-w-[1000px] px-4 pt-20 md:px-0">
       <div
         ref={ref}
         className="relative flex h-[440px] origin-top items-end overflow-hidden rounded-[2.5rem] border-4 border-white bg-[#1f7dba] shadow-[0_30px_70px_rgba(15,23,42,0.35)] will-change-transform sm:h-[460px]"
@@ -656,7 +630,7 @@ export default function HomeDashboard({ data }: { data: HomeData }) {
       {data.bday.today.length > 0 ? <BirthdayHero people={data.bday.today} /> : <Hero photos={data.photos} />}
       <NavIsland variant="floating" />
 
-      <div className="mx-auto max-w-6xl space-y-12 px-4 pb-32 pt-8 md:px-8">
+      <div className="mx-auto max-w-6xl space-y-12 px-4 pb-4 pt-8 md:px-8">
         <div className="grid gap-4 sm:grid-cols-2">
           {[
             { label: "Total Pelanggaran", value: pel.total, icon: AlertTriangle, tone: "bg-rose-50 text-rose-600 border-rose-200" },
@@ -682,7 +656,6 @@ export default function HomeDashboard({ data }: { data: HomeData }) {
         <OrgChart org={data.org} />
         <PieSection pel={pel} />
         <DashboardSection pel={pel} live={live} />
-        <HelpFooter />
       </div>
     </div>
   );
