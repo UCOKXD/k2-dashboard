@@ -33,7 +33,7 @@ function AccountButton() {
     return (
       <Link
         href="/masuk"
-        className="flex items-center gap-1.5 rounded-full bg-white px-4 py-1.5 text-xs font-bold text-navy-900 shadow-[0_6px_18px_rgba(0,0,0,0.35)] transition hover:-translate-y-0.5 hover:bg-sea-50 sm:text-sm"
+        className="flex min-h-9 items-center gap-1.5 rounded-full bg-[#fff] px-4 text-xs font-semibold text-[#0b1e3d] transition hover:bg-[#f1f8fd] sm:text-sm"
       >
         <LogIn size={15} /> Masuk
       </Link>
@@ -44,7 +44,7 @@ function AccountButton() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="relative flex items-center gap-1.5 rounded-full bg-white py-1 pl-1 pr-2 text-xs font-bold sm:gap-2 sm:pr-3 text-navy-900 shadow-[0_6px_18px_rgba(0,0,0,0.35)] sm:text-sm"
+        className="relative flex min-h-9 items-center gap-1.5 rounded-full bg-[#fff] py-1 pl-1 pr-2 text-xs font-semibold text-[#0b1e3d] sm:gap-2 sm:pr-3 sm:text-sm"
       >
         {user.tempPassword && <span aria-label="Password awal belum diganti" className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-white" />}
         <span className="grid h-6 w-6 place-items-center rounded-full bg-gradient-to-br from-sea-500 to-navy-700 text-[11px] text-white">{user.panggilan[0]}</span>

@@ -40,61 +40,62 @@ export default function LoginForm() {
     setBusy(false);
   }
 
+  const field = "min-h-[46px] w-full rounded-k2-md border border-line-strong bg-surface px-3.5 text-[15px] text-ink outline-none transition placeholder:text-ink-3 hover:border-ink-3 focus:border-sea-500 focus:shadow-[0_0_0_3px_rgba(46,155,224,0.25)]";
+
   return (
-    <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-center gap-6 pt-2 sm:pt-6 lg:gap-12">
+    <div className="mx-auto grid max-w-[1100px] items-center gap-[clamp(32px,6vw,80px)] py-[clamp(24px,5vw,72px)] min-[861px]:grid-cols-[1fr_minmax(320px,440px)]">
       {/* Maskot menyapa; berganti jadi "Waduh!" kalau login ditolak. */}
-      <div className="flex flex-[0_1_22rem] flex-col items-center gap-2 text-center sm:gap-4">
+      <div className="flex flex-col items-center text-center min-[861px]:items-start min-[861px]:text-left">
         <Sticker name={error ? "waduh" : "halo"} size={220} />
-        <div>
-          <p className="text-xl font-extrabold text-navy-900 sm:text-2xl">Selamat datang kembali</p>
-          <p className="mt-1 text-sm text-slate-600">Setiap siswa ABSORBING punya akun sendiri. Pengurus (BPH &amp; K2) juga bisa membuka Panel Admin.</p>
-        </div>
+        <h1 className="mt-5 text-[clamp(36px,5vw,60px)] font-extrabold leading-none tracking-[-0.03em]">Selamat datang kembali</h1>
+        <p className="mt-3.5 max-w-[40ch] text-[17px] text-ink-3">Setiap siswa ABSORBING punya akun sendiri. Pengurus (BPH &amp; K2) juga bisa membuka Panel Admin.</p>
       </div>
-      <form onSubmit={submit} className="k2-card w-full max-w-md space-y-5 p-7 shadow-3 sm:p-9">
-        <div className="flex flex-col items-center gap-3 text-center">
-          <div className="flex gap-2">
-            <Image src="/logo-k2.png" alt="Logo Divisi K2" width={56} height={57} className="h-14 w-14 object-contain" />
-            <Image src="/logo-absorbing.png" alt="Logo kelas Absorbing" width={56} height={59} className="h-14 w-14 object-contain" />
-          </div>
-          <div>
-            <h2 className="text-2xl font-extrabold text-navy-900">Masuk</h2>
-            <p className="text-sm text-slate-500">Untuk siswa ABSORBING. Melihat info kelas tetap bisa tanpa masuk.</p>
-          </div>
+      <form onSubmit={submit} className="flex flex-col gap-[18px] rounded-k2-xl border border-line bg-surface p-[clamp(24px,3vw,36px)] shadow-3">
+        <div className="flex gap-2">
+          <Image src="/logo-k2.png" alt="Logo Divisi K2" width={48} height={49} className="h-12 w-12 object-contain" />
+          <Image src="/logo-absorbing.png" alt="Logo kelas Absorbing" width={48} height={50} className="h-12 w-12 object-contain" />
+        </div>
+        <div>
+          <h2 className="text-[28px] font-bold">Masuk</h2>
+          <p className="mt-1 text-sm text-ink-3">Untuk siswa ABSORBING. Melihat info kelas tetap bisa tanpa masuk.</p>
         </div>
 
-        <label className="block space-y-1.5">
-          <span className="text-sm font-semibold text-slate-700">Username</span>
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoComplete="username"
-            autoCapitalize="none"
-            placeholder="mis. Ancis18"
-            className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm outline-none focus:border-sea-500 focus:ring-2 focus:ring-sea-500/30"
-          />
+        <label className="flex flex-col gap-1.5">
+          <span className="text-sm font-semibold text-ink-2">Username</span>
+          <input value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" autoCapitalize="none" placeholder="mis. Ancis18" className={field} />
         </label>
-        <label className="block space-y-1.5">
-          <span className="text-sm font-semibold text-slate-700">Password</span>
-          <div className="relative">
-            <input
-              type={show ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-              className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 pr-11 text-sm outline-none focus:border-sea-500 focus:ring-2 focus:ring-sea-500/30"
-            />
-            <button type="button" onClick={() => setShow((s) => !s)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" aria-label={show ? "Sembunyikan password" : "Tampilkan password"}>
-              {show ? <EyeOff size={17} /> : <Eye size={17} />}
+        <label className="flex flex-col gap-1.5">
+          <span className="text-sm font-semibold text-ink-2">Password</span>
+          <span className="relative block">
+            <input type={show ? "text" : "password"} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" className={`${field} pr-12`} />
+            <button
+              type="button"
+              onClick={() => setShow((s) => !s)}
+              className="absolute right-1 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-k2-md text-ink-3 hover:bg-surface-2 hover:text-ink"
+              aria-label={show ? "Sembunyikan password" : "Tampilkan password"}
+              aria-pressed={show}
+            >
+              {show ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
-          </div>
+          </span>
         </label>
 
-        {error && <p className="rounded-xl bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700">{error}</p>}
+        {error && (
+          <p role="alert" className="rounded-k2-md bg-bad-soft px-3.5 py-2.5 text-sm font-semibold text-bad">
+            {error}
+          </p>
+        )}
 
-        <button disabled={busy || !username || !password} className="flex w-full items-center justify-center gap-2 rounded-xl bg-navy-900 py-3 font-bold text-white shadow-[0_12px_28px_rgba(11,30,61,0.4)] transition hover:bg-navy-800 disabled:opacity-50">
+        <button
+          disabled={busy || !username || !password}
+          className="flex min-h-11 w-full items-center justify-center gap-2 rounded-full bg-accent text-[15px] font-semibold text-[var(--on-accent)] transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-45"
+        >
           <LogIn size={17} /> {busy ? "Memeriksa..." : "Masuk"}
         </button>
-        <p className="text-center text-xs text-slate-400">Username = nama panggilan + nomor absen, mis. Ancis18. Password awal dibagikan Divisi K2 dan wajib diganti saat pertama masuk. Lupa password? Minta pengurus BPH atau K2 untuk mereset.</p>
+        <p className="text-center text-[13px] text-ink-3">
+          Username = nama panggilan + nomor absen, mis. <span className="font-mono">Ancis18</span>. Password awal dibagikan Divisi K2 dan wajib diganti saat pertama masuk. Lupa
+          password? Minta pengurus BPH atau K2 untuk mereset.
+        </p>
       </form>
     </div>
   );

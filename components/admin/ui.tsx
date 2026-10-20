@@ -8,16 +8,16 @@ import Sticker from "@/components/Sticker";
 
 // Gaya isian tanpa lebar (inputBase) dan versi selebar kolom (input).
 export const inputBase =
-  "rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-sea-500 focus:ring-2 focus:ring-sea-500/30";
+  "min-h-[42px] rounded-k2-md border border-line-strong bg-surface px-3 py-2 text-sm text-ink outline-none transition hover:border-ink-3 focus:border-sea-500 focus:shadow-[0_0_0_3px_rgba(46,155,224,0.25)]";
 export const input = `w-full ${inputBase}`;
-export const smallBtn = "rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-40";
+export const smallBtn = "rounded-full border border-line-strong bg-surface px-3 py-1.5 text-xs font-semibold text-ink transition hover:border-ink-3 disabled:opacity-40";
 
 export function Panel({ title, desc, children }: { title: string; desc?: string; children: React.ReactNode }) {
   return (
     <section className="k2-card space-y-4 p-5 sm:p-7">
       <div>
-        <h3 className="text-lg font-extrabold text-navy-900">{title}</h3>
-        {desc && <p className="text-sm text-slate-500">{desc}</p>}
+        <h2 className="text-2xl font-bold">{title}</h2>
+        {desc && <p className="mt-1.5 text-[14.5px] text-ink-3">{desc}</p>}
       </div>
       {children}
     </section>
@@ -77,15 +77,18 @@ export function SaveBar({ dirty, saving, status, onSave, onReset }: { dirty: boo
   // Maskot "Siap!" di samping tombol simpan; berganti jadi "Waduh!" kalau penyimpanan gagal.
   return (
     <div className={`${dirty ? "pointer-events-none sticky bottom-[calc(80px+env(safe-area-inset-bottom))] md:bottom-3" : ""} z-20 flex items-center gap-3 sm:gap-4`}>
-      <div className="pointer-events-auto flex flex-1 flex-wrap items-center justify-between gap-3 rounded-k2-lg border border-line bg-surface px-4 py-3 shadow-2">
-        <p className={`text-sm font-medium ${status?.type === "err" ? "text-rose-600" : status ? "text-emerald-600" : dirty ? "text-amber-700" : "text-slate-400"}`}>
+      <div
+        data-state={status?.type === "err" ? "error" : status ? "saved" : dirty ? "dirty" : "clean"}
+        className={`pointer-events-auto flex flex-1 flex-wrap items-center justify-between gap-3 rounded-k2-lg border bg-surface px-4 py-3.5 shadow-2 ${dirty ? "border-warn/45" : "border-line"}`}
+      >
+        <p aria-live="polite" className={`text-sm font-semibold ${status?.type === "err" ? "text-bad" : status ? "text-ok" : dirty ? "text-warn" : "text-ink-3"}`}>
           {status?.text ?? (dirty ? "Ada perubahan yang belum disimpan." : "Tidak ada perubahan.")}
         </p>
         <div className="flex gap-2">
-          <button onClick={onReset} disabled={!dirty || saving} className="flex items-center gap-1.5 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 disabled:opacity-40">
+          <button onClick={onReset} disabled={!dirty || saving} className="flex min-h-10 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink transition hover:border-ink-3 disabled:cursor-not-allowed disabled:opacity-45">
             <Undo2 size={14} /> Batalkan
           </button>
-          <button onClick={onSave} disabled={!dirty || saving} className="flex items-center gap-1.5 rounded-full bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow disabled:opacity-40">
+          <button onClick={onSave} disabled={!dirty || saving} className="flex min-h-10 items-center gap-1.5 rounded-full bg-[#0b1e3d] px-5 text-sm font-semibold text-white transition hover:bg-[#1b3a6b] disabled:cursor-not-allowed disabled:opacity-45 dark:bg-[#2e9be0] dark:text-[#061227] dark:hover:bg-[#8fcff1]">
             <Save size={14} /> {saving ? "Menyimpan..." : "Simpan"}
           </button>
         </div>

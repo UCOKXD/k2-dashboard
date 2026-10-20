@@ -19,28 +19,28 @@ export default function Error({ error, retry }: { error: Error & { digest?: stri
   }, [error]);
 
   return (
-    // Beranda tidak memberi jarak atas (banner-nya penuh), jadi jaraknya ditambah di sini.
-    <div className={`flex flex-wrap items-center justify-center gap-8 py-6 sm:gap-14 sm:py-12 ${path === "/" ? "px-4 pt-32 lg:pt-28" : ""}`}>
+    // Beranda tidak memberi jarak atas (sampulnya penuh), jadi jaraknya ditambah di sini.
+    <div className={`grid min-h-[calc(100vh-64px-220px)] items-center gap-[clamp(28px,6vw,72px)] py-14 min-[761px]:grid-cols-[auto_1fr] ${path === "/" ? "mx-auto max-w-[calc(var(--wadah)+var(--gutter)*2)] px-[var(--gutter)] pt-32 lg:pt-28" : ""}`}>
       <Sticker name="waduh-error" size={300} />
-      <div className="flex max-w-[520px] flex-[0_1_520px] flex-col gap-4">
-        <span className="self-start rounded-full bg-rose-50 px-3 py-1 text-[13px] font-bold text-rose-700">Gagal memuat data</span>
-        <h1 className="text-3xl font-extrabold text-slate-800">Ada yang putus di tengah jalan</h1>
-        <p className="text-base text-slate-600">Website belum bisa mengambil data dari server atau spreadsheet. Biasanya ini sebentar saja, coba muat ulang dalam beberapa detik.</p>
-        <div className="mt-2 flex flex-wrap gap-2.5">
+      <div className="max-w-[560px]">
+        <span className="inline-flex rounded-full bg-bad-soft px-3 py-1 font-mono text-xs font-bold uppercase tracking-[0.08em] text-bad">Gagal memuat data</span>
+        <h1 className="mt-3.5 text-[clamp(28px,3.6vw,42px)] font-bold">Ada yang putus di tengah jalan</h1>
+        <p className="mt-3.5 max-w-[50ch] text-[17px] text-ink-3">Website belum bisa mengambil data dari server atau spreadsheet. Biasanya ini sebentar saja, coba muat ulang dalam beberapa detik.</p>
+        <div className="mt-[26px] flex flex-wrap gap-2.5">
           <button
             type="button"
             onClick={() => retry()}
-            className="flex items-center gap-1.5 rounded-full bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(11,30,61,0.35)] transition hover:bg-navy-800"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#0b1e3d] px-5 text-[15px] font-semibold text-white transition hover:bg-[#1b3a6b] dark:bg-[#2e9be0] dark:text-[#061227] dark:hover:bg-[#8fcff1]"
           >
-            <RefreshCw size={15} /> Coba lagi
+            <RefreshCw size={16} /> Coba lagi
           </button>
-          <Link href="/" className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+          <Link href="/" className="inline-flex min-h-11 items-center rounded-full border border-line-strong bg-surface px-5 text-[15px] font-semibold text-ink transition hover:border-ink-3">
             Kembali ke beranda
           </Link>
         </div>
-        <details className="mt-2 rounded-k2-md border border-line bg-surface px-4 py-3">
-          <summary className="cursor-pointer text-sm font-semibold text-slate-700">Detail untuk admin</summary>
-          <div className="mt-2 space-y-1.5 font-mono text-xs leading-relaxed text-slate-600">
+        <details className="mt-6 max-w-[520px] rounded-k2-md border border-line bg-surface px-4 py-3">
+          <summary className="cursor-pointer text-sm font-semibold text-ink-2">Detail untuk admin</summary>
+          <div className="mt-2.5 space-y-1.5 font-mono text-[12.5px] leading-relaxed text-ink-3">
             <p className="break-words">{error.message || "Tidak ada pesan error."}</p>
             <p>
               {error.digest ? `Kode: ${error.digest} · ` : ""}Waktu: {at} · Halaman: {path}
