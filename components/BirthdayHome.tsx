@@ -83,14 +83,15 @@ export function BirthdayHero({ people }: { people: BdayPerson[] }) {
 
   return (
     // Jarak atas mengikuti tinggi bunting (sebanding lebar layar) supaya bunting tidak menutupi tulisan.
-    <div className="mx-auto max-w-[1000px] px-4 md:px-0" style={{ paddingTop: "calc(2.5rem + 10vw)" }}>
+    <div className="mx-auto max-w-[calc(var(--wadah)+var(--gutter)*2)] px-[var(--gutter)]" style={{ paddingTop: "calc(2.5rem + 10vw)" }}>
       <section
         aria-label="Ucapan ulang tahun"
         onClick={burst}
-        className="relative flex min-h-[560px] flex-col items-center overflow-hidden rounded-[2.5rem] border-4 border-white px-5 pb-12 pt-10 text-center text-white shadow-[0_30px_70px_rgba(11,30,61,0.45)] sm:min-h-[620px] sm:px-10"
-        style={{ background: "linear-gradient(135deg, #0B1E3D 0%, #1B3A6B 55%, #b4577a 100%)" }}
+        className="relative isolate flex min-h-[560px] cursor-pointer flex-col items-center overflow-hidden rounded-k2-xl px-5 pb-12 pt-10 text-center text-white shadow-3 sm:min-h-[620px] sm:px-10"
+        style={{ background: "linear-gradient(135deg, #0b1e3d 0%, #1b3a6b 52%, #b4577a 100%)" }}
       >
         {/* Dekorasi (tidak bisa diklik, tidak dibacakan) */}
+        <div aria-hidden="true" className="k2-bday-art" />
         <div aria-hidden="true" className="pointer-events-none absolute inset-0">
           {FALLING.map((c, i) => (
             <span key={i} className="k2-confetti" style={{ left: c.left, background: COLORS[i % COLORS.length], animationDuration: `${c.dur}s`, animationDelay: `${c.delay}s` }} />
@@ -117,19 +118,19 @@ export function BirthdayHero({ people }: { people: BdayPerson[] }) {
             {people.map((p) => (
               <div
                 key={p.nama}
-                className={`flex min-w-0 flex-1 flex-col items-center gap-2 rounded-3xl border border-white/25 bg-white/10 p-3 text-center backdrop-blur-md sm:flex-row sm:gap-4 sm:p-4 sm:text-left ${
+                className={`flex min-w-0 flex-1 flex-col items-center gap-2 rounded-k2-lg border border-white/[0.22] bg-white/10 p-3 text-center backdrop-blur-md sm:flex-row sm:gap-4 sm:p-4 sm:text-left ${
                   people.length > 3 ? "min-w-[40%] sm:min-w-0" : ""
                 } ${people.length >= 3 ? "sm:flex-[0_1_280px]" : "max-w-[340px] sm:flex-[0_1_340px]"}`}
               >
                 <Avatar nama={p.nama} />
                 <div className="min-w-0">
                   <p
-                    className={`break-words font-extrabold leading-tight ${people.length >= 3 ? "text-sm sm:text-2xl" : people.length === 2 ? "text-base sm:text-3xl" : "text-2xl sm:text-3xl"}`}
+                    className={`break-words font-display font-extrabold leading-tight tracking-[-0.02em] ${people.length >= 3 ? "text-sm sm:text-2xl" : people.length === 2 ? "text-base sm:text-3xl" : "text-2xl sm:text-3xl"}`}
                     style={{ textShadow: "0 3px 12px rgba(11,30,61,0.55)" }}
                   >
                     {p.nama}
                   </p>
-                  {p.absen && <p className="mt-1 text-[11px] font-semibold text-white/80 sm:text-[13px]">Absen {String(p.absen).padStart(2, "0")}</p>}
+                  {p.absen && <p className="mt-1 font-mono text-[11px] font-semibold tracking-[0.08em] text-white/80 sm:text-[12px]">Absen {String(p.absen).padStart(2, "0")}</p>}
                 </div>
               </div>
             ))}

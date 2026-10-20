@@ -81,12 +81,12 @@ export function BirthdayStrip() {
   const { today } = useBirthday();
   if (!today.length) return null;
   return (
-    <Link href="/#ucapan" className="k2-bd-strip mb-6 flex flex-wrap items-center gap-4 rounded-3xl px-5 py-3.5 shadow-[0_14px_34px_rgba(15,23,42,0.14)] transition hover:-translate-y-0.5">
+    <Link href="/#ucapan" className="k2-bd-strip mb-6 flex flex-wrap items-center gap-4 rounded-k2-lg px-[18px] py-3.5 no-underline shadow-1 transition hover:-translate-y-0.5">
       <Image src="/perayaan/kue-ulang-tahun.png" alt="" aria-hidden="true" width={252} height={291} className="h-[52px] w-auto" />
-      <p className="min-w-0 flex-[1_1_280px] text-[15px] leading-snug text-slate-700">
+      <p className="min-w-0 flex-[1_1_260px] text-[15px] leading-snug text-ink">
         <b className="k2-bd-name">Hari ini ulang tahun {joinNames(today.map((p) => p.nama))}.</b> Jangan lupa kasih ucapan!
       </p>
-      <span className="rounded-full bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow">Kirim ucapan</span>
+      <span className="inline-flex min-h-10 items-center rounded-full bg-[#0b1e3d] px-5 text-sm font-semibold text-white dark:bg-accent dark:text-[#140a1f]">Kirim ucapan</span>
     </Link>
   );
 }
