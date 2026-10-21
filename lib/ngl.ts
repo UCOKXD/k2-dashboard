@@ -3,7 +3,8 @@
 // - Sesi dibuka/ditutup admin (izin "ngl"). Sesi baru = centang hijau mulai dari nol lagi.
 // - Satu pesan per pengirim → penerima per sesi (tidak bisa diubah/diisi ulang).
 // - Pesan sesi yang masih buka belum bisa dibaca penerima; baru terbuka setelah sesi ditutup.
-// - Pesan disimpan 3 bulan setelah sesinya ditutup, lalu terhapus otomatis.
+// - Pesan disimpan sekian hari setelah sesinya ditutup (diatur admin, bawaan 90 hari), lalu terhapus otomatis.
+//   Admin juga bisa menghapus sesi yang sudah ditutup secara manual.
 // - Pengirim asli tetap tercatat (admin NGL boleh melihatnya untuk menangani laporan).
 import { randomUUID } from "node:crypto";
 import { STUDENTS } from "@/lib/students";
@@ -12,8 +13,11 @@ import { cmd, getJSON, setJSON } from "@/lib/store";
 const STATE = "k2:ngl:state";
 const SESSIONS = "k2:ngl:sessions";
 const REPORTS = "k2:ngl:reports";
-const KEEP = 90 * 86_400; // 3 bulan setelah sesi ditutup
-const WHILE_OPEN = 200 * 86_400; // selama sesi masih buka (dipendekkan jadi 3 bulan saat ditutup)
+const SETTINGS = "k2:ngl:settings";
+export const KEEP_DEFAULT = 90; // hari setelah sesi ditutup
+export const KEEP_MIN = 1;
+export const KEEP_MAX = 365;
+const WHILE_OPEN = 400 * 86_400; // selama sesi masih buka (dipendekkan saat ditutup)
 
 export const NGL_MIN = 10;
 export const NGL_MAX = 500;
@@ -38,11 +42,55 @@ export async function getState(): Promise<State> {
   return getJSON<State>(STATE, { open: false, current: null });
 }
 
-// Sesi 3 bulan terakhir (terbaru di depan). Sesi yang lebih lama dibuang dari daftar.
+// Lama penyimpanan pesan (hari) setelah sesi ditutup.
+export async function getKeepDays(): Promise<number> {
+  const d = (await getJSON<{ keepDays?: number }>(SETTINGS, {})).keepDays;
+  return typeof d === "number" && d >= KEEP_MIN && d <= KEEP_MAX ? d : KEEP_DEFAULT;
+}
+const expiresAt = (s: NglSession, days: number) => (s.closedAt ? Date.parse(s.closedAt) + days * 86_400_000 : null);
+
+// Sesi yang masih tersimpan (terbaru di depan). Sesi yang melewati masa simpan dibuang dari daftar.
 export async function listSessions(): Promise<NglSession[]> {
+  const [all, days] = await Promise.all([getJSON<NglSession[]>(SESSIONS, []), getKeepDays()]);
+  return all.filter((s) => (expiresAt(s, days) ?? Infinity) > Date.now());
+}
+
+// Pasang masa hapus untuk semua data satu sesi.
+async function expireSession(sid: string, seconds: number) {
+  for (const x of STUDENTS) {
+    await cmd("EXPIRE", inKey(sid, x.absen), seconds);
+    await cmd("EXPIRE", doneKey(sid, x.absen), seconds);
+  }
+  await cmd("EXPIRE", countKey(sid), seconds);
+  for (const m of MILESTONES) await cmd("EXPIRE", msKey(sid, m), seconds);
+}
+
+// Hapus sesi yang sudah ditutup beserta semua pesan & laporannya (tidak bisa dibatalkan).
+export async function deleteSession(sid: string): Promise<string | null> {
+  const st = await getState();
+  if (st.open && st.current?.id === sid) return "Sesi yang masih dibuka tidak bisa dihapus. Tutup dulu sesinya.";
   const all = await getJSON<NglSession[]>(SESSIONS, []);
-  const limit = Date.now() - KEEP * 1000;
-  return all.filter((s) => !s.closedAt || Date.parse(s.closedAt) > limit);
+  if (!all.some((s) => s.id === sid)) return "Sesi tidak ditemukan";
+  const keys = [...STUDENTS.flatMap((x) => [inKey(sid, x.absen), doneKey(sid, x.absen)]), countKey(sid), ...MILESTONES.map((m) => msKey(sid, m))];
+  for (let i = 0; i < keys.length; i += 20) await cmd("DEL", ...keys.slice(i, i + 20));
+  await setJSON(SESSIONS, all.filter((s) => s.id !== sid));
+  for (const r of await reports()) if (r.sid === sid) await dismissReport(r.id);
+  return null;
+}
+
+// Ubah lama penyimpanan. Berlaku juga untuk sesi lama: yang sudah lewat langsung dihapus, sisanya dihitung ulang.
+export async function setKeepDays(days: number): Promise<{ deleted: number }> {
+  await setJSON(SETTINGS, { keepDays: days });
+  let deleted = 0;
+  for (const s of await getJSON<NglSession[]>(SESSIONS, [])) {
+    const end = expiresAt(s, days);
+    if (end === null) continue; // sesi masih buka
+    const left = Math.ceil((end - Date.now()) / 1000);
+    if (left <= 0) {
+      if (!(await deleteSession(s.id))) deleted++;
+    } else await expireSession(s.id, left);
+  }
+  return { deleted };
 }
 
 export async function openSession(by: string): Promise<NglSession | string> {
@@ -60,12 +108,8 @@ export async function closeSession(by: string): Promise<{ session: NglSession; c
   const s: NglSession = { ...st.current, closedAt: new Date().toISOString(), closedBy: by };
   await setJSON(SESSIONS, (await listSessions()).map((x) => (x.id === s.id ? s : x)));
   await setJSON(STATE, { open: false, current: s } satisfies State);
-  // Mulai hitung 3 bulan dari sekarang untuk semua data sesi ini.
-  for (const x of STUDENTS) {
-    await cmd("EXPIRE", inKey(s.id, x.absen), KEEP);
-    await cmd("EXPIRE", doneKey(s.id, x.absen), KEEP);
-  }
-  await cmd("EXPIRE", countKey(s.id), KEEP);
+  // Mulai hitung masa simpan dari sekarang untuk semua data sesi ini.
+  await expireSession(s.id, (await getKeepDays()) * 86_400);
   return { session: s, count: await countOf(s.id) };
 }
 

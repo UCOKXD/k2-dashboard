@@ -12,6 +12,7 @@ type Report = { sid: string; id: string; to: number; at: string; message: Messag
 type Data = {
   state: { open: boolean; current: Session | null };
   sessions: Session[];
+  keepDays: number;
   progress: { sid: string; count: number; total: number; perStudent: number; students: { absen: number; done: number }[] } | null;
   reports: Report[];
 };
@@ -53,6 +54,70 @@ function MessageCard({ m, onDelete }: { m: Message; onDelete?: () => void }) {
         </p>
       )}
     </div>
+  );
+}
+
+// Masa simpan pesan + hapus manual sesi lama.
+function KeepPanel({ data, act }: { data: Data; act: (b: Record<string, unknown>, ask?: string) => Promise<boolean> }) {
+  const monthly = data.keepDays % 30 === 0;
+  const [num, setNum] = useState(String(monthly ? data.keepDays / 30 : data.keepDays));
+  const [unit, setUnit] = useState<"hari" | "bulan">(monthly ? "bulan" : "hari");
+  const days = (Number(num) || 0) * (unit === "bulan" ? 30 : 1);
+  const valid = Number.isInteger(days) && days >= 1 && days <= 365;
+  const hapusPada = (s: Session) => (s.closedAt ? tgl(new Date(Date.parse(s.closedAt) + data.keepDays * 86_400_000).toISOString()) : "");
+  const label = (d: number) => (d % 30 === 0 ? `${d / 30} bulan` : `${d} hari`);
+
+  return (
+    <Panel title="Penyimpanan pesan" desc={`Sekarang: pesan dihapus otomatis ${label(data.keepDays)} setelah sesinya ditutup. Sesi yang sudah ditutup juga bisa dihapus manual.`}>
+      <div className="flex flex-wrap items-end gap-2">
+        <label className="space-y-1">
+          <span className="block text-xs font-semibold text-slate-600">Hapus otomatis setelah</span>
+          <span className="flex gap-2">
+            <input type="number" min={1} max={unit === "bulan" ? 12 : 365} value={num} onChange={(e) => setNum(e.target.value)} className={`${input} w-24 font-mono`} />
+            <select value={unit} onChange={(e) => setUnit(e.target.value as "hari" | "bulan")} className={`${input} w-28`}>
+              <option value="hari">hari</option>
+              <option value="bulan">bulan</option>
+            </select>
+          </span>
+        </label>
+        <button
+          disabled={!valid || days === data.keepDays}
+          onClick={() => act({ action: "keep", days }, `Atur pesan NGL dihapus ${label(days)} setelah sesi ditutup? Berlaku juga untuk sesi lama: yang sudah lewat ${label(days)} langsung terhapus.`)}
+          className="min-h-[42px] rounded-full bg-[#0b1e3d] px-5 text-sm font-semibold text-white disabled:opacity-45 dark:bg-[#2e9be0] dark:text-[#061227]"
+        >
+          Simpan
+        </button>
+        {!valid && <p className="w-full text-xs font-semibold text-rose-600">Isi antara 1 hari sampai 12 bulan (365 hari).</p>}
+      </div>
+
+      {data.sessions.length === 0 ? (
+        <p className="text-sm text-slate-500">Belum ada sesi tersimpan.</p>
+      ) : (
+        <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-white">
+          {data.sessions.map((s, i) => {
+            const open = data.state.open && data.state.current?.id === s.id;
+            return (
+              <li key={s.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-sm">
+                <div>
+                  <p className="font-semibold text-slate-800">
+                    Sesi {data.sessions.length - i} · dibuka {tgl(s.openedAt)}
+                  </p>
+                  <p className="text-xs text-slate-500">{open ? "Masih dibuka" : `Ditutup ${tgl(s.closedAt)} · terhapus otomatis ${hapusPada(s)}`}</p>
+                </div>
+                <button
+                  disabled={open}
+                  title={open ? "Tutup sesi dulu sebelum menghapus" : undefined}
+                  onClick={() => act({ action: "delete-session", sid: s.id }, `Hapus Sesi ${data.sessions.length - i} beserta SEMUA pesannya sekarang? Penerima tidak bisa membacanya lagi dan ini tidak bisa dibatalkan.`)}
+                  className={`${smallBtn} inline-flex items-center gap-1 text-rose-600`}
+                >
+                  <Trash2 size={12} /> Hapus sesi
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </Panel>
   );
 }
 
@@ -107,7 +172,7 @@ export default function NglAdmin() {
 
   return (
     <div className="space-y-6">
-      <Panel title="Sesi NGL" desc="Buka sesi agar siswa bisa mengisi. Sesi baru membuat semua centang mulai dari nol lagi. Pesan baru bisa dibaca penerima setelah sesi ditutup, dan tersimpan 3 bulan setelahnya.">
+      <Panel title="Sesi NGL" desc="Buka sesi agar siswa bisa mengisi. Sesi baru membuat semua centang mulai dari nol lagi. Pesan baru bisa dibaca penerima setelah sesi ditutup, lalu terhapus otomatis sesuai pengaturan di bawah.">
         <div className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-3 ${state.open ? "border-emerald-200 bg-emerald-50/80" : "border-slate-200 bg-white"}`}>
           <p className="text-sm font-semibold text-slate-800">
             {state.open ? (
@@ -138,6 +203,8 @@ export default function NglAdmin() {
         </div>
         {msg && <p className="text-sm font-medium text-rose-600">{msg}</p>}
       </Panel>
+
+      <KeepPanel data={data} act={act} />
 
       {progress && (
         <Panel title={`Progres pengisian ${state.open ? "(sesi berjalan)" : "(sesi terakhir)"}`} desc="Jumlah teman yang sudah diisi tiap siswa. Isi pesannya tidak ditampilkan di sini.">

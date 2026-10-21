@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { recordHistory, requireAdmin } from "@/lib/auth";
-import { closeSession, deleteMessage, dismissReport, getState, listSessions, messagesFor, openSession, pct, progress, reports, studentOf } from "@/lib/ngl";
+import { KEEP_MAX, KEEP_MIN, closeSession, deleteMessage, deleteSession, dismissReport, getKeepDays, getState, listSessions, messagesFor, openSession, pct, progress, reports, setKeepDays, studentOf } from "@/lib/ngl";
 import { notify } from "@/lib/notify";
 import { NOT_READY, storeReady } from "@/lib/store";
 
@@ -23,7 +23,7 @@ export async function GET(req: Request) {
     const msgs = await messagesFor(sid, to);
     return NextResponse.json({ messages: msgs.map((m) => ({ ...m, sender: who(m.from) })) });
   }
-  const [state, sessions, reps] = await Promise.all([getState(), listSessions(), reports()]);
+  const [state, sessions, reps, keepDays] = await Promise.all([getState(), listSessions(), reports(), getKeepDays()]);
   const target = state.current ?? sessions[0] ?? null;
   const items = [];
   for (const r of reps) {
@@ -32,7 +32,7 @@ export async function GET(req: Request) {
     else await dismissReport(r.id); // pesannya sudah terhapus (dihapus admin / lewat 3 bulan)
   }
   return NextResponse.json(
-    { state, sessions, progress: target ? { sid: target.id, ...(await progress(target.id)) } : null, reports: items },
+    { state, sessions, keepDays, progress: target ? { sid: target.id, ...(await progress(target.id)) } : null, reports: items },
     { headers: { "Cache-Control": "no-store" } },
   );
 }
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
   const { user, error } = await requireAdmin(req, { perm: "ngl" });
   if (error) return error;
   if (!storeReady) return NextResponse.json({ error: NOT_READY }, { status: 503 });
-  const b = ((await req.json().catch(() => ({}))) ?? {}) as { action?: string; sid?: string; to?: number; id?: string };
+  const b = ((await req.json().catch(() => ({}))) ?? {}) as { action?: string; sid?: string; to?: number; id?: string; days?: number };
   if (b.action === "open") {
     const s = await openSession(user.panggilan);
     if (typeof s === "string") return NextResponse.json({ error: s }, { status: 400 });
@@ -61,6 +61,19 @@ export async function POST(req: Request) {
     if (!m) return NextResponse.json({ error: "Pesan tidak ditemukan" }, { status: 404 });
     await recordHistory(user, `Menghapus pesan NGL untuk ${studentOf(m.to)?.short} dari ${studentOf(m.from)?.short}`);
     return NextResponse.json({ ok: true });
+  }
+  if (b.action === "delete-session" && typeof b.sid === "string") {
+    const e = await deleteSession(b.sid);
+    if (e) return NextResponse.json({ error: e }, { status: 400 });
+    await recordHistory(user, "Menghapus sesi NGL beserta semua pesannya");
+    return NextResponse.json({ ok: true });
+  }
+  if (b.action === "keep") {
+    const d = Number(b.days);
+    if (!Number.isInteger(d) || d < KEEP_MIN || d > KEEP_MAX) return NextResponse.json({ error: `Isi ${KEEP_MIN}–${KEEP_MAX} hari` }, { status: 400 });
+    const r = await setKeepDays(d);
+    await recordHistory(user, `Mengatur pesan NGL dihapus otomatis ${d} hari setelah sesi ditutup${r.deleted ? ` (${r.deleted} sesi lama langsung terhapus)` : ""}`);
+    return NextResponse.json({ ok: true, deleted: r.deleted });
   }
   if (b.action === "dismiss" && typeof b.id === "string") {
     await dismissReport(b.id);
