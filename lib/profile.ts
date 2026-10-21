@@ -1,4 +1,4 @@
-// Profil siswa (hanya server): bio, Instagram, dan maksimal 3 foto unggahan seperti feed.
+// Profil siswa (hanya server): bio, Instagram, TikTok, dan maksimal 3 foto unggahan seperti feed.
 // Foto sudah dikecilkan & dijadikan WebP di browser (<= 200 KB) supaya penyimpanan tetap ringan.
 import { randomUUID } from "node:crypto";
 import { cmd, getJSON, setJSON } from "@/lib/store";
@@ -7,10 +7,12 @@ export const BIO_MAX = 150;
 export const POST_MAX = 3;
 export const POST_MAX_BYTES = 200_000;
 export const IG_RE = /^[A-Za-z0-9._]{1,30}$/;
+export const TT_RE = /^[A-Za-z0-9._]{2,24}$/;
 
 export type Post = { id: string; at: string };
-export type Profile = { bio: string; ig: string; showIg: boolean; posts: Post[] };
-const EMPTY: Profile = { bio: "", ig: "", showIg: false, posts: [] };
+export type Profile = { bio: string; ig: string; showIg: boolean; tt: string; showTt: boolean; posts: Post[] };
+export const EMPTY_PROFILE: Profile = { bio: "", ig: "", showIg: false, tt: "", showTt: false, posts: [] };
+const EMPTY = EMPTY_PROFILE;
 
 const pKey = (absen: number) => `k2:profile:${absen}`;
 const postKey = (absen: number, id: string) => `k2:post:${absen}:${id}`;
@@ -19,7 +21,7 @@ export async function getProfile(absen: number): Promise<Profile> {
   return { ...EMPTY, ...(await getJSON<Partial<Profile>>(pKey(absen), {})) };
 }
 
-export async function saveInfo(absen: number, info: Pick<Profile, "bio" | "ig" | "showIg">) {
+export async function saveInfo(absen: number, info: Pick<Profile, "bio" | "ig" | "showIg" | "tt" | "showTt">) {
   const p = await getProfile(absen);
   await setJSON(pKey(absen), { ...p, ...info });
 }

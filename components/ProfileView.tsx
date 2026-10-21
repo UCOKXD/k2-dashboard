@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, ImagePlus, Lock, Pencil, Trash2, Users, X } 
 import { adminFetch, useAuth, usePerm } from "@/components/AuthProvider";
 import { StatGroup } from "@/components/IzinStats";
 import InstagramButton from "@/components/InstagramButton";
+import TikTokButton from "@/components/TikTokButton";
 import { Loading } from "@/components/admin/ui";
 
 export type ProfileData = {
@@ -17,6 +18,8 @@ export type ProfileData = {
   bio: string;
   ig: string;
   showIg: boolean;
+  tt: string;
+  showTt: boolean;
   posts: { id: string; at: string }[];
   stats: { izin: number | null; sakit: number | null; pelanggaran: number | null; poin: number | null };
   own: boolean;
@@ -114,7 +117,12 @@ export default function ProfileView({ absen }: { absen: number }) {
           {data.bio ? <p className="whitespace-pre-line text-[15px] leading-relaxed text-ink-2">{data.bio}</p> : data.own && <p className="text-sm text-ink-3">Belum ada bio.</p>}
           <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
             {data.ig && (data.showIg || data.own) && <InstagramButton handle={data.ig} />}
-            {data.own && data.ig && !data.showIg && <span className="self-center text-xs text-ink-3">(Instagram disembunyikan dari teman)</span>}
+            {data.tt && (data.showTt || data.own) && <TikTokButton handle={data.tt} />}
+            {data.own && ((data.ig && !data.showIg) || (data.tt && !data.showTt)) && (
+              <span className="self-center text-xs text-ink-3">
+                ({[data.ig && !data.showIg && "Instagram", data.tt && !data.showTt && "TikTok"].filter(Boolean).join(" & ")} disembunyikan dari teman)
+              </span>
+            )}
             {data.own && (
               <Link href="/akun" className="inline-flex min-h-10 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink hover:border-ink-3">
                 <Pencil size={15} /> Edit profil

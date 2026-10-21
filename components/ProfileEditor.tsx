@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { ImagePlus, Save, Trash2 } from "lucide-react";
 import { adminFetch, useAuth } from "@/components/AuthProvider";
 import InstagramButton from "@/components/InstagramButton";
+import TikTokButton from "@/components/TikTokButton";
 import { compressImage } from "@/components/imageTools";
 import { type ProfileData, fetchProfile, postSrc } from "@/components/ProfileView";
 import { input } from "@/components/admin/ui";
@@ -64,13 +65,15 @@ export function UsernameForm() {
   );
 }
 
-// Bio + Instagram (opsional, bisa disembunyikan) + maksimal 3 foto seperti feed.
+// Bio + Instagram & TikTok (opsional, bisa disembunyikan) + maksimal 3 foto seperti feed.
 export function ProfileInfoEditor() {
   const { user } = useAuth();
   const [data, setData] = useState<ProfileData | null>(null);
   const [bio, setBio] = useState("");
   const [ig, setIg] = useState("");
   const [showIg, setShowIg] = useState(false);
+  const [tt, setTt] = useState("");
+  const [showTt, setShowTt] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [pmsg, setPmsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -84,6 +87,8 @@ export function ProfileInfoEditor() {
         setBio(d.bio);
         setIg(d.ig);
         setShowIg(d.showIg);
+        setTt(d.tt ?? "");
+        setShowTt(!!d.showTt);
       })
       .catch((e: Error) => setMsg({ ok: false, text: e.message }));
   }, [user]);
@@ -93,6 +98,7 @@ export function ProfileInfoEditor() {
   if (!data) return <p className="text-sm text-ink-3">Memuat profil…</p>;
   const left = BIO_MAX - [...bio].length;
   const handle = ig.trim().replace(/^@/, "");
+  const ttHandle = tt.trim().replace(/^@/, "");
 
   async function upload(f?: File) {
     if (!f || !user) return;
@@ -130,7 +136,7 @@ export function ProfileInfoEditor() {
         onSubmit={async (e) => {
           e.preventDefault();
           setBusy(true);
-          await run(() => adminFetch("/api/profil", "PUT", { bio, ig: handle, showIg: showIg && !!handle }), "Profil tersimpan.", setMsg);
+          await run(() => adminFetch("/api/profil", "PUT", { bio, ig: handle, showIg: showIg && !!handle, tt: ttHandle, showTt: showTt && !!ttHandle }), "Profil tersimpan.", setMsg);
           setBusy(false);
         }}
       >
@@ -155,6 +161,23 @@ export function ProfileInfoEditor() {
           <div>
             <p className="mb-1.5 text-xs text-ink-3">Pratinjau:</p>
             <InstagramButton handle={handle} />
+          </div>
+        )}
+        <label className="block space-y-1.5">
+          <span className="text-sm font-semibold text-ink-2">TikTok (opsional)</span>
+          <span className="flex items-center gap-2">
+            <span className="font-mono text-ink-3">@</span>
+            <input value={tt} onChange={(e) => setTt(e.target.value)} maxLength={60} autoCapitalize="none" spellCheck={false} placeholder="username tiktok" className={`${input} w-full max-w-xs font-mono`} />
+          </span>
+        </label>
+        <label className="flex items-center gap-2.5 text-sm text-ink-2">
+          <input type="checkbox" checked={showTt} disabled={!ttHandle} onChange={(e) => setShowTt(e.target.checked)} className="h-4 w-4 accent-[#fe2c55]" />
+          Tampilkan tombol TikTok di profilku
+        </label>
+        {ttHandle && showTt && (
+          <div>
+            <p className="mb-1.5 text-xs text-ink-3">Pratinjau:</p>
+            <TikTokButton handle={ttHandle} />
           </div>
         )}
         <button disabled={busy || left < 0} className={btn}>
