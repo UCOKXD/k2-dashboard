@@ -7,7 +7,6 @@ import {
   Armchair,
   BookOpen,
   Calculator,
-  ChevronDown,
   ClipboardList,
   Clock,
   FileText,
@@ -181,10 +180,9 @@ export default function NavIsland({ variant }: { variant: "floating" | "static" 
               aria-expanded={isOpen}
               aria-haspopup="true"
               onClick={(ev) => setOpen((ev.nativeEvent as PointerEvent).pointerType === "mouse" ? e.name : isOpen ? null : e.name)}
-              className={`${ITEM} !w-auto !grid-flow-col gap-0.5 px-2.5 ${active ? "bg-[#fff] text-[#0b1e3d]" : isOpen ? "bg-white/15 text-white" : "text-[#c9d6e6] hover:bg-white/10 hover:text-white"}`}
+              className={`${ITEM} ${active ? "bg-[#fff] text-[#0b1e3d]" : isOpen ? "bg-white/15 text-white" : "text-[#c9d6e6] hover:bg-white/10 hover:text-white"}`}
             >
               <e.icon size={18} className={active ? "text-sea-600" : "text-sea-300"} />
-              <ChevronDown size={13} className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
               {!isOpen && <Tip text={e.name} />}
             </button>
             {isOpen && (
