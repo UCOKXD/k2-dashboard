@@ -101,7 +101,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 }
 
 // Halaman publik yang memakai kepala halaman biru (components/PageHero.tsx).
-const HERO_PAGES = ["/jadwal", "/izin", "/izin-sakit", "/pelanggaran", "/doa-harian", "/kalender-acara", "/tempat-duduk", "/galeri", "/ngl"];
+const HERO_PAGES = ["/jadwal", "/izin", "/izin-sakit", "/pelanggaran", "/doa-harian", "/kalender-acara", "/tempat-duduk", "/galeri", "/ngl", "/kalkulator"];
 
 function Frame({ children }: { children: React.ReactNode }) {
   const path = usePathname();
