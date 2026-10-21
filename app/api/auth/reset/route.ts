@@ -3,6 +3,7 @@ import { accountsFor, findAccount } from "@/lib/admins";
 import { changedAccounts, initialPassword, recordHistory, requireAdmin, usesTempPassword } from "@/lib/auth";
 import { getContent } from "@/lib/content-server";
 import { NOT_READY, cmd, storeReady } from "@/lib/store";
+import { getUsernames, loginOf, setUsername } from "@/lib/usernames";
 
 export const dynamic = "force-dynamic";
 
@@ -14,9 +15,11 @@ export async function GET(req: Request) {
   const [org, birthdays] = await Promise.all([getContent("org"), getContent("birthdays")]);
   const list = accountsFor(org);
   const changed = await changedAccounts(list.map((a) => a.key)).catch(() => new Set<string>());
+  const names = storeReady ? await getUsernames().catch(() => ({})) : {};
   return NextResponse.json({
     items: list.map((a) => ({
       username: a.username,
+      login: loginOf(a, names),
       jabatan: a.jabatan,
       grup: a.grup,
       admin: a.admin,
@@ -39,6 +42,8 @@ export async function POST(req: Request) {
   if (target.webAdmin) return NextResponse.json({ error: "Password Admin Website tidak bisa direset dari sini" }, { status: 403 });
   await cmd("DEL", `k2:pw:${target.key}`);
   await cmd("DEL", `k2:fail:${target.key}`);
-  await recordHistory(user, `Mereset password ${target.panggilan} (${target.username}) ke password awal`);
+  const custom = (await getUsernames())[target.key];
+  if (custom) await setUsername(target.key, null); // username kembali ke username awal
+  await recordHistory(user, `Mereset password ${target.panggilan} ke password awal${custom ? ` dan username ke ${target.username} (sebelumnya ${custom})` : ""}`);
   return NextResponse.json({ ok: true, temp: await initialPassword(target), admin: target.admin });
 }

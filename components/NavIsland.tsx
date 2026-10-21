@@ -15,6 +15,7 @@ import {
   GraduationCap,
   Images,
   MessageCircleHeart,
+  UsersRound,
 } from "lucide-react";
 
 export const MENU = [
@@ -30,6 +31,7 @@ export const MENU = [
   { name: "Tempat Duduk", icon: Armchair, href: "/tempat-duduk", match: "/tempat-duduk" },
   { name: "Galeri", icon: Images, href: "/galeri", match: "/galeri" },
   { name: "NGL", icon: MessageCircleHeart, href: "/ngl", match: "/ngl" },
+  { name: "Profil", icon: UsersRound, href: "/profil", match: "/profil" },
 ] as const;
 
 // floating: halaman utama. Island melayang di bawah banner, lalu naik menempel di tengah atas layar saat di-scroll.

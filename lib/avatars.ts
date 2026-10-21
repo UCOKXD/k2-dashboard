@@ -24,11 +24,11 @@ function isImage(type: string, buf: Buffer) {
   return false;
 }
 
-export function parseAvatar(data: unknown): { type: string; b64: string } | { error: string } {
+export function parseAvatar(data: unknown, max = AVATAR_MAX_BYTES): { type: string; b64: string } | { error: string } {
   const m = typeof data === "string" ? /^data:(image\/(?:jpeg|png|webp));base64,([A-Za-z0-9+/=]+)$/.exec(data) : null;
   if (!m) return { error: "Format foto tidak didukung (pakai JPG, PNG, atau WebP)" };
   const buf = Buffer.from(m[2], "base64");
-  if (buf.length > AVATAR_MAX_BYTES) return { error: "Foto terlalu besar" };
+  if (buf.length > max) return { error: "Foto terlalu besar" };
   if (!isImage(m[1], buf)) return { error: "Berkas bukan gambar yang valid" };
   return { type: m[1], b64: m[2] };
 }

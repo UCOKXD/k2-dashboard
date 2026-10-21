@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
-import { LayoutDashboard, Lock, ShieldAlert, UserRound } from "lucide-react";
+import { Eye, LayoutDashboard, Lock, ShieldAlert, UserRound } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import PasswordForm from "@/components/PasswordForm";
 import ProfilePhoto from "@/components/ProfilePhoto";
+import { ProfileInfoEditor, UsernameForm } from "@/components/ProfileEditor";
 import { Loading, Panel } from "@/components/admin/ui";
 import { GRUP_LABEL } from "@/lib/admins";
 
@@ -24,9 +25,15 @@ export default function AccountPage() {
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold">Akun Saya</h2>
-        <p className="text-sm text-slate-500">Halo, {user.panggilan}!</p>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="k2-eyebrow">K2 · Profil</p>
+          <h1 className="mt-3 text-[clamp(32px,4.5vw,48px)] font-extrabold leading-none tracking-[-0.03em]">Edit profil</h1>
+          <p className="mt-2 text-[15px] text-ink-3">Halo, {user.panggilan}!</p>
+        </div>
+        <Link href={`/profil/${user.absen}`} className="inline-flex min-h-10 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink hover:border-ink-3">
+          <Eye size={15} /> Lihat profilku
+        </Link>
       </div>
 
       {user.tempPassword && (
@@ -49,7 +56,7 @@ export default function AccountPage() {
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
             <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">Username</dt>
-            <dd className="font-mono font-semibold text-slate-800">{user.username}</dd>
+            <dd className="font-mono font-semibold text-slate-800">{user.login}</dd>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
             <dt className="text-xs font-semibold uppercase tracking-wider text-slate-500">Nomor absen</dt>
@@ -65,6 +72,14 @@ export default function AccountPage() {
 
       <Panel title="Foto Profil" desc="Tampil di tombol akun, daftar teman di NGL, dan banner ulang tahun.">
         <ProfilePhoto />
+      </Panel>
+
+      <Panel title="Bio, Instagram & foto" desc="Terlihat oleh teman sekelas yang sudah masuk.">
+        <ProfileInfoEditor />
+      </Panel>
+
+      <Panel title="Username" desc="Username dipakai untuk masuk.">
+        {user.tempPassword ? <p className="text-sm text-ink-3">Ganti password awal dulu sebelum mengganti username.</p> : <UsernameForm />}
       </Panel>
 
       <Panel title="Ganti Password" desc="Minimal 6 karakter. Setelah diganti, kamu akan diminta masuk lagi.">

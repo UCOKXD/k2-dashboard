@@ -93,8 +93,8 @@ export default function LoginForm() {
           <LogIn size={17} /> {busy ? "Memeriksa..." : "Masuk"}
         </button>
         <p className="text-center text-[13px] text-ink-3">
-          Username = nama panggilan + nomor absen, mis. <span className="font-mono">Ancis18</span>. Password awal dibagikan Divisi K2 dan wajib diganti saat pertama masuk. Lupa
-          password? Minta pengurus BPH atau K2 untuk mereset.
+          Username awal = nama panggilan + nomor absen, mis. <span className="font-mono">Ancis18</span> (atau username yang sudah kamu ganti). Password awal dibagikan Divisi K2 dan wajib diganti saat pertama masuk. Lupa
+          password atau username? Minta pengurus BPH atau K2 untuk mereset.
         </p>
       </form>
     </div>

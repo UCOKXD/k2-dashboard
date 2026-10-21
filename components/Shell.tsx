@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, KeyRound, LayoutDashboard, LogIn, LogOut } from "lucide-react";
+import { ChevronDown, KeyRound, LayoutDashboard, LogIn, LogOut, UserRound } from "lucide-react";
 import AuthProvider, { useAuth } from "@/components/AuthProvider";
 import { GRUP_LABEL } from "@/lib/admins";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -70,8 +70,11 @@ function AccountButton() {
               <LayoutDashboard size={15} /> Panel Admin
             </Link>
           )}
+          <Link href={`/profil/${user.absen}`} onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 hover:bg-slate-50">
+            <UserRound size={15} /> Profil saya
+          </Link>
           <Link href="/akun" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 hover:bg-slate-50">
-            <KeyRound size={15} /> {user.tempPassword ? <span className="font-semibold text-rose-600">Ganti password awal</span> : "Ganti password"}
+            <KeyRound size={15} /> {user.tempPassword ? <span className="font-semibold text-rose-600">Ganti password awal</span> : "Edit profil & akun"}
           </Link>
           <button
             type="button"
@@ -101,7 +104,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
 }
 
 // Halaman publik yang memakai kepala halaman biru (components/PageHero.tsx).
-const HERO_PAGES = ["/jadwal", "/izin", "/izin-sakit", "/pelanggaran", "/doa-harian", "/kalender-acara", "/tempat-duduk", "/galeri", "/ngl", "/kalkulator"];
+const HERO_PAGES = ["/jadwal", "/izin", "/izin-sakit", "/pelanggaran", "/doa-harian", "/kalender-acara", "/tempat-duduk", "/galeri", "/ngl", "/kalkulator", "/profil"];
 
 function Frame({ children }: { children: React.ReactNode }) {
   const path = usePathname();

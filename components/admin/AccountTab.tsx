@@ -7,7 +7,7 @@ import { ACCOUNTS, can, type Grup } from "@/lib/admins";
 import { Panel, smallBtn } from "@/components/admin/ui";
 import { avatarSrc, refreshAvatars, useAvatars } from "@/components/useAvatars";
 
-type Status = { username: string; jabatan: string; grup: Grup; admin: boolean; webAdmin: boolean; changed: boolean; birthday: boolean };
+type Status = { username: string; login?: string; jabatan: string; grup: Grup; admin: boolean; webAdmin: boolean; changed: boolean; birthday: boolean };
 
 export default function AccountTab() {
   const { user } = useAuth();
@@ -45,7 +45,7 @@ export default function AccountTab() {
     if (!confirm(`Reset password ${panggilan} ke ${awal}?`)) return;
     try {
       const r = await adminFetch<{ temp: string | null }>("/api/auth/reset", "POST", { username });
-      setResetMsg(r.temp ? `Password ${panggilan} sekarang: ${r.temp} — minta ${panggilan} segera menggantinya.` : `Password ${panggilan} direset, tapi tanggal lahirnya belum terdata di tab Ulang Tahun.`);
+      setResetMsg(r.temp ? `Password ${panggilan} sekarang: ${r.temp} (username juga kembali ke username awal) — minta ${panggilan} segera menggantinya.` : `Password ${panggilan} direset, tapi tanggal lahirnya belum terdata di tab Ulang Tahun.`);
       setStatus((s) => (s && s[username] ? { ...s, [username]: { ...s[username], changed: false } } : s));
     } catch (err) {
       setResetMsg((err as Error).message);
@@ -116,7 +116,15 @@ export default function AccountTab() {
                         {a.jabatan}
                         {a.webAdmin && <span className="ml-1.5 rounded-full bg-navy-900 px-2 py-0.5 text-[11px] font-semibold text-white">Admin Website</span>}
                       </td>
-                      <td className="px-3 py-2 font-mono">{a.username}</td>
+                      <td className="px-3 py-2 font-mono">
+                        {s?.login && s.login !== a.username ? (
+                          <>
+                            {s.login} <span className="block text-[11px] text-slate-400">awal: {a.username}</span>
+                          </>
+                        ) : (
+                          a.username
+                        )}
+                      </td>
                       <td className="px-3 py-2 text-xs font-semibold">
                         {!s ? (
                           <span className="text-slate-400">…</span>

@@ -3,7 +3,8 @@
 import { createHash, createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { type Account, type SessionUser, can, findAccount } from "@/lib/admins";
+import { type Account, type SessionUser, accountsFor, can, findAccount } from "@/lib/admins";
+import { type UsernameMap, getUsernames, loginOf } from "@/lib/usernames";
 import type { PermKey } from "@/lib/roles";
 import { DEFAULT_ORG } from "@/lib/content";
 import { getContent } from "@/lib/content-server";
@@ -105,9 +106,25 @@ function unsign(token: string): { u: string; exp: number; pv: string } | null {
 }
 
 // Akun lengkap dengan peran terbaru dari tab Struktur (hak admin mengikuti struktur).
+// Mencari dengan username awal (penanda internal di sesi); untuk masuk pakai loginAccount.
 async function accountOf(username: string): Promise<Account | undefined> {
   const org = await getContent("org").catch(() => DEFAULT_ORG);
   return findAccount(username, org);
+}
+
+async function usernames(): Promise<UsernameMap> {
+  return storeReady ? getUsernames().catch(() => ({})) : {};
+}
+
+// Akun untuk form masuk: username pilihan siswa, atau username awal kalau belum diganti.
+async function loginAccount(input: string): Promise<{ account?: Account; map: UsernameMap }> {
+  const map = await usernames();
+  const u = input.trim().toLowerCase();
+  const key = Object.keys(map).find((k) => map[k].toLowerCase() === u);
+  const org = await getContent("org").catch(() => DEFAULT_ORG);
+  if (key) return { account: accountsFor(org).find((a) => a.key === key), map };
+  const a = findAccount(input, org);
+  return { account: a && !map[a.key] ? a : undefined, map };
 }
 
 /* --------------------------------------------------------- Password awal */
@@ -144,9 +161,10 @@ async function checkInitial(a: Account, pw: string) {
   return (await initialPasswords(a)).some((p) => eq(pw, p));
 }
 
-function toUser(a: Account, stored: string | null): SessionUser {
+function toUser(a: Account, stored: string | null, map: UsernameMap): SessionUser {
   return {
     username: a.username,
+    login: loginOf(a, map),
     nama: a.nama,
     panggilan: a.panggilan,
     absen: a.absen,
@@ -167,7 +185,7 @@ export async function login(username: string, password: string, ip: string): Pro
   if (acc.n > MAX_FAIL) return { error: `Akun ini dikunci sementara karena terlalu banyak percobaan salah. Coba lagi dalam ${minutes(acc.ttl)} menit.` };
   if (byIp.n > MAX_IP) return { error: `Terlalu banyak percobaan dari perangkat/jaringan ini. Coba lagi dalam ${minutes(byIp.ttl)} menit.` };
 
-  const account = await accountOf(username);
+  const { account, map } = await loginAccount(username);
   const stored = account ? await storedHash(account.key) : null;
   const ok = account ? (stored ? checkHash(password, stored) : await checkInitial(account, password)) : false;
   if (!account || !ok) {
@@ -179,7 +197,7 @@ export async function login(username: string, password: string, ip: string): Pro
   }
   await release(accountKey(username)); // berhasil: jatah akun dipulihkan (batas per IP tetap berjalan)
   const token = sign({ u: account.username, exp: Math.floor(Date.now() / 1000) + MAX_AGE, pv: pwVersion(stored) });
-  return { user: toUser(account, stored), token };
+  return { user: toUser(account, stored, map), token };
 }
 
 export function setSessionCookie(res: NextResponse, token: string) {
@@ -205,7 +223,7 @@ export async function currentUser(): Promise<SessionUser | null> {
     return null;
   }
   if (p.pv !== pwVersion(stored)) return null;
-  return toUser(account, stored);
+  return toUser(account, stored, await usernames());
 }
 
 export async function changePassword(username: string, oldPw: string, newPw: string): Promise<string | null> {

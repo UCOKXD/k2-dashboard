@@ -106,8 +106,10 @@ export const GRUP_LABEL: Record<Grup, string> = {
 export const roleLabel = (r: RoleKey) => ROLE_DEF[r].label;
 
 // Info sesi yang dikirim ke browser. admin = boleh membuka Panel Admin; perms = fitur admin yang boleh dipakai.
+// username = username awal (penanda internal akun, tidak berubah); login = username yang dipakai masuk sekarang.
 export type SessionUser = Pick<Account, "username" | "nama" | "panggilan" | "absen" | "jabatan" | "grup" | "webAdmin" | "perms" | "admin"> & {
   tempPassword: boolean;
+  login: string;
 };
 
 // Boleh memakai fitur ini? Admin Website selalu boleh.
