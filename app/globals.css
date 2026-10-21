@@ -440,20 +440,17 @@ html { scroll-padding-top: calc(var(--header-h) + 72px); }
 .k2-header:not(.k2-header--fest) .k2-wordmark { filter: invert(1); } /* wordmark putih jadi gelap di header terang */
 .dark .k2-header .k2-wordmark { filter: none; }
 .k2-wordmark { transition: filter .5s ease; }
-/* Footer: sedikit lebih terang di mode terang, navy tua di mode gelap */
-.k2-footer { background-color: #17365f; }
-.k2-footer .k2-footer-laut { background-color: #12294f; }
-.dark .k2-footer { background-color: #061227; }
-.dark .k2-footer .k2-footer-laut { background-color: #050f22; }
-/* Ganti tema: semua warna berpindah halus selama ±0,5 detik */
-.k2-theme-anim, .k2-theme-anim *, .k2-theme-anim *::before, .k2-theme-anim *::after {
-  transition: background-color .5s ease, color .5s ease, border-color .5s ease, fill .5s ease, stroke .5s ease, box-shadow .5s ease, filter .5s ease !important;
-}
+/* Footer: satu warna untuk seluruh bagian (tidak belang), sedikit lebih terang di mode terang */
+.k2-footer, .k2-footer .k2-footer-laut { background-color: #15325a; }
+.dark .k2-footer, .dark .k2-footer .k2-footer-laut { background-color: #061227; }
+/* Ganti tema: seluruh halaman berpindah warna sekaligus lewat View Transition (satu gambar memudar, ringan di GPU),
+   jadi tidak ada bagian yang berubah duluan dan tidak patah-patah walau halamannya panjang. */
+::view-transition-old(root), ::view-transition-new(root) { animation-duration: .45s; animation-timing-function: ease; }
 @keyframes k2IconUp { from { transform: translateY(120%) rotate(-60deg); opacity: 0; } to { transform: none; opacity: 1; } }
 .k2-icon-up { animation: k2IconUp .45s cubic-bezier(.2,1.3,.4,1); }
 @keyframes k2Drop { from { opacity: 0; transform: translateY(-6px) scale(.97); } to { opacity: 1; transform: none; } }
 .k2-drop { animation: k2Drop .18s var(--ease); }
 @media (prefers-reduced-motion: reduce) {
-  .k2-theme-anim, .k2-theme-anim * { transition: none !important; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
   .k2-icon-up, .k2-drop { animation: none; }
 }

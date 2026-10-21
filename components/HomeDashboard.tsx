@@ -114,15 +114,26 @@ function Hero({ photos }: { photos: string[] }) {
   // Isi sampul memudar pelan mengikuti scroll (hanya opacity/transform, tinggi halaman tidak berubah).
   useEffect(() => {
     if (reducedMotion()) return;
-    const onScroll = () => {
+    // Diperbarui paling sering sekali per frame, dan berhenti menulis gaya setelah sampul lewat dari layar.
+    let frame = 0;
+    let last = -1;
+    const paint = () => {
+      frame = 0;
       const el = ref.current;
-      if (!el) return;
       const p = Math.min(window.scrollY / 480, 1);
+      if (!el || p === last) return;
+      last = p;
       el.style.opacity = String(1 - p * 0.6);
-      el.style.transform = `translateY(${-p * 24}px)`;
+      el.style.transform = `translate3d(0,${-p * 24}px,0)`;
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(paint);
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
   }, []);
 
   return (

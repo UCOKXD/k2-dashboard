@@ -6,7 +6,7 @@ export const metadata = { title: "Kalkulator | K2 PPTI 28" };
 export default function Page() {
   return (
     <>
-      <PageHero eyebrow="Kalkulator" title="Kalkulator" lede="Kalkulator saintifik, grafik 2D, dan grafik 3D dari GeoGebra untuk tugas dan belajar." />
+      <PageHero eyebrow="Kalkulator" title="Kalkulator" />
       <div className="py-[clamp(32px,5vw,56px)]">
         <Calculators />
       </div>

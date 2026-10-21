@@ -29,7 +29,7 @@ export default async function Page() {
       <PageHero
         eyebrow="Kalender"
         title="Kalender Acara"
-        lede="Tugas, acara kelas, ulang tahun, jadwal kuliah, dan libur nasional dalam satu kalender."
+        lede="Tugas, acara kelas, ulang tahun, dan jadwal kuliah."
         actions={<AdminLink href="/admin?tab=tugas" label="Kelola tugas" perm="tugas" />}
       />
       <div className="space-y-12 py-[clamp(32px,5vw,56px)]">

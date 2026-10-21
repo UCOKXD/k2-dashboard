@@ -20,7 +20,6 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ c
       <PageHero
         eyebrow="Profil"
         title="Kenalan sama ABSORBING"
-        lede="Pengurus kelas tiap CAWU dan seluruh anggota ABSORBING PPTI 28. Klik foto untuk membuka profilnya."
         aside={<CawuPicker cawu={cawu} current={cawuData.current} filled={filled} />}
       />
       <div className="space-y-20 py-[clamp(40px,6vw,72px)]">

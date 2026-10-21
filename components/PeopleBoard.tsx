@@ -44,7 +44,7 @@ function Person({ c, i, big }: { c: Card; i: number; big?: boolean }) {
     <>
       <span
         className={`relative grid place-items-center overflow-hidden rounded-full bg-accent-soft ring-1 ring-line transition duration-300 group-hover:-translate-y-1 group-hover:shadow-3 group-hover:ring-4 group-hover:ring-accent-soft ${
-          big ? "h-[clamp(150px,22vw,230px)] w-[clamp(150px,22vw,230px)]" : "h-[clamp(120px,17vw,200px)] w-[clamp(120px,17vw,200px)]"
+          big ? "h-[clamp(120px,17vw,184px)] w-[clamp(120px,17vw,184px)]" : "h-[clamp(96px,13vw,156px)] w-[clamp(96px,13vw,156px)]"
         }`}
       >
         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -57,11 +57,11 @@ function Person({ c, i, big }: { c: Card; i: number; big?: boolean }) {
   return (
     <li data-reveal style={{ ["--d" as string]: `${(i % 4) * 80}ms` }} className="flex justify-center text-center">
       {s ? (
-        <Link href={`/profil/${s.absen}`} className="group flex max-w-[260px] flex-col items-center rounded-k2-lg p-2">
+        <Link href={`/profil/${s.absen}`} className="group flex max-w-[220px] flex-col items-center rounded-k2-lg p-2">
           {body}
         </Link>
       ) : (
-        <div className="group flex max-w-[260px] flex-col items-center p-2">{body}</div>
+        <div className="group flex max-w-[220px] flex-col items-center p-2">{body}</div>
       )}
     </li>
   );

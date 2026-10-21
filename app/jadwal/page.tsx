@@ -14,7 +14,6 @@ export default async function Page() {
       <PageHero
         eyebrow="Jadwal kuliah"
         title="Jadwal Kuliah"
-        lede="Senin sampai Sabtu. Hari ini dan kelas yang sedang berlangsung ditandai otomatis menurut jam Jakarta."
         sticker={schedule.length > 0 ? "cek-di-sini" : undefined}
         actions={<AdminLink href="/admin?tab=jadwal" label="Ubah jadwal" perm="jadwal" />}
       />

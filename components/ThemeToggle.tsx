@@ -18,8 +18,6 @@ function subscribe(cb: () => void) {
   return () => obs.disconnect();
 }
 
-let animTimer = 0;
-
 export default function ThemeToggle() {
   const dark = useSyncExternalStore(subscribe, () => document.documentElement.classList.contains("dark"), () => false);
 
@@ -47,12 +45,13 @@ export default function ThemeToggle() {
     try {
       localStorage.setItem(KEY, next ? "dark" : "light");
     } catch {}
-    // Warna seluruh halaman berganti halus (kelas sementara, lihat .k2-theme-anim di globals.css).
+    // Warna seluruh halaman berganti halus: browser memudarkan tampilan lama ke tampilan baru sekaligus
+    // (View Transition). Browser lama langsung berganti tanpa animasi.
     const html = document.documentElement;
-    html.classList.add("k2-theme-anim");
-    html.classList.toggle("dark", next);
-    window.clearTimeout(animTimer);
-    animTimer = window.setTimeout(() => html.classList.remove("k2-theme-anim"), 650);
+    const apply = () => html.classList.toggle("dark", next);
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
+    if (doc.startViewTransition && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) doc.startViewTransition(apply);
+    else apply();
   }
 
   return (

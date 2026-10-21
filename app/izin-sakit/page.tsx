@@ -14,7 +14,7 @@ export default async function Page() {
   const stats = izinStats(t, /keluhan|sakit|gejala|alasan|keterangan|penyakit/i, "Keluhan terbanyak");
   return (
     <>
-      <PageHero eyebrow="Izin Sakit" title="Izin Sakit" lede="Catatan izin karena sakit dari spreadsheet Divisi K2. Semoga lekas sembuh!" sticker="cepat-sembuh" />
+      <PageHero eyebrow="Izin Sakit" title="Izin Sakit" lede="Semoga lekas sembuh!" sticker="cepat-sembuh" />
       <div className="space-y-12 py-[clamp(32px,5vw,56px)]">
         <ContactK2 text="Sakit dan perlu izin, atau ada pertanyaan? Kabari Divisi K2 lewat WhatsApp." />
         <section>

@@ -14,7 +14,7 @@ export default async function Page() {
       <PageHero
         eyebrow="Galeri"
         title="Galeri Kelas"
-        lede="Foto-foto kegiatan ABSORBING. Foto di sini juga dipakai untuk banner beranda dan latar jam."
+        lede="Foto-foto kegiatan ABSORBING."
         sticker={gallery.length > 0 ? "cekrek" : undefined}
         actions={<AdminLink href="/admin?tab=galeri" label="Unggah foto" perm="galeri" />}
       />

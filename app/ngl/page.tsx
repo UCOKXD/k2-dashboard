@@ -9,7 +9,7 @@ export default function Page() {
       <PageHero
         eyebrow="NGL kelas"
         title="NGL Kelas"
-        lede="Kirim apresiasi dan masukan untuk tiap teman sekelas. Kamu bisa memilih anonim atau menampilkan panggilanmu."
+        lede="Kirim apresiasi dan masukan untuk tiap teman sekelas."
       />
       <div className="py-[clamp(32px,5vw,56px)]">
         <NglPage />
