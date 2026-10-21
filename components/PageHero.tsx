@@ -10,12 +10,14 @@ export default function PageHero({
   lede,
   sticker,
   actions,
+  aside,
 }: {
   eyebrow: string;
   title: string;
   lede?: string;
   sticker?: StickerName;
   actions?: React.ReactNode;
+  aside?: React.ReactNode; // isi kanan (mis. pilihan CAWU), menggantikan stiker
 }) {
   return (
     <>
@@ -27,7 +29,7 @@ export default function PageHero({
             {lede && <p className="k2-page-hero__lede">{lede}</p>}
             {actions && <div className="mt-5 flex flex-wrap items-center gap-2.5">{actions}</div>}
           </div>
-          {sticker && <Sticker name={sticker} size={150} className="k2-page-hero__host" />}
+          {aside ? <div className="self-end">{aside}</div> : sticker && <Sticker name={sticker} size={150} className="k2-page-hero__host" />}
         </div>
       </section>
       <div className="mt-6 empty:hidden">

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { AlertTriangle, ClipboardList, BookOpen, Cake, GraduationCap, History, Images, KeyRound, Lock, MessageCircle, MessageCircleHeart, Network, Armchair } from "lucide-react";
+import { AlertTriangle, ClipboardList, BookOpen, Cake, GraduationCap, History, Images, KeyRound, Lock, MessageCircle, MessageCircleHeart, Network, Armchair, Share2, UsersRound } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import OrgEditor from "@/components/admin/OrgEditor";
 import PelEditor from "@/components/admin/PelEditor";
@@ -13,6 +13,7 @@ import HistoryTab from "@/components/admin/HistoryTab";
 import AccountTab from "@/components/admin/AccountTab";
 import NotifEditor from "@/components/admin/NotifEditor";
 import NglAdmin from "@/components/admin/NglAdmin";
+import { CawuEditor, FooterEditor } from "@/components/admin/CawuEditor";
 import { Loading } from "@/components/admin/ui";
 import { can } from "@/lib/admins";
 import type { PermKey } from "@/lib/roles";
@@ -20,6 +21,7 @@ import type { PermKey } from "@/lib/roles";
 // perm: izin yang dibutuhkan (lib/roles.ts); "web" = khusus Admin Website; null = semua pengurus (ganti password sendiri).
 const TABS: { id: string; label: string; icon: typeof Network; el: () => React.ReactNode; perm: PermKey | "web" | null }[] = [
   { id: "struktur", label: "Struktur & Peran", icon: Network, el: OrgEditor, perm: "web" },
+  { id: "cawu", label: "Struktur per CAWU", icon: UsersRound, el: CawuEditor, perm: "web" },
   { id: "pelanggaran", label: "Pelanggaran", icon: AlertTriangle, el: PelEditor, perm: "pelanggaran" },
   { id: "galeri", label: "Galeri", icon: Images, el: GalleryEditor, perm: "galeri" },
   { id: "ultah", label: "Ulang Tahun", icon: Cake, el: BirthdayEditor, perm: "ultah" },
@@ -29,6 +31,7 @@ const TABS: { id: string; label: string; icon: typeof Network; el: () => React.R
   { id: "riwayat", label: "Riwayat", icon: History, el: HistoryTab, perm: "riwayat" },
   { id: "akun", label: "Akun", icon: KeyRound, el: AccountTab, perm: null },
   { id: "notifikasi", label: "Notifikasi WA", icon: MessageCircle, el: NotifEditor, perm: "web" },
+  { id: "footer", label: "Media Sosial", icon: Share2, el: FooterEditor, perm: "web" },
 ];
 
 export default function AdminPanel({ storeReady }: { storeReady: boolean }) {

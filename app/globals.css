@@ -419,3 +419,16 @@ html { scroll-padding-top: calc(var(--header-h) + 72px); }
 .dark .k2-bar { background: #2e9be0; }
 .dark .k2-bar--now { background: #8fcff1; }
 .dark .k2-bar--lain { background: var(--ink-3); }
+
+/* Footer bawah: navy dengan pola gelombang laut halus (bukan gambar) */
+.k2-footer-laut { background-color: #061227; }
+.k2-footer-laut::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .7;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120' viewBox='0 0 240 120'%3E%3Cpath d='M0 60c40-24 80-24 120 0s80 24 120 0' fill='none' stroke='%238fcff1' stroke-opacity='.1' stroke-width='1.4'/%3E%3Cpath d='M0 95c40-24 80-24 120 0s80 24 120 0' fill='none' stroke='%23f8c3cf' stroke-opacity='.06' stroke-width='1'/%3E%3C/svg%3E"),
+    radial-gradient(60% 80% at 50% 0%, rgba(46,155,224,.18), transparent 70%);
+}
+
+/* Muncul saat di-scroll (kelas dipasang lewat JavaScript, jadi isi tetap terlihat tanpa JS) */
+.k2-reveal { opacity: 0; transform: translateY(18px) scale(.97); filter: blur(4px); transition: opacity .7s var(--ease), transform .7s var(--ease), filter .7s var(--ease); transition-delay: var(--d, 0ms); }
+.k2-reveal.is-in { opacity: 1; transform: none; filter: none; }
+@media (prefers-reduced-motion: reduce) { .k2-reveal { opacity: 1; transform: none; filter: none; transition: none; } }

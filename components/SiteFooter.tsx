@@ -1,15 +1,40 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, LogIn, MessageCircle } from "lucide-react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
+import { Camera, CirclePlay, Globe, LayoutDashboard, LogIn, Mail, MessageCircle, Music2 } from "lucide-react";
+import type { FooterData, SocialType } from "@/lib/content";
 import Sticker from "@/components/Sticker";
 import { useAuth } from "@/components/AuthProvider";
 import { WA_K2, WA_K2_TEXT } from "@/components/ContactK2";
 
-// Footer pita navy di semua halaman: kontak WhatsApp Divisi K2 + pintu masuk admin.
+const ICON: Record<SocialType, typeof Mail> = { instagram: Camera, tiktok: Music2, youtube: CirclePlay, email: Mail, whatsapp: MessageCircle, link: Globe };
+
+// Media sosial dari Panel Admin; diambil sekali per kunjungan.
+let socialsCache: Promise<FooterData> | null = null;
+function useSocials() {
+  const [data, setData] = useState<FooterData>({ socials: [] });
+  useEffect(() => {
+    socialsCache ??= fetch("/api/content/footer")
+      .then((r) => r.json() as Promise<{ data?: FooterData }>)
+      .then((d) => d.data ?? { socials: [] })
+      .catch(() => ({ socials: [] }));
+    let alive = true;
+    void socialsCache.then((d) => alive && setData(d));
+    return () => {
+      alive = false;
+    };
+  }, []);
+  return data.socials;
+}
+
+// Footer di semua halaman: pita "Ada pertanyaan?" (WhatsApp K2 + pintu masuk admin), lalu identitas kelas,
+// media sosial (diisi Admin Website), dan hak cipta.
 export default function SiteFooter() {
   const { user, ready } = useAuth();
   const onLogin = usePathname() === "/masuk";
+  const socials = useSocials();
   return (
     <footer className="relative mt-16 bg-navy-950 text-[#c9d6e6] print:hidden">
       <div className="mx-auto grid max-w-[calc(var(--wadah)+var(--gutter)*2)] items-center gap-6 px-[var(--gutter)] py-12 md:grid-cols-[auto_1fr_auto]">
@@ -45,6 +70,42 @@ export default function SiteFooter() {
       </div>
       <div className="mx-auto max-w-[calc(var(--wadah)+var(--gutter)*2)] px-[var(--gutter)]">
         <p className="border-t border-white/[0.08] py-[18px] font-mono text-xs text-[#8da0b9]">Divisi K2 · Kesiswaan &amp; Kedisiplinan · ABSORBING PPTI 28</p>
+      </div>
+
+      <div className="k2-footer-laut relative overflow-hidden border-t border-white/[0.06]">
+        <div className="relative mx-auto flex max-w-[calc(var(--wadah)+var(--gutter)*2)] flex-col items-center px-[var(--gutter)] pb-8 pt-12 text-center">
+          <div className="flex items-center gap-2">
+            <Image src="/logo-k2.png" alt="Logo Divisi K2" width={64} height={66} className="h-16 w-16 object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.4)]" />
+            <Image src="/logo-absorbing.png" alt="Logo kelas ABSORBING PPTI 28" width={64} height={67} className="h-16 w-16 object-contain drop-shadow-[0_6px_14px_rgba(0,0,0,0.4)]" />
+          </div>
+          <p className="mt-5 max-w-[38ch] font-display text-[clamp(17px,2vw,21px)] font-semibold leading-snug text-white text-balance">
+            A Journey To Absorb Knowledge, Insights And Valuable Memories Together
+          </p>
+          {socials.length > 0 && (
+            <>
+              <p className="mt-9 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-axo-300">Media Sosial Kami</p>
+              <ul className="mt-4 flex flex-wrap justify-center gap-x-8 gap-y-3">
+                {socials.map((x) => {
+                  const Icon = ICON[x.type];
+                  return (
+                    <li key={x.url}>
+                      <a
+                        href={x.url}
+                        target={x.type === "email" ? undefined : "_blank"}
+                        rel="noopener noreferrer"
+                        className="inline-flex min-h-11 items-center gap-2.5 text-[15px] text-[#e6eef7] transition hover:text-white"
+                      >
+                        <Icon size={22} strokeWidth={1.8} aria-hidden="true" />
+                        {x.label}
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+            </>
+          )}
+          <p className="mt-10 text-sm text-[#c9d6e6]">Copyright © {new Date().getFullYear()} PPTI 28 - ABSORBING. All Rights Reserved.</p>
+        </div>
       </div>
     </footer>
   );

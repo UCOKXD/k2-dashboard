@@ -63,6 +63,44 @@ export function normOrg(o: Partial<OrgData> | null | undefined): OrgData {
   };
 }
 
+// Struktur pengurus per CAWU (1–6) untuk halaman Profil. CAWU aktif selalu mengikuti Struktur & Peran (org);
+// CAWU lain diisi manual oleh Admin Website.
+export type OrgPeople = Omit<OrgData, "izin" | "izinKeys">;
+export type CawuData = { current: number; snaps: Record<string, OrgPeople> };
+export const CAWU_MAX = 6;
+export const DEFAULT_CAWU: CawuData = { current: 1, snaps: {} };
+export const peopleOf = (o: OrgData): OrgPeople => ({
+  dpp: o.dpp,
+  komti: o.komti,
+  wakomti: o.wakomti,
+  bendahara: o.bendahara,
+  sekretaris: o.sekretaris,
+  koordinator: o.koordinator,
+  anggota: o.anggota,
+  kurikulum: o.kurikulum,
+  itl: o.itl,
+  pubdok: o.pubdok,
+});
+export const EMPTY_PEOPLE: OrgPeople = {
+  dpp: "",
+  komti: "",
+  wakomti: "",
+  bendahara: "",
+  sekretaris: "",
+  koordinator: "",
+  anggota: [],
+  kurikulum: { koordinator: "", anggota: [] },
+  itl: { koordinator: "", anggota: [] },
+  pubdok: { koordinator: "", anggota: [] },
+};
+
+// Media sosial kelas di footer (diisi manual Admin Website).
+export const SOCIAL_TYPES = ["instagram", "tiktok", "youtube", "email", "whatsapp", "link"] as const;
+export type SocialType = (typeof SOCIAL_TYPES)[number];
+export type SocialLink = { type: SocialType; label: string; url: string };
+export type FooterData = { socials: SocialLink[] };
+export const SOCIAL_MAX = 6;
+
 export type Slide = { id: string; src: string };
 export type SlidesData = { duration: number; items: Slide[] }; // duration dalam detik
 
@@ -101,6 +139,8 @@ export const CONTENT = {
   birthdays: { key: "k2:birthdays", fallback: {} as Birthdays },
   schedule: { key: "k2:schedule", fallback: [] as ScheduleItem[] },
   tasks: { key: "k2:tasks", fallback: [] as TaskItem[] },
+  cawu: { key: "k2:cawu", fallback: DEFAULT_CAWU as CawuData },
+  footer: { key: "k2:footer", fallback: { socials: [] } as FooterData },
 } as const;
 
 export type ContentKey = keyof typeof CONTENT;

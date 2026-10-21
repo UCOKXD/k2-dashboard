@@ -1,6 +1,6 @@
 // Menjelaskan perubahan admin dengan kalimat yang mudah dibaca untuk Log Aktivitas publik,
 // mis. "menambahkan 4 tugas baru: Quiz, ...". Hanya membandingkan data lama vs baru (tanpa efek samping).
-import { HARI, type Birthdays, type ContentKey, type GalleryItem, type OrgData, type PelOverrides, type ScheduleItem, type SeatsData, type SlidesData } from "@/lib/content";
+import { HARI, type Birthdays, type CawuData, type ContentKey, type GalleryItem, type OrgData, type PelOverrides, type ScheduleItem, type SeatsData, type SlidesData } from "@/lib/content";
 import { STUDENTS } from "@/lib/students";
 import { jam } from "@/lib/time";
 import { DIFFICULTY, type TaskItem } from "@/lib/tasks";
@@ -29,6 +29,8 @@ export const TITLES: Record<ActivityType, string> = {
   birthdays: "Data ulang tahun diperbarui",
   schedule: "Jadwal kuliah diperbarui",
   tasks: "Pembaruan tugas",
+  cawu: "Struktur pengurus per CAWU diperbarui",
+  footer: "Media sosial kelas diperbarui",
   "doa-reset": "Riwayat petugas doa direset",
 };
 
@@ -68,6 +70,18 @@ export function describe(key: ContentKey, before: unknown, after: unknown, extra
         if (min.length) out.push(`mengeluarkan dari anggota ${label}: ${names(min.map(short))}`);
       }
       if (JSON.stringify(a.izin) !== JSON.stringify(b.izin)) out.push("mengubah hak akses pengurus");
+      break;
+    }
+    case "footer": {
+      if (JSON.stringify(before) !== JSON.stringify(after)) out.push("memperbarui media sosial kelas di footer");
+      break;
+    }
+    case "cawu": {
+      const a = before as CawuData;
+      const b = after as CawuData;
+      if (a.current !== b.current) out.push(`mengatur CAWU aktif menjadi CAWU ${b.current}`);
+      const changed = Object.keys({ ...a.snaps, ...b.snaps }).filter((k) => JSON.stringify(a.snaps[k]) !== JSON.stringify(b.snaps[k]));
+      if (changed.length) out.push(`memperbarui pengurus ${changed.map((k) => `CAWU ${k}`).join(", ")}`);
       break;
     }
     case "slides": {

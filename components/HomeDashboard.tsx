@@ -61,6 +61,8 @@ const LOG_STYLE: Record<LogType, { icon: typeof Calendar; badge: string; color: 
   birthdays: { icon: Cake, badge: "Ulang Tahun", color: "bg-pink-50 text-pink-600 border-pink-200" },
   schedule: { icon: GraduationCap, badge: "Jadwal Kuliah", color: "bg-sky-50 text-sky-600 border-sky-200" },
   tasks: { icon: ClipboardList, badge: "Tugas", color: "bg-amber-50 text-amber-600 border-amber-200" },
+  cawu: { icon: Network, badge: "Struktur CAWU", color: "bg-violet-50 text-violet-600 border-violet-200" },
+  footer: { icon: Network, badge: "Media Sosial", color: "bg-sky-50 text-sky-600 border-sky-200" },
   "doa-reset": { icon: UserCheck, badge: "Doa Harian", color: "bg-emerald-50 text-emerald-600 border-emerald-200" },
 };
 

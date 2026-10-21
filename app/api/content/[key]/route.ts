@@ -7,7 +7,13 @@ import {
   type ActivityLog,
   type ContentKey,
   type GalleryItem,
+  type CawuData,
   type OrgData,
+  type OrgPeople,
+  CAWU_MAX,
+  SOCIAL_MAX,
+  SOCIAL_TYPES,
+  type SocialLink,
   type PelOverrides,
   type ScheduleItem,
   type SeatsData,
@@ -64,6 +70,51 @@ function clean(key: ContentKey, b: unknown): [unknown, string] | string {
         izinKeys: ALL_PERMS,
       };
       return [d, "Mengubah struktur & peran pengurus"];
+    }
+    case "footer": {
+      const socials: SocialLink[] = [];
+      for (const x of Array.isArray(o.socials) ? o.socials.slice(0, SOCIAL_MAX) : []) {
+        const it = (x ?? {}) as Record<string, unknown>;
+        const type = SOCIAL_TYPES.find((t) => t === it.type);
+        const label = str(it.label, 60);
+        let url = str(it.url, 300);
+        if (!type || !label) continue;
+        if (type === "email") {
+          url = url.replace(/^mailto:/i, "");
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(url)) return `Email tidak valid: ${url}`;
+          url = `mailto:${url}`;
+        } else if (!/^https:\/\/[^\s]+$/i.test(url)) return `Link ${label} harus diawali https://`;
+        socials.push({ type, label, url });
+      }
+      return [{ socials }, "Memperbarui media sosial di footer"];
+    }
+    case "cawu": {
+      const list = (v: unknown) => (Array.isArray(v) ? [...new Set(v.slice(0, 8).map(student).filter(Boolean))] : []);
+      const div = (v: unknown) => {
+        const x = (v ?? {}) as Record<string, unknown>;
+        return { koordinator: student(x.koordinator), anggota: list(x.anggota) };
+      };
+      const current = Math.round(Number(o.current));
+      if (!(current >= 1 && current <= CAWU_MAX)) return "CAWU aktif harus 1–6";
+      const src = (o.snaps ?? {}) as Record<string, unknown>;
+      const snaps: Record<string, OrgPeople> = {};
+      for (let n = 1; n <= CAWU_MAX; n++) {
+        const x = src[n] as Record<string, unknown> | undefined;
+        if (!x || typeof x !== "object") continue;
+        snaps[n] = {
+          dpp: str(x.dpp, 80),
+          komti: student(x.komti),
+          wakomti: student(x.wakomti),
+          bendahara: student(x.bendahara),
+          sekretaris: student(x.sekretaris),
+          koordinator: student(x.koordinator),
+          anggota: list(x.anggota),
+          kurikulum: div(x.kurikulum),
+          itl: div(x.itl),
+          pubdok: div(x.pubdok),
+        };
+      }
+      return [{ current, snaps } satisfies CawuData, "Memperbarui struktur per CAWU"];
     }
     case "slides": {
       const items = Array.isArray(o.items)
@@ -246,6 +297,8 @@ const PERM_OF: Record<ContentKey, PermKey | "web"> = {
   birthdays: "ultah",
   schedule: "jadwal",
   tasks: "tugas",
+  cawu: "web",
+  footer: "web",
 };
 
 const PAGES: Record<ContentKey, string[]> = {
@@ -257,6 +310,8 @@ const PAGES: Record<ContentKey, string[]> = {
   birthdays: ["/", "/kalender-acara"],
   schedule: ["/", "/jadwal", "/kalender-acara"],
   tasks: ["/kalender-acara"],
+  cawu: ["/profil"],
+  footer: ["/"],
 };
 
 export async function GET(
