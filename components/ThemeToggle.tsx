@@ -18,6 +18,8 @@ function subscribe(cb: () => void) {
   return () => obs.disconnect();
 }
 
+let animTimer = 0;
+
 export default function ThemeToggle() {
   const dark = useSyncExternalStore(subscribe, () => document.documentElement.classList.contains("dark"), () => false);
 
@@ -45,7 +47,12 @@ export default function ThemeToggle() {
     try {
       localStorage.setItem(KEY, next ? "dark" : "light");
     } catch {}
-    document.documentElement.classList.toggle("dark", next);
+    // Warna seluruh halaman berganti halus (kelas sementara, lihat .k2-theme-anim di globals.css).
+    const html = document.documentElement;
+    html.classList.add("k2-theme-anim");
+    html.classList.toggle("dark", next);
+    window.clearTimeout(animTimer);
+    animTimer = window.setTimeout(() => html.classList.remove("k2-theme-anim"), 650);
   }
 
   return (
@@ -54,9 +61,12 @@ export default function ThemeToggle() {
       onClick={toggle}
       aria-label={dark ? "Ganti ke tema terang" : "Ganti ke tema gelap"}
       title={dark ? "Tema terang" : "Tema gelap"}
-      className="grid h-10 w-10 place-items-center rounded-full border border-white/[0.18] text-white transition hover:bg-white/10"
+      className="grid h-10 w-10 place-items-center overflow-hidden rounded-full border border-[color-mix(in_srgb,currentColor_22%,transparent)] transition hover:bg-[color-mix(in_srgb,currentColor_10%,transparent)] active:scale-90"
     >
-      {dark ? <Sun size={16} /> : <Moon size={16} />}
+      {/* Ikon baru naik dari bawah setiap kali tema diganti. */}
+      <span key={dark ? "gelap" : "terang"} className="k2-icon-up grid place-items-center">
+        {dark ? <Sun size={16} /> : <Moon size={16} />}
+      </span>
     </button>
   );
 }

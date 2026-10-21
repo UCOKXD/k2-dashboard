@@ -28,13 +28,16 @@ export const MILESTONES = [50, 70, 90, 100];
 
 export type NglSession = { id: string; openedAt: string; openedBy: string; closedAt?: string; closedBy?: string };
 type State = { open: boolean; current: NglSession | null };
-export type NglMessage = { id: string; from: number; to: number; anon: boolean; apresiasi: string; improvement: string; tambahan: string; at: string };
+export type NglMessage = { id: string; from: number; to: number; anon: boolean; apresiasi: string; improvement: string; tambahan: string; at: string; foto?: boolean };
 export type NglReport = { sid: string; id: string; to: number; at: string };
 
 const inKey = (sid: string, absen: number) => `k2:ngl:${sid}:in:${absen}`; // pesan untuk siswa ini
 const doneKey = (sid: string, absen: number) => `k2:ngl:${sid}:done:${absen}`; // nomor absen yang sudah diisi siswa ini
 const countKey = (sid: string) => `k2:ngl:${sid}:count`;
 const msKey = (sid: string, m: number) => `k2:ngl:${sid}:ms:${m}`;
+const imgKey = (sid: string, id: string) => `k2:ngl:${sid}:img:${id}`; // foto lampiran (maks. 1 per pesan, WebP <= 200 KB)
+const imgsKey = (sid: string) => `k2:ngl:${sid}:imgs`; // daftar id pesan yang punya foto (untuk masa hapus)
+export const NGL_FOTO_MAX_BYTES = 200_000;
 
 export const studentOf = (absen: number) => STUDENTS.find((s) => s.absen === absen);
 
@@ -63,6 +66,8 @@ async function expireSession(sid: string, seconds: number) {
   }
   await cmd("EXPIRE", countKey(sid), seconds);
   for (const m of MILESTONES) await cmd("EXPIRE", msKey(sid, m), seconds);
+  for (const id of await cmd<string[]>("SMEMBERS", imgsKey(sid))) await cmd("EXPIRE", imgKey(sid, id), seconds);
+  await cmd("EXPIRE", imgsKey(sid), seconds);
 }
 
 // Hapus sesi yang sudah ditutup beserta semua pesan & laporannya (tidak bisa dibatalkan).
@@ -71,7 +76,8 @@ export async function deleteSession(sid: string): Promise<string | null> {
   if (st.open && st.current?.id === sid) return "Sesi yang masih dibuka tidak bisa dihapus. Tutup dulu sesinya.";
   const all = await getJSON<NglSession[]>(SESSIONS, []);
   if (!all.some((s) => s.id === sid)) return "Sesi tidak ditemukan";
-  const keys = [...STUDENTS.flatMap((x) => [inKey(sid, x.absen), doneKey(sid, x.absen)]), countKey(sid), ...MILESTONES.map((m) => msKey(sid, m))];
+  const imgs = (await cmd<string[]>("SMEMBERS", imgsKey(sid))).map((id) => imgKey(sid, id));
+  const keys = [...STUDENTS.flatMap((x) => [inKey(sid, x.absen), doneKey(sid, x.absen)]), countKey(sid), ...MILESTONES.map((m) => msKey(sid, m)), ...imgs, imgsKey(sid)];
   for (let i = 0; i < keys.length; i += 20) await cmd("DEL", ...keys.slice(i, i + 20));
   await setJSON(SESSIONS, all.filter((s) => s.id !== sid));
   for (const r of await reports()) if (r.sid === sid) await dismissReport(r.id);
@@ -124,7 +130,8 @@ export async function doneBy(sid: string, absen: number): Promise<number[]> {
 const clean = (v: unknown) => (typeof v === "string" ? v.replace(/\r\n/g, "\n").trim() : "");
 
 // Kirim satu pesan. Mengembalikan pesan error, atau { count } = jumlah pesan sesi ini setelah pesan masuk.
-export async function submit(from: number, body: Record<string, unknown>): Promise<{ count: number; sid: string } | string> {
+// foto = lampiran yang sudah diperiksa di route ({ type, b64 }), boleh dikirim anonim.
+export async function submit(from: number, body: Record<string, unknown>, foto?: { type: string; b64: string }): Promise<{ count: number; sid: string } | string> {
   const st = await getState();
   if (!st.open || !st.current) return "Sesi NGL sedang ditutup";
   const sid = st.current.id;
@@ -139,7 +146,12 @@ export async function submit(from: number, body: Record<string, unknown>): Promi
   // SADD mengembalikan 0 kalau sudah ada: satu pesan per pasangan per sesi, aman walau dikirim bersamaan.
   const added = await cmd<number>("SADD", doneKey(sid, from), to);
   if (!added) return "Kamu sudah mengisi untuk teman ini";
-  const msg: NglMessage = { id: randomUUID(), from, to, anon: body.anon !== false, apresiasi, improvement, tambahan, at: new Date().toISOString() };
+  const msg: NglMessage = { id: randomUUID(), from, to, anon: body.anon !== false, apresiasi, improvement, tambahan, at: new Date().toISOString(), ...(foto ? { foto: true } : {}) };
+  if (foto) {
+    await cmd("SET", imgKey(sid, msg.id), `${foto.type};${foto.b64}`, "EX", WHILE_OPEN);
+    await cmd("SADD", imgsKey(sid), msg.id);
+    await cmd("EXPIRE", imgsKey(sid), WHILE_OPEN);
+  }
   await cmd("RPUSH", inKey(sid, to), JSON.stringify(msg));
   const count = await cmd<number>("INCR", countKey(sid));
   await cmd("EXPIRE", doneKey(sid, from), WHILE_OPEN);
@@ -193,6 +205,10 @@ export async function deleteMessage(sid: string, to: number, id: string): Promis
     const m = parse(raw);
     if (m?.id === id) {
       await cmd("LREM", inKey(sid, to), 1, raw);
+      if (m.foto) {
+        await cmd("DEL", imgKey(sid, id));
+        await cmd("SREM", imgsKey(sid), id);
+      }
       await dismissReport(id);
       return m;
     }
@@ -208,3 +224,10 @@ export async function progress(sid: string) {
 }
 
 export const pct = (count: number) => Math.floor((count * 100) / TOTAL);
+
+export async function getFoto(sid: string, id: string): Promise<{ type: string; data: Buffer } | null> {
+  const raw = await cmd<string | null>("GET", imgKey(sid, id));
+  if (!raw) return null;
+  const [type, b64] = raw.split(";");
+  return { type, data: Buffer.from(b64, "base64") };
+}

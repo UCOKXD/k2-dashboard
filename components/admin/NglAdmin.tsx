@@ -7,7 +7,7 @@ import { STUDENTS } from "@/lib/students";
 
 type Session = { id: string; openedAt: string; openedBy: string; closedAt?: string; closedBy?: string };
 type Person = { absen: number; nama: string; panggilan: string };
-type Message = { id: string; from: number; to: number; anon: boolean; apresiasi: string; improvement: string; tambahan: string; at: string; sender: Person };
+type Message = { id: string; from: number; to: number; anon: boolean; apresiasi: string; improvement: string; tambahan: string; at: string; foto?: boolean; sender: Person };
 type Report = { sid: string; id: string; to: number; at: string; message: Message; sender: Person; recipient: Person };
 type Data = {
   state: { open: boolean; current: Session | null };
@@ -27,7 +27,7 @@ async function fetchAdmin(): Promise<Data> {
   return d;
 }
 
-function MessageCard({ m, onDelete }: { m: Message; onDelete?: () => void }) {
+function MessageCard({ m, onDelete, sid }: { m: Message; onDelete?: () => void; sid?: string }) {
   return (
     <div className="space-y-2 rounded-2xl border border-slate-200 bg-white p-4 text-sm">
       <div className="flex flex-wrap items-center justify-between gap-2">
@@ -48,6 +48,10 @@ function MessageCard({ m, onDelete }: { m: Message; onDelete?: () => void }) {
       <p>
         <b className="text-amber-700">Area improvement:</b> <span className="whitespace-pre-wrap text-slate-700">{m.improvement}</span>
       </p>
+      {m.foto && sid && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={`/api/ngl/foto?sid=${sid}&id=${m.id}&to=${m.to}`} alt="Foto lampiran" loading="lazy" className="max-h-60 rounded-xl object-contain" />
+      )}
       {m.tambahan && (
         <p>
           <b className="text-slate-600">Pesan tambahan:</b> <span className="whitespace-pre-wrap text-slate-700">{m.tambahan}</span>
@@ -247,7 +251,7 @@ export default function NglAdmin() {
                 <p className="flex items-center gap-1.5 text-xs font-semibold text-rose-600">
                   <Flag size={12} /> Dilaporkan {r.recipient.panggilan} · {tgl(r.at)}
                 </p>
-                <MessageCard m={{ ...r.message, sender: r.sender }} onDelete={() => act({ action: "delete", sid: r.sid, to: r.to, id: r.id }, "Hapus pesan ini? Penerima tidak akan melihatnya lagi.")} />
+                <MessageCard sid={r.sid} m={{ ...r.message, sender: r.sender }} onDelete={() => act({ action: "delete", sid: r.sid, to: r.to, id: r.id }, "Hapus pesan ini? Penerima tidak akan melihatnya lagi.")} />
                 <button onClick={() => act({ action: "dismiss", id: r.id })} className={smallBtn}>
                   Abaikan laporan
                 </button>
@@ -282,7 +286,7 @@ export default function NglAdmin() {
           <div className="space-y-3">
             {messages.length ? (
               messages.map((m) => (
-                <MessageCard key={m.id} m={m} onDelete={() => act({ action: "delete", sid: selSid, to, id: m.id }, "Hapus pesan ini? Penerima tidak akan melihatnya lagi.").then((ok) => {
+                <MessageCard key={m.id} sid={selSid} m={m} onDelete={() => act({ action: "delete", sid: selSid, to, id: m.id }, "Hapus pesan ini? Penerima tidak akan melihatnya lagi.").then((ok) => {
                     if (ok) show(selSid, to);
                   })} />
               ))

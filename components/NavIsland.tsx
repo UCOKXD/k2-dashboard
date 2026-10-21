@@ -6,41 +6,85 @@ import {
   AlertTriangle,
   Armchair,
   BookOpen,
-  Calendar,
   Calculator,
+  ChevronDown,
+  ClipboardList,
   Clock,
   FileText,
-  LayoutDashboard,
-  Stethoscope,
+  FolderOpen,
   GraduationCap,
   Images,
+  LayoutDashboard,
   MessageCircleHeart,
+  School,
+  Stethoscope,
+  Users,
   UsersRound,
 } from "lucide-react";
 
-export const MENU = [
+export type MenuItem = { name: string; icon: typeof Clock; href: string; match: string };
+export type MenuEntry = MenuItem | { name: string; icon: typeof Clock; children: MenuItem[] };
+
+// Menu dirangkum per kelompok (dropdown).
+export const MENU_GROUPS: MenuEntry[] = [
   { name: "Dashboard", icon: LayoutDashboard, href: "/", match: "/" },
   { name: "Doa Harian", icon: BookOpen, href: "/doa-harian", match: "/doa-harian" },
-  { name: "Izin Sakit", icon: Stethoscope, href: "/izin-sakit", match: "/izin-sakit" },
-  { name: "Izin", icon: FileText, href: "/izin", match: "/izin" },
-  { name: "Kalender", icon: Calendar, href: "/kalender-acara", match: "/kalender-acara" },
-  { name: "Jadwal", icon: GraduationCap, href: "/jadwal", match: "/jadwal" },
+  {
+    name: "Laporan",
+    icon: FolderOpen,
+    children: [
+      { name: "Izin Sakit", icon: Stethoscope, href: "/izin-sakit", match: "/izin-sakit" },
+      { name: "Izin Tidak Masuk", icon: FileText, href: "/izin", match: "/izin" },
+      { name: "Pelanggaran", icon: AlertTriangle, href: "/pelanggaran", match: "/pelanggaran" },
+    ],
+  },
+  {
+    name: "Perkuliahan",
+    icon: School,
+    children: [
+      { name: "Tempat Duduk", icon: Armchair, href: "/tempat-duduk", match: "/tempat-duduk" },
+      { name: "Jadwal", icon: GraduationCap, href: "/jadwal", match: "/jadwal" },
+      { name: "Tugas & Kalender", icon: ClipboardList, href: "/kalender-acara", match: "/kalender-acara" },
+      { name: "Kalkulator", icon: Calculator, href: "/kalkulator", match: "/kalkulator" },
+    ],
+  },
   { name: "Waktu", icon: Clock, href: "/waktu", match: "/waktu" },
-  { name: "Kalkulator", icon: Calculator, href: "/kalkulator", match: "/kalkulator" },
-  { name: "Pelanggaran", icon: AlertTriangle, href: "/pelanggaran", match: "/pelanggaran" },
-  { name: "Tempat Duduk", icon: Armchair, href: "/tempat-duduk", match: "/tempat-duduk" },
   { name: "Galeri", icon: Images, href: "/galeri", match: "/galeri" },
-  { name: "NGL", icon: MessageCircleHeart, href: "/ngl", match: "/ngl" },
-  { name: "Profil", icon: UsersRound, href: "/profil", match: "/profil" },
-] as const;
+  {
+    name: "Social",
+    icon: Users,
+    children: [
+      { name: "NGL", icon: MessageCircleHeart, href: "/ngl", match: "/ngl" },
+      { name: "Profil", icon: UsersRound, href: "/profil", match: "/profil" },
+    ],
+  },
+];
+
+// Semua tautan dalam satu daftar (dipakai di tempat lain).
+export const MENU: MenuItem[] = MENU_GROUPS.flatMap((e) => ("children" in e ? e.children : [e]));
+export const isActive = (path: string, m: MenuItem) => (m.match === "/" ? path === "/" : path === m.match || path.startsWith(`${m.match}/`));
+
+const ITEM = "group relative grid h-10 w-10 shrink-0 cursor-pointer place-items-center rounded-full transition-colors duration-200";
+
+// Tombol ikon dengan label kecil yang muncul saat disorot/fokus.
+function Tip({ text }: { text: string }) {
+  return (
+    <span className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 -translate-x-1/2 whitespace-nowrap rounded-k2-md bg-[#061227] px-2.5 py-1 text-xs font-semibold text-white opacity-0 shadow-3 transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100">
+      {text}
+    </span>
+  );
+}
 
 // floating: halaman utama. Island melayang di bawah banner, lalu naik menempel di tengah atas layar saat di-scroll.
 // static: halaman lain. Island selalu menempel di atas, tanpa animasi scroll.
+// Hanya ikon (label muncul saat disorot) supaya ringkas; kelompok membuka dropdown.
 // Hanya di tablet & desktop (>=768px); di ponsel diganti bar bawah (MobileNav).
 export default function NavIsland({ variant }: { variant: "floating" | "static" }) {
   const path = usePathname();
   const ref = useRef<HTMLDivElement>(null);
+  const nav = useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState<string | null>(null);
 
   useEffect(() => {
     if (variant !== "floating") return;
@@ -59,49 +103,94 @@ export default function NavIsland({ variant }: { variant: "floating" | "static" 
     };
   }, [variant]);
 
+  // Dropdown tertutup saat klik di luar atau Esc.
+  useEffect(() => {
+    if (!open) return;
+    const away = (e: MouseEvent) => !nav.current?.contains(e.target as Node) && setOpen(null);
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && setOpen(null);
+    document.addEventListener("mousedown", away);
+    document.addEventListener("keydown", esc);
+    return () => {
+      document.removeEventListener("mousedown", away);
+      document.removeEventListener("keydown", esc);
+    };
+  }, [open]);
+
   const docked = variant === "static" || scrolled;
 
-  const nav = (
+  const bar = (
     <nav
-      className={`pointer-events-auto flex max-w-[calc(100vw-2rem)] items-center gap-0.5 overflow-x-auto rounded-full border border-white/[0.12] bg-[rgba(6,18,39,0.86)] p-1.5 text-white shadow-[0_18px_40px_-16px_rgba(6,18,39,0.6)] backdrop-blur-[16px] backdrop-saturate-[1.4] no-scrollbar
-        transition-all duration-[600ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${docked ? "scale-95" : "scale-100"}`}
+      ref={nav}
+      className={`pointer-events-auto flex items-center gap-1 rounded-full border border-white/[0.12] bg-[rgba(6,18,39,0.86)] p-1.5 text-white shadow-[0_18px_40px_-16px_rgba(6,18,39,0.6)] backdrop-blur-[16px] backdrop-saturate-[1.4]
+        transition-transform duration-[600ms] ease-[cubic-bezier(0.76,0,0.24,1)] ${docked ? "scale-95" : "scale-100"}`}
       aria-label="Menu utama"
     >
-      {MENU.map((item) => {
-        const Icon = item.icon;
-        const active = path === item.match;
-        // Menempel di header: nama menu aktif saja (semua nama di layar sangat lebar) supaya tidak menutupi logo/tombol header.
-        // Melayang di bawah banner: nama menu aktif selalu tampil, semua nama tampil mulai 1300px.
-        const label = docked
-          ? `${active ? "ml-2 max-w-[160px] opacity-100 lg:ml-0 lg:max-w-0 lg:opacity-0 min-[1120px]:ml-2 min-[1120px]:max-w-[160px] min-[1120px]:opacity-100" : "max-w-0 opacity-0"} min-[1900px]:ml-2 min-[1900px]:max-w-[160px] min-[1900px]:opacity-100 group-hover:ml-2 group-hover:max-w-[160px] group-hover:opacity-100`
-          : `${active ? "ml-2 max-w-[160px] opacity-100" : "max-w-0 opacity-0"} min-[1300px]:ml-2 min-[1300px]:max-w-[160px] min-[1300px]:opacity-100 group-hover:ml-2 group-hover:max-w-[160px] group-hover:opacity-100`;
+      {MENU_GROUPS.map((e) => {
+        if (!("children" in e)) {
+          const active = isActive(path, e);
+          return (
+            <Link
+              key={e.name}
+              href={e.href}
+              aria-label={e.name}
+              aria-current={active ? "page" : undefined}
+              onClick={() => setOpen(null)}
+              className={`${ITEM} ${active ? "bg-[#fff] text-[#0b1e3d]" : "text-[#c9d6e6] hover:bg-white/10 hover:text-white"}`}
+            >
+              <e.icon size={18} className={active ? "text-sea-600" : "text-sea-300"} />
+              <Tip text={e.name} />
+            </Link>
+          );
+        }
+        const active = e.children.some((c) => isActive(path, c));
+        const isOpen = open === e.name;
         return (
-          <Link
-            key={item.name}
-            href={item.href}
-            title={item.name}
-            aria-current={active ? "page" : undefined}
-            className={`group flex h-10 shrink-0 cursor-pointer items-center rounded-full px-3 text-[13px] font-semibold transition-colors duration-200 ${
-              active ? "bg-white text-navy-900" : "text-[#c9d6e6] hover:bg-white/10 hover:text-white"
-            }`}
-          >
-            <Icon size={17} className={`shrink-0 ${active ? "text-sea-600" : "text-sea-300"}`} />
-            <span className={`overflow-hidden whitespace-nowrap transition-all duration-300 ${label}`}>{item.name}</span>
-          </Link>
+          <div key={e.name} className="relative">
+            <button
+              type="button"
+              aria-label={e.name}
+              aria-expanded={isOpen}
+              aria-haspopup="true"
+              onClick={() => setOpen(isOpen ? null : e.name)}
+              className={`${ITEM} !w-auto !grid-flow-col gap-0.5 px-2.5 ${active ? "bg-[#fff] text-[#0b1e3d]" : isOpen ? "bg-white/15 text-white" : "text-[#c9d6e6] hover:bg-white/10 hover:text-white"}`}
+            >
+              <e.icon size={18} className={active ? "text-sea-600" : "text-sea-300"} />
+              <ChevronDown size={13} className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+              {!isOpen && <Tip text={e.name} />}
+            </button>
+            {isOpen && (
+              <div className="k2-drop absolute left-1/2 top-full z-20 mt-3 min-w-[210px] -translate-x-1/2 rounded-k2-lg border border-white/[0.12] bg-[rgba(6,18,39,0.95)] p-1.5 shadow-3 backdrop-blur-[16px]">
+                <p className="px-3 pb-1 pt-1.5 font-mono text-[10.5px] font-semibold uppercase tracking-[0.12em] text-sea-300">{e.name}</p>
+                {e.children.map((c) => {
+                  const on = isActive(path, c);
+                  return (
+                    <Link
+                      key={c.href}
+                      href={c.href}
+                      aria-current={on ? "page" : undefined}
+                      onClick={() => setOpen(null)}
+                      className={`flex min-h-10 items-center gap-2.5 rounded-k2-md px-3 text-sm font-semibold ${on ? "bg-[#fff] text-[#0b1e3d]" : "text-[#dbe5f0] hover:bg-white/10 hover:text-white"}`}
+                    >
+                      <c.icon size={16} className={on ? "text-sea-600" : "text-sea-300"} />
+                      {c.name}
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         );
       })}
     </nav>
   );
 
   if (variant === "static") {
-    return (
-      <div className="pointer-events-none fixed inset-x-0 top-[76px] z-[60] hidden justify-center md:flex lg:top-[6px]">{nav}</div>
-    );
+    return <div className="pointer-events-none fixed inset-x-0 top-[76px] z-[60] hidden justify-center md:flex lg:top-[6px]">{bar}</div>;
   }
   // sticky: menempel otomatis saat posisinya sampai di atas layar, tanpa mengubah tinggi halaman
   return (
     <div ref={ref} className="pointer-events-none sticky top-[76px] z-[60] -mt-7 hidden h-14 justify-center md:flex lg:top-[6px]">
-      {nav}
+      {bar}
     </div>
   );
 }

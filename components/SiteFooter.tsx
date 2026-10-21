@@ -36,7 +36,7 @@ export default function SiteFooter() {
   const onLogin = usePathname() === "/masuk";
   const socials = useSocials();
   return (
-    <footer className="relative mt-16 bg-navy-950 text-[#c9d6e6] print:hidden">
+    <footer className="k2-footer relative mt-16 text-[#c9d6e6] print:hidden">
       <div className="mx-auto grid max-w-[calc(var(--wadah)+var(--gutter)*2)] items-center gap-6 px-[var(--gutter)] py-12 md:grid-cols-[auto_1fr_auto]">
         <Sticker name="tanya-k2" size={110} className="-mt-20 md:-mt-24" />
         <div className="min-w-0">

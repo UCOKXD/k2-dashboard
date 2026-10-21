@@ -1,7 +1,8 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, Check, EyeOff, Flag, Lock, MessageCircleHeart, Search, Send, UserRound } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { compressImage } from "@/components/imageTools";
+import { ArrowLeft, Check, EyeOff, Flag, ImagePlus, Lock, MessageCircleHeart, Search, Send, Trash2, UserRound } from "lucide-react";
 import { adminFetch, useAuth } from "@/components/AuthProvider";
 import { Loading } from "@/components/admin/ui";
 import { STUDENTS } from "@/lib/students";
@@ -11,7 +12,7 @@ const MIN = 10;
 const MAX = 500;
 const HARI_BULAN = (iso: string) => new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Jakarta" });
 
-type Msg = { id: string; from: string | null; apresiasi: string; improvement: string; tambahan: string; reported: boolean };
+type Msg = { id: string; from: string | null; apresiasi: string; improvement: string; tambahan: string; foto?: boolean; reported: boolean };
 type Group = { sid: string; openedAt: string; closedAt: string; messages: Msg[] };
 type Data = { open: boolean; sid: string | null; done: number[]; perStudent: number; received: Group[]; waiting: boolean };
 type Draft = { anon: boolean; apresiasi: string; improvement: string; tambahan: string };
@@ -103,6 +104,9 @@ export default function NglPage() {
       .catch((e: Error) => setErr(e.message));
   }, [canUse]);
 
+  const [foto, setFoto] = useState<string | null>(null); // lampiran (data URL WebP), tidak disimpan di draf
+  const [fotoBusy, setFotoBusy] = useState(false);
+  const fotoInput = useRef<HTMLInputElement>(null);
   const avatars = useAvatars();
   const others = useMemo(() => STUDENTS.filter((s) => s.absen !== user?.absen), [user?.absen]);
   const list = others.filter((s) => !q.trim() || `${s.full} ${s.short} ${s.absen}`.toLowerCase().includes(q.trim().toLowerCase()));
@@ -139,12 +143,13 @@ export default function NglPage() {
     setDraft(next);
     if (data.sid && to !== null) saveDraft(data.sid, to, next);
   };
-  const valid = draft.apresiasi.trim().length >= MIN && draft.improvement.trim().length >= MIN;
+  const valid = draft.apresiasi.trim().length >= MIN && draft.improvement.trim().length >= MIN && !fotoBusy;
 
   function pick(absen: number) {
     if (!data?.sid) return;
     setTo(absen);
     setDraft(loadDraft(data.sid, absen));
+    setFoto(null);
     setNotice("");
   }
 
@@ -152,7 +157,8 @@ export default function NglPage() {
     if (!data?.sid || to === null) return;
     setBusy(true);
     try {
-      await adminFetch("/api/ngl", "POST", { to, ...draft });
+      await adminFetch("/api/ngl", "POST", { to, ...draft, ...(foto ? { foto } : {}) });
+      setFoto(null);
       saveDraft(data.sid, to, null);
       setNotice(`Pesan untuk ${target?.short} terkirim.`);
       setTo(null);
@@ -301,6 +307,51 @@ export default function NglPage() {
           <Field label={`Area improvement untuk ${target.short}`} hint="Hal yang bisa ia tingkatkan, sampaikan dengan baik..." value={draft.improvement} onChange={(v) => setD({ improvement: v })} required />
           <Field label="Pesan tambahan" hint="Boleh dikosongkan" value={draft.tambahan} onChange={(v) => setD({ tambahan: v })} />
 
+          <div className="space-y-2">
+            <p className="text-sm font-semibold text-slate-700">
+              Foto <span className="font-normal text-slate-500">(opsional, maks. 1)</span>
+            </p>
+            {foto ? (
+              <div className="relative w-fit">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={foto} alt="Foto yang akan dikirim" className="max-h-56 rounded-2xl object-contain" />
+                <button type="button" onClick={() => setFoto(null)} aria-label="Hapus foto" className="absolute right-2 top-2 grid h-9 w-9 place-items-center rounded-full bg-black/60 text-white hover:bg-rose-600">
+                  <Trash2 size={15} />
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                disabled={fotoBusy}
+                onClick={() => fotoInput.current?.click()}
+                className="inline-flex min-h-10 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink hover:border-ink-3 disabled:opacity-50"
+              >
+                <ImagePlus size={15} /> {fotoBusy ? "Mengecilkan foto…" : "Tambah foto"}
+              </button>
+            )}
+            <input
+              ref={fotoInput}
+              type="file"
+              accept="image/*"
+              className="sr-only"
+              tabIndex={-1}
+              aria-hidden="true"
+              onChange={async (e) => {
+                const f = e.target.files?.[0];
+                e.target.value = "";
+                if (!f) return;
+                setFotoBusy(true);
+                try {
+                  setFoto(await compressImage(f));
+                } catch (err) {
+                  setNotice((err as Error).message);
+                }
+                setFotoBusy(false);
+              }}
+            />
+            <p className="text-xs text-slate-500">Foto dikecilkan otomatis (±200 KB) dan ikut anonim kalau kamu memilih anonim. Foto tidak ikut disimpan di draf.</p>
+          </div>
+
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="text-xs text-slate-500">Draf tersimpan otomatis di perangkat ini sampai dikirim.</p>
             <button
@@ -346,6 +397,12 @@ export default function NglPage() {
                         <p className="text-[11px] font-bold uppercase tracking-wider text-amber-700">Area improvement</p>
                         <p className="whitespace-pre-wrap text-sm text-slate-800">{m.improvement}</p>
                       </div>
+                      {m.foto && (
+                        <a href={`/api/ngl/foto?sid=${g.sid}&id=${m.id}`} target="_blank" rel="noopener noreferrer" className="block">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={`/api/ngl/foto?sid=${g.sid}&id=${m.id}`} alt="Foto dari pengirim" loading="lazy" className="max-h-72 w-full rounded-2xl bg-slate-100 object-contain" />
+                        </a>
+                      )}
                       {m.tambahan && (
                         <div className="space-y-1 rounded-2xl bg-slate-100 px-4 py-3">
                           <p className="text-[11px] font-bold uppercase tracking-wider text-slate-600">Pesan tambahan</p>

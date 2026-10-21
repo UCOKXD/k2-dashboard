@@ -35,7 +35,7 @@ function AccountButton() {
     return (
       <Link
         href="/masuk"
-        className="flex min-h-9 items-center gap-1.5 rounded-full bg-[#fff] px-4 text-xs font-semibold text-[#0b1e3d] transition hover:bg-[#f1f8fd] sm:text-sm"
+        className="flex min-h-9 items-center gap-1.5 rounded-full border border-line-strong bg-[#fff] px-4 text-xs font-semibold text-[#0b1e3d] transition hover:bg-[#f1f8fd] sm:text-sm"
       >
         <LogIn size={15} /> Masuk
       </Link>
@@ -46,7 +46,7 @@ function AccountButton() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="relative flex min-h-9 items-center gap-1.5 rounded-full bg-[#fff] py-1 pl-1 pr-2 text-xs font-semibold text-[#0b1e3d] sm:gap-2 sm:pr-3 sm:text-sm"
+        className="relative flex min-h-9 items-center gap-1.5 rounded-full border border-line-strong bg-[#fff] py-1 pl-1 pr-2 text-xs font-semibold text-[#0b1e3d] sm:gap-2 sm:pr-3 sm:text-sm"
       >
         {user.tempPassword && <span aria-label="Password awal belum diganti" className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-white" />}
         {avatarSrc(avatars, user.absen) ? (
@@ -121,7 +121,7 @@ function Frame({ children }: { children: React.ReactNode }) {
       </a>
       {/* Header navy solid. Di layar lebar island menu menempel di tengah header, jadi isi kiri & kanan dijaga tetap ramping. */}
       <header
-        className="fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between gap-4 border-b border-white/[0.08] bg-[#0b1e3d] px-[var(--gutter)] text-white print:hidden"
+        className={`k2-header fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between gap-4 border-b px-[var(--gutter)] print:hidden ${bday ? "k2-header--fest" : ""}`}
         style={bday ? { background: HEADER_BDAY } : undefined}
       >
         <Link href="/" className="flex min-w-0 items-center gap-2" aria-label="K2 Pusat Informasi, ke halaman utama">
@@ -130,16 +130,10 @@ function Frame({ children }: { children: React.ReactNode }) {
             {bday && <PartyHat />}
           </span>
           <Image src="/logo-absorbing.png" alt="Logo kelas Absorbing PPTI 28" width={40} height={42} className="h-[38px] w-[38px] shrink-0 object-contain" priority />
-          <Image src="/k2-wordmark.png" alt="K2 Pusat Informasi" width={600} height={235} className="ml-1.5 h-7 w-auto shrink-0" priority />
+          <Image src="/k2-wordmark.png" alt="K2 Pusat Informasi" width={600} height={235} className="k2-wordmark ml-1.5 h-7 w-auto shrink-0" priority />
         </Link>
         <div className="flex shrink-0 items-center gap-2">
-          {bday ? (
-            <BirthdayBadge />
-          ) : (
-            <span className="hidden items-center gap-2 rounded-full border border-white/[0.14] px-3 py-2 font-mono text-xs font-semibold uppercase tracking-[0.04em] text-sea-100 xl:inline-flex">
-              <span className="h-[7px] w-[7px] rounded-full bg-[#4fd1a1] shadow-[0_0_0_3px_rgba(79,209,161,0.22)]" /> Siswa aktif
-            </span>
-          )}
+          {bday && <BirthdayBadge />}
           <ThemeToggle />
           <AccountButton />
         </div>

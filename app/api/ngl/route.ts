@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { requireUser } from "@/lib/auth";
 import { PER_STUDENT, doneBy, getState, listSessions, messagesFor, milestoneReached, pct, reports, studentOf, submit, TOTAL } from "@/lib/ngl";
 import { notify } from "@/lib/notify";
+import { parseAvatar } from "@/lib/avatars";
+import { NGL_FOTO_MAX_BYTES } from "@/lib/ngl";
 import { NOT_READY, storeReady } from "@/lib/store";
 
 export const dynamic = "force-dynamic";
@@ -37,6 +39,7 @@ export async function GET(req: Request) {
         apresiasi: m.apresiasi,
         improvement: m.improvement,
         tambahan: m.tambahan,
+        foto: !!m.foto,
         reported: reportedIds.has(m.id),
       })),
     });
@@ -53,7 +56,13 @@ export async function POST(req: Request) {
   if (error) return error;
   if (!storeReady) return NextResponse.json({ error: NOT_READY }, { status: 503 });
   const body = (await req.json().catch(() => null)) as Record<string, unknown> | null;
-  const r = await submit(user.absen, body ?? {});
+  let foto: { type: string; b64: string } | undefined;
+  if (body?.foto) {
+    const p = parseAvatar(body.foto, NGL_FOTO_MAX_BYTES);
+    if ("error" in p) return NextResponse.json({ error: p.error }, { status: 400 });
+    foto = p;
+  }
+  const r = await submit(user.absen, body ?? {}, foto);
   if (typeof r === "string") return NextResponse.json({ error: r }, { status: 400 });
   // Kabari grup saat pengisian melewati 50/70/90/100%.
   const m = await milestoneReached(r.sid, r.count).catch(() => null);

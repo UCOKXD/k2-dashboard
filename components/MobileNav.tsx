@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AlertTriangle, Clock, GraduationCap, LayoutDashboard, LayoutGrid, X } from "lucide-react";
-import { MENU } from "@/components/NavIsland";
+import { MENU_GROUPS, isActive, type MenuItem } from "@/components/NavIsland";
 
 // Bar bawah ponsel (<768px) + lembar menu berisi semua menu. Di tablet & desktop diganti NavIsland.
 const TABS = [
@@ -115,26 +115,35 @@ export default function MobileNav() {
                 <X size={18} />
               </button>
             </div>
-            <ul className="grid grid-cols-3 gap-2">
-              {MENU.map(({ name, icon: Icon, href, match }) => {
-                const active = path === match;
-                return (
-                  <li key={href}>
-                    <Link
-                      href={href}
-                      onClick={() => setOpen(false)}
-                      aria-current={active ? "page" : undefined}
-                      className={`flex min-h-[76px] flex-col items-center justify-center gap-2 rounded-k2-md border p-2 text-center text-[13px] font-semibold leading-tight ${
-                        active ? "border-accent bg-accent-soft text-ink" : "border-line text-ink"
-                      }`}
-                    >
-                      <Icon size={20} className="text-accent" />
-                      {name}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
+            {[
+              { name: "", items: MENU_GROUPS.filter((e) => !("children" in e)) as MenuItem[] },
+              ...MENU_GROUPS.flatMap((e) => ("children" in e ? [{ name: e.name, items: e.children }] : [])),
+            ].map((sec) => (
+              <div key={sec.name || "utama"} className="mb-4">
+                {sec.name && <p className="mb-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-3">{sec.name}</p>}
+                <ul className="grid grid-cols-3 gap-2">
+                  {sec.items.map((m) => {
+                    const active = isActive(path, m);
+                    const Icon = m.icon;
+                    return (
+                      <li key={m.href}>
+                        <Link
+                          href={m.href}
+                          onClick={() => setOpen(false)}
+                          aria-current={active ? "page" : undefined}
+                          className={`flex min-h-[76px] flex-col items-center justify-center gap-2 rounded-k2-md border p-2 text-center text-[13px] font-semibold leading-tight ${
+                            active ? "border-accent bg-accent-soft text-ink" : "border-line text-ink"
+                          }`}
+                        >
+                          <Icon size={20} className="text-accent" />
+                          {m.name}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
       )}
