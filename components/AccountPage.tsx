@@ -74,7 +74,7 @@ export default function AccountPage() {
         <ProfilePhoto />
       </Panel>
 
-      <Panel title="Bio, Instagram, TikTok & foto" desc="Terlihat oleh teman sekelas yang sudah masuk.">
+      <Panel title="Bio, media sosial & foto" desc="Terlihat oleh teman sekelas yang sudah masuk.">
         <ProfileInfoEditor />
       </Panel>
 

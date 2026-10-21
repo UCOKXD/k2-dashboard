@@ -4,6 +4,7 @@ import { ImagePlus, Save, Trash2 } from "lucide-react";
 import { adminFetch, useAuth } from "@/components/AuthProvider";
 import InstagramButton from "@/components/InstagramButton";
 import TikTokButton from "@/components/TikTokButton";
+import LinkedInButton from "@/components/LinkedInButton";
 import { compressImage } from "@/components/imageTools";
 import { type ProfileData, fetchProfile, postSrc } from "@/components/ProfileView";
 import { input } from "@/components/admin/ui";
@@ -65,7 +66,7 @@ export function UsernameForm() {
   );
 }
 
-// Bio + Instagram & TikTok (opsional, bisa disembunyikan) + maksimal 3 foto seperti feed.
+// Bio + Instagram, TikTok & LinkedIn (opsional, bisa disembunyikan) + maksimal 3 foto seperti feed.
 export function ProfileInfoEditor() {
   const { user } = useAuth();
   const [data, setData] = useState<ProfileData | null>(null);
@@ -74,6 +75,8 @@ export function ProfileInfoEditor() {
   const [showIg, setShowIg] = useState(false);
   const [tt, setTt] = useState("");
   const [showTt, setShowTt] = useState(false);
+  const [li, setLi] = useState("");
+  const [showLi, setShowLi] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [pmsg, setPmsg] = useState<{ ok: boolean; text: string } | null>(null);
@@ -89,6 +92,8 @@ export function ProfileInfoEditor() {
         setShowIg(d.showIg);
         setTt(d.tt ?? "");
         setShowTt(!!d.showTt);
+        setLi(d.li ?? "");
+        setShowLi(!!d.showLi);
       })
       .catch((e: Error) => setMsg({ ok: false, text: e.message }));
   }, [user]);
@@ -99,6 +104,10 @@ export function ProfileInfoEditor() {
   const left = BIO_MAX - [...bio].length;
   const handle = ig.trim().replace(/^@/, "");
   const ttHandle = tt.trim().replace(/^@/, "");
+  const liHandle = li
+    .trim()
+    .replace(/^https?:\/\/([a-z]{2,3}\.)?(www\.)?linkedin\.com\/in\//i, "")
+    .replace(/[/?#].*$/, "");
 
   async function upload(f?: File) {
     if (!f || !user) return;
@@ -136,7 +145,7 @@ export function ProfileInfoEditor() {
         onSubmit={async (e) => {
           e.preventDefault();
           setBusy(true);
-          await run(() => adminFetch("/api/profil", "PUT", { bio, ig: handle, showIg: showIg && !!handle, tt: ttHandle, showTt: showTt && !!ttHandle }), "Profil tersimpan.", setMsg);
+          await run(() => adminFetch("/api/profil", "PUT", { bio, ig: handle, showIg: showIg && !!handle, tt: ttHandle, showTt: showTt && !!ttHandle, li: liHandle, showLi: showLi && !!liHandle }), "Profil tersimpan.", setMsg);
           setBusy(false);
         }}
       >
@@ -178,6 +187,29 @@ export function ProfileInfoEditor() {
           <div>
             <p className="mb-1.5 text-xs text-ink-3">Pratinjau:</p>
             <TikTokButton handle={ttHandle} />
+          </div>
+        )}
+        <label className="block space-y-1.5">
+          <span className="text-sm font-semibold text-ink-2">LinkedIn (opsional)</span>
+          <input
+            value={li}
+            onChange={(e) => setLi(e.target.value)}
+            maxLength={160}
+            autoCapitalize="none"
+            spellCheck={false}
+            placeholder="linkedin.com/in/nama-kamu"
+            className={`${input} block w-full max-w-md font-mono`}
+          />
+          <span className="block text-xs text-ink-3">Tempel link profil LinkedIn-mu, atau ketik bagian setelah /in/.</span>
+        </label>
+        <label className="flex items-center gap-2.5 text-sm text-ink-2">
+          <input type="checkbox" checked={showLi} disabled={!liHandle} onChange={(e) => setShowLi(e.target.checked)} className="h-4 w-4 accent-[#0a66c2]" />
+          Tampilkan tombol LinkedIn di profilku
+        </label>
+        {liHandle && showLi && (
+          <div>
+            <p className="mb-1.5 text-xs text-ink-3">Pratinjau:</p>
+            <LinkedInButton handle={liHandle} />
           </div>
         )}
         <button disabled={busy || left < 0} className={btn}>

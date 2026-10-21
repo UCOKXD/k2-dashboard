@@ -6,6 +6,7 @@ import { adminFetch, useAuth, usePerm } from "@/components/AuthProvider";
 import { StatGroup } from "@/components/IzinStats";
 import InstagramButton from "@/components/InstagramButton";
 import TikTokButton from "@/components/TikTokButton";
+import LinkedInButton from "@/components/LinkedInButton";
 import { Loading } from "@/components/admin/ui";
 
 export type ProfileData = {
@@ -20,6 +21,8 @@ export type ProfileData = {
   showIg: boolean;
   tt: string;
   showTt: boolean;
+  li: string;
+  showLi: boolean;
   posts: { id: string; at: string }[];
   stats: { izin: number | null; sakit: number | null; pelanggaran: number | null; poin: number | null };
   own: boolean;
@@ -118,9 +121,10 @@ export default function ProfileView({ absen }: { absen: number }) {
           <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
             {data.ig && (data.showIg || data.own) && <InstagramButton handle={data.ig} />}
             {data.tt && (data.showTt || data.own) && <TikTokButton handle={data.tt} />}
-            {data.own && ((data.ig && !data.showIg) || (data.tt && !data.showTt)) && (
+            {data.li && (data.showLi || data.own) && <LinkedInButton handle={data.li} />}
+            {data.own && ((data.ig && !data.showIg) || (data.tt && !data.showTt) || (data.li && !data.showLi)) && (
               <span className="self-center text-xs text-ink-3">
-                ({[data.ig && !data.showIg && "Instagram", data.tt && !data.showTt && "TikTok"].filter(Boolean).join(" & ")} disembunyikan dari teman)
+                ({[data.ig && !data.showIg && "Instagram", data.tt && !data.showTt && "TikTok", data.li && !data.showLi && "LinkedIn"].filter(Boolean).join(", ")} disembunyikan dari teman)
               </span>
             )}
             {data.own && (

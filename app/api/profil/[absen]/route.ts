@@ -12,7 +12,7 @@ import { getUsernames, loginOf } from "@/lib/usernames";
 
 export const dynamic = "force-dynamic";
 
-// Profil satu siswa untuk siswa yang sudah masuk: info, foto, bio, Instagram & TikTok (kalau ditampilkan), dan jumlah izin/sakit/pelanggaran.
+// Profil satu siswa untuk siswa yang sudah masuk: info, foto, bio, Instagram, TikTok & LinkedIn (kalau ditampilkan), dan jumlah izin/sakit/pelanggaran.
 export async function GET(req: Request, { params }: { params: Promise<{ absen: string }> }) {
   const { user, error } = await requireUser(req, { allowTemp: true });
   if (error) return error;
@@ -42,6 +42,8 @@ export async function GET(req: Request, { params }: { params: Promise<{ absen: s
       showIg: profile.showIg,
       tt: profile.showTt || own ? profile.tt : "",
       showTt: profile.showTt,
+      li: profile.showLi || own ? profile.li : "",
+      showLi: profile.showLi,
       posts: profile.posts,
       stats: { izin: count(izin), sakit: count(sakit), pelanggaran: pelT ? (pel?.kasus ?? 0) : null, poin: pelT ? (pel?.jumlah ?? 0) : null },
       own,
