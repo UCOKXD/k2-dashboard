@@ -172,3 +172,20 @@ export default function DevEasterEgg() {
     document.body,
   );
 }
+
+// Foto profil developer dengan maskot yang mengintip dari belakang (tangan maskot tetap di depan foto).
+// Posisi lingkaran foto = posisi lingkaran pada gambar maskot (public/dev/pp-back.webp, 451×374).
+export function DevAvatar({ src, name }: { src: string | null; name: string }) {
+  return (
+    <span className="k2-dev-pp relative block aspect-[451/374] w-[200px] shrink-0 self-center sm:w-[220px] sm:self-start">
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/dev/pp-back.webp" alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full" />
+      <span className="absolute left-[31.26%] top-[16.98%] grid h-[79.41%] w-[65.85%] place-items-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-4xl font-bold text-white">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        {src ? <img src={src} alt={`Foto profil ${name}`} className="h-full w-full object-cover" /> : name[0]}
+      </span>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src="/dev/pp-front.webp" alt="" aria-hidden="true" draggable={false} className="pointer-events-none absolute inset-0 h-full w-full" />
+    </span>
+  );
+}

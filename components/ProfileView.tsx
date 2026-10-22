@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, ImagePlus, Pencil, Trash2, Users, X } from "
 import { adminFetch, useAuth, usePerm } from "@/components/AuthProvider";
 import { StatGroup } from "@/components/IzinStats";
 import InstagramButton from "@/components/InstagramButton";
-import DevEasterEgg, { DevTitle } from "@/components/DevEasterEgg";
+import DevEasterEgg, { DevAvatar, DevTitle } from "@/components/DevEasterEgg";
 import TikTokButton from "@/components/TikTokButton";
 import LinkedInButton from "@/components/LinkedInButton";
 import { Loading } from "@/components/admin/ui";
@@ -100,10 +100,14 @@ export default function ProfileView({ absen }: { absen: number }) {
       {dev && <DevTitle />}
 
       <section className={`k2-card flex flex-col gap-6 p-[clamp(20px,3vw,32px)] sm:flex-row sm:items-start ${dev ? "!border-sea-300 shadow-[0_0_0_1px_rgba(46,155,224,.35),0_24px_70px_-18px_rgba(46,155,224,.7)]" : ""}`}>
-        <span className="relative grid h-28 w-28 shrink-0 place-items-center self-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-4xl font-bold text-white ring-4 ring-accent-soft sm:self-start">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          {data.avatar ? <img src={`/api/avatar/${data.absen}?v=${data.avatar}`} alt={`Foto profil ${data.panggilan}`} className="h-full w-full object-cover" /> : data.panggilan[0]}
-        </span>
+        {dev ? (
+          <DevAvatar src={data.avatar ? `/api/avatar/${data.absen}?v=${data.avatar}` : null} name={data.panggilan} />
+        ) : (
+          <span className="relative grid h-28 w-28 shrink-0 place-items-center self-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-4xl font-bold text-white ring-4 ring-accent-soft sm:self-start">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {data.avatar ? <img src={`/api/avatar/${data.absen}?v=${data.avatar}`} alt={`Foto profil ${data.panggilan}`} className="h-full w-full object-cover" /> : data.panggilan[0]}
+          </span>
+        )}
         <div className="min-w-0 flex-1 space-y-3 text-center sm:text-left">
           <div>
             <p className="k2-eyebrow justify-center sm:justify-start">Absen {String(data.absen).padStart(2, "0")}</p>
