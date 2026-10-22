@@ -7,6 +7,8 @@ import { STICKERS, type StickerName } from "@/lib/stickers";
 // stiker maskot melayang sambil berguling di latar, dan letupan konfeti + stiker setiap kali latar diklik.
 // Semua animasi hanya transform/opacity supaya ringan; dimatikan kalau pengguna memilih gerak dikurangi.
 
+export const DEV_NAME = "Francis Demetrio Villanova"; // pemilik easter egg
+
 const NAMES = Object.keys(STICKERS) as StickerName[];
 const src = (n: StickerName) => `/stickers/sticker-${n}.png`;
 const COLORS = ["#2e9be0", "#8fcff1", "#f8c3cf", "#ff8fb3", "#ffd166", "#7c5cff", "#4fd1a1", "#ffffff"];
@@ -187,5 +189,20 @@ export function DevAvatar({ src, name }: { src: string | null; name: string }) {
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img src="/dev/pp-front.webp" alt="" aria-hidden="true" draggable={false} className="pointer-events-none absolute inset-0 h-full w-full" />
     </span>
+  );
+}
+
+// Maskot di belakang lingkaran foto yang sudah ada (kartu pengurus/anggota). Ukuran mengikuti lingkaran induknya:
+// gambar 151,86% lebar lingkaran, digeser supaya lingkaran pada gambar pas dengan lingkaran foto.
+export function DevMascotBack() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/dev/pp-back.webp" alt="" aria-hidden="true" draggable={false} className="pointer-events-none absolute left-[-47.47%] top-[-21.38%] z-0 h-auto w-[151.86%] max-w-none" />
+  );
+}
+export function DevMascotFront() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img src="/dev/pp-front.webp" alt="" aria-hidden="true" draggable={false} className="pointer-events-none absolute left-[-47.47%] top-[-21.38%] z-[2] h-auto w-[151.86%] max-w-none" />
   );
 }

@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { ChevronDown } from "lucide-react";
 import { avatarSrc, useAvatars } from "@/components/useAvatars";
+import { DEV_NAME, DevMascotBack, DevMascotFront } from "@/components/DevEasterEgg";
 import { CAWU_MAX, type OrgPeople } from "@/lib/content";
 import { STUDENTS } from "@/lib/students";
 
@@ -40,15 +41,22 @@ function Person({ c, i, big }: { c: Card; i: number; big?: boolean }) {
   const avatars = useAvatars();
   const s = studentOf(c.nama);
   const src = avatarSrc(avatars, s?.absen);
+  const dev = c.nama === DEV_NAME; // easter egg: maskot mengintip di belakang foto developer
   const body = (
     <>
       <span
-        className={`relative grid place-items-center overflow-hidden rounded-full bg-accent-soft ring-1 ring-line transition duration-300 group-hover:-translate-y-1 group-hover:shadow-3 group-hover:ring-4 group-hover:ring-accent-soft ${
+        className={`relative block shrink-0 transition duration-300 group-hover:-translate-y-1 ${dev ? "group-hover:-rotate-2" : ""} ${
           big ? "h-[clamp(120px,17vw,184px)] w-[clamp(120px,17vw,184px)]" : "h-[clamp(96px,13vw,156px)] w-[clamp(96px,13vw,156px)]"
         }`}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        {src ? <img src={src} alt="" loading="lazy" className="h-full w-full object-cover" /> : <span className="font-display text-[clamp(40px,6vw,64px)] font-bold text-accent-ink">{(s?.short ?? c.nama)[0]}</span>}
+        {dev && <DevMascotBack />}
+        <span
+          className={`relative z-[1] grid h-full w-full place-items-center overflow-hidden rounded-full bg-accent-soft transition duration-300 group-hover:shadow-3 ${dev ? "" : "ring-1 ring-line group-hover:ring-4 group-hover:ring-accent-soft"}`}
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {src ? <img src={src} alt="" loading="lazy" className="h-full w-full object-cover" /> : <span className="font-display text-[clamp(40px,6vw,64px)] font-bold text-accent-ink">{(s?.short ?? c.nama)[0]}</span>}
+        </span>
+        {dev && <DevMascotFront />}
       </span>
       <span className="mt-4 block font-display text-[clamp(16px,1.8vw,21px)] font-semibold leading-tight text-ink">{c.nama}</span>
       <span className="mt-1.5 block font-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#b4577a] dark:text-axo-300">{c.jabatan}</span>

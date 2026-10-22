@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, ImagePlus, Pencil, Trash2, Users, X } from "
 import { adminFetch, useAuth, usePerm } from "@/components/AuthProvider";
 import { StatGroup } from "@/components/IzinStats";
 import InstagramButton from "@/components/InstagramButton";
-import DevEasterEgg, { DevAvatar, DevTitle } from "@/components/DevEasterEgg";
+import DevEasterEgg, { DEV_NAME, DevAvatar, DevTitle } from "@/components/DevEasterEgg";
 import TikTokButton from "@/components/TikTokButton";
 import LinkedInButton from "@/components/LinkedInButton";
 import { Loading } from "@/components/admin/ui";
@@ -35,8 +35,6 @@ export async function fetchProfile(absen: number): Promise<ProfileData> {
   if (!r.ok) throw new Error(d.error ?? "Gagal memuat profil");
   return d;
 }
-
-const DEV_NAME = "Francis Demetrio Villanova";
 
 export const postSrc = (absen: number, id: string) => `/api/profil/foto/${absen}/${id}`;
 const tgl = (iso: string) => new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Jakarta" });
