@@ -161,7 +161,7 @@ function Hero({ photos }: { photos: string[] }) {
             Halo, <em className="not-italic text-sea-300">ABSORBING!</em>
           </h1>
           <p className="mt-5 max-w-[50ch] text-[clamp(16px,1.6vw,19px)] leading-[1.55] text-[#d2deeb]">
-            Pusat informasi Divisi K2 — Kesiswaan &amp; Kedisiplinan PPTI 28. Jadwal, izin, tugas, dan pengumuman kelas di satu tempat.
+            A Journey To Absorb Knowledge, Insights And Valuable Memories Together
           </p>
           <div className="mt-7 flex flex-wrap gap-2.5">
             <Link href="/jadwal" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#fff] px-5 text-[15px] font-semibold text-[#0b1e3d] transition hover:bg-[#f1f8fd]">

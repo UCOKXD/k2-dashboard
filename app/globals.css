@@ -454,3 +454,50 @@ html { scroll-padding-top: calc(var(--header-h) + 72px); }
   ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
   .k2-icon-up, .k2-drop { animation: none; }
 }
+
+/* ------------------------------------------------------------------ Easter egg profil developer */
+.k2-dev-aura { position: absolute; border-radius: 9999px; will-change: transform, opacity; animation: k2Aura 6s ease-in-out infinite alternate; }
+.k2-dev-aura--l { left: -22vw; top: 10vh; width: 52vw; height: 85vh; background: radial-gradient(closest-side, rgba(46,155,224,.55), rgba(46,155,224,.18) 55%, transparent); }
+.k2-dev-aura--r { right: -22vw; top: 4vh; width: 52vw; height: 85vh; background: radial-gradient(closest-side, rgba(124,92,255,.42), rgba(46,155,224,.2) 55%, transparent); animation-delay: -2s; }
+.k2-dev-aura--b { left: 10vw; bottom: -38vh; width: 80vw; height: 70vh; background: radial-gradient(closest-side, rgba(143,207,241,.6), rgba(46,155,224,.22) 55%, transparent); animation-delay: -4s; }
+.dark .k2-dev-aura--l { background: radial-gradient(closest-side, rgba(46,155,224,.5), rgba(46,155,224,.15) 55%, transparent); }
+.dark .k2-dev-aura--b { background: radial-gradient(closest-side, rgba(46,155,224,.55), rgba(124,92,255,.18) 55%, transparent); }
+@keyframes k2Aura { from { transform: scale(.9); opacity: .65; } to { transform: scale(1.12); opacity: 1; } }
+
+/* Stiker melayang naik sambil berguling */
+.k2-dev-fly { position: absolute; bottom: 0; opacity: .9; will-change: transform; filter: drop-shadow(0 8px 14px rgba(11,30,61,.25)); animation: k2Fly linear infinite; }
+@keyframes k2Fly {
+  0% { transform: translate3d(0, 30vh, 0) rotate(0deg); }
+  50% { transform: translate3d(var(--drift), -55vh, 0) rotate(calc(var(--spin) / 2)); }
+  100% { transform: translate3d(calc(var(--drift) * -.4), -125vh, 0) rotate(var(--spin)); }
+}
+
+/* Judul berkilau */
+.k2-dev-title {
+  background: linear-gradient(100deg, #0b1e3d 0%, #1f7dba 22%, #8fcff1 38%, #7c5cff 54%, #ff8fb3 70%, #1f7dba 86%, #0b1e3d 100%);
+  background-size: 250% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: k2Shine 5s linear infinite, k2DevIn .9s cubic-bezier(.2,1.4,.4,1) both;
+  filter: drop-shadow(0 6px 18px rgba(46,155,224,.35));
+}
+.dark .k2-dev-title { background-image: linear-gradient(100deg, #ffffff 0%, #8fcff1 22%, #2e9be0 38%, #a78bfa 54%, #ff8fb3 70%, #8fcff1 86%, #ffffff 100%); }
+@keyframes k2Shine { to { background-position: -250% 0; } }
+@keyframes k2DevIn { from { opacity: 0; transform: translateY(24px) scale(.85); } to { opacity: 1; transform: none; } }
+
+/* Letupan: cincin, kepingan, dan stiker kecil yang meloncat */
+.k2-dev-bit { animation-duration: 1.25s; animation-timing-function: cubic-bezier(.15,.7,.3,1); }
+.k2-dev-ring { position: absolute; width: 24px; height: 24px; border-radius: 9999px; border: 3px solid #8fcff1; box-shadow: 0 0 24px rgba(46,155,224,.6); transform: translate(-50%, -50%); animation: k2Ring .7s ease-out forwards; }
+@keyframes k2Ring { from { transform: translate(-50%, -50%) scale(.3); opacity: 1; } to { transform: translate(-50%, -50%) scale(7); opacity: 0; } }
+.k2-dev-pop { position: absolute; width: 74px; transform: translate(-50%, -50%); animation: k2Pop 1.5s cubic-bezier(.2,.8,.3,1) forwards; }
+@keyframes k2Pop {
+  0% { transform: translate(-50%, -50%) scale(.2) rotate(0deg); opacity: 0; }
+  20% { transform: translate(calc(-50% + var(--dx) * .4), calc(-50% - 110px)) scale(1.1) rotate(var(--rot)); opacity: 1; }
+  70% { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + 40px)) scale(.8) rotate(calc(var(--rot) * -1)); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .k2-dev-aura, .k2-dev-title { animation: none; }
+  .k2-dev-fly { display: none; }
+}
+/* Bantalan lembut di belakang judul supaya tetap terbaca walau stiker lewat di belakangnya */
+.k2-dev-head { isolation: isolate; }
+.k2-dev-head::before { content: ""; position: absolute; inset: -18px -6%; z-index: -1; border-radius: 9999px; background: radial-gradient(closest-side, color-mix(in srgb, var(--paper) 92%, transparent) 55%, transparent); pointer-events: none; }

@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight, ImagePlus, Pencil, Trash2, Users, X } from "
 import { adminFetch, useAuth, usePerm } from "@/components/AuthProvider";
 import { StatGroup } from "@/components/IzinStats";
 import InstagramButton from "@/components/InstagramButton";
+import DevEasterEgg, { DevTitle } from "@/components/DevEasterEgg";
 import TikTokButton from "@/components/TikTokButton";
 import LinkedInButton from "@/components/LinkedInButton";
 import { Loading } from "@/components/admin/ui";
@@ -34,6 +35,8 @@ export async function fetchProfile(absen: number): Promise<ProfileData> {
   if (!r.ok) throw new Error(d.error ?? "Gagal memuat profil");
   return d;
 }
+
+const DEV_NAME = "Francis Demetrio Villanova";
 
 export const postSrc = (absen: number, id: string) => `/api/profil/foto/${absen}/${id}`;
 const tgl = (iso: string) => new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Jakarta" });
@@ -86,13 +89,17 @@ export default function ProfileView({ absen }: { absen: number }) {
   const canDelete = data.own || !!mod;
   const cur = open !== null ? data.posts[open] : null;
 
+  const dev = data.nama === DEV_NAME; // easter egg profil developer
+
   return (
     <div className="mx-auto max-w-4xl space-y-8">
+      {dev && <DevEasterEgg />}
       <Link href="/profil" className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-ink">
         <Users size={15} /> Semua teman sekelas
       </Link>
+      {dev && <DevTitle />}
 
-      <section className="k2-card flex flex-col gap-6 p-[clamp(20px,3vw,32px)] sm:flex-row sm:items-start">
+      <section className={`k2-card flex flex-col gap-6 p-[clamp(20px,3vw,32px)] sm:flex-row sm:items-start ${dev ? "!border-sea-300 shadow-[0_0_0_1px_rgba(46,155,224,.35),0_24px_70px_-18px_rgba(46,155,224,.7)]" : ""}`}>
         <span className="relative grid h-28 w-28 shrink-0 place-items-center self-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-4xl font-bold text-white ring-4 ring-accent-soft sm:self-start">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {data.avatar ? <img src={`/api/avatar/${data.absen}?v=${data.avatar}`} alt={`Foto profil ${data.panggilan}`} className="h-full w-full object-cover" /> : data.panggilan[0]}
