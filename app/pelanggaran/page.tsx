@@ -6,6 +6,7 @@ import AdminLink from "@/components/AdminLink";
 import PelStats from "@/components/PelStats";
 import { pelStats } from "@/lib/pel-stats";
 import PageHero from "@/components/PageHero";
+import Avatar from "@/components/Avatar";
 import SectionHead from "@/components/SectionHead";
 
 export const revalidate = 30;
@@ -39,6 +40,7 @@ export default async function Page() {
               {pel.shame.map((r, i) => (
                 <div key={r.nama} className="rounded-xl border-2 border-dashed border-red-400 bg-amber-50 p-4 text-center shadow transition-transform hover:-rotate-1 hover:scale-105">
                   <p className="font-mono text-sm font-bold text-red-600">#{i + 1}</p>
+                  <Avatar nama={r.nama} className="mx-auto mt-2 h-20 w-20 text-2xl ring-4 ring-red-200" />
                   <p className="my-2 text-lg font-extrabold">{r.nama}</p>
                   <p className="font-display text-3xl font-black text-red-600">
                     {r.jumlah} <span className="font-sans text-sm font-semibold">poin</span>

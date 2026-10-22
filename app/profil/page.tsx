@@ -1,6 +1,5 @@
 import PageHero from "@/components/PageHero";
-import PeopleBoard, { CawuPicker } from "@/components/PeopleBoard";
-import ProfileDirectory from "@/components/ProfileDirectory";
+import PeopleBoard, { CawuPicker, MemberBoard } from "@/components/PeopleBoard";
 import SectionHead from "@/components/SectionHead";
 import { CAWU_MAX, peopleOf, type OrgPeople } from "@/lib/content";
 import { getContent } from "@/lib/content-server";
@@ -29,7 +28,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ c
         </section>
         <section>
           <SectionHead no="02" label="Anggota" title="Semua teman sekelas" />
-          <ProfileDirectory />
+          <MemberBoard />
         </section>
       </div>
     </>

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, ImagePlus, Lock, Pencil, Trash2, Users, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, ImagePlus, Pencil, Trash2, Users, X } from "lucide-react";
 import { adminFetch, useAuth, usePerm } from "@/components/AuthProvider";
 import { StatGroup } from "@/components/IzinStats";
 import InstagramButton from "@/components/InstagramButton";
@@ -39,7 +39,7 @@ export const postSrc = (absen: number, id: string) => `/api/profil/foto/${absen}
 const tgl = (iso: string) => new Date(iso).toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric", timeZone: "Asia/Jakarta" });
 const n = (v: number | null) => (v === null ? "–" : v);
 
-// Halaman profil seorang siswa (untuk siswa yang sudah masuk).
+// Halaman profil seorang siswa (bisa dibuka siapa saja, termasuk tamu).
 export default function ProfileView({ absen }: { absen: number }) {
   const { user, ready } = useAuth();
   const mod = usePerm("akun"); // pengurus yang boleh menghapus foto tidak pantas
@@ -53,8 +53,8 @@ export default function ProfileView({ absen }: { absen: number }) {
       .catch((e: Error) => setErr(e.message));
   }, [absen]);
   useEffect(() => {
-    if (user) load();
-  }, [user, load]);
+    if (ready) load();
+  }, [ready, user, load]);
 
   // Lightbox: Esc menutup, panah kiri/kanan berpindah foto.
   useEffect(() => {
@@ -69,16 +69,6 @@ export default function ProfileView({ absen }: { absen: number }) {
   }, [open, data]);
 
   if (!ready) return <Loading />;
-  if (!user)
-    return (
-      <div className="k2-card mx-auto max-w-md space-y-4 p-8 text-center">
-        <Lock className="mx-auto text-ink-3" />
-        <p className="font-semibold text-ink-2">Masuk dulu untuk melihat profil teman sekelas.</p>
-        <Link href="/masuk" className="inline-flex min-h-10 items-center rounded-full bg-[#0b1e3d] px-6 text-sm font-semibold text-white">
-          Masuk
-        </Link>
-      </div>
-    );
   if (err) return <p className="k2-card p-6 text-center text-sm font-semibold text-bad">{err}</p>;
   if (!data) return <Loading />;
 

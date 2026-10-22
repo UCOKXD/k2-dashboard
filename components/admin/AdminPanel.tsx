@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { AlertTriangle, ClipboardList, BookOpen, Cake, GraduationCap, History, Images, KeyRound, Lock, MessageCircle, MessageCircleHeart, Network, Armchair, Share2, UsersRound } from "lucide-react";
+import { AlertTriangle, ClipboardList, BookOpen, Cake, GraduationCap, History, Images, KeyRound, Lock, MessageCircle, MessageCircleHeart, Network, Armchair, Package, Share2, UsersRound } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import OrgEditor from "@/components/admin/OrgEditor";
 import PelEditor from "@/components/admin/PelEditor";
@@ -13,6 +13,7 @@ import HistoryTab from "@/components/admin/HistoryTab";
 import AccountTab from "@/components/admin/AccountTab";
 import NotifEditor from "@/components/admin/NotifEditor";
 import NglAdmin from "@/components/admin/NglAdmin";
+import InventarisAdmin from "@/components/admin/InventarisAdmin";
 import { CawuEditor, FooterEditor } from "@/components/admin/CawuEditor";
 import { Loading } from "@/components/admin/ui";
 import { can } from "@/lib/admins";
@@ -28,6 +29,7 @@ const TABS: { id: string; label: string; icon: typeof Network; el: () => React.R
   { id: "jadwal", label: "Jadwal", icon: GraduationCap, el: ScheduleEditor, perm: "jadwal" },
   { id: "tugas", label: "Tugas", icon: ClipboardList, el: TasksEditor, perm: "tugas" },
   { id: "ngl", label: "NGL", icon: MessageCircleHeart, el: NglAdmin, perm: "ngl" },
+  { id: "inventaris", label: "Inventaris", icon: Package, el: InventarisAdmin, perm: "inventaris" },
   { id: "riwayat", label: "Riwayat", icon: History, el: HistoryTab, perm: "riwayat" },
   { id: "akun", label: "Akun", icon: KeyRound, el: AccountTab, perm: null },
   { id: "notifikasi", label: "Notifikasi WA", icon: MessageCircle, el: NotifEditor, perm: "web" },

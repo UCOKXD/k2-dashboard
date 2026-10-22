@@ -148,3 +148,13 @@ export function CawuPicker({ cawu, current, filled }: { cawu: number; current: n
     </label>
   );
 }
+
+// Semua anggota kelas, tampil sama seperti kartu divisi (foto bulat besar, nama, label). Klik untuk membuka profil.
+export function MemberBoard() {
+  const ref = useReveal();
+  return (
+    <div ref={ref}>
+      <Group cards={STUDENTS.map((s) => ({ nama: s.full, jabatan: `${String(s.absen).padStart(2, "0")} · ${s.short}` }))} cols="grid-cols-2 md:grid-cols-3 lg:grid-cols-4" />
+    </div>
+  );
+}

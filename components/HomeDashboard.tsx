@@ -40,6 +40,7 @@ import { StatGroup } from "@/components/IzinStats";
 import type { TaskItem } from "@/lib/tasks";
 import { PHOTO_EVERY_MS } from "@/lib/photos";
 import { useGalleryPhotos } from "@/components/useGalleryPhotos";
+import Avatar from "@/components/Avatar";
 import { STUDENTS } from "@/lib/students";
 import type { DoaPick } from "@/lib/store";
 import type { HomeData, LogType, PelanggaranData, StudentStat } from "@/lib/dashboard";
@@ -488,12 +489,15 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
                 {topThree.map((s, i) => (
                   <div key={s.nama} className="relative flex flex-col justify-between overflow-hidden rounded-k2-md border border-rose-100 bg-surface p-4 shadow-1 transition-transform hover:scale-[1.02]">
                     <div className="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-600">#{i + 1}</div>
-                    <div>
-                      <span className="inline-block max-w-[calc(100%-2rem)] truncate rounded-md border border-rose-100 bg-rose-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-rose-600">
-                        {s.kategori}
-                      </span>
-                      <h4 className="mt-2.5 truncate text-sm font-bold text-slate-800" title={s.nama}>{s.nama}</h4>
-                      <p className="mt-0.5 text-[11px] text-slate-400">Panggilan: {s.short}</p>
+                    <div className="flex items-start gap-3 pr-8">
+                      <Avatar nama={s.nama} className="h-12 w-12 text-lg ring-2 ring-rose-200" />
+                      <div className="min-w-0">
+                        <span className="inline-block max-w-full truncate rounded-md border border-rose-100 bg-rose-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-rose-600">
+                          {s.kategori}
+                        </span>
+                        <h4 className="mt-1.5 truncate text-sm font-bold text-slate-800" title={s.nama}>{s.nama}</h4>
+                        <p className="mt-0.5 text-[11px] text-slate-400">Panggilan: {s.short}</p>
+                      </div>
                     </div>
                     <div className="mt-3 border-t border-slate-100 pt-2.5">
                       <span className="text-xs font-semibold text-rose-600">{s.jumlah} Poin</span>

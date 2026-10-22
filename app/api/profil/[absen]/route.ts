@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { accountsFor } from "@/lib/admins";
-import { requireUser } from "@/lib/auth";
+import { currentUser } from "@/lib/auth";
 import { getAvatarMap } from "@/lib/avatars";
 import { getContent } from "@/lib/content-server";
 import { buildPelanggaran } from "@/lib/dashboard";
@@ -12,10 +12,9 @@ import { getUsernames, loginOf } from "@/lib/usernames";
 
 export const dynamic = "force-dynamic";
 
-// Profil satu siswa untuk siswa yang sudah masuk: info, foto, bio, Instagram, TikTok & LinkedIn (kalau ditampilkan), dan jumlah izin/sakit/pelanggaran.
-export async function GET(req: Request, { params }: { params: Promise<{ absen: string }> }) {
-  const { user, error } = await requireUser(req, { allowTemp: true });
-  if (error) return error;
+// Profil satu siswa (terbuka untuk semua, termasuk tamu): info, foto, bio, Instagram, TikTok & LinkedIn (kalau ditampilkan), dan jumlah izin/sakit/pelanggaran.
+export async function GET(_: Request, { params }: { params: Promise<{ absen: string }> }) {
+  const user = await currentUser();
   const absen = Number((await params).absen);
   const s = STUDENTS.find((x) => x.absen === absen);
   if (!s) return NextResponse.json({ error: "Siswa tidak ditemukan" }, { status: 404 });
@@ -27,7 +26,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ absen: s
     : [EMPTY_PROFILE, {}, {}];
   const count = (t: Awaited<ReturnType<typeof getTable>> | null) => (t ? t.rows.filter((r) => resolveName(r[t.name] ?? "") === s.full).length : null);
   const pel = pelT ? buildPelanggaran(pelT, ov).students.find((x) => x.nama === s.full) : undefined;
-  const own = user.absen === absen;
+  const own = user?.absen === absen;
 
   return NextResponse.json(
     {
