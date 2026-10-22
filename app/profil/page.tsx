@@ -18,7 +18,7 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ c
     <>
       <PageHero
         eyebrow="Profil"
-        title="Kenalan sama ABSORBING"
+        title="Say HI to ABSORBERS!!"
         aside={<CawuPicker cawu={cawu} current={cawuData.current} filled={filled} />}
       />
       <div className="space-y-20 py-[clamp(40px,6vw,72px)]">

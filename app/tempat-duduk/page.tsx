@@ -10,7 +10,7 @@ export default async function Page() {
   const seats = await getContent("seats");
   return (
     <>
-      <PageHero eyebrow="Tempat duduk" title="Tempat Duduk" lede="Denah tempat duduk kelas ABSORBING yang diatur Divisi K2." sticker="duduk-sini" />
+      <PageHero eyebrow="Tempat duduk" title="Tempat Duduk" lede="Denah tempat duduk kelas ABSORBING." sticker="duduk-sini" />
       <div className="space-y-6 py-[clamp(32px,5vw,56px)]">
         <TapReminder />
         <SeatPlanner initial={seats} />

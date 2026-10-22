@@ -346,7 +346,7 @@ export default function VoiceRecorder() {
 
         <ul className="grid gap-2 rounded-k2-md bg-surface-2 p-4 text-[13px] leading-relaxed text-ink-2 sm:grid-cols-2">
           <li className="flex gap-2">
-            <ShieldCheck size={16} className="mt-0.5 shrink-0 text-ok" /> Suara tidak dikirim ke server; file langsung tersimpan di perangkatmu.
+            <ShieldCheck size={16} className="mt-0.5 shrink-0 text-ok" /> File langsung tersimpan di perangkatmu.
           </li>
           <li className="flex gap-2">
             <AlertTriangle size={16} className="mt-0.5 shrink-0 text-amber-600" /> Di HP, tetap buka halaman ini selama merekam. Pindah aplikasi bisa menghentikan rekaman.

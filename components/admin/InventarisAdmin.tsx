@@ -8,10 +8,11 @@ import { Loading, Panel, SaveBar, input, newId, smallBtn } from "@/components/ad
 
 const today = () => new Date().toLocaleDateString("en-CA", { timeZone: "Asia/Jakarta" });
 const tglID = (s: string) => (s ? new Date(`${s}T00:00:00`).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }) : "–");
+// Warna kondisi hanya di garis kiri kotak pilihan, supaya daftar pilihannya tetap terbaca di mode terang & gelap.
 const KONDISI_CLS: Record<Kondisi, string> = {
-  baik: "border-emerald-300 bg-emerald-50 text-emerald-800 dark:border-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-200",
-  rusak: "border-amber-300 bg-amber-50 text-amber-800 dark:border-amber-700 dark:bg-amber-950/50 dark:text-amber-200",
-  hilang: "border-rose-300 bg-rose-50 text-rose-800 dark:border-rose-700 dark:bg-rose-950/50 dark:text-rose-200",
+  baik: "!border-l-4 !border-l-emerald-500",
+  rusak: "!border-l-4 !border-l-amber-500",
+  hilang: "!border-l-4 !border-l-rose-500",
 };
 
 // Inventaris kelas (Panel Admin): daftar barang + catatan peminjaman. Khusus izin "inventaris" (bawaan IT & Logistik).
@@ -135,7 +136,7 @@ export default function InventarisAdmin() {
                   </label>
                   <select value={it.kondisi} onChange={(e) => setItem(it.id, { kondisi: e.target.value as Kondisi })} aria-label="Kondisi" className={`${input} font-semibold ${KONDISI_CLS[it.kondisi]}`}>
                     {KONDISI.map((k) => (
-                      <option key={k} value={k}>
+                      <option key={k} value={k} className="bg-surface text-ink">
                         {KONDISI_LABEL[k]}
                       </option>
                     ))}
