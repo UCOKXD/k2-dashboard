@@ -28,7 +28,6 @@ export type MenuEntry = MenuItem | { name: string; icon: typeof Clock; children:
 // Menu dirangkum per kelompok (dropdown).
 export const MENU_GROUPS: MenuEntry[] = [
   { name: "Dashboard", icon: LayoutDashboard, href: "/", match: "/" },
-  { name: "Doa Harian", icon: BookOpen, href: "/doa-harian", match: "/doa-harian" },
   {
     name: "Laporan",
     icon: FolderOpen,
@@ -44,6 +43,7 @@ export const MENU_GROUPS: MenuEntry[] = [
     children: [
       { name: "Tempat Duduk", icon: Armchair, href: "/tempat-duduk", match: "/tempat-duduk" },
       { name: "Jadwal", icon: GraduationCap, href: "/jadwal", match: "/jadwal" },
+      { name: "Doa Harian", icon: BookOpen, href: "/doa-harian", match: "/doa-harian" },
       { name: "Tugas & Kalender", icon: ClipboardList, href: "/kalender-acara", match: "/kalender-acara" },
       { name: "Kalkulator", icon: Calculator, href: "/kalkulator", match: "/kalkulator" },
       { name: "Rekam Suara", icon: Mic, href: "/rekam", match: "/rekam" },

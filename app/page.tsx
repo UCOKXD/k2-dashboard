@@ -7,6 +7,9 @@ import { galleryPhotos } from "@/lib/photos";
 import { birthdayInfo } from "@/lib/birthday";
 import { recentDoaPicks } from "@/lib/store";
 import { STUDENTS } from "@/lib/students";
+import { accountsFor } from "@/lib/admins";
+import { getProfile } from "@/lib/profile";
+import { storeReady } from "@/lib/store";
 
 export const revalidate = 30;
 
@@ -49,6 +52,17 @@ export default async function Home() {
     .filter((b) => b.days <= 7)
     .sort((a, b) => a.days - b.days);
 
+  // Kartu kenalan: jabatan dari Struktur & Peran, bio dari profil masing-masing siswa (kosong kalau belum diisi).
+  const accounts = accountsFor(org);
+  const bios = storeReady ? await Promise.all(STUDENTS.map((s) => getProfile(s.absen).then((p) => p.bio).catch(() => ""))) : STUDENTS.map(() => "");
+  const members = STUDENTS.map((s, i) => ({
+    absen: s.absen,
+    nama: s.full,
+    short: s.short,
+    jabatan: accounts.find((a) => a.absen === s.absen)?.jabatan ?? "Siswa",
+    bio: bios[i],
+  }));
+
   return (
     <HomeDashboard
       tasks={tasks}
@@ -61,6 +75,7 @@ export default async function Home() {
         bday: await birthdayInfo(birthdays),
         photos: galleryPhotos(gallery), // foto banner = foto Galeri (kosong kalau Galeri kosong)
         cards: { nextEvent, doaToday, ultah, schedule },
+        members,
       }}
     />
   );

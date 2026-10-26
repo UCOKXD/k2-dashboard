@@ -59,7 +59,11 @@ export type HomeData = {
   photos: string[]; // foto banner dari Galeri (boleh kosong)
   bday: BdayInfo; // tema ulang tahun (hari ini & bulan ini)
   cards: HomeCards;
+  members: MemberCard[]; // FlashCard "Yuk Kenalan!!"
 };
+
+// Data kartu kenalan: semuanya data asli (daftar siswa, jabatan dari Struktur & Peran, bio yang diisi siswa sendiri).
+export type MemberCard = { absen: number; nama: string; short: string; jabatan: string; bio: string };
 
 // Riwayat acak doa yang hanya tersimpan di browser (dipakai selama penyimpanan server belum dipasang).
 export const LOCAL_DOA_LOG = "k2-doa-log";

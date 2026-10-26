@@ -34,13 +34,12 @@ function nextClass(list: ScheduleItem[], now: { day: number; min: number }) {
   return null;
 }
 
+const CELL = "flex min-w-0 gap-4 border-line p-[clamp(18px,2.4vw,28px)] [&+&]:border-t min-[720px]:[&+&]:border-l min-[720px]:[&+&]:border-t-0";
+
 // Satu kolom di strip "Hari ini" (desain v2): ikon, label mono, isi, seluruhnya bisa diklik.
 function Card({ icon: Icon, label, href, children }: { icon: typeof Cake; label: string; href: string; children: React.ReactNode }) {
   return (
-    <Link
-      href={href}
-      className="flex min-w-0 gap-4 border-line p-[clamp(18px,2.4vw,28px)] transition-colors hover:bg-surface-2 [&+&]:border-t min-[900px]:[&+&]:border-l min-[900px]:[&+&]:border-t-0"
-    >
+    <Link href={href} className={`${CELL} transition-colors hover:bg-surface-2`}>
       <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-ink">
         <Icon size={22} />
       </span>
@@ -74,22 +73,44 @@ export default function HomeCards({ cards }: { cards: Cards }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 overflow-hidden rounded-k2-xl border border-line bg-surface shadow-3 min-[900px]:grid-cols-3">
-        <Card icon={GraduationCap} label="Kelas berikutnya" href="/jadwal">
-          {!cards.schedule.length ? (
-            <span className={META}>Jadwal kuliah belum diisi admin.</span>
-          ) : kelas ? (
-            <>
-              <span className={VAL}>{kelas.s.matkul}</span>
-              <span className={META}>
-                <b className={kelas.live ? "font-bold text-ok" : "font-semibold text-accent-ink"}>{kelas.when}</b> · <span className="font-mono">{jam(kelas.s.start)}–{jam(kelas.s.end)}</span>
-                {kelas.s.ruang && ` · ${kelas.s.ruang}`}
+      <div className="grid grid-cols-1 overflow-hidden rounded-k2-xl border border-line bg-surface shadow-3 min-[720px]:grid-cols-2">
+        {/* Perkuliahan: kelas berikutnya + petugas doa hari ini dalam satu kartu (dua tautan terpisah). */}
+        <div className={CELL}>
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-ink">
+            <GraduationCap size={22} />
+          </span>
+          <span className="min-w-0 flex-1">
+            <Link href="/jadwal" className="group block">
+              <span className="block font-mono text-[11px] font-semibold uppercase leading-tight tracking-[0.1em] text-ink-3">Perkuliahan · kelas berikutnya</span>
+              {!cards.schedule.length ? (
+                <span className={META}>Jadwal kuliah belum diisi admin.</span>
+              ) : kelas ? (
+                <>
+                  <span className={`${VAL} group-hover:text-accent-ink`}>{kelas.s.matkul}</span>
+                  <span className={META}>
+                    <b className={kelas.live ? "font-bold text-ok" : "font-semibold text-accent-ink"}>{kelas.when}</b> · <span className="font-mono">{jam(kelas.s.start)}–{jam(kelas.s.end)}</span>
+                    {kelas.s.ruang && ` · ${kelas.s.ruang}`}
+                  </span>
+                </>
+              ) : (
+                <span className={META}>{now ? "Tidak ada kelas minggu ini." : "Memuat..."}</span>
+              )}
+            </Link>
+            <Link href="/doa-harian" className="group mt-3 flex items-center gap-2 border-t border-line pt-3 text-[13.5px]">
+              <BookOpenCheck size={16} className="shrink-0 text-accent-ink" />
+              <span className="min-w-0 truncate text-ink-3">
+                Petugas doa:{" "}
+                {doaToday ? (
+                  <b className="font-semibold text-ink group-hover:text-accent-ink">
+                    {doaToday.name} <span className="font-mono font-normal text-ink-3">· {doaToday.nim}</span>
+                  </b>
+                ) : (
+                  <span className="group-hover:text-accent-ink">belum diacak hari ini</span>
+                )}
               </span>
-            </>
-          ) : (
-            <span className={META}>{now ? "Tidak ada kelas minggu ini." : "Memuat..."}</span>
-          )}
-        </Card>
+            </Link>
+          </span>
+        </div>
 
         <Card icon={CalendarClock} label="Acara terdekat" href="/kalender-acara">
           {nextEvent ? (
@@ -102,19 +123,6 @@ export default function HomeCards({ cards }: { cards: Cards }) {
             </>
           ) : (
             <span className={META}>Belum ada acara mendatang.</span>
-          )}
-        </Card>
-
-        <Card icon={BookOpenCheck} label="Petugas doa hari ini" href="/doa-harian">
-          {doaToday ? (
-            <>
-              <span className={VAL}>{doaToday.name}</span>
-              <span className={META}>
-                NIM <span className="font-mono">{doaToday.nim}</span>
-              </span>
-            </>
-          ) : (
-            <span className={META}>Belum diacak hari ini.</span>
           )}
         </Card>
       </div>

@@ -22,11 +22,8 @@ import {
   PieChart as PieIcon,
   Pause,
   Play,
-  Search,
   Stethoscope,
   UserCheck,
-  Users,
-  X,
 } from "lucide-react";
 import NavIsland from "@/components/NavIsland";
 import Sticker from "@/components/Sticker";
@@ -36,14 +33,14 @@ import { LOCAL_DOA_LOG, doaLog } from "@/lib/dashboard";
 import HomeCards from "@/components/HomeCards";
 import TaskBoard from "@/components/TaskBoard";
 import SectionHead from "@/components/SectionHead";
+import MemberCarousel from "@/components/MemberCarousel";
 import { StatGroup } from "@/components/IzinStats";
 import type { TaskItem } from "@/lib/tasks";
 import { PHOTO_EVERY_MS } from "@/lib/photos";
 import { useGalleryPhotos } from "@/components/useGalleryPhotos";
 import Avatar from "@/components/Avatar";
-import { STUDENTS } from "@/lib/students";
 import type { DoaPick } from "@/lib/store";
-import type { HomeData, LogType, PelanggaranData, StudentStat } from "@/lib/dashboard";
+import type { HomeData, LogType, PelanggaranData } from "@/lib/dashboard";
 
 // Bayangan sengaja agak gelap supaya kartu terlihat timbul (3D).
 const CARD = "k2-card";
@@ -158,7 +155,7 @@ function Hero({ photos }: { photos: string[] }) {
         <div ref={ref} className="relative flex max-w-[760px] flex-col pb-24 pt-[150px] md:pb-[clamp(88px,10vw,128px)] md:pt-[140px]">
           <HeroClock />
           <h1 className="mt-[22px] text-[clamp(48px,8.4vw,112px)] font-extrabold leading-[0.94] tracking-[-0.035em]">
-            Halo, <em className="not-italic text-sea-300">ABSORBING!</em>
+            Halo, <em className="not-italic text-sea-300">ABSORBERS!</em>
           </h1>
           <p className="mt-5 max-w-[50ch] text-[clamp(16px,1.6vw,19px)] leading-[1.55] text-[#d2deeb]">
             A Journey To Absorb Knowledge, Insights And Valuable Memories Together
@@ -207,64 +204,6 @@ function Hero({ photos }: { photos: string[] }) {
   );
 }
 
-/* --------------------------------------------------------------- Tooltip */
-
-type Tip = { s: StudentStat; x: number; y: number; below: boolean };
-
-function useStudentTooltip() {
-  const [tip, setTip] = useState<Tip | null>(null);
-
-  useEffect(() => {
-    const hide = () => setTip(null);
-    window.addEventListener("scroll", hide, { passive: true });
-    return () => window.removeEventListener("scroll", hide);
-  }, []);
-
-  // Posisi fixed (dihitung dari elemen yang di-hover) supaya tidak terpotong area scroll.
-  const show = (s: StudentStat) => (e: React.MouseEvent<HTMLElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    const below = r.top < 240;
-    setTip({ s, x: Math.min(Math.max(r.left, 8), window.innerWidth - 296), y: below ? r.bottom + 8 : r.top - 8, below });
-  };
-  return { tip, show, hide: () => setTip(null) };
-}
-
-function TipBox({ tip }: { tip: Tip | null }) {
-  if (!tip) return null;
-  const { s } = tip;
-  const info = STUDENTS.find((x) => x.full === s.nama);
-  return (
-    <div
-      className="animate-fadeIn pointer-events-none fixed z-[70] w-72 rounded-2xl border border-slate-700 bg-slate-900 p-4 text-white shadow-[0_25px_50px_rgba(0,0,0,0.4)]"
-      style={{ left: tip.x, top: tip.y, transform: tip.below ? undefined : "translateY(-100%)" }}
-    >
-      <div className="mb-2 flex items-center justify-between gap-2 border-b border-slate-800 pb-2">
-        <span className="truncate text-sm font-bold text-blue-400">{s.nama}</span>
-        <span className="shrink-0 text-xs text-slate-400">{s.short}</span>
-      </div>
-      <div className="space-y-1 text-xs text-slate-300">
-        {info && (
-          <p>
-            <strong className="text-slate-200">Absen:</strong> {info.absen} · <strong className="text-slate-200">NIM:</strong> {info.nim}
-          </p>
-        )}
-        <p>
-          <strong className="text-slate-200">Total:</strong> {s.kasus} pelanggaran · {s.jumlah} poin
-        </p>
-        <p className="mt-2 font-semibold text-amber-400">{s.pelanggaran.length ? "Daftar Pelanggaran Terbaru:" : "Belum ada pelanggaran."}</p>
-        {s.pelanggaran.length > 0 && (
-          <ul className="list-inside list-disc space-y-0.5 pl-1 text-slate-300">
-            {s.pelanggaran.map((v, i) => (
-              <li key={i} className="truncate">
-                {v}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-    </div>
-  );
-}
 
 /* ------------------------------------------------------- Log aktivitas */
 
@@ -440,27 +379,12 @@ function PieSection({ pel }: { pel: PelanggaranData }) {
 /* -------------------------------------------- Ringkasan dashboard utama */
 
 function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }) {
-  const [query, setQuery] = useState("");
-  const { tip, show, hide } = useStudentTooltip();
 
-  const ranked = pel.students.filter((s) => s.jumlah > 0);
   const topThree = pel.shame;
-  const pareto = ranked.slice(0, 8);
-  const max = pareto[0]?.jumlah ?? 1;
 
-  const q = query.trim().toLowerCase();
-  const filtered = pel.students.filter(
-    (s) =>
-      s.nama.toLowerCase().includes(q) ||
-      s.short.toLowerCase().includes(q) ||
-      (s.kategori || "bersih").toLowerCase().includes(q)
-  );
-
-  const panel = "rounded-3xl border border-slate-200/90 bg-gradient-to-br from-slate-50 to-blue-50/40 p-6 shadow-[0_20px_50px_rgba(15,23,42,0.2)] sm:p-8";
 
   return (
     <section id="dashboard" className="scroll-mt-32">
-      <TipBox tip={tip} />
       <div className="k2-card space-y-10 p-8 md:p-10">
         <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
           <div>
@@ -544,99 +468,6 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
             </div>
           </div>
         </div>
-
-        {/* C. Grafik Pareto */}
-        <div className={panel}>
-          <h3 className="mb-6 text-sm font-bold uppercase tracking-wider text-slate-400">Grafik Pareto Pelanggaran</h3>
-          {pareto.length === 0 && <p className="text-sm text-slate-400">Belum ada pelanggaran yang tercatat.</p>}
-          <div className="space-y-5">
-            {pareto.map((s) => (
-              <div key={s.nama} className="space-y-1.5">
-                <div className="flex items-center justify-between gap-3 text-sm">
-                  <span
-                    className="inline-block w-fit cursor-pointer truncate font-semibold text-slate-700 transition-colors hover:text-blue-600"
-                    onMouseEnter={show(s)}
-                    onMouseLeave={hide}
-                  >
-                    {s.short}
-                  </span>
-                  <span className="max-w-[60%] shrink-0 truncate rounded-full border border-blue-200 bg-blue-100/70 px-2.5 py-0.5 text-xs font-bold text-blue-600">
-                    {s.jumlah} Poin ({s.kategori})
-                  </span>
-                </div>
-                <div className="py-1">
-                  <div className="h-3.5 w-full overflow-hidden rounded-full bg-slate-200/90 p-0.5 shadow-inner">
-                    <div
-                      className="h-full cursor-pointer rounded-full bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600 shadow-sm transition-all duration-1000 hover:brightness-110"
-                      style={{ width: `${(s.jumlah / max) * 100}%` }}
-                      onMouseEnter={show(s)}
-                      onMouseLeave={hide}
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* D. Daftar nama siswa */}
-        <div className={panel}>
-          <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-            <h3 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-400">
-              <Users size={16} className="text-blue-600" /> Daftar Nama Siswa
-            </h3>
-            <div className="relative w-full sm:w-72">
-              <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="text"
-                placeholder="Cari nama atau kategori..."
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 bg-white py-2 pl-10 pr-10 text-xs font-medium text-slate-800 shadow-xs transition-all placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/30"
-              />
-              {query && (
-                <button onClick={() => setQuery("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600" aria-label="Hapus pencarian">
-                  <X size={14} />
-                </button>
-              )}
-            </div>
-          </div>
-
-          {filtered.length > 0 ? (
-            <div className="custom-scrollbar mt-4 grid max-h-[560px] grid-cols-1 gap-3 overflow-y-auto pr-1 md:grid-cols-2">
-              {filtered.map((s, i) => (
-                <div
-                  key={s.nama}
-                  className="flex items-center justify-between gap-2 rounded-k2-md border border-line bg-surface p-3.5 shadow-1 transition-all hover:border-accent"
-                >
-                  <div className="flex min-w-0 items-center gap-3">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue-600 text-xs font-bold text-white shadow-md shadow-blue-500/30">{i + 1}</span>
-                    <span className="inline-block cursor-pointer truncate text-sm font-semibold text-slate-800 transition-colors hover:text-blue-600" onMouseEnter={show(s)} onMouseLeave={hide}>
-                      {s.nama}
-                    </span>
-                  </div>
-                  <span
-                    className={`max-w-[45%] shrink-0 cursor-pointer truncate rounded-lg border px-2.5 py-1 text-xs font-semibold transition-colors ${
-                      s.jumlah ? "border-blue-100 bg-blue-50 text-blue-600 hover:bg-blue-100" : "border-emerald-100 bg-emerald-50 text-emerald-600 hover:bg-emerald-100"
-                    }`}
-                    onMouseEnter={show(s)}
-                    onMouseLeave={hide}
-                  >
-                    {s.jumlah ? s.kategori : "Bersih"}
-                  </span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="py-12 text-center text-sm text-slate-400">
-              Tidak ada nama siswa yang cocok dengan kata kunci &quot;<span className="font-semibold text-slate-600">{query}</span>&quot;.
-            </div>
-          )}
-
-          <div className="mt-8 border-t border-slate-200 pt-4 text-center">
-            <span className="text-xs font-medium text-slate-400">Arahkan kursor ke nama atau label biru untuk melihat detail pelanggaran.</span>
-          </div>
-        </div>
       </div>
     </section>
   );
@@ -684,8 +515,13 @@ export default function HomeDashboard({ data, tasks, today }: { data: HomeData; 
       <NavIsland variant="floating" />
 
       <div className="mx-auto max-w-[calc(var(--wadah)+var(--gutter)*2)] space-y-[clamp(48px,6vw,72px)] px-[var(--gutter)] pb-4">
-        {/* Strip "Hari ini": di ponsel menumpang di bawah sampul, di tablet/desktop di bawah menu pulau. */}
+        {/* FlashCard "Yuk Kenalan!!" tepat di bawah menu pulau (di ponsel menumpang di bawah sampul). */}
         <div className={`relative z-[3] ${bdayToday ? "mt-8" : "-mt-10 md:mt-6"}`}>
+          <MemberCarousel members={data.members} />
+        </div>
+
+        {/* Strip "Hari ini" */}
+        <div className="relative z-[3] !mt-6">
           <HomeCards cards={data.cards} />
         </div>
 
@@ -694,7 +530,6 @@ export default function HomeDashboard({ data, tasks, today }: { data: HomeData; 
         <section aria-labelledby="judul-minggu-ini" className="space-y-5">
           <SectionHead no="01" label="Minggu ini" title="Tugas & pengumuman" id="judul-minggu-ini" />
           <TaskBoard tasks={tasks} today={today} />
-          <LogPanel logs={data.logs} />
         </section>
 
         <section aria-labelledby="judul-struktur">
@@ -713,6 +548,9 @@ export default function HomeDashboard({ data, tasks, today }: { data: HomeData; 
           <PieSection pel={pel} />
           <DashboardSection pel={pel} live={live} />
         </section>
+
+        {/* Log aktivitas & pengumuman di paling bawah halaman. */}
+        <LogPanel logs={data.logs} />
       </div>
     </div>
   );
