@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
 import { avatarSrc, useAvatars } from "@/components/useAvatars";
 import type { MemberCard } from "@/lib/dashboard";
+import { DEV_NAME, DevMascotBack, DevMascotFront } from "@/components/DevEasterEgg";
 
 // FlashCard "Yuk Kenalan!!" di beranda (sesuai sketsa): kartu tengah besar & aktif, dua kartu di kiri-kanannya lebih kecil,
 // dua kartu paling luar miring & agak transparan. Berganti otomatis tiap 4 detik, kembali ke awal setelah kartu terakhir.
@@ -41,18 +42,28 @@ function Card({ m, src, active, onPick }: { m: MemberCard; src: string | null; a
       onClick={active ? undefined : onPick}
       aria-hidden={!active}
     >
-      <span className="grid aspect-square w-[62%] shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-5xl font-bold text-white ring-4 ring-accent-soft">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        {src ? <img src={src} alt={active ? `Foto profil ${m.short}` : ""} loading="lazy" draggable={false} className="h-full w-full object-cover" /> : m.short[0]}
-      </span>
+      {m.nama === DEV_NAME ? (
+        // Foto developer tetap memakai bingkai maskot.
+        <span className="relative aspect-square w-[62%] shrink-0">
+          <DevMascotBack />
+          <span className="relative z-[1] grid h-full w-full place-items-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-5xl font-bold text-white">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            {src ? <img src={src} alt={active ? `Foto profil ${m.short}` : ""} loading="lazy" draggable={false} className="h-full w-full object-cover" /> : m.short[0]}
+          </span>
+          <DevMascotFront />
+        </span>
+      ) : (
+        <span className="grid aspect-square w-[62%] shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-5xl font-bold text-white ring-4 ring-accent-soft">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {src ? <img src={src} alt={active ? `Foto profil ${m.short}` : ""} loading="lazy" draggable={false} className="h-full w-full object-cover" /> : m.short[0]}
+        </span>
+      )}
       <h3 className="mt-3 line-clamp-2 font-display text-[17px] font-bold leading-tight text-ink">{m.nama}</h3>
       <p className="mt-0.5 font-mono text-[11.5px] text-ink-3">
         {String(m.absen).padStart(2, "0")} · {m.short}
       </p>
-      <p className={`mt-2.5 line-clamp-3 w-full rounded-xl border border-line bg-surface-2 px-3 py-1.5 text-[12.5px] leading-snug ${m.bio ? "text-ink-2" : "italic text-ink-3"}`}>
-        {m.bio || "Belum ada bio."}
-      </p>
-      <p className="mt-2 w-full truncate rounded-xl border border-line bg-surface-2 px-3 py-1.5 text-[12.5px] font-semibold text-accent-ink">{m.jabatan}</p>
+      <p className="mt-2 max-w-full truncate rounded-full bg-accent-soft px-3 py-1 text-[12px] font-semibold text-accent-ink">{m.jabatan}</p>
+      <p className={`mt-2.5 line-clamp-3 w-full text-[13px] leading-snug ${m.bio ? "text-ink-2" : "italic text-ink-3"}`}>{m.bio || "Belum ada bio."}</p>
       {active ? (
         <Link href={`/profil/${m.absen}`} className="mt-auto pt-3 text-sm font-semibold text-accent-ink hover:underline">
           Lihat Profil →
@@ -176,8 +187,9 @@ export default function MemberCarousel({ members }: { members: MemberCard[] }) {
       </div>
 
       <div className="mt-3 flex items-center justify-center gap-3">
-        <p className="font-mono text-xs text-ink-3" aria-live={paused || hold ? "polite" : "off"}>
-          {idx + 1} / {n} · <span className="text-ink-2">{cur.short}</span>
+        {/* Penanda posisi hanya untuk pembaca layar (tidak ditampilkan). */}
+        <p className="sr-only" aria-live={paused || hold ? "polite" : "off"}>
+          Profil {idx + 1} dari {n}: {cur.nama}
         </p>
         <button
           type="button"
