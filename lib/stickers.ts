@@ -19,6 +19,7 @@ export const STICKERS = {
   "selamat-ulang-tahun": { w: 195, h: 216, alt: "Maskot K2: Selamat ulang tahun!" },
   "duduk-sini": { w: 189, h: 211, alt: "Maskot K2: Duduk sini" },
   cekrek: { w: 169, h: 208, alt: "Maskot K2: Cekrek!" },
+  "kenalan-yuk": { w: 300, h: 312, alt: "Maskot K2: Kenalan yuk!" },
   "maskot-balon-1": { w: 263, h: 306, alt: "Maskot K2 membawa balon" },
   "maskot-balon-2": { w: 236, h: 305, alt: "Maskot K2 membawa balon" },
 } as const;

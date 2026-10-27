@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Pause, Play } from "lucide-react";
 import { avatarSrc, useAvatars } from "@/components/useAvatars";
+import Sticker from "@/components/Sticker";
 import type { MemberCard } from "@/lib/dashboard";
 import { DEV_NAME, DevMascotBack, DevMascotFront } from "@/components/DevEasterEgg";
 
@@ -121,10 +122,12 @@ export default function MemberCarousel({ members }: { members: MemberCard[] }) {
   const cur = members[idx];
 
   return (
-    <section aria-labelledby="judul-kenalan" className="rounded-k2-xl border border-white/40 bg-[color-mix(in_srgb,var(--surface)_62%,transparent)] px-2 pb-6 pt-7 shadow-2 backdrop-blur-[6px] dark:border-white/10 sm:px-4">
+    <section aria-labelledby="judul-kenalan" className="relative rounded-k2-xl border border-white/40 bg-[color-mix(in_srgb,var(--surface)_62%,transparent)] px-2 pb-6 pt-7 shadow-2 backdrop-blur-[6px] dark:border-white/10 sm:px-4">
       <h2 id="judul-kenalan" className="text-center font-display text-[clamp(28px,4vw,42px)] font-extrabold tracking-[-0.02em] text-ink">
         Yuk Kenalan!!
       </h2>
+      {/* Stiker maskot menempel di pojok kiri atas kotak (bisa diklik: bergoyang). */}
+      <Sticker name="kenalan-yuk" size={110} className="absolute -top-14 left-2 z-20 sm:-top-16 sm:left-4 md:!h-[150px] lg:-top-20" />
 
       <div
         className="mt-5 flex items-center justify-between gap-1"
