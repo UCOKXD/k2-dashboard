@@ -223,7 +223,7 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
         <div className="relative z-20 flex w-full flex-col items-center">
           {/* Label diberi latar navy tipis supaya tetap terbaca di atas foto apa pun. */}
           <p
-            className={`rounded-full bg-[rgba(11,30,61,0.5)] px-4 py-1 font-mono font-semibold uppercase tracking-[0.32em] text-sea-100 backdrop-blur-sm ${full ? "text-lg sm:text-2xl" : "text-[12.5px]"}`}
+            className={`rounded-full bg-[rgba(11,30,61,0.5)] px-4 py-1 font-semibold text-sea-100 ${full ?"text-lg sm:text-2xl" : "text-[12.5px]"}`}
             style={SHADOW_LABEL}
           >
             Waktu Indonesia Barat
@@ -239,7 +239,7 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
           </p>
           <div className={`mx-auto mt-6 grid w-full grid-cols-3 gap-3 ${full ? "max-w-2xl" : "max-w-md"}`}>
             {ZONES.map((z) => (
-              <div key={z.tz} className="rounded-xl border border-white/[0.12] bg-[rgba(6,18,39,0.6)] px-2 py-2.5 backdrop-blur-sm">
+              <div key={z.tz} className="rounded-xl border border-white/[0.12] bg-[rgba(6,18,39,0.6)] px-2 py-2.5">
                 <p className="font-mono text-[11px] font-bold tracking-[0.12em] text-sea-300">{z.label}</p>
                 <p className="mt-1.5 font-mono text-[19px] font-bold tabular-nums">
                   {now ? part(now, z.tz, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" }) : "--:--"}
@@ -260,7 +260,7 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
             <TriangleAlert className="mt-0.5 shrink-0 text-rose-500" />
           )}
           <div>
-            <p className="font-bold text-slate-800">
+            <p className="font-bold text-ink">
               {failed
                 ? "Gagal mengecek waktu server. Jam di atas memakai jam perangkat Anda."
                 : !sync
@@ -280,7 +280,7 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
         <button
           onClick={resync}
           disabled={busy}
-          className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink transition hover:border-ink-3 disabled:opacity-50"
+          className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-k2-md border border-line-strong bg-surface px-4 text-sm font-semibold text-ink transition hover:border-ink-3 disabled:opacity-50"
         >
           <RefreshCw size={14} className={busy ? "animate-spin" : ""} /> Cek ulang
         </button>

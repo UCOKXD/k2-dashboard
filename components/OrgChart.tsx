@@ -15,10 +15,10 @@ function Connector() {
 // Kartu berwarna (gradien) untuk DPP, BPH, dan Koordinator.
 function Box({ role, icon: Icon, person: p, text, className }: { role: string; icon: typeof User; person?: Person; text?: string; className: string }) {
   return (
-    <div className={`flex min-w-0 items-center gap-2.5 rounded-2xl border px-3.5 py-2.5 text-white shadow-[0_12px_28px_rgba(15,23,42,0.3)] ${className}`}>
+    <div className={`flex min-w-0 items-center gap-2.5 rounded-2xl border px-3.5 py-2.5 text-white ${className}`}>
       <Icon size={18} className="shrink-0 opacity-80" />
       <div className="min-w-0 text-left leading-tight">
-        <p className="text-[10px] font-bold uppercase tracking-wider opacity-85">{role}</p>
+        <p className="text-xs font-bold opacity-85">{role}</p>
         {p ? (
           <p className="text-sm font-bold">
             {p.nama} {p.panggilan && <span className="font-medium opacity-80">({p.panggilan})</span>}
@@ -45,14 +45,14 @@ function Division({ k, org }: { k: DivKey; org: OrgData }) {
   const name = k === "k2" ? "K2" : ROLE_DEF[k].label;
   return (
     <div className="flex min-w-0 flex-col gap-2.5 rounded-k2-lg border border-line bg-surface-2 p-4">
-      <p className="text-center text-[11px] font-bold uppercase tracking-widest text-ink-3">{ROLE_DEF[k].label}</p>
+      <p className="text-center text-xs font-bold text-ink-3">{ROLE_DEF[k].label}</p>
       <Box role={`Koordinator ${name}`} icon={s.icon} person={person(d.koordinator)} text="Belum diisi" className={s.box} />
       {anggota.length > 0 && (
         <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {anggota.map((p) => (
-            <li key={p.nama} className="min-w-0 rounded-k2-md border border-line bg-surface px-3 py-2 text-center shadow-1">
-              <p className={`text-[10px] font-bold uppercase tracking-wider ${s.tag}`}>Anggota</p>
-              <p className="truncate text-sm font-bold text-slate-800" title={p.nama}>
+            <li key={p.nama} className="min-w-0 rounded-k2-md border border-line bg-surface px-3 py-2 text-center">
+              <p className={`text-xs font-bold ${s.tag}`}>Anggota</p>
+              <p className="truncate text-sm font-bold text-ink" title={p.nama}>
                 {p.nama}
               </p>
               <p className="text-[11px] text-ink-3">({p.panggilan})</p>
@@ -73,7 +73,7 @@ export default function OrgChart({ org }: { org: OrgData }) {
           <Box role="DPP" icon={Crown} text={org.dpp} className="w-full max-w-[16rem] justify-center border-amber-400 bg-gradient-to-r from-amber-500 to-orange-500" />
           <Connector />
 
-          <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-ink-3">Badan Pengurus Harian</p>
+          <p className="mb-2 text-xs font-bold text-ink-3">Badan Pengurus Harian</p>
           <div className="grid w-full max-w-3xl grid-cols-1 gap-3 sm:grid-cols-2">
             <Box role="Komti" icon={User} person={person(org.komti)} className="border-blue-400 bg-gradient-to-r from-blue-600 to-indigo-600" />
             <Box role="Wakomti" icon={User} person={person(org.wakomti)} className="border-indigo-400 bg-gradient-to-r from-indigo-600 to-violet-600" />
@@ -82,7 +82,7 @@ export default function OrgChart({ org }: { org: OrgData }) {
           </div>
           <Connector />
 
-          <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-ink-3">Divisi</p>
+          <p className="mb-2 text-xs font-bold text-ink-3">Divisi</p>
           <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
             {DIV_KEYS.map((k) => (
               <Division key={k} k={k} org={org} />

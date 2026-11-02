@@ -98,7 +98,7 @@ export default function InventarisAdmin() {
             ["Rusak / hilang", bad],
           ].map(([k, v]) => (
             <div key={k} className="rounded-k2-md border border-line bg-surface-2 px-4 py-3">
-              <dt className="font-mono text-[11px] font-semibold uppercase tracking-[0.08em] text-ink-3">{k}</dt>
+              <dt className=" text-xs font-semibold text-ink-3">{k}</dt>
               <dd className="mt-1 font-display text-2xl font-bold text-ink">{v}</dd>
             </div>
           ))}
@@ -111,7 +111,7 @@ export default function InventarisAdmin() {
               setQ("");
               setD({ ...d, items: [{ id: newId(), nama: "", jumlah: 1, kondisi: "baik", lokasi: "", catatan: "" }, ...d.items] });
             }}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#0b1e3d] px-4 text-sm font-semibold text-white hover:bg-[#1b3a6b] dark:bg-[#2e9be0] dark:text-[#061227]"
+            className="inline-flex min-h-11 items-center gap-2 rounded-k2-md bg-[#0b1e3d] px-4 text-sm font-semibold text-white hover:bg-[#1b3a6b] dark:bg-[#2e9be0] dark:text-[#061227]"
           >
             <PackagePlus size={16} /> Tambah barang
           </button>
@@ -207,7 +207,7 @@ export default function InventarisAdmin() {
             <input value={form.catatan} onChange={(e) => setForm({ ...form, catatan: e.target.value })} placeholder="mis. untuk presentasi" maxLength={200} className={input} />
           </label>
           <div className="flex flex-wrap items-center gap-3 sm:col-span-2 lg:col-span-3">
-            <button className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#0b1e3d] px-4 text-sm font-semibold text-white hover:bg-[#1b3a6b] dark:bg-[#2e9be0] dark:text-[#061227]">Catat peminjaman</button>
+            <button className="inline-flex min-h-11 items-center gap-2 rounded-k2-md bg-[#0b1e3d] px-4 text-sm font-semibold text-white hover:bg-[#1b3a6b] dark:bg-[#2e9be0] dark:text-[#061227]">Catat peminjaman</button>
             {formErr && <p className="text-sm font-semibold text-bad">{formErr}</p>}
           </div>
         </form>
@@ -266,7 +266,7 @@ export default function InventarisAdmin() {
         )}
       </Panel>
 
-      {user?.tempPassword && <p className="text-sm font-medium text-amber-700">Ganti password sementara dulu sebelum bisa menyimpan.</p>}
+      {user?.tempPassword && <p className="text-sm font-medium text-warn">Ganti password sementara dulu sebelum bisa menyimpan.</p>}
       <SaveBar dirty={dirty} saving={saving} status={status} onSave={save} onReset={() => setD(saved ?? EMPTY_INV)} />
     </div>
   );

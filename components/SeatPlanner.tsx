@@ -103,14 +103,14 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
   const candidates = STUDENTS.map((s, i) => ({ ...s, i })).filter(
     (s) => !pq || s.full.toLowerCase().includes(pq.toLowerCase()) || s.short.toLowerCase().includes(pq.toLowerCase())
   );
-  const btn = "rounded-full px-5 py-3 text-sm font-semibold shadow-[0_10px_24px_rgba(15,23,42,0.2)] transition disabled:opacity-50";
+  const btn = "rounded-full px-5 py-3 text-sm font-semibold transition disabled:opacity-50";
 
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center gap-3">
         {admin && (
           <>
-            <button onClick={acak} disabled={busy} className={`${btn} bg-sea-500 px-6 text-base text-white hover:bg-sea-600`}>
+            <button onClick={acak} disabled={busy} className={`${btn} bg-[#165f93] px-6 text-base text-white hover:bg-[#165f93]`}>
               {busy ? "Mengacak..." : "Acak Tempat Duduk"}
             </button>
             <button
@@ -120,7 +120,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
                 setMsg("");
               }}
               disabled={busy}
-              className={`${btn} border border-sea-300 bg-surface hover:bg-sea-100`}
+              className={`${btn} border border-line-strong bg-surface hover:bg-sea-100`}
             >
               Kembali ke denah awal
             </button>
@@ -130,34 +130,34 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
       </div>
 
       {admin ? (
-        <p className="text-sm text-navy-700">Klik dua kursi untuk saling menukar. Perubahan baru terlihat semua orang setelah Anda menekan Simpan.</p>
+        <p className="text-sm text-ink-2">Klik dua kursi untuk saling menukar. Perubahan baru terlihat semua orang setelah Anda menekan Simpan.</p>
       ) : (
-        <p className="flex items-center gap-1.5 text-sm text-navy-700">
+        <p className="flex items-center gap-1.5 text-sm text-ink-2">
           <Lock size={14} /> Denah resmi dari admin{saved?.at ? `, diperbarui ${fmt(saved.at)}${saved.by ? ` oleh ${saved.by}` : ""}` : ""}. Arahkan kursor ke kursi untuk melihat nama lengkap.
         </p>
       )}
 
       {admin && dirty && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-amber-300 bg-amber-50/90 px-4 py-3 shadow-[0_12px_28px_rgba(15,23,42,0.15)]">
-          <p className="text-sm font-semibold text-amber-900">Ada perubahan yang belum disimpan.</p>
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-warn/40 bg-amber-50/90 px-4 py-3 shadow-[0_12px_28px_rgba(15,23,42,0.15)]">
+          <p className="text-sm font-semibold text-warn">Ada perubahan yang belum disimpan.</p>
           <div className="flex gap-2">
-            <button onClick={discard} className="flex items-center gap-1.5 rounded-full border border-amber-300 bg-white px-4 py-2 text-sm font-semibold text-amber-900">
+            <button onClick={discard} className="flex items-center gap-1.5 rounded-k2-md border border-warn/40 bg-surface px-4 py-2 text-sm font-semibold text-warn">
               <Undo2 size={14} /> Batalkan
             </button>
-            <button onClick={save} disabled={saving || busy} className="flex items-center gap-1.5 rounded-full bg-navy-900 px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-50">
+            <button onClick={save} disabled={saving || busy} className="flex items-center gap-1.5 rounded-k2-md bg-navy-900 px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-50">
               <Save size={14} /> {saving ? "Menyimpan..." : "Simpan & umumkan"}
             </button>
           </div>
         </div>
       )}
-      {msg && <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm font-medium text-rose-700">{msg}</p>}
-      {ok && !dirty && <p className="rounded-lg bg-emerald-50 px-3 py-2 text-sm font-medium text-emerald-700">{ok}</p>}
+      {msg && <p className="rounded-lg bg-bad-soft px-3 py-2 text-sm font-medium text-bad">{msg}</p>}
+      {ok && !dirty && <p className="rounded-lg bg-ok-soft px-3 py-2 text-sm font-medium text-ok">{ok}</p>}
 
       <div className="k2-card overflow-x-auto p-4">
         <div className="grid min-w-[900px] grid-cols-11 gap-2" style={{ gridTemplateRows: "auto repeat(4, 3.25rem)" }}>
           <div style={{ gridRow: 1, gridColumn: "4 / 8" }} className="rounded-lg bg-navy-900 py-2 text-center text-sm font-semibold text-white">Papan</div>
-          <div style={{ gridRow: 1, gridColumn: "10 / 12" }} className="rounded-lg bg-sea-500 py-2 text-center text-sm font-semibold text-white">Dosen</div>
-          <div style={{ gridRow: "4 / 6", gridColumn: "1 / 4" }} className="grid place-items-center rounded-lg border-2 border-dashed border-sea-300 text-sm text-sea-600">Box</div>
+          <div style={{ gridRow: 1, gridColumn: "10 / 12" }} className="rounded-lg bg-[#165f93] py-2 text-center text-sm font-semibold text-white">Dosen</div>
+          <div style={{ gridRow: "4 / 6", gridColumn: "1 / 4" }} className="grid place-items-center rounded-lg border-2 border-dashed border-line-strong text-sm text-accent-ink">Box</div>
 
           {SEATS.map((p, i) => {
             const s = STUDENTS[order[i]];
@@ -174,16 +174,16 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
                 onClick={admin ? () => tap(i) : undefined}
                 title={isPrio ? `${s.full} (wajib depan)` : s.full}
                 style={{ gridRow: p.r, gridColumn: p.c }}
-                className={`relative rounded-lg border px-1 text-xs font-medium shadow-[0_4px_10px_rgba(15,23,42,0.12)] transition-colors ${
+                className={`relative rounded-lg border px-1 text-xs font-medium transition-colors ${
                   picked === i
                     ? "border-axo-500 bg-axo-300"
                     : hit
                       ? "border-yellow-500 bg-yellow-200"
                       : isPrio
-                        ? "border-amber-400 bg-amber-50 hover:bg-amber-100"
+                        ? "border-amber-400 bg-warn-soft hover:bg-warn-soft"
                         : zone.has(i)
-                          ? "border-sea-300 bg-sea-100/70 hover:bg-sea-100"
-                          : "border-sea-300 bg-sea-50 hover:bg-sea-100"
+                          ? "border-line-strong bg-sea-100/70 hover:bg-sea-100"
+                          : "border-line-strong bg-accent-soft hover:bg-sea-100"
                 }`}
               >
                 {isPrio && <Star size={10} className="absolute right-1 top-1 fill-amber-400 text-amber-500" />}
@@ -199,7 +199,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
         <div className="k2-card space-y-3 p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h3 className="flex items-center gap-1.5 font-bold text-navy-900">
+              <h3 className="flex items-center gap-1.5 font-bold text-ink">
                 <Star size={16} className="fill-amber-400 text-amber-500" /> Prioritas Duduk Depan
               </h3>
             </div>
@@ -209,7 +209,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
                   setPrio([]);
                   setMsg("");
                 }}
-                className="text-sm text-sea-600 underline"
+                className="text-sm text-accent-ink underline"
               >
                 Hapus semua
               </button>
@@ -219,7 +219,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
           {prio.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {prio.map((st) => (
-                <button key={st} onClick={() => togglePrio(st)} className="flex min-h-11 items-center gap-1 rounded-full border border-amber-300 bg-amber-100 px-3.5 text-sm font-semibold text-amber-900 shadow-sm hover:bg-amber-200">
+                <button key={st} onClick={() => togglePrio(st)} className="flex min-h-11 items-center gap-1 rounded-k2-md border border-warn/40 bg-warn-soft px-3.5 text-sm font-semibold text-warn shadow-sm hover:bg-amber-200">
                   {STUDENTS[st].full} <X size={12} />
                 </button>
               ))}
@@ -235,7 +235,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
                   key={s.i}
                   onClick={() => togglePrio(s.i)}
                   disabled={busy}
-                  className={`min-h-11 rounded-full border px-3.5 text-sm font-medium transition ${on ? "border-amber-400 bg-amber-400 text-white shadow" : "border-sea-300 bg-sea-50 text-navy-900 hover:bg-sea-100"}`}
+                  className={`min-h-11 rounded-k2-md border px-3.5 text-sm font-medium transition ${on ? "border-amber-400 bg-amber-400 text-white shadow" : "border-line-strong bg-accent-soft text-ink hover:bg-sea-100"}`}
                 >
                   {s.absen}. {s.full}
                 </button>

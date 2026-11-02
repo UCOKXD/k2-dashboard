@@ -30,19 +30,19 @@ export default function GalleryEditor() {
 
   return (
     <Panel title="Galeri Kelas" desc="Foto dokumentasi kegiatan di halaman Galeri. Tambahkan keterangan singkat, lalu Simpan. Foto galeri juga otomatis tampil bergantian (setiap 6 detik) di banner beranda dan latar jam halaman Waktu.">
-      <label className={`flex cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-sea-300 bg-sea-50/60 py-6 text-sm font-semibold text-sea-600 ${uploading ? "opacity-60" : "hover:bg-sea-50"}`}>
+      <label className={`flex cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-line-strong bg-sea-50/60 py-6 text-sm font-semibold text-accent-ink ${uploading ? "opacity-60" : "hover:bg-accent-soft"}`}>
         <ImagePlus size={20} /> {uploading ? "Mengunggah..." : "Pilih foto (bisa beberapa sekaligus)"}
         <input type="file" accept="image/*" multiple hidden disabled={uploading} onChange={(e) => add(e.target.files)} />
       </label>
-      {err && <p className="text-sm text-rose-600">{err}</p>}
+      {err && <p className="text-sm text-bad">{err}</p>}
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {d.map((it) => (
-          <div key={it.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-md">
+          <div key={it.id} className="overflow-hidden rounded-2xl border border-line bg-surface shadow-md">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img width={1600} height={900} src={it.src} alt={it.caption || "Foto"} className="aspect-video w-full object-cover" />
             <div className="flex gap-2 p-2">
               <input value={it.caption} onChange={(e) => c.setDraft(d.map((x) => (x.id === it.id ? { ...x, caption: e.target.value } : x)))} placeholder="Keterangan foto" className={input} />
-              <button onClick={() => c.setDraft(d.filter((x) => x.id !== it.id))} className={`${smallBtn} text-rose-600`} aria-label="Hapus foto">
+              <button onClick={() => c.setDraft(d.filter((x) => x.id !== it.id))} className={`${smallBtn} text-bad`} aria-label="Hapus foto">
                 <Trash2 size={14} />
               </button>
             </div>

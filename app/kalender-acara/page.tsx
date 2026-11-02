@@ -37,7 +37,7 @@ export default async function Page() {
         <WeekCalendar events={events} today={today} birthdays={bdays} schedule={schedule} tasks={tasks} />
         <YearCalendar events={events} today={today} birthdays={bdays} schedule={schedule} tasks={tasks} />
         <section>
-          <SectionHead no="01" label="Data" title="Daftar acara dari form" />
+          <SectionHead label="Data" title="Daftar acara dari form" />
           <DataTable cols={t.cols} rows={t.rows} emptySticker={!hasUrgent} label="daftar acara" />
         </section>
       </div>
@@ -46,7 +46,7 @@ export default async function Page() {
         href="https://forms.gle/w9G7tBxWwaLBW6y59"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-[calc(84px+env(safe-area-inset-bottom))] right-4 z-30 md:bottom-6 md:right-6 flex items-center gap-2 rounded-full border border-white/15 bg-navy-900 px-7 py-4 text-base font-bold text-white shadow-3 transition hover:scale-105 hover:bg-sea-600"
+        className="fixed bottom-[calc(84px+env(safe-area-inset-bottom))] right-4 z-30 md:bottom-6 md:right-6 flex items-center gap-2 rounded-full border border-white/15 bg-navy-900 px-7 py-4 text-base font-bold text-white shadow-3 transition hover:scale-105 hover:bg-[#165f93]"
       >
         <span className="text-xl leading-none">+</span> Saran acara
       </a>

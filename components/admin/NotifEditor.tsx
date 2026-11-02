@@ -22,7 +22,7 @@ function CopyBox({ text, label }: { text: string; label: string }) {
   const [done, setDone] = useState(false);
   return (
     <div className="relative">
-      <pre className="max-h-72 overflow-auto rounded-2xl border border-slate-200 bg-slate-50 p-4 pr-24 font-mono text-xs leading-relaxed text-slate-800">{text}</pre>
+      <pre className="max-h-72 overflow-auto rounded-2xl border border-line bg-surface-2 p-4 pr-24 font-mono text-xs leading-relaxed text-ink">{text}</pre>
       <button
         type="button"
         onClick={() => navigator.clipboard.writeText(text).then(() => (setDone(true), setTimeout(() => setDone(false), 1500)))}
@@ -103,7 +103,7 @@ export default function NotifEditor() {
     return () => clearInterval(id);
   }, []);
 
-  if (err && !data) return <Panel title="Notifikasi WhatsApp"><p className="text-sm text-rose-600">{err}</p></Panel>;
+  if (err && !data) return <Panel title="Notifikasi WhatsApp"><p className="text-sm text-bad">{err}</p></Panel>;
   if (!data || !draft) return <Loading title="Notifikasi WhatsApp" />;
 
   const origin = window.location.origin; // data hanya ada di browser, jadi aman
@@ -157,19 +157,19 @@ export default function NotifEditor() {
     <div className="space-y-6">
       <Panel title="Notifikasi WhatsApp" desc="Laporan baru dikirim otomatis ke grup WhatsApp kelas lewat bot di laptop. Saat laptop mati, pesan menunggu di antrian dan dikirim begitu bot menyala lagi (yang menumpuk digabung jadi satu pesan rangkuman).">
         <div className="grid gap-3 sm:grid-cols-3">
-          <div className={`rounded-2xl border px-4 py-3 ${online ? "border-emerald-200 bg-emerald-50/80" : "border-slate-200 bg-white"}`}>
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Bot</p>
-            <p className={`flex items-center gap-1.5 font-bold ${online ? "text-emerald-700" : "text-slate-700"}`}>
+          <div className={`rounded-2xl border px-4 py-3 ${online ? "border-ok/30 bg-emerald-50/80" : "border-line bg-surface"}`}>
+            <p className="text-xs font-semibold text-ink-3">Bot</p>
+            <p className={`flex items-center gap-1.5 font-bold ${online ? "text-ok" : "text-ink-2"}`}>
               <span className={`h-2.5 w-2.5 rounded-full ${online ? "bg-emerald-500" : "bg-slate-400"}`} /> {online ? "Aktif" : "Tidak aktif"}
             </p>
-            <p className="text-xs text-slate-500">{seen ? `Terakhir mengecek ${ago(seen, data.now)}` : "Belum pernah tersambung"}</p>
+            <p className="text-xs text-ink-3">{seen ? `Terakhir mengecek ${ago(seen, data.now)}` : "Belum pernah tersambung"}</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Menunggu dikirim</p>
-            <p className="text-2xl font-extrabold text-slate-800">{length}</p>
+          <div className="rounded-2xl border border-line bg-surface px-4 py-3">
+            <p className="text-xs font-semibold text-ink-3">Menunggu dikirim</p>
+            <p className="text-2xl font-extrabold text-ink">{length}</p>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3">
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500" htmlFor="notif-interval">
+          <div className="rounded-2xl border border-line bg-surface px-4 py-3">
+            <label className="block text-xs font-semibold text-ink-3" htmlFor="notif-interval">
               Bot mengecek tiap (detik)
             </label>
             <input
@@ -181,23 +181,23 @@ export default function NotifEditor() {
               onChange={(e) => setDraft({ ...draft, interval: Math.min(300, Math.max(15, Number(e.target.value) || 30)) })}
               className={`${input} mt-1 max-w-[7rem]`}
             />
-            <p className="mt-1 text-xs text-slate-500">≈ {perHour} perintah Redis/jam saat bot menyala.</p>
+            <p className="mt-1 text-xs text-ink-3">≈ {perHour} perintah Redis/jam saat bot menyala.</p>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <button onClick={() => action("test")} className="flex items-center gap-1.5 rounded-full bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow">
+          <button onClick={() => action("test")} className="flex items-center gap-1.5 rounded-k2-md bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow">
             <Send size={14} /> Kirim pesan uji
           </button>
-          {msg && <p className="text-sm font-medium text-slate-700">{msg}</p>}
+          {msg && <p className="text-sm font-medium text-ink-2">{msg}</p>}
         </div>
       </Panel>
 
       <Panel title="Template Pesan" desc="Tulis {nama_isian} untuk memasukkan data. Baris yang isiannya kosong otomatis dihilangkan. *teks* = tebal, _teks_ = miring di WhatsApp.">
         <div className="space-y-4">
           {NOTIF_DEFS.map((d) => (
-            <div key={d.type} className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
+            <div key={d.type} className="space-y-3 rounded-2xl border border-line bg-surface p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <label className="flex min-h-11 items-center gap-2 font-bold text-slate-800">
+                <label className="flex min-h-11 items-center gap-2 font-bold text-ink">
                   <input
                     type="checkbox"
                     checked={draft.enabled[d.type]}
@@ -219,7 +219,7 @@ export default function NotifEditor() {
                   )}
                 </div>
               </div>
-              {samples[d.type] && <p className="text-xs font-medium text-slate-600">{samples[d.type]}</p>}
+              {samples[d.type] && <p className="text-xs font-medium text-ink-2">{samples[d.type]}</p>}
               <div className={`grid gap-3 lg:grid-cols-2 ${draft.enabled[d.type] ? "" : "opacity-50"}`}>
                 <div className="space-y-2">
                   <textarea
@@ -231,14 +231,14 @@ export default function NotifEditor() {
                   />
                   <div className="flex flex-wrap gap-1">
                     {d.fields.map((f) => (
-                      <span key={f.key} title={f.label} className="rounded-full bg-slate-100 px-2 py-0.5 font-mono text-[11px] text-slate-600">
+                      <span key={f.key} title={f.label} className="rounded-full bg-surface-2 px-2 py-0.5 font-mono text-[11px] text-ink-2">
                         {`{${f.key}}`}
                       </span>
                     ))}
                   </div>
                 </div>
                 <div>
-                  <p className="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-500">Pratinjau</p>
+                  <p className="mb-1 text-xs font-semibold text-ink-3">Pratinjau</p>
                   {/* Gelembung chat ala WhatsApp; warna ditulis langsung supaya tetap terbaca di mode gelap. */}
                   <p className="whitespace-pre-wrap rounded-2xl rounded-tl-sm px-4 py-3 text-sm shadow-sm" style={{ background: "#dcf8c6", color: "#0f172a" }}>
                     {render(draft.templates[d.type], { ...d.sample, ...sampleBase })}
@@ -253,28 +253,28 @@ export default function NotifEditor() {
 
       <Panel title="Riwayat Kiriman" desc="30 kiriman terakhir dari bot.">
         {log.length ? (
-          <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-white text-sm">
+          <ul className="divide-y divide-line rounded-2xl border border-line bg-surface text-sm">
             {log.map((l, i) => (
               <li key={i} className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 px-4 py-2.5">
-                <span className={`text-xs font-semibold ${l.skipped ? "text-ink-3" : "text-emerald-600"}`}>{l.skipped ? "Dilewati" : "Terkirim"}</span>
-                <span className="font-semibold text-slate-800">
+                <span className={`text-xs font-semibold ${l.skipped ? "text-ink-3" : "text-ok"}`}>{l.skipped ? "Dilewati" : "Terkirim"}</span>
+                <span className="font-semibold text-ink">
                   {NOTIF_DEF[l.type]?.label ?? l.type}
                   {l.n > 1 && ` (${l.n})`}
                 </span>
                 <span className="text-xs text-ink-3">{fmtWib(l.at)}</span>
-                {!l.skipped && <span className="w-full truncate text-xs text-slate-500">{l.preview.replace(/\n/g, " · ")}</span>}
+                {!l.skipped && <span className="w-full truncate text-xs text-ink-3">{l.preview.replace(/\n/g, " · ")}</span>}
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-sm text-slate-500">Belum ada kiriman.</p>
+          <p className="text-sm text-ink-3">Belum ada kiriman.</p>
         )}
       </Panel>
 
       <Panel title="Pemasangan" desc="Dua kunci rahasia di bawah menghubungkan Google Form dan bot ke web. Jangan dibagikan.">
         <div className="space-y-3">
-          <h4 className="font-bold text-slate-800">1. Google Form → web (Apps Script)</h4>
-          <ol className="list-decimal space-y-1 pl-5 text-sm text-slate-600">
+          <h4 className="font-bold text-ink">1. Google Form → web (Apps Script)</h4>
+          <ol className="list-decimal space-y-1 pl-5 text-sm text-ink-2">
             <li>
               Buka spreadsheet jawaban Google Form → menu <b>Ekstensi (Extensions) → Apps Script</b> (boleh juga project baru di script.google.com).
             </li>
@@ -287,18 +287,18 @@ export default function NotifEditor() {
           <CopyBox label="kode Apps Script" text={appsScript(origin, data.keys.form, data.sheetId)} />
         </div>
         <div className="space-y-3">
-          <h4 className="font-bold text-slate-800">2. Bot WhatsApp di laptop</h4>
-          <p className="text-sm text-slate-600">
+          <h4 className="font-bold text-ink">2. Bot WhatsApp di laptop</h4>
+          <p className="text-sm text-ink-2">
             Ikuti panduan di folder{" "}
-            <a href={REPO} target="_blank" rel="noopener noreferrer" className="font-semibold text-sea-600 underline">
+            <a href={REPO} target="_blank" rel="noopener noreferrer" className="font-semibold text-accent-ink underline">
               bot/
             </a>{" "}
-            pada repo GitHub. Isi file <code className="rounded bg-slate-100 px-1">.env</code> bot dengan:
+            pada repo GitHub. Isi file <code className="rounded bg-surface-2 px-1">.env</code> bot dengan:
           </p>
           <CopyBox label="isi .env bot" text={`WEB_URL=${origin}\nBOT_TOKEN=${data.keys.bot}\nGROUP_ID=`} />
-          <p className="text-xs text-slate-500">GROUP_ID diisi setelah menjalankan <code className="rounded bg-slate-100 px-1">npm run grup</code> di laptop.</p>
+          <p className="text-xs text-ink-3">GROUP_ID diisi setelah menjalankan <code className="rounded bg-surface-2 px-1">npm run grup</code> di laptop.</p>
         </div>
-        <button onClick={() => action("rotate")} className={`${smallBtn} inline-flex w-fit items-center gap-1 text-rose-600`}>
+        <button onClick={() => action("rotate")} className={`${smallBtn} inline-flex w-fit items-center gap-1 text-bad`}>
           <KeyRound size={12} /> Buat kunci baru
         </button>
       </Panel>

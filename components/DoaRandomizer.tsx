@@ -141,7 +141,7 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
             <button
               onClick={spin}
               disabled={spinning || !pool.length}
-              className="mt-5 rounded-full bg-sea-500 px-6 py-3 font-semibold text-white shadow-[0_10px_24px_rgba(31,125,186,0.45)] transition hover:bg-sea-600 disabled:opacity-50"
+              className="mt-5 rounded-k2-md bg-[#165f93] px-6 py-3 font-semibold text-white transition hover:bg-[#165f93] disabled:opacity-50"
             >
               {spinning ? "Mengacak..." : "Acak nama"}
             </button>
@@ -150,16 +150,16 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
             </p>
           </>
         ) : (
-          <p className="mx-auto mt-5 flex max-w-xs items-center justify-center gap-1.5 text-sm text-navy-700">
+          <p className="mx-auto mt-5 flex max-w-xs items-center justify-center gap-1.5 text-sm text-ink-2">
             <Lock size={14} /> Pengacakan dilakukan oleh admin.{" "}
             {!signedIn && (
-              <Link href="/masuk" className="font-semibold text-sea-600 underline">
+              <Link href="/masuk" className="font-semibold text-accent-ink underline">
                 Masuk
               </Link>
             )}
           </p>
         )}
-        {error && <p className="mt-3 text-sm font-medium text-rose-600">{error}</p>}
+        {error && <p className="mt-3 text-sm font-medium text-bad">{error}</p>}
         {user && !stored && <p className="mt-3 text-xs text-navy-700/80">Riwayat & log saat ini hanya tersimpan di perangkat ini (penyimpanan server belum dipasang).</p>}
       </div>
 
@@ -173,8 +173,8 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
           )}
         </div>
         {user && (
-          <form onSubmit={addManual} className="mt-4 space-y-2 rounded-xl border border-sea-100 bg-sea-50/60 p-3">
-            <p className="text-xs font-semibold text-navy-700">Tambah manual: nama yang sudah berdoa bulan ini di luar acak</p>
+          <form onSubmit={addManual} className="mt-4 space-y-2 rounded-xl border border-line bg-sea-50/60 p-3">
+            <p className="text-xs font-semibold text-ink-2">Tambah manual: nama yang sudah berdoa bulan ini di luar acak</p>
             <div className="flex flex-wrap gap-2">
               <select
                 value={manualName}
@@ -206,7 +206,7 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
               </select>
               <button
                 disabled={!manualName || adding}
-                className="flex items-center gap-1 rounded-full bg-navy-900 px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-40"
+                className="flex items-center gap-1 rounded-k2-md bg-navy-900 px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-40"
               >
                 <Plus size={14} /> {adding ? "Menyimpan..." : "Tambah"}
               </button>
@@ -216,12 +216,12 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
         {history.length === 0 && <p className="mt-3 text-sm text-navy-700/70">Belum ada.</p>}
         <ol className="mt-3 space-y-1 text-sm">
           {history.map((h, i) => (
-            <li key={i} className="flex justify-between gap-3 border-b border-sea-100 py-1">
+            <li key={i} className="flex justify-between gap-3 border-b border-line py-1">
               <span>
                 {h.name} <span className="text-xs text-navy-700/70">({h.nim})</span>
-                {h.manual && <span className="ml-1.5 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">manual</span>}
+                {h.manual && <span className="ml-1.5 rounded-full bg-surface-2 px-2 py-0.5 text-[11px] font-semibold text-ink-2">manual</span>}
               </span>
-              <span className="shrink-0 text-navy-700">{fmt(h.at)}</span>
+              <span className="shrink-0 text-ink-2">{fmt(h.at)}</span>
             </li>
           ))}
         </ol>

@@ -49,7 +49,7 @@ export default function SiteFooter() {
           href={WA_K2}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex min-h-11 w-full items-center justify-center gap-2 rounded-full sm:w-auto bg-[#047857] px-5 text-sm font-bold text-white transition hover:bg-[#065f46]"
+          className="flex min-h-11 w-full items-center justify-center gap-2 rounded-k2-md sm:w-auto bg-[#047857] px-5 text-sm font-bold text-white transition hover:bg-[#065f46]"
         >
           <MessageCircle size={17} /> Hubungi K2
           <span className="font-mono text-xs font-semibold text-white/90">{WA_K2_TEXT}</span>
@@ -73,7 +73,7 @@ export default function SiteFooter() {
           </p>
           {socials.length > 0 && (
             <>
-              <p className="mt-9 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-axo-300">Media Sosial Kami</p>
+              <p className="mt-9 text-xs font-semibold text-axo-300">Media Sosial Kami</p>
               <ul className="mt-4 flex flex-wrap justify-center gap-x-8 gap-y-3">
                 {socials.map((x) => {
                   const Icon = ICON[x.type];

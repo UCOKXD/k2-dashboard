@@ -191,7 +191,7 @@ export default function NavIsland({ variant }: { variant: "floating" | "static" 
               // pt-3 = jembatan tak terlihat antara tombol dan daftar, supaya kursor tidak "keluar" saat turun
               <div className="absolute left-1/2 top-full z-20 -translate-x-1/2 pt-3">
                 <div className="k2-drop min-w-[210px] rounded-k2-lg border border-white/[0.12] bg-[rgba(6,18,39,0.97)] p-1.5 shadow-3">
-                  <p className="px-3 pb-1 pt-1.5 font-mono text-[10.5px] font-semibold uppercase tracking-[0.12em] text-sea-300">{e.name}</p>
+                  <p className="px-3 pb-1 pt-1.5 text-xs font-semibold text-sea-300">{e.name}</p>
                   {e.children.map((c) => {
                     const on = isActive(path, c);
                     return (

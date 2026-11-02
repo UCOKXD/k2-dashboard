@@ -105,7 +105,7 @@ export default function YearCalendar({
           >
             <ChevronLeft size={18} />
           </button>
-          <p className="min-w-[11rem] text-center text-xl font-extrabold text-navy-900">{view === "bulan" ? `${MONTHS[month]} ${year}` : year}</p>
+          <p className="min-w-[11rem] text-center text-xl font-extrabold text-ink">{view === "bulan" ? `${MONTHS[month]} ${year}` : year}</p>
           <button
             onClick={() => (view === "bulan" ? shift(1) : setYear((y) => y + 1))}
             className="grid h-11 w-11 shrink-0 place-items-center rounded-k2-md border border-line-strong bg-surface text-ink transition hover:bg-surface-2"
@@ -141,14 +141,14 @@ export default function YearCalendar({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-600">
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-ink-2">
         <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-sea-500" /> Acara kelas</span>
         <span className="flex items-center gap-1"><span className="h-2.5 w-2.5 rounded-full bg-pink-500" /> Ulang tahun</span>
         {tasks.length > 0 && (
           <span className="flex items-center gap-1">
-            Deadline tugas: <span className={`rounded px-1 font-mono text-[10px] font-bold ${URGENCY.urgent.chip}`}>URGENT</span> ≤3 hari ·{" "}
-            <span className={`rounded px-1 font-mono text-[10px] font-bold ${URGENCY.medium.chip}`}>MEDIUM</span> 4–10 ·{" "}
-            <span className={`rounded px-1 font-mono text-[10px] font-bold ${URGENCY.low.chip}`}>LOW</span> &gt;10
+            Tenggat tugas: <span className={`rounded px-1 ${URGENCY.urgent.chip}`}>{URGENCY.urgent.label}</span> ≤3 hari ·{" "}
+            <span className={`rounded px-1 ${URGENCY.medium.chip}`}>{URGENCY.medium.label}</span> 4–10 ·{" "}
+            <span className={`rounded px-1 ${URGENCY.low.chip}`}>{URGENCY.low.label}</span> &gt;10
           </span>
         )}
         {schedule.length > 0 && (
@@ -157,22 +157,22 @@ export default function YearCalendar({
             <span className="h-2.5 w-2.5 rounded-full bg-sky-200 ring-1 ring-sky-500" /> Jadwal kuliah (tidak tampil di hari libur nasional)
           </label>
         )}
-        {!hasSkb(year) && <span className="font-semibold text-amber-700">SKB libur {year} belum terbit: baru libur bertanggal tetap.</span>}
+        {!hasSkb(year) && <span className="font-semibold text-warn">SKB libur {year} belum terbit: baru libur bertanggal tetap.</span>}
       </div>
 
       {view === "bulan" ? (
         <>
           <div className="k2-card overflow-hidden">
-            <div className="grid grid-cols-7 border-b border-slate-200 bg-slate-50">
+            <div className="grid grid-cols-7 border-b border-line bg-surface-2">
               {DAYS.map((d, i) => (
-                <div key={d} className={`py-2.5 text-center text-xs font-bold uppercase tracking-wider ${i === 0 ? "text-red-600" : "text-slate-500"}`}>
+                <div key={d} className={`py-2.5 text-center text-xs font-bold ${i === 0 ?"text-bad" : "text-ink-3"}`}>
                   {d}
                 </div>
               ))}
             </div>
             <div className="grid grid-cols-7">
               {monthCells(year, month).map((d, i) => {
-                if (d === null) return <div key={`x${i}`} className="min-h-20 border-b border-r border-slate-100 bg-slate-50/50 sm:min-h-28" />;
+                if (d === null) return <div key={`x${i}`} className="min-h-20 border-b border-r border-line bg-slate-50/50 sm:min-h-28" />;
                 const k = key(year, month, d);
                 const h = hol.get(k);
                 const es = ev.get(k) ?? [];
@@ -182,11 +182,11 @@ export default function YearCalendar({
                 const kul = showKuliah && !(h && !h.cuti) ? (kuliahByDay.get(i % 7) ?? []) : [];
                 const isToday = k === today;
                 return (
-                  <div key={k} className={`min-h-20 border-b border-r border-slate-100 p-1.5 sm:min-h-28 sm:p-2 ${h && !h.cuti ? "bg-red-50/60" : h?.cuti ? "bg-rose-50/40" : ""}`}>
-                    <span className={`inline-grid h-7 w-7 place-items-center rounded-full text-sm font-bold ${isToday ? "bg-sea-500 text-white shadow-md" : dayTone(i % 7, h)}`}>{d}</span>
-                    {h && <p className={`mt-0.5 line-clamp-2 text-[10px] font-semibold leading-tight sm:text-[11px] ${h.cuti ? "text-rose-400" : "text-red-600"}`}>{h.name}</p>}
+                  <div key={k} className={`min-h-20 border-b border-r border-line p-1.5 sm:min-h-28 sm:p-2 ${h && !h.cuti ? "bg-red-50/60" : h?.cuti ? "bg-rose-50/40" : ""}`}>
+                    <span className={`inline-grid h-7 w-7 place-items-center rounded-full text-sm font-bold ${isToday ? "bg-[#165f93] text-white shadow-md" : dayTone(i % 7, h)}`}>{d}</span>
+                    {h && <p className={`mt-0.5 line-clamp-2 text-[10px] font-semibold leading-tight sm:text-[11px] ${h.cuti ? "text-rose-400" : "text-bad"}`}>{h.name}</p>}
                     {es.map((e, j) => (
-                      <p key={j} title={e.detail || e.title} className="mt-1 truncate rounded-md bg-sea-500 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm sm:text-[11px]">
+                      <p key={j} title={e.detail || e.title} className="mt-1 truncate rounded-md bg-[#165f93] px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm sm:text-[11px]">
                         {e.title}
                       </p>
                     ))}
@@ -198,7 +198,7 @@ export default function YearCalendar({
                           title={`${t.judul}${t.matkul ? ` · ${t.matkul}` : ""} · ${DIFFICULTY[t.difficulty].label}${t.jam ? ` · pukul ${jam(t.jam)}` : ""} · ${daysLabel(u.days)}`}
                           className={`mt-1 truncate rounded-md px-1.5 py-0.5 text-[10px] font-bold shadow-sm sm:text-[11px] ${URGENCY[u.level].chip}`}
                         >
-                          {u.level === "urgent" ? "URGENT · " : ""}
+                          {u.level === "urgent" ? "Mendesak · " : ""}
                           {t.judul}
                         </p>
                       );
@@ -226,7 +226,7 @@ export default function YearCalendar({
 
           <div className="grid gap-4 md:grid-cols-2">
             <div className="k2-card p-5">
-              <h3 className="mb-3 font-bold text-slate-800">Acara & ulang tahun bulan ini</h3>
+              <h3 className="mb-3 font-bold text-ink">Acara & ulang tahun bulan ini</h3>
               {monthEv.length === 0 && monthBd.length === 0 && <p className="text-sm text-ink-3">Belum ada acara.</p>}
               <ul className="space-y-2">
                 {/* Acara dan ulang tahun digabung, urut tanggal. */}
@@ -237,15 +237,15 @@ export default function YearCalendar({
                   .sort((x, y) => x.d.localeCompare(y.d))
                   .map(({ d, k, e, b }) => (
                     <li key={k} className="flex gap-3 text-sm">
-                      <span className={`w-8 shrink-0 font-bold ${b ? "text-pink-500" : "text-sea-600"}`}>{Number(d.slice(8))}</span>
+                      <span className={`w-8 shrink-0 font-bold ${b ? "text-pink-500" : "text-accent-ink"}`}>{Number(d.slice(8))}</span>
                       {e ? (
                         <span>
-                          <b className="text-slate-800">{e.title}</b>
-                          {e.detail && <span className="block text-xs text-slate-500">{e.detail}</span>}
+                          <b className="text-ink">{e.title}</b>
+                          {e.detail && <span className="block text-xs text-ink-3">{e.detail}</span>}
                         </span>
                       ) : (
                         <span className="flex items-center gap-1.5">
-                          <Cake size={14} className="shrink-0 text-pink-500" /> <b className="text-slate-800">Ulang tahun {b!.nama}</b>
+                          <Cake size={14} className="shrink-0 text-pink-500" /> <b className="text-ink">Ulang tahun {b!.nama}</b>
                         </span>
                       )}
                     </li>
@@ -253,12 +253,12 @@ export default function YearCalendar({
               </ul>
             </div>
             <div className="k2-card p-5">
-              <h3 className="mb-3 font-bold text-slate-800">Libur & cuti bersama bulan ini</h3>
+              <h3 className="mb-3 font-bold text-ink">Libur & cuti bersama bulan ini</h3>
               {monthHol.length === 0 && <p className="text-sm text-ink-3">Tidak ada libur nasional.</p>}
               <ul className="space-y-2">
                 {monthHol.map((h) => (
                   <li key={h.date} className="flex gap-3 text-sm">
-                    <span className={`w-8 shrink-0 font-bold ${h.cuti ? "text-rose-400" : "text-red-600"}`}>{Number(h.date.slice(8))}</span>
+                    <span className={`w-8 shrink-0 font-bold ${h.cuti ? "text-rose-400" : "text-bad"}`}>{Number(h.date.slice(8))}</span>
                     <span className={h.cuti ? "text-rose-500" : "text-red-700"}>{h.name}</span>
                   </li>
                 ))}
@@ -277,10 +277,10 @@ export default function YearCalendar({
               }}
               className="k2-card p-3 text-left transition hover:-translate-y-0.5 hover:border-accent"
             >
-              <p className="mb-2 font-bold text-navy-900">{name}</p>
+              <p className="mb-2 font-bold text-ink">{name}</p>
               <div className="grid grid-cols-7 gap-y-0.5 text-center text-[11px]">
                 {DAYS.map((d, i) => (
-                  <span key={d} className={`font-bold ${i === 0 ? "text-red-600" : "text-ink-3"}`}>
+                  <span key={d} className={`font-bold ${i === 0 ? "text-bad" : "text-ink-3"}`}>
                     {d[0]}
                   </span>
                 ))}
@@ -290,7 +290,7 @@ export default function YearCalendar({
                   const h = hol.get(k);
                   return (
                     <span key={k} title={[h?.name, ...(ev.get(k) ?? []).map((e) => e.title), ...(bd.get(k) ?? []).map((b) => `Ultah ${b.short}`), ...(taskByDate.get(k) ?? []).map((t) => `Deadline ${t.judul}`)].filter(Boolean).join(" · ") || undefined} className="relative grid place-items-center py-0.5">
-                      <span className={`grid h-6 w-6 place-items-center rounded-full font-semibold ${k === today ? "bg-sea-500 text-white" : dayTone(i % 7, h)}`}>{d}</span>
+                      <span className={`grid h-6 w-6 place-items-center rounded-full font-semibold ${k === today ? "bg-[#165f93] text-white" : dayTone(i % 7, h)}`}>{d}</span>
                       {(ev.has(k) || bd.has(k) || taskByDate.has(k)) && (
                         <span className="absolute bottom-0 flex gap-0.5">
                           {ev.has(k) && <span className="h-1 w-1 rounded-full bg-sea-500" />}

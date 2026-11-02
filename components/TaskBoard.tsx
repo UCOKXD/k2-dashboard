@@ -20,10 +20,10 @@ export default function TaskBoard({ tasks, today }: { tasks: TaskItem[]; today: 
   return (
     <div className="space-y-4">
       {urgent.length > 0 && (
-        <div className="flex items-center gap-4 rounded-k2-lg border border-bad/35 bg-bad-soft p-4 shadow-2 sm:p-5">
+        <div className="flex items-center gap-4 rounded-k2-lg border border-bad/35 bg-bad-soft p-4 sm:p-5">
           <div className="min-w-0 flex-1">
-            <p className="mb-2 flex items-center gap-2 text-sm font-black tracking-wider text-red-700">
-              <AlarmClock size={18} aria-hidden="true" /> URGENT: deadline 3 hari lagi atau kurang
+            <p className="mb-2 flex items-center gap-2 text-sm font-black tracking-wider text-bad">
+              <AlarmClock size={18} aria-hidden="true" /> Mendesak: tenggat 3 hari lagi atau kurang
             </p>
             <ul className="space-y-1.5">
               {urgent.map((t) => {
@@ -31,8 +31,8 @@ export default function TaskBoard({ tasks, today }: { tasks: TaskItem[]; today: 
                 return (
                   <li key={t.id} className="flex flex-wrap items-baseline gap-x-2 text-sm text-red-900">
                     <b className="text-base">{t.judul}</b>
-                    {t.matkul && <span className="text-red-700">· {t.matkul}</span>}
-                    <span className="font-bold text-red-600">
+                    {t.matkul && <span className="text-bad">· {t.matkul}</span>}
+                    <span className="font-bold text-bad">
                       · {daysLabel(u.days)} ({fmt(t.deadline)}
                       {t.jam && `, pukul ${jam(t.jam)}`})
                     </span>
@@ -46,8 +46,8 @@ export default function TaskBoard({ tasks, today }: { tasks: TaskItem[]; today: 
       )}
 
       <div className="k2-card p-5">
-        <h3 className="mb-3 flex items-center gap-2 font-bold text-slate-800">
-          <ClipboardList size={18} className="text-sea-600" /> Tugas aktif ({active.length})
+        <h3 className="mb-3 flex items-center gap-2 font-bold text-ink">
+          <ClipboardList size={18} className="text-accent-ink" /> Tugas aktif ({active.length})
         </h3>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {active.map((t) => {
@@ -55,20 +55,20 @@ export default function TaskBoard({ tasks, today }: { tasks: TaskItem[]; today: 
             return (
               <div key={t.id} className={`rounded-k2-md border bg-surface p-3.5 ${u.level === "urgent" ? "border-bad/45" : "border-line"}`}>
                 <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
-                  <span className={`rounded-k2-sm px-2 py-0.5 font-mono text-[11px] font-bold uppercase tracking-[0.08em] ${URGENCY[u.level].chip}`}>{URGENCY[u.level].label}</span>
+                  <span className={`rounded-k2-sm px-2 py-0.5 text-xs font-bold ${URGENCY[u.level].chip}`}>{URGENCY[u.level].label}</span>
                   <span className={`rounded-md border px-2 py-0.5 text-[10px] font-bold ${DIFFICULTY[t.difficulty].cls}`}>{DIFFICULTY[t.difficulty].label}</span>
                 </div>
-                <p className="font-bold text-slate-800">{t.judul}</p>
+                <p className="font-bold text-ink">{t.judul}</p>
                 {t.matkul && (
-                  <p className="flex items-center gap-1 text-xs text-slate-500">
+                  <p className="flex items-center gap-1 text-xs text-ink-3">
                     <BookOpen size={11} /> {t.matkul}
                   </p>
                 )}
-                <p className="mt-1 text-xs text-slate-600">
+                <p className="mt-1 text-xs text-ink-2">
                   Deadline {fmt(t.deadline)}
                   {t.jam && `, pukul ${jam(t.jam)}`} · <b>{daysLabel(u.days)}</b>
                 </p>
-                {t.catatan && <p className="mt-1 text-xs text-slate-500">{t.catatan}</p>}
+                {t.catatan && <p className="mt-1 text-xs text-ink-3">{t.catatan}</p>}
               </div>
             );
           })}

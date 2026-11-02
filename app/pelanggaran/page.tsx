@@ -29,20 +29,20 @@ export default async function Page() {
       />
       <div className="space-y-12 py-[clamp(32px,5vw,56px)]">
         <section>
-          <SectionHead no="01" label="Ringkasan" title="Angka pelanggaran" />
+          <SectionHead label="Ringkasan" title="Angka pelanggaran" />
           <PelStats stats={stats} />
         </section>
 
         {pel.shame.length > 0 && (
           <section className="rounded-k2-lg border border-bad/35 bg-bad-soft p-5 shadow-2">
-            <h3 className="mb-4 text-lg font-bold text-red-700">Hall of Shame</h3>
+            <h3 className="mb-4 text-lg font-bold text-bad">Hall of Shame</h3>
             <div className="grid gap-4 sm:grid-cols-3">
               {pel.shame.map((r, i) => (
-                <div key={r.nama} className="rounded-xl border-2 border-dashed border-red-400 bg-amber-50 p-4 text-center shadow transition-transform hover:-rotate-1 hover:scale-105">
-                  <p className="font-mono text-sm font-bold text-red-600">#{i + 1}</p>
+                <div key={r.nama} className="rounded-xl border-2 border-dashed border-red-400 bg-warn-soft p-4 text-center shadow transition-transform hover:-rotate-1 hover:scale-105">
+                  <p className="font-mono text-sm font-bold text-bad">#{i + 1}</p>
                   <Avatar nama={r.nama} className="mx-auto mt-2 h-20 w-20 text-2xl ring-4 ring-red-200" />
                   <p className="my-2 text-lg font-extrabold">{r.nama}</p>
-                  <p className="font-display text-3xl font-black text-red-600">
+                  <p className="font-display text-3xl font-black text-bad">
                     {r.jumlah} <span className="font-sans text-sm font-semibold">poin</span>
                   </p>
                   <p className="text-xs text-red-500">{r.kasus} pelanggaran</p>
@@ -53,7 +53,7 @@ export default async function Page() {
         )}
 
         <section>
-          <SectionHead no="02" label="Rekap" title="Per siswa" />
+          <SectionHead label="Rekap" title="Per siswa" />
           <DataTable
             label="rekap per siswa"
             cols={[
@@ -66,7 +66,7 @@ export default async function Page() {
         </section>
 
         <section>
-          <SectionHead no="03" label="Detail" title="Riwayat laporan" />
+          <SectionHead label="Detail" title="Riwayat laporan" />
           <DataTable
             label="riwayat laporan"
             cols={[

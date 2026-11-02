@@ -2,17 +2,16 @@ import Sticker from "@/components/Sticker";
 import { BirthdayStrip } from "@/components/Birthday";
 import type { StickerName } from "@/lib/stickers";
 
-// Kepala halaman biru (desain v2) untuk semua halaman publik selain beranda.
-// Menu pulau mengapung di atasnya; saat tema ulang tahun, strip ajakan tampil tepat di bawahnya.
+// Kepala halaman yang tenang di atas kertas (DESIGN.md: sampul biru bergambar hanya di Beranda & Waktu).
+// Satu stiker maskot di kanan sebagai motif; saat tema ulang tahun, strip ajakan tampil tepat di bawahnya.
 export default function PageHero({
-  eyebrow,
   title,
   lede,
   sticker,
   actions,
   aside,
 }: {
-  eyebrow: string;
+  eyebrow?: string; // tidak ditampilkan lagi (dulu mengulang judul); dibiarkan supaya pemanggil lama tetap valid
   title: string;
   lede?: string;
   sticker?: StickerName;
@@ -24,7 +23,6 @@ export default function PageHero({
       <section className="k2-page-hero">
         <div className="k2-page-hero__in">
           <div className="min-w-0">
-            <p className="k2-eyebrow">K2 · {eyebrow}</p>
             <h1>{title}</h1>
             {lede && <p className="k2-page-hero__lede">{lede}</p>}
             {actions && <div className="mt-5 flex flex-wrap items-center gap-2.5">{actions}</div>}

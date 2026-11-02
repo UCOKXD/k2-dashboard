@@ -289,7 +289,7 @@ export default function VoiceRecorder() {
         </div>
 
         <div className="flex flex-col items-center gap-5 py-2 text-center">
-          <p className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-ink-3" aria-live="polite">
+          <p className="flex items-center gap-2 text-xs font-semibold text-ink-3" aria-live="polite">
             <span className={`h-2.5 w-2.5 rounded-full ${state === "rec" ? "bg-rose-600" : state === "paused" ? "bg-amber-500" : "bg-line-strong"}`} aria-hidden="true" />
             {state === "rec" ? "Merekam" : state === "paused" ? "Dijeda" : state === "saving" ? "Menyiapkan file…" : "Siap merekam"}
           </p>
@@ -377,12 +377,12 @@ export default function VoiceRecorder() {
                   <button
                     type="button"
                     onClick={() => download(t)}
-                    className="inline-flex min-h-11 items-center gap-2 rounded-full bg-emerald-600 px-5 text-sm font-bold text-white transition hover:bg-emerald-700"
+                    className="inline-flex min-h-11 items-center gap-2 rounded-k2-md bg-emerald-600 px-5 text-sm font-bold text-white transition hover:bg-emerald-700"
                   >
                     <Download size={16} /> Unduh .{t.ext}
                   </button>
                   {t.saved && <span className="text-xs font-semibold text-ok">Sudah diunduh</span>}
-                  <button type="button" onClick={() => remove(t)} className="ml-auto inline-flex min-h-11 items-center gap-1.5 rounded-full px-3 text-sm font-semibold text-bad hover:bg-surface-2">
+                  <button type="button" onClick={() => remove(t)} className="ml-auto inline-flex min-h-11 items-center gap-1.5 rounded-k2-md px-3 text-sm font-semibold text-bad hover:bg-surface-2">
                     <Trash2 size={15} /> Hapus
                   </button>
                 </div>

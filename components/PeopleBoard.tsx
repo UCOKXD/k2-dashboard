@@ -59,7 +59,7 @@ function Person({ c, i, big }: { c: Card; i: number; big?: boolean }) {
         {dev && <DevMascotFront />}
       </span>
       <span className="mt-4 block font-display text-[clamp(16px,1.8vw,21px)] font-semibold leading-tight text-ink">{c.nama}</span>
-      <span className="mt-1.5 block font-mono text-[12px] font-semibold uppercase tracking-[0.08em] text-[#b4577a] dark:text-axo-300">{c.jabatan}</span>
+      <span className="mt-1.5 block text-[12px] font-semibold text-[#b4577a] dark:text-axo-300">{c.jabatan}</span>
     </>
   );
   return (
@@ -138,20 +138,20 @@ export function CawuPicker({ cawu, current, filled }: { cawu: number; current: n
   const path = usePathname();
   return (
     <label className="block text-right">
-      <span className="mb-1.5 block font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-sea-300">CAWU / Periode</span>
+      <span className="mb-1.5 block text-sm font-semibold text-ink-2">Periode CAWU</span>
       <span className="relative inline-block">
         <select
           value={cawu}
           onChange={(e) => router.replace(`${path}?cawu=${e.target.value}`, { scroll: false })}
-          className="min-h-11 appearance-none rounded-full border border-white/25 bg-white/10 py-2 pl-4 pr-10 text-[15px] font-semibold text-white backdrop-blur-[6px] outline-none hover:bg-white/15 focus:border-sea-300"
+          className="min-h-11 appearance-none rounded-k2-md border border-line-strong bg-surface py-2 pl-4 pr-10 text-[15px] font-semibold text-ink hover:border-ink-3"
         >
           {Array.from({ length: CAWU_MAX }, (_, i) => i + 1).map((n) => (
-            <option key={n} value={n} className="text-[#0b1e3d]">
+            <option key={n} value={n}>
               {ROMAN[n]} ({URUTAN[n]}){n === current ? " · berjalan" : filled.includes(n) ? "" : " · kosong"}
             </option>
           ))}
         </select>
-        <ChevronDown size={18} className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-white" />
+        <ChevronDown size={18} aria-hidden="true" className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
       </span>
     </label>
   );

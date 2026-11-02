@@ -124,7 +124,7 @@ export function BirthdayHero({ people }: { people: BdayPerson[] }) {
             {people.map((p) => (
               <div
                 key={p.nama}
-                className={`flex min-w-0 flex-1 flex-col items-center gap-2 rounded-k2-lg border border-white/[0.22] bg-white/10 p-3 text-center backdrop-blur-md sm:flex-row sm:gap-4 sm:p-4 sm:text-left ${
+                className={`flex min-w-0 flex-1 flex-col items-center gap-2 rounded-k2-lg border border-white/[0.22] bg-white/10 p-3 text-center sm:flex-row sm:gap-4 sm:p-4 sm:text-left ${
                   people.length > 3 ? "min-w-[40%] sm:min-w-0" : ""
                 } ${people.length >= 3 ? "sm:flex-[0_1_280px]" : "max-w-[340px] sm:flex-[0_1_340px]"}`}
               >
@@ -232,10 +232,10 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
   return (
     <section id="ucapan" className="grid scroll-mt-32 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
       <div className={`${CARD} space-y-4`}>
-        <h2 className="text-xl font-extrabold text-slate-800">Kirim ucapan</h2>
+        <h2 className="text-xl font-extrabold text-ink">Kirim ucapan</h2>
         <form onSubmit={send} className="space-y-3">
           <label className="block space-y-1.5">
-            <span className="text-sm font-semibold text-slate-700">Ucapan untuk {names}</span>
+            <span className="text-sm font-semibold text-ink-2">Ucapan untuk {names}</span>
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value.slice(0, WISH_MAX))}
@@ -247,20 +247,20 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
               required
             />
           </label>
-          <p className="text-xs text-slate-500">Ucapan dikirim tanpa nama. Satu perangkat hanya bisa mengirim 1 ucapan.</p>
+          <p className="text-xs text-ink-3">Ucapan dikirim tanpa nama. Satu perangkat hanya bisa mengirim 1 ucapan.</p>
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-[13px] text-slate-500">
+            <p className="text-[13px] text-ink-3">
               {items ? `${items.length} ucapan dari teman sekelas` : "Memuat ucapan..."} · {text.length}/{WISH_MAX}
             </p>
             <button
               disabled={busy || mine || !text.trim()}
-              className="flex items-center gap-1.5 rounded-full bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(11,30,61,0.35)] transition hover:bg-navy-800 disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-k2-md bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(11,30,61,0.35)] transition hover:bg-navy-800 disabled:opacity-50"
             >
               <Send size={14} /> {busy ? "Mengirim..." : mine ? "Sudah terkirim" : "Kirim ucapan"}
             </button>
           </div>
           {status && (
-            <p role="status" className={`rounded-xl px-3 py-2 text-sm font-medium ${status.ok ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}>
+            <p role="status" className={`rounded-xl px-3 py-2 text-sm font-medium ${status.ok ? "bg-ok-soft text-ok" : "bg-bad-soft text-bad"}`}>
               {status.text}
             </p>
           )}
@@ -271,11 +271,11 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
             {items.map((w) => (
               <li key={w.id} className="flex items-start justify-between gap-3 rounded-k2-md bg-surface-2 px-4 py-3">
                 <div className="min-w-0">
-                  <p className="text-xs font-bold text-slate-500">Anonim · {jamWib(w.at)}</p>
-                  <p className="mt-0.5 break-words text-sm leading-relaxed text-slate-800">{w.text}</p>
+                  <p className="text-xs font-bold text-ink-3">Anonim · {jamWib(w.at)}</p>
+                  <p className="mt-0.5 break-words text-sm leading-relaxed text-ink">{w.text}</p>
                 </div>
                 {user && (
-                  <button type="button" onClick={() => remove(w)} className="shrink-0 rounded-full p-1.5 text-ink-3 transition hover:bg-rose-50 hover:text-rose-600" aria-label="Hapus ucapan ini">
+                  <button type="button" onClick={() => remove(w)} className="shrink-0 rounded-full p-1.5 text-ink-3 transition hover:bg-bad-soft hover:text-bad" aria-label="Hapus ucapan ini">
                     <Trash2 size={15} />
                   </button>
                 )}
@@ -286,7 +286,7 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
       </div>
 
       <aside className={`${CARD} space-y-3`}>
-        <h2 className="flex items-center gap-2 text-lg font-extrabold text-navy-900">
+        <h2 className="flex items-center gap-2 text-lg font-extrabold text-ink">
           <Image src="/perayaan/kue-ulang-tahun.png" alt="" aria-hidden="true" width={252} height={291} className="h-[30px] w-auto" />
           Ulang tahun bulan ini
         </h2>
@@ -295,8 +295,8 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
             <li key={p.nama} className={`flex items-center gap-3 rounded-2xl px-3 py-2 ${p.days === 0 ? "bg-pink-50" : ""} ${p.days < 0 ? "opacity-55" : ""}`}>
               <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-navy-900 text-sm font-black text-white">{Number(p.mmdd.slice(3))}</span>
               <div className="min-w-0">
-                <p className="truncate font-bold text-slate-800">{p.nama}</p>
-                <p className={`text-xs font-semibold ${p.days === 0 ? "text-pink-600" : "text-slate-500"}`}>
+                <p className="truncate font-bold text-ink">{p.nama}</p>
+                <p className={`text-xs font-semibold ${p.days === 0 ? "text-pink-600" : "text-ink-3"}`}>
                   {p.days === 0 ? "Hari ini!" : p.days === 1 ? "Besok" : p.days > 0 ? `${p.days} hari lagi` : "Sudah lewat"}
                 </p>
               </div>

@@ -29,24 +29,24 @@ async function fetchAdmin(): Promise<Data> {
 
 function MessageCard({ m, onDelete, sid }: { m: Message; onDelete?: () => void; sid?: string }) {
   return (
-    <div className="space-y-2 rounded-2xl border border-slate-200 bg-white p-4 text-sm">
+    <div className="space-y-2 rounded-2xl border border-line bg-surface p-4 text-sm">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <p className="flex items-center gap-1.5 font-semibold text-slate-800">
-          {m.anon ? <EyeOff size={14} className="text-ink-3" /> : <UserRound size={14} className="text-sea-600" />}
+        <p className="flex items-center gap-1.5 font-semibold text-ink">
+          {m.anon ? <EyeOff size={14} className="text-ink-3" /> : <UserRound size={14} className="text-accent-ink" />}
           Dari {m.sender.nama} ({m.sender.panggilan}) → {nama(m.to)?.short}
-          <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${m.anon ? "bg-slate-100 text-slate-600" : "bg-sea-50 text-sea-600"}`}>{m.anon ? "dikirim anonim" : "pakai nama"}</span>
+          <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${m.anon ? "bg-surface-2 text-ink-2" : "bg-accent-soft text-accent-ink"}`}>{m.anon ? "dikirim anonim" : "pakai nama"}</span>
         </p>
         {onDelete && (
-          <button onClick={onDelete} className={`${smallBtn} inline-flex items-center gap-1 text-rose-600`}>
+          <button onClick={onDelete} className={`${smallBtn} inline-flex items-center gap-1 text-bad`}>
             <Trash2 size={12} /> Hapus pesan
           </button>
         )}
       </div>
       <p>
-        <b className="text-emerald-700">Apresiasi:</b> <span className="whitespace-pre-wrap text-slate-700">{m.apresiasi}</span>
+        <b className="text-ok">Apresiasi:</b> <span className="whitespace-pre-wrap text-ink-2">{m.apresiasi}</span>
       </p>
       <p>
-        <b className="text-amber-700">Area improvement:</b> <span className="whitespace-pre-wrap text-slate-700">{m.improvement}</span>
+        <b className="text-warn">Area improvement:</b> <span className="whitespace-pre-wrap text-ink-2">{m.improvement}</span>
       </p>
       {m.foto && sid && (
         // eslint-disable-next-line @next/next/no-img-element
@@ -54,7 +54,7 @@ function MessageCard({ m, onDelete, sid }: { m: Message; onDelete?: () => void; 
       )}
       {m.tambahan && (
         <p>
-          <b className="text-slate-600">Pesan tambahan:</b> <span className="whitespace-pre-wrap text-slate-700">{m.tambahan}</span>
+          <b className="text-ink-2">Pesan tambahan:</b> <span className="whitespace-pre-wrap text-ink-2">{m.tambahan}</span>
         </p>
       )}
     </div>
@@ -75,7 +75,7 @@ function KeepPanel({ data, act }: { data: Data; act: (b: Record<string, unknown>
     <Panel title="Penyimpanan pesan" desc={`Sekarang: pesan dihapus otomatis ${label(data.keepDays)} setelah sesinya ditutup. Sesi yang sudah ditutup juga bisa dihapus manual.`}>
       <div className="flex flex-wrap items-end gap-2">
         <label className="space-y-1">
-          <span className="block text-xs font-semibold text-slate-600">Hapus otomatis setelah</span>
+          <span className="block text-xs font-semibold text-ink-2">Hapus otomatis setelah</span>
           <span className="flex gap-2">
             <input type="number" min={1} max={unit === "bulan" ? 12 : 365} value={num} onChange={(e) => setNum(e.target.value)} className={`${input} w-24 font-mono`} />
             <select value={unit} onChange={(e) => setUnit(e.target.value as "hari" | "bulan")} className={`${input} w-28`}>
@@ -91,28 +91,28 @@ function KeepPanel({ data, act }: { data: Data; act: (b: Record<string, unknown>
         >
           Simpan
         </button>
-        {!valid && <p className="w-full text-xs font-semibold text-rose-600">Isi antara 1 hari sampai 12 bulan (365 hari).</p>}
+        {!valid && <p className="w-full text-xs font-semibold text-bad">Isi antara 1 hari sampai 12 bulan (365 hari).</p>}
       </div>
 
       {data.sessions.length === 0 ? (
-        <p className="text-sm text-slate-500">Belum ada sesi tersimpan.</p>
+        <p className="text-sm text-ink-3">Belum ada sesi tersimpan.</p>
       ) : (
-        <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-white">
+        <ul className="divide-y divide-line rounded-2xl border border-line bg-surface">
           {data.sessions.map((s, i) => {
             const open = data.state.open && data.state.current?.id === s.id;
             return (
               <li key={s.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 text-sm">
                 <div>
-                  <p className="font-semibold text-slate-800">
+                  <p className="font-semibold text-ink">
                     Sesi {data.sessions.length - i} · dibuka {tgl(s.openedAt)}
                   </p>
-                  <p className="text-xs text-slate-500">{open ? "Masih dibuka" : `Ditutup ${tgl(s.closedAt)} · terhapus otomatis ${hapusPada(s)}`}</p>
+                  <p className="text-xs text-ink-3">{open ? "Masih dibuka" : `Ditutup ${tgl(s.closedAt)} · terhapus otomatis ${hapusPada(s)}`}</p>
                 </div>
                 <button
                   disabled={open}
                   title={open ? "Tutup sesi dulu sebelum menghapus" : undefined}
                   onClick={() => act({ action: "delete-session", sid: s.id }, `Hapus Sesi ${data.sessions.length - i} beserta SEMUA pesannya sekarang? Penerima tidak bisa membacanya lagi dan ini tidak bisa dibatalkan.`)}
-                  className={`${smallBtn} inline-flex items-center gap-1 text-rose-600`}
+                  className={`${smallBtn} inline-flex items-center gap-1 text-bad`}
                 >
                   <Trash2 size={12} /> Hapus sesi
                 </button>
@@ -141,7 +141,7 @@ export default function NglAdmin() {
   }, []);
   const reload = () => fetchAdmin().then(setData).catch((e: Error) => setErr(e.message));
 
-  if (err && !data) return <Panel title="NGL"><p className="text-sm text-rose-600">{err}</p></Panel>;
+  if (err && !data) return <Panel title="NGL"><p className="text-sm text-bad">{err}</p></Panel>;
   if (!data) return <Loading title="NGL" />;
 
   const { state, progress, reports } = data;
@@ -177,11 +177,11 @@ export default function NglAdmin() {
   return (
     <div className="space-y-6">
       <Panel title="Sesi NGL" desc="Buka sesi agar siswa bisa mengisi. Sesi baru membuat semua centang mulai dari nol lagi. Pesan baru bisa dibaca penerima setelah sesi ditutup, lalu terhapus otomatis sesuai pengaturan di bawah.">
-        <div className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-3 ${state.open ? "border-emerald-200 bg-emerald-50/80" : "border-slate-200 bg-white"}`}>
-          <p className="text-sm font-semibold text-slate-800">
+        <div className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-3 ${state.open ? "border-ok/30 bg-emerald-50/80" : "border-line bg-surface"}`}>
+          <p className="text-sm font-semibold text-ink">
             {state.open ? (
               <>
-                <span className="text-emerald-700">● Sesi dibuka</span> sejak {tgl(state.current?.openedAt)} oleh {state.current?.openedBy}
+                <span className="text-ok">● Sesi dibuka</span> sejak {tgl(state.current?.openedAt)} oleh {state.current?.openedBy}
               </>
             ) : state.current ? (
               <>Sesi terakhir ditutup {tgl(state.current.closedAt)} oleh {state.current.closedBy}</>
@@ -192,20 +192,20 @@ export default function NglAdmin() {
           {state.open ? (
             <button
               onClick={() => act({ action: "close" }, "Tutup sesi NGL? Siswa tidak bisa mengisi lagi, dan pesan bisa langsung dibaca penerima.")}
-              className="flex items-center gap-1.5 rounded-full bg-rose-600 px-5 py-2 text-sm font-semibold text-white shadow"
+              className="flex items-center gap-1.5 rounded-k2-md bg-rose-600 px-5 py-2 text-sm font-semibold text-white shadow"
             >
               <Lock size={14} /> Tutup sesi
             </button>
           ) : (
             <button
               onClick={() => act({ action: "open" }, "Buka sesi NGL baru? Semua siswa bisa mengisi lagi untuk semua teman (centang mulai dari nol). Pesan sesi sebelumnya tetap tersimpan.")}
-              className="flex items-center gap-1.5 rounded-full bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow"
+              className="flex items-center gap-1.5 rounded-k2-md bg-emerald-600 px-5 py-2 text-sm font-semibold text-white shadow"
             >
               <LockOpen size={14} /> Buka sesi NGL baru
             </button>
           )}
         </div>
-        {msg && <p className="text-sm font-medium text-rose-600">{msg}</p>}
+        {msg && <p className="text-sm font-medium text-bad">{msg}</p>}
       </Panel>
 
       <KeepPanel data={data} act={act} />
@@ -213,7 +213,7 @@ export default function NglAdmin() {
       {progress && (
         <Panel title={`Progres pengisian ${state.open ? "(sesi berjalan)" : "(sesi terakhir)"}`} desc="Jumlah teman yang sudah diisi tiap siswa. Isi pesannya tidak ditampilkan di sini.">
           <div className="space-y-1.5">
-            <p className="text-sm font-semibold text-slate-700">
+            <p className="text-sm font-semibold text-ink-2">
               {progress.count} dari {progress.total} pesan ({p}%) · {lengkap} dari {rows.length} siswa sudah lengkap
             </p>
             <div className="h-3 overflow-hidden rounded-full bg-slate-200">
@@ -225,13 +225,13 @@ export default function NglAdmin() {
               const s = nama(r.absen);
               const full = r.done >= progress.perStudent;
               return (
-                <li key={r.absen} className="flex items-center justify-between gap-2 rounded-2xl border border-slate-200 bg-white px-3.5 py-2 text-sm">
-                  <span className="min-w-0 truncate font-semibold text-slate-800">
+                <li key={r.absen} className="flex items-center justify-between gap-2 rounded-2xl border border-line bg-surface px-3.5 py-2 text-sm">
+                  <span className="min-w-0 truncate font-semibold text-ink">
                     {r.absen}. {s?.short}
                   </span>
                   <span
                     className={`shrink-0 rounded-full px-2 py-0.5 text-xs font-bold ${
-                      full ? "bg-emerald-50 text-emerald-700" : r.done === 0 ? "bg-rose-50 text-rose-700" : "bg-amber-50 text-amber-700"
+                      full ? "bg-ok-soft text-ok" : r.done === 0 ? "bg-bad-soft text-bad" : "bg-warn-soft text-warn"
                     }`}
                   >
                     {full ? "Lengkap" : r.done === 0 ? "Belum mengisi" : `${r.done}/${progress.perStudent}`}
@@ -248,7 +248,7 @@ export default function NglAdmin() {
           <div className="space-y-3">
             {reports.map((r) => (
               <div key={r.id} className="space-y-2">
-                <p className="flex items-center gap-1.5 text-xs font-semibold text-rose-600">
+                <p className="flex items-center gap-1.5 text-xs font-semibold text-bad">
                   <Flag size={12} /> Dilaporkan {r.recipient.panggilan} · {tgl(r.at)}
                 </p>
                 <MessageCard sid={r.sid} m={{ ...r.message, sender: r.sender }} onDelete={() => act({ action: "delete", sid: r.sid, to: r.to, id: r.id }, "Hapus pesan ini? Penerima tidak akan melihatnya lagi.")} />
@@ -259,7 +259,7 @@ export default function NglAdmin() {
             ))}
           </div>
         ) : (
-          <p className="text-sm text-slate-500">Tidak ada laporan.</p>
+          <p className="text-sm text-ink-3">Tidak ada laporan.</p>
         )}
       </Panel>
 
@@ -291,7 +291,7 @@ export default function NglAdmin() {
                   })} />
               ))
             ) : (
-              <p className="text-sm text-slate-500">Belum ada pesan untuk siswa ini di sesi tersebut.</p>
+              <p className="text-sm text-ink-3">Belum ada pesan untuk siswa ini di sesi tersebut.</p>
             )}
           </div>
         )}

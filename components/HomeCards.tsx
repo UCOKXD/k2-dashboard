@@ -44,7 +44,7 @@ function Card({ icon: Icon, label, href, children }: { icon: typeof Cake; label:
         <Icon size={22} />
       </span>
       <span className="min-w-0">
-        <span className="block font-mono text-[11px] font-semibold uppercase leading-tight tracking-[0.1em] text-ink-3">{label}</span>
+        <span className="block text-xs font-semibold leading-tight text-ink-3">{label}</span>
         {children}
       </span>
     </Link>
@@ -73,7 +73,7 @@ export default function HomeCards({ cards }: { cards: Cards }) {
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-1 overflow-hidden rounded-k2-xl border border-line bg-surface shadow-3 min-[720px]:grid-cols-2">
+      <div className="grid grid-cols-1 overflow-hidden rounded-k2-xl border border-line bg-surface min-[720px]:grid-cols-2">
         {/* Perkuliahan: kelas berikutnya + petugas doa hari ini dalam satu kartu (dua tautan terpisah). */}
         <div className={CELL}>
           <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-accent-soft text-accent-ink">
@@ -81,7 +81,7 @@ export default function HomeCards({ cards }: { cards: Cards }) {
           </span>
           <span className="min-w-0 flex-1">
             <Link href="/jadwal" className="group block">
-              <span className="block font-mono text-[11px] font-semibold uppercase leading-tight tracking-[0.1em] text-ink-3">Perkuliahan · kelas berikutnya</span>
+              <span className="block text-xs font-semibold leading-tight text-ink-3">Perkuliahan · kelas berikutnya</span>
               {!cards.schedule.length ? (
                 <span className={META}>Jadwal kuliah belum diisi admin.</span>
               ) : kelas ? (
@@ -130,8 +130,8 @@ export default function HomeCards({ cards }: { cards: Cards }) {
       {/* Ulang tahun hari ini tampil besar di banner beranda; kartu ini untuk yang akan datang. */}
       {ultah.some((u) => u.days > 0) && (
         <div>
-          <div className="flex flex-wrap items-center gap-4 rounded-k2-lg border border-[#fbcfe8] bg-gradient-to-r from-[#fdf2f8] via-[#fff1f2] to-[#fffbeb] p-5 shadow-2 dark:border-[rgba(244,114,182,0.28)] dark:from-[rgba(236,72,153,0.16)] dark:via-[rgba(244,63,94,0.1)] dark:to-[rgba(245,158,11,0.1)]">
-            <div className="rounded-2xl border border-pink-200 bg-surface p-3 text-pink-500 shadow-md">
+          <div className="flex flex-wrap items-center gap-4 rounded-k2-lg border border-[#fbcfe8] bg-gradient-to-r from-[#fdf2f8] via-[#fff1f2] to-[#fffbeb] p-5 dark:border-[rgba(244,114,182,0.28)] dark:from-[rgba(236,72,153,0.16)] dark:via-[rgba(244,63,94,0.1)] dark:to-[rgba(245,158,11,0.1)]">
+            <div className="rounded-2xl border border-pink-200 bg-surface p-3 text-pink-500">
               <Cake size={22} />
             </div>
             <div className="min-w-0 flex-1">

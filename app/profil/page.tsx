@@ -23,11 +23,11 @@ export default async function Page({ searchParams }: { searchParams: Promise<{ c
       />
       <div className="space-y-20 py-[clamp(40px,6vw,72px)]">
         <section>
-          <SectionHead no="01" label={`Pengurus · CAWU ${cawu}`} title="Pengurus kelas" />
+          <SectionHead label={`Pengurus · CAWU ${cawu}`} title="Pengurus kelas" />
           <PeopleBoard boards={boards} cawu={cawu} current={cawuData.current} />
         </section>
         <section>
-          <SectionHead no="02" label="Anggota" title="Semua teman sekelas" />
+          <SectionHead label="Anggota" title="Semua teman sekelas" />
           <MemberBoard />
         </section>
       </div>

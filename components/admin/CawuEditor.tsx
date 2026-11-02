@@ -20,12 +20,12 @@ function PeopleFields({ d, set }: { d: OrgPeople; set: (p: Partial<OrgPeople>) =
   const setDiv = (k: DivKey, v: Divisi) => (k === "k2" ? set({ koordinator: v.koordinator, anggota: v.anggota }) : set({ [k]: v } as Partial<OrgPeople>));
   return (
     <div className="space-y-4">
-      <div className="space-y-2 rounded-2xl border border-slate-200 bg-white p-4">
-        <p className="font-bold text-slate-800">Badan Pengurus Harian (BPH)</p>
+      <div className="space-y-2 rounded-2xl border border-line bg-surface p-4">
+        <p className="font-bold text-ink">Badan Pengurus Harian (BPH)</p>
         <div className="grid gap-3 sm:grid-cols-2">
           {BPH.map(([k, label]) => (
             <label key={k} className="block space-y-1">
-              <span className="text-sm font-semibold text-slate-700">{label}</span>
+              <span className="text-sm font-semibold text-ink-2">{label}</span>
               <StudentSelect value={d[k]} onChange={(v) => set({ [k]: v } as Partial<OrgPeople>)} />
             </label>
           ))}
@@ -35,13 +35,13 @@ function PeopleFields({ d, set }: { d: OrgPeople; set: (p: Partial<OrgPeople>) =
         {DIV_KEYS.map((k) => {
           const v = divOf(k);
           return (
-            <div key={k} className="space-y-2 rounded-2xl border border-slate-200 bg-white p-4">
-              <p className="font-bold text-slate-800">{ROLE_DEF[k].label}</p>
+            <div key={k} className="space-y-2 rounded-2xl border border-line bg-surface p-4">
+              <p className="font-bold text-ink">{ROLE_DEF[k].label}</p>
               <label className="block space-y-1">
-                <span className="text-sm font-semibold text-slate-700">Koordinator</span>
+                <span className="text-sm font-semibold text-ink-2">Koordinator</span>
                 <StudentSelect value={v.koordinator} onChange={(x) => setDiv(k, { ...v, koordinator: x })} />
               </label>
-              <p className="pt-1 text-sm font-semibold text-slate-700">Anggota</p>
+              <p className="pt-1 text-sm font-semibold text-ink-2">Anggota</p>
               {v.anggota.map((a, i) => (
                 <div key={i} className="flex gap-2">
                   <StudentSelect value={a} onChange={(x) => setDiv(k, { ...v, anggota: v.anggota.map((y, j) => (j === i ? x : y)) })} />
@@ -83,7 +83,7 @@ export function CawuEditor() {
         <fieldset disabled={!canEdit} className="m-0 min-w-0 space-y-5 border-0 p-0">
           <div className="flex flex-wrap items-end gap-4">
             <label className="space-y-1">
-              <span className="block text-sm font-semibold text-slate-700">CAWU yang sedang berjalan</span>
+              <span className="block text-sm font-semibold text-ink-2">CAWU yang sedang berjalan</span>
               <select value={d.current} onChange={(e) => c.setDraft({ ...d, current: Number(e.target.value) })} className={`${input} w-40`}>
                 {Array.from({ length: CAWU_MAX }, (_, i) => i + 1).map((x) => (
                   <option key={x} value={x}>
@@ -93,7 +93,7 @@ export function CawuEditor() {
               </select>
             </label>
             <label className="space-y-1">
-              <span className="block text-sm font-semibold text-slate-700">Edit pengurus</span>
+              <span className="block text-sm font-semibold text-ink-2">Edit pengurus</span>
               <select value={sel} onChange={(e) => setN(Number(e.target.value))} className={`${input} w-40`}>
                 {Array.from({ length: CAWU_MAX }, (_, i) => i + 1).map((x) => (
                   <option key={x} value={x}>
@@ -104,10 +104,10 @@ export function CawuEditor() {
               </select>
             </label>
           </div>
-          {!canEdit && <p className="text-sm font-medium text-amber-700">Hanya Admin Website yang bisa mengubah struktur per CAWU.</p>}
+          {!canEdit && <p className="text-sm font-medium text-warn">Hanya Admin Website yang bisa mengubah struktur per CAWU.</p>}
 
           {isCurrent ? (
-            <p className="flex items-start gap-2 rounded-2xl border border-sea-300 bg-sea-50/80 px-4 py-3 text-sm text-navy-900">
+            <p className="flex items-start gap-2 rounded-2xl border border-line-strong bg-sea-50/80 px-4 py-3 text-sm text-ink">
               <Info size={17} className="mt-0.5 shrink-0" />
               <span>
                 CAWU {sel} sedang berjalan, jadi halaman Profil memakai pengurus dari tab <b>Struktur &amp; Peran</b> (yang juga menentukan hak akses). Ubah pengurusnya di sana. Saat
@@ -149,7 +149,7 @@ export function FooterEditor() {
       <Panel title="Media Sosial di Footer" desc="Tampil di bagian paling bawah semua halaman. Kosongkan untuk menyembunyikan. Tulisan hak cipta selalu tampil.">
         <fieldset disabled={!canEdit} className="m-0 min-w-0 space-y-3 border-0 p-0">
           {d.socials.map((x, i) => (
-            <div key={i} className="grid gap-2 rounded-2xl border border-slate-200 bg-white p-3 sm:grid-cols-[150px_1fr_1.5fr_auto]">
+            <div key={i} className="grid gap-2 rounded-2xl border border-line bg-surface p-3 sm:grid-cols-[150px_1fr_1.5fr_auto]">
               <select value={x.type} onChange={(e) => set(d.socials.map((y, j) => (j === i ? { ...y, type: e.target.value as SocialLink["type"] } : y)))} className={input}>
                 {SOCIAL_TYPES.map((t) => (
                   <option key={t} value={t}>
@@ -174,7 +174,7 @@ export function FooterEditor() {
               <Plus size={13} /> Tambah media sosial
             </button>
           )}
-          {!canEdit && <p className="text-sm font-medium text-amber-700">Hanya Admin Website yang bisa mengubah media sosial.</p>}
+          {!canEdit && <p className="text-sm font-medium text-warn">Hanya Admin Website yang bisa mengubah media sosial.</p>}
         </fieldset>
       </Panel>
       <SaveBar dirty={c.dirty} saving={c.saving} status={c.status} onSave={() => c.save()} onReset={c.reset} />

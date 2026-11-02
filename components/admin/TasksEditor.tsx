@@ -25,7 +25,7 @@ export default function TasksEditor() {
 
   return (
     <div className="space-y-6">
-      <Panel title="Tambah tugas" desc="Tugas tampil di Kalender pada tanggal deadline. Sisa ≤ 3 hari = URGENT (merah), 4–10 hari = MEDIUM, lebih dari 10 hari = LOW.">
+      <Panel title="Tambah tugas" desc="Tugas tampil di Kalender pada tanggal deadline. Sisa ≤ 3 hari = Mendesak (merah), 4–10 hari = MEDIUM, lebih dari 10 hari = LOW.">
         <div className="grid items-center gap-3 sm:grid-cols-2 lg:grid-cols-[1fr_1fr_auto_auto]">
           <input value={form.judul} onChange={(e) => setForm({ ...form, judul: e.target.value })} placeholder="Judul (mis. Quiz, Presentasi Expert)" className={input} />
           <input value={form.matkul} onChange={(e) => setForm({ ...form, matkul: e.target.value })} placeholder="Mata kuliah (opsional)" className={input} />
@@ -37,14 +37,14 @@ export default function TasksEditor() {
                 key={n}
                 type="button"
                 onClick={() => setForm({ ...form, difficulty: n })}
-                className={`flex-1 rounded-xl border px-2 py-2 text-xs font-bold transition ${form.difficulty === n ? DIFFICULTY[n].cls + " ring-2 ring-offset-1 ring-sea-500/40" : "border-slate-200 bg-white text-slate-500"}`}
+                className={`flex-1 rounded-xl border px-2 py-2 text-xs font-bold transition ${form.difficulty === n ? DIFFICULTY[n].cls + " ring-2 ring-offset-1 ring-sea-500/40" : "border-line bg-surface text-ink-3"}`}
               >
                 {DIFFICULTY[n].label}
               </button>
             ))}
           </div>
           <input value={form.catatan} onChange={(e) => setForm({ ...form, catatan: e.target.value })} placeholder="Catatan (opsional)" className={input} />
-          <button onClick={add} disabled={!form.judul.trim() || !form.deadline} className="flex items-center justify-center gap-1.5 rounded-xl bg-sea-500 px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-40">
+          <button onClick={add} disabled={!form.judul.trim() || !form.deadline} className="flex items-center justify-center gap-1.5 rounded-xl bg-[#165f93] px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-40">
             <Plus size={15} /> Tambah
           </button>
         </div>
@@ -56,11 +56,11 @@ export default function TasksEditor() {
           {sorted.map((t) => {
             const u = urgencyOf(t, today);
             return (
-              <div key={t.id} className={`flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-2.5 ${t.done ? "opacity-60" : ""}`}>
-                <button onClick={() => set(t.id, { done: !t.done })} className="text-ink-3 hover:text-emerald-600" title={t.done ? "Tandai belum selesai" : "Tandai selesai"}>
-                  {t.done ? <CheckCircle2 size={20} className="text-emerald-600" /> : <Circle size={20} />}
+              <div key={t.id} className={`flex flex-wrap items-center gap-2 rounded-2xl border border-line bg-surface p-2.5 ${t.done ? "opacity-60" : ""}`}>
+                <button onClick={() => set(t.id, { done: !t.done })} className="text-ink-3 hover:text-ok" title={t.done ? "Tandai belum selesai" : "Tandai selesai"}>
+                  {t.done ? <CheckCircle2 size={20} className="text-ok" /> : <Circle size={20} />}
                 </button>
-                <span className={`rounded-k2-sm px-2 py-0.5 font-mono text-[11px] font-bold uppercase tracking-[0.08em] ${URGENCY[u.level].chip}`}>{URGENCY[u.level].label}</span>
+                <span className={`rounded-k2-sm px-2 py-0.5 text-xs font-bold ${URGENCY[u.level].chip}`}>{URGENCY[u.level].label}</span>
                 <input value={t.judul} onChange={(e) => set(t.id, { judul: e.target.value })} className={`${inputBase} min-w-[8rem] flex-1 py-1.5`} aria-label="Judul" />
                 <input value={t.matkul} onChange={(e) => set(t.id, { matkul: e.target.value })} placeholder="Mata kuliah" className={`${inputBase} w-32 py-1.5`} aria-label="Mata kuliah" />
                 <DateSelect value={t.deadline} onChange={(v) => v && set(t.id, { deadline: v })} label="Deadline" />
@@ -72,8 +72,8 @@ export default function TasksEditor() {
                     </option>
                   ))}
                 </select>
-                <span className="w-20 text-xs text-slate-500">{daysLabel(u.days)}</span>
-                <button onClick={() => c.setDraft(d.filter((x) => x.id !== t.id))} className={`${smallBtn} text-rose-600`} aria-label="Hapus tugas">
+                <span className="w-20 text-xs text-ink-3">{daysLabel(u.days)}</span>
+                <button onClick={() => c.setDraft(d.filter((x) => x.id !== t.id))} className={`${smallBtn} text-bad`} aria-label="Hapus tugas">
                   <Trash2 size={14} />
                 </button>
               </div>

@@ -40,7 +40,7 @@ function Card({ m, src, active, onPick }: { m: MemberCard; src: string | null; a
   return (
     <div className="relative h-full w-full">
     <article
-      className={`flex h-full w-full flex-col items-center rounded-[30px] border bg-surface px-5 pb-5 pt-6 text-center shadow-3 ${active ? "border-sea-300" : "border-line"}`}
+      className={`flex h-full w-full flex-col items-center rounded-[30px] border bg-surface px-5 pb-5 pt-6 text-center ${active ? "border-line-strong shadow-3" : "border-line shadow-1"}`}
       aria-hidden={!active}
     >
       {m.nama === DEV_NAME ? (
@@ -127,7 +127,7 @@ export default function MemberCarousel({ members }: { members: MemberCard[] }) {
   const cur = members[idx];
 
   return (
-    <section aria-labelledby="judul-kenalan" className="relative rounded-k2-xl border border-white/40 bg-[color-mix(in_srgb,var(--surface)_62%,transparent)] px-2 pb-6 pt-7 shadow-2 backdrop-blur-[6px] dark:border-white/10 sm:px-4">
+    <section aria-labelledby="judul-kenalan" className="relative rounded-k2-xl border border-line bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] px-2 pb-6 pt-7 sm:px-4">
       <h2 id="judul-kenalan" className="text-center font-display text-[clamp(28px,4vw,42px)] font-extrabold tracking-[-0.02em] text-ink">
         Yuk Kenalan!!
       </h2>

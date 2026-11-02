@@ -76,7 +76,7 @@ export default function UpdateToasts() {
             <BellRing size={16} className="text-sea-300" />
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-bold uppercase tracking-wider text-sea-300">Update baru</p>
+            <p className="text-xs font-bold text-sea-300">Update baru</p>
             <p className="text-sm font-bold leading-snug">{t.title}</p>
             <p className="line-clamp-2 text-xs text-white/80">{t.detail}</p>
           </div>

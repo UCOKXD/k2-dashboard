@@ -80,7 +80,7 @@ export default function ProfilePhoto() {
             type="button"
             disabled={busy || locked}
             onClick={() => input.current?.click()}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#0b1e3d] px-4 text-sm font-semibold text-white transition hover:bg-[#1b3a6b] disabled:cursor-not-allowed disabled:opacity-45 dark:bg-[#2e9be0] dark:text-[#061227]"
+            className="inline-flex min-h-11 items-center gap-2 rounded-k2-md bg-[#0b1e3d] px-4 text-sm font-semibold text-white transition hover:bg-[#1b3a6b] disabled:cursor-not-allowed disabled:opacity-45 dark:bg-[#2e9be0] dark:text-[#061227]"
           >
             <Camera size={16} /> {busy ? "Memproses..." : src ? "Ganti foto" : "Pasang foto"}
           </button>
@@ -89,7 +89,7 @@ export default function ProfilePhoto() {
               type="button"
               disabled={busy || locked}
               onClick={remove}
-              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-bad transition hover:border-bad disabled:opacity-45"
+              className="inline-flex min-h-11 items-center gap-2 rounded-k2-md border border-line-strong bg-surface px-4 text-sm font-semibold text-bad transition hover:border-bad disabled:opacity-45"
             >
               <Trash2 size={15} /> Hapus
             </button>

@@ -23,7 +23,7 @@ export default function GalleryView({ items }: { items: GalleryItem[] }) {
 
   if (!items.length)
     return (
-      <div className="k2-card flex items-center gap-4 p-5 text-sm text-slate-500">
+      <div className="k2-card flex items-center gap-4 p-5 text-sm text-ink-3">
         <Sticker name="belum-ada-data" size={120} />
         <p>Foto kegiatan kelas akan muncul di sini setelah admin mengunggahnya.</p>
       </div>
@@ -43,7 +43,7 @@ export default function GalleryView({ items }: { items: GalleryItem[] }) {
             <img width={1600} height={1200} src={it.src} alt={it.caption || "Foto kelas"} loading="lazy" className="w-full transition duration-500 group-hover:scale-[1.03] h-auto" />
             {(it.caption || it.at) && (
               <div className="px-4 py-3">
-                {it.caption && <p className="text-sm font-semibold text-slate-800">{it.caption}</p>}
+                {it.caption && <p className="text-sm font-semibold text-ink">{it.caption}</p>}
                 <p className="text-xs text-ink-3">{fmt(it.at)}</p>
               </div>
             )}
@@ -52,7 +52,7 @@ export default function GalleryView({ items }: { items: GalleryItem[] }) {
       </div>
 
       {cur && (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm" onClick={() => setOpen(null)}>
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 p-4" onClick={() => setOpen(null)}>
           <button className="absolute right-4 top-4 rounded-full bg-white/15 p-2 text-white" aria-label="Tutup">
             <X />
           </button>

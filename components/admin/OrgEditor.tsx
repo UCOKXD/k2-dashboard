@@ -31,7 +31,7 @@ export default function OrgEditor() {
     <div className="space-y-6">
       <Panel title="Struktur & Peran" desc="Atur pengurus kelas tiap cawu. Struktur ini tampil di halaman utama dan menentukan fitur Panel Admin yang bisa dipakai tiap orang.">
         <p
-          className={`flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm font-medium ${canEdit ? "border-sea-300 bg-sea-50/80 text-navy-900" : "border-amber-300 bg-amber-50 text-amber-900"}`}
+          className={`flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm font-medium ${canEdit ? "border-line-strong bg-sea-50/80 text-ink" : "border-warn/40 bg-warn-soft text-warn"}`}
         >
           {canEdit ? <ShieldCheck size={17} className="mt-0.5 shrink-0" /> : <Lock size={17} className="mt-0.5 shrink-0" />}
           <span>
@@ -42,16 +42,16 @@ export default function OrgEditor() {
         </p>
         <fieldset disabled={!canEdit} className="m-0 min-w-0 space-y-5 border-0 p-0">
           <label className="block space-y-1">
-            <span className="text-sm font-semibold text-slate-700">DPP (Dewan Pembina)</span>
+            <span className="text-sm font-semibold text-ink-2">DPP (Dewan Pembina)</span>
             <input value={d.dpp} onChange={(e) => set({ dpp: e.target.value })} placeholder="Kosongkan agar hanya tertulis DPP" className={input} />
           </label>
 
-          <div className="space-y-2 rounded-2xl border border-slate-200 bg-white p-4">
-            <p className="font-bold text-slate-800">Badan Pengurus Harian (BPH)</p>
+          <div className="space-y-2 rounded-2xl border border-line bg-surface p-4">
+            <p className="font-bold text-ink">Badan Pengurus Harian (BPH)</p>
             <div className="grid gap-3 sm:grid-cols-2">
               {BPH.map(([k, label]) => (
                 <label key={k} className="block space-y-1">
-                  <span className="text-sm font-semibold text-slate-700">{label}</span>
+                  <span className="text-sm font-semibold text-ink-2">{label}</span>
                   <StudentSelect value={d[k]} onChange={(v) => set({ [k]: v } as Partial<OrgData>)} />
                 </label>
               ))}
@@ -62,13 +62,13 @@ export default function OrgEditor() {
             {DIV_KEYS.map((k) => {
               const v = divOf(k);
               return (
-                <div key={k} className="space-y-2 rounded-2xl border border-slate-200 bg-white p-4">
-                  <p className="font-bold text-slate-800">{ROLE_DEF[k].label}</p>
+                <div key={k} className="space-y-2 rounded-2xl border border-line bg-surface p-4">
+                  <p className="font-bold text-ink">{ROLE_DEF[k].label}</p>
                   <label className="block space-y-1">
-                    <span className="text-sm font-semibold text-slate-700">Koordinator</span>
+                    <span className="text-sm font-semibold text-ink-2">Koordinator</span>
                     <StudentSelect value={v.koordinator} onChange={(x) => setDiv(k, { ...v, koordinator: x })} />
                   </label>
-                  <p className="pt-1 text-sm font-semibold text-slate-700">Anggota</p>
+                  <p className="pt-1 text-sm font-semibold text-ink-2">Anggota</p>
                   {v.anggota.map((a, i) => (
                     <div key={i} className="flex gap-2">
                       <StudentSelect value={a} onChange={(x) => setDiv(k, { ...v, anggota: v.anggota.map((y, j) => (j === i ? x : y)) })} />
@@ -91,11 +91,11 @@ export default function OrgEditor() {
 
       <Panel title="Hak Akses Tiap Peran" desc="Centang fitur Panel Admin yang boleh dipakai tiap peran (koordinator dan anggota divisi mendapat akses yang sama). Siswa tanpa peran hanya bisa melihat.">
         <fieldset disabled={!canEdit} className="m-0 min-w-0 border-0 p-0">
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white">
+          <div className="overflow-x-auto rounded-2xl border border-line bg-surface">
             <table className="w-full min-w-[860px] text-left text-sm">
-              <thead className="bg-slate-100 text-xs text-slate-500">
+              <thead className="bg-surface-2 text-xs text-ink-3">
                 <tr>
-                  <th className="px-3 py-2.5 uppercase tracking-wider">Peran</th>
+                  <th className="px-3 py-2.5">Peran</th>
                   {PERMS.map((p) => (
                     <th key={p.key} title={p.desc} className="px-2 py-2.5 text-center font-semibold">
                       {p.label}
@@ -108,8 +108,8 @@ export default function OrgEditor() {
               </thead>
               <tbody>
                 {ROLE_DEFS.map((r) => (
-                  <tr key={r.key} className="border-t border-slate-100">
-                    <td className="px-3 py-2 font-semibold text-slate-800">{r.label}</td>
+                  <tr key={r.key} className="border-t border-line">
+                    <td className="px-3 py-2 font-semibold text-ink">{r.label}</td>
                     {PERMS.map((p) => (
                       <td key={p.key} className="px-1 py-0.5 text-center">
                         {/* Label 44 px di sekeliling kotak centang supaya mudah disentuh. */}
@@ -133,10 +133,10 @@ export default function OrgEditor() {
             </table>
           </div>
         </fieldset>
-        <ul className="grid gap-1 text-xs text-slate-500 sm:grid-cols-2">
+        <ul className="grid gap-1 text-xs text-ink-3 sm:grid-cols-2">
           {PERMS.map((p) => (
             <li key={p.key}>
-              <b className="text-slate-700">{p.label}</b>: {p.desc}
+              <b className="text-ink-2">{p.label}</b>: {p.desc}
             </li>
           ))}
         </ul>

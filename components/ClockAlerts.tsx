@@ -143,7 +143,7 @@ export function ClockAlertsLayer({ alerts, full }: { alerts: ReturnType<typeof u
         <div
           key={toast.id}
           role="status"
-          className={`animate-toastIn absolute inset-x-0 z-40 mx-auto flex w-fit max-w-[92%] items-center gap-2 rounded-full border border-white/25 bg-[rgba(11,30,61,0.85)] px-6 py-3 font-bold text-white shadow-[0_18px_40px_rgba(0,0,0,0.45)] backdrop-blur-md ${
+          className={`animate-toastIn absolute inset-x-0 z-40 mx-auto flex w-fit max-w-[92%] items-center gap-2 rounded-k2-md border border-white/25 bg-[rgba(11,30,61,0.85)] px-6 py-3 font-bold text-white shadow-[0_18px_40px_rgba(0,0,0,0.45)] ${
             full ? "top-16 text-2xl sm:text-4xl" : "top-14 text-base sm:text-xl"
           }`}
         >
@@ -155,7 +155,7 @@ export function ClockAlertsLayer({ alerts, full }: { alerts: ReturnType<typeof u
           type="button"
           onClick={close}
           aria-label="Tutup notifikasi"
-          className={`absolute inset-0 z-50 flex items-center justify-center gap-4 bg-[rgba(11,30,61,0.78)] p-4 backdrop-blur-sm ${two ? "flex-col sm:flex-row" : ""}`}
+          className={`absolute inset-0 z-50 flex items-center justify-center gap-4 bg-[rgba(11,30,61,0.78)] p-4 ${two ? "flex-col sm:flex-row" : ""}`}
         >
           {overlay.images.map((im) => (
             // eslint-disable-next-line @next/next/no-img-element

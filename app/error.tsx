@@ -23,18 +23,18 @@ export default function Error({ error, retry }: { error: Error & { digest?: stri
     <div className={`grid min-h-[calc(100vh-64px-220px)] items-center gap-[clamp(28px,6vw,72px)] py-14 min-[761px]:grid-cols-[auto_1fr] ${path === "/" ? "mx-auto max-w-[calc(var(--wadah)+var(--gutter)*2)] px-[var(--gutter)] pt-32 lg:pt-28" : ""}`}>
       <Sticker name="waduh-error" size={300} />
       <div className="max-w-[560px]">
-        <span className="inline-flex rounded-full bg-bad-soft px-3 py-1 font-mono text-xs font-bold uppercase tracking-[0.08em] text-bad">Gagal memuat data</span>
+        <span className="inline-flex rounded-full bg-bad-soft px-3 py-1 text-xs font-bold text-bad">Gagal memuat data</span>
         <h1 className="mt-3.5 text-[clamp(28px,3.6vw,42px)] font-bold">Ada yang putus di tengah jalan</h1>
         <p className="mt-3.5 max-w-[50ch] text-[17px] text-ink-3">Website belum bisa mengambil data dari server atau spreadsheet. Biasanya ini sebentar saja, coba muat ulang dalam beberapa detik.</p>
         <div className="mt-[26px] flex flex-wrap gap-2.5">
           <button
             type="button"
             onClick={() => retry()}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#0b1e3d] px-5 text-[15px] font-semibold text-white transition hover:bg-[#1b3a6b] dark:bg-[#2e9be0] dark:text-[#061227] dark:hover:bg-[#8fcff1]"
+            className="inline-flex min-h-11 items-center gap-2 rounded-k2-md bg-[#0b1e3d] px-5 text-[15px] font-semibold text-white transition hover:bg-[#1b3a6b] dark:bg-[#2e9be0] dark:text-[#061227] dark:hover:bg-[#8fcff1]"
           >
             <RefreshCw size={16} /> Coba lagi
           </button>
-          <Link href="/" className="inline-flex min-h-11 items-center rounded-full border border-line-strong bg-surface px-5 text-[15px] font-semibold text-ink transition hover:border-ink-3">
+          <Link href="/" className="inline-flex min-h-11 items-center rounded-k2-md border border-line-strong bg-surface px-5 text-[15px] font-semibold text-ink transition hover:border-ink-3">
             Kembali ke beranda
           </Link>
         </div>

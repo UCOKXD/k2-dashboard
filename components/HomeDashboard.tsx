@@ -85,7 +85,7 @@ function HeroClock() {
     };
   }, []);
   return (
-    <span className="inline-flex min-h-[32px] items-center gap-2.5 self-start rounded-full border border-white/[0.18] bg-white/10 px-3.5 font-mono text-[12.5px] font-semibold tracking-[0.04em] text-sea-100 backdrop-blur-[6px]">
+    <span className="inline-flex min-h-[32px] items-center gap-2.5 self-start rounded-full border border-white/30 bg-[rgba(6,18,39,0.55)] px-3.5 font-mono text-[12.5px] font-semibold tracking-[0.04em] text-sea-100">
       <span className="h-[7px] w-[7px] rounded-full bg-[#4fd1a1]" aria-hidden="true" />
       {text || "\u00a0"}
     </span>
@@ -161,10 +161,10 @@ function Hero({ photos }: { photos: string[] }) {
             A Journey To Absorb Knowledge, Insights And Valuable Memories Together
           </p>
           <div className="mt-7 flex flex-wrap gap-2.5">
-            <Link href="/jadwal" className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#fff] px-5 text-[15px] font-semibold text-[#0b1e3d] transition hover:bg-[#f1f8fd]">
+            <Link href="/jadwal" className="inline-flex min-h-11 items-center gap-2 rounded-k2-md bg-[#fff] px-5 text-[15px] font-semibold text-[#0b1e3d] transition hover:bg-[#f1f8fd]">
               <GraduationCap size={17} /> Lihat jadwal
             </Link>
-            <Link href="/kalender-acara" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/35 px-5 text-[15px] font-semibold text-white transition hover:border-white hover:bg-white/[0.06]">
+            <Link href="/kalender-acara" className="inline-flex min-h-11 items-center gap-2 rounded-k2-md border border-white/35 px-5 text-[15px] font-semibold text-white transition hover:border-white hover:bg-white/[0.06]">
               <ClipboardList size={17} /> Tugas aktif
             </Link>
           </div>
@@ -352,7 +352,7 @@ function PieSection({ pel }: { pel: PelanggaranData }) {
             />
             <div className="z-10 text-center">
               <span className="text-2xl font-black text-slate-800 sm:text-3xl">{total} Kasus</span>
-              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-3">Total Akumulasi</p>
+              <p className="mt-0.5 text-xs font-bold text-ink-3">Total Akumulasi</p>
             </div>
           </div>
         </div>
@@ -420,7 +420,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
                     <div className="flex items-start gap-3 pr-8">
                       <Avatar nama={s.nama} className="h-12 w-12 text-lg ring-2 ring-rose-200" />
                       <div className="min-w-0">
-                        <span className="inline-block max-w-full truncate rounded-md border border-rose-100 bg-rose-50 px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-rose-600">
+                        <span className="inline-block max-w-full truncate rounded-md border border-rose-100 bg-rose-50 px-2 py-0.5 text-xs font-bold text-rose-600">
                           {s.kategori}
                         </span>
                         <h4 className="mt-1.5 truncate text-sm font-bold text-slate-800" title={s.nama}>{s.nama}</h4>
@@ -441,7 +441,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
             <div>
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="rounded-xl bg-blue-600 p-2 text-white shadow-md">
+                  <div className="rounded-xl bg-[#165f93] p-2 text-white shadow-md">
                     <Activity size={18} aria-hidden="true" />
                   </div>
                   <h3 className="text-base font-bold">History Terbaru</h3>
@@ -532,17 +532,17 @@ export default function HomeDashboard({ data, tasks, today }: { data: HomeData; 
         {bdayToday && <BirthdaySection info={data.bday} />}
 
         <section aria-labelledby="judul-minggu-ini" className="space-y-5">
-          <SectionHead no="01" label="Minggu ini" title="Tugas & pengumuman" id="judul-minggu-ini" />
+          <SectionHead label="Minggu ini" title="Tugas & pengumuman" id="judul-minggu-ini" />
           <TaskBoard tasks={tasks} today={today} />
         </section>
 
         <section aria-labelledby="judul-struktur">
-          <SectionHead no="02" label="Struktur" title="Pengurus kelas ABSORBING" id="judul-struktur" />
+          <SectionHead label="Struktur" title="Pengurus kelas ABSORBING" id="judul-struktur" />
           <OrgChart org={data.org} />
         </section>
 
         <section aria-labelledby="judul-statistik" className="space-y-5">
-          <SectionHead no="03" label="Statistik" title="Kedisiplinan kelas" id="judul-statistik" />
+          <SectionHead label="Statistik" title="Kedisiplinan kelas" id="judul-statistik" />
           <StatGroup
             items={[
               { label: "Total pelanggaran", value: pel.total, unit: "kasus", sub: "Semua laporan", bad: true },

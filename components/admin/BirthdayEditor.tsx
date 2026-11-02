@@ -32,8 +32,8 @@ export default function BirthdayEditor() {
           const day = dd0 ? String(Number(dd0)) : (partial[s.full]?.day ?? "");
           const month = mm ? String(Number(mm)) : (partial[s.full]?.month ?? "");
           return (
-            <div key={s.full} className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-2">
-              <span className="min-w-0 flex-1 truncate text-sm font-medium text-slate-700" title={s.full}>
+            <div key={s.full} className="flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2">
+              <span className="min-w-0 flex-1 truncate text-sm font-medium text-ink-2" title={s.full}>
                 {s.absen}. {s.full}
               </span>
               <select value={day} onChange={(e) => set(s.full, e.target.value, month)} className={`${inputBase} w-20 shrink-0 px-2 py-1.5`} aria-label="Tanggal">

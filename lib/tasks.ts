@@ -32,11 +32,11 @@ export function urgencyOf(t: TaskItem, today: string): { level: Urgency; days: n
 
 // Warna chip desain v2 (lolos WCAG AA dengan teks putih); nilainya di --chip-* pada app/globals.css.
 export const URGENCY: Record<Urgency, { label: string; chip: string; dot: string }> = {
-  urgent: { label: "URGENT", chip: "bg-[var(--chip-urgent)] text-white", dot: "bg-[var(--chip-urgent)]" },
-  medium: { label: "MEDIUM", chip: "bg-[var(--chip-medium)] text-white", dot: "bg-[var(--chip-medium)]" },
-  low: { label: "LOW", chip: "bg-[var(--chip-low)] text-white", dot: "bg-[var(--chip-low)]" },
-  lewat: { label: "LEWAT", chip: "bg-[var(--chip-lewat)] text-white", dot: "bg-[var(--chip-lewat)]" },
-  selesai: { label: "SELESAI", chip: "bg-slate-300 text-slate-700 line-through", dot: "bg-slate-300" },
+  urgent: { label: "Mendesak", chip: "bg-[var(--chip-urgent)] text-white", dot: "bg-[var(--chip-urgent)]" },
+  medium: { label: "Sedang", chip: "bg-[var(--chip-medium)] text-white", dot: "bg-[var(--chip-medium)]" },
+  low: { label: "Santai", chip: "bg-[var(--chip-low)] text-white", dot: "bg-[var(--chip-low)]" },
+  lewat: { label: "Lewat", chip: "bg-[var(--chip-lewat)] text-white", dot: "bg-[var(--chip-lewat)]" },
+  selesai: { label: "Selesai", chip: "bg-slate-300 text-slate-700 line-through", dot: "bg-slate-300" },
 };
 
 export const daysLabel = (d: number) => (d < 0 ? `lewat ${-d} hari` : d === 0 ? "hari ini" : d === 1 ? "besok" : `${d} hari lagi`);

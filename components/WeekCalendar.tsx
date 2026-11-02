@@ -48,9 +48,9 @@ export default function WeekCalendar({
   return (
     <section className="k2-card space-y-4 p-5 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h3 className="flex items-center gap-2 text-lg font-extrabold text-navy-900">
-          <CalendarDays size={20} className="text-sea-600" /> {offset === 0 ? "Minggu ini" : offset === 1 ? "Minggu depan" : offset === -1 ? "Minggu lalu" : "Minggu"}
-          <span className="text-sm font-semibold text-slate-500">· {range}</span>
+        <h3 className="flex items-center gap-2 text-lg font-extrabold text-ink">
+          <CalendarDays size={20} className="text-accent-ink" /> {offset === 0 ? "Minggu ini" : offset === 1 ? "Minggu depan" : offset === -1 ? "Minggu lalu" : "Minggu"}
+          <span className="text-sm font-semibold text-ink-3">· {range}</span>
         </h3>
         <div className="flex items-center gap-2">
           <button onClick={() => setOffset((o) => o - 1)} className="grid h-11 w-11 shrink-0 place-items-center rounded-k2-md border border-line-strong bg-surface text-ink transition hover:bg-surface-2" aria-label="Minggu sebelumnya">
@@ -83,10 +83,10 @@ export default function WeekCalendar({
               className={`flex min-h-[9rem] flex-col gap-1.5 rounded-2xl border p-3 ${isToday ? "border-accent bg-accent-soft" : "border-line bg-surface"}`}
             >
               <div className="flex items-baseline justify-between gap-2">
-                <p className={`text-sm font-bold ${dow === 0 || holiday ? "text-red-600" : "text-slate-800"}`}>{HARI[dow]}</p>
-                <p className={`text-xs font-semibold ${isToday ? "rounded-full bg-sea-500 px-2 py-0.5 text-white" : "text-slate-500"}`}>{isToday ? "Hari ini" : label(d)}</p>
+                <p className={`text-sm font-bold ${dow === 0 || holiday ? "text-bad" : "text-ink"}`}>{HARI[dow]}</p>
+                <p className={`text-xs font-semibold ${isToday ? "rounded-full bg-[#165f93] px-2 py-0.5 text-white" : "text-ink-3"}`}>{isToday ? "Hari ini" : label(d)}</p>
               </div>
-              {holiday && <p className="text-xs font-semibold text-red-600">{holiday}</p>}
+              {holiday && <p className="text-xs font-semibold text-bad">{holiday}</p>}
               {bd.map((b) => (
                 <p key={b.nama} className="flex items-center gap-1 text-xs font-semibold text-pink-600">
                   <Cake size={12} className="shrink-0" /> Ultah {b.short}
@@ -100,7 +100,7 @@ export default function WeekCalendar({
               {tk.map((t) => {
                 const u = URGENCY[urgencyOf(t, today).level];
                 return (
-                  <p key={t.id} className="flex items-start gap-1 text-xs font-semibold text-slate-700">
+                  <p key={t.id} className="flex items-start gap-1 text-xs font-semibold text-ink-2">
                     <ClipboardList size={12} className="mt-0.5 shrink-0" />
                     <span>
                       <span className={`mr-1 rounded px-1 py-px font-mono text-[10px] font-bold ${u.chip}`}>{u.label}</span>
@@ -111,7 +111,7 @@ export default function WeekCalendar({
                 );
               })}
               {kuliah.map((s) => (
-                <p key={s.id} className="flex items-start gap-1 text-xs text-sea-600">
+                <p key={s.id} className="flex items-start gap-1 text-xs text-accent-ink">
                   <BookOpen size={12} className="mt-0.5 shrink-0" />
                   <span>
                     <b className="font-mono">{jam(s.start)}</b> {s.matkul}

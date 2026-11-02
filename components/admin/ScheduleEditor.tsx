@@ -18,7 +18,7 @@ export default function ScheduleEditor() {
     <Panel title="Jadwal Kuliah" desc="Satu baris = satu sesi kuliah. Baris tanpa nama mata kuliah atau jam tidak akan disimpan.">
       <div className="space-y-2">
         {sorted.map((s) => (
-          <div key={s.id} className="grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-2.5 sm:grid-cols-[8rem_auto_auto_1fr_7rem_1fr_auto] items-center">
+          <div key={s.id} className="grid grid-cols-2 gap-2 rounded-2xl border border-line bg-surface p-2.5 sm:grid-cols-[8rem_auto_auto_1fr_7rem_1fr_auto] items-center">
             <select value={s.day} onChange={(e) => set(s.id, { day: Number(e.target.value) })} className={input} aria-label="Hari">
               {[1, 2, 3, 4, 5, 6].map((h) => (
                 <option key={h} value={h}>
@@ -31,7 +31,7 @@ export default function ScheduleEditor() {
             <input value={s.matkul} onChange={(e) => set(s.id, { matkul: e.target.value })} placeholder="Mata kuliah" className={`${input} col-span-2 sm:col-span-1`} />
             <input value={s.ruang} onChange={(e) => set(s.id, { ruang: e.target.value })} placeholder="Ruang" className={input} />
             <input value={s.dosen} onChange={(e) => set(s.id, { dosen: e.target.value })} placeholder="Dosen" className={input} />
-            <button onClick={() => c.setDraft(d.filter((x) => x.id !== s.id))} className={`${smallBtn} text-rose-600`} aria-label="Hapus sesi">
+            <button onClick={() => c.setDraft(d.filter((x) => x.id !== s.id))} className={`${smallBtn} text-bad`} aria-label="Hapus sesi">
               <Trash2 size={14} />
             </button>
           </div>
@@ -47,8 +47,8 @@ export default function ScheduleEditor() {
       >
         <Plus size={13} /> Tambah sesi
       </button>
-      {incomplete && <p className="text-xs text-amber-700">Ada baris yang belum lengkap (mata kuliah / jam).</p>}
-      {badTime.length > 0 && <p className="text-xs font-semibold text-rose-600">Jam selesai harus setelah jam mulai: {badTime.map((s) => s.matkul || "(tanpa nama)").join(", ")}.</p>}
+      {incomplete && <p className="text-xs text-warn">Ada baris yang belum lengkap (mata kuliah / jam).</p>}
+      {badTime.length > 0 && <p className="text-xs font-semibold text-bad">Jam selesai harus setelah jam mulai: {badTime.map((s) => s.matkul || "(tanpa nama)").join(", ")}.</p>}
       <SaveBar dirty={c.dirty} saving={c.saving} status={c.status} onSave={() => c.save()} onReset={c.reset} />
     </Panel>
   );

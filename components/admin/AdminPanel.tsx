@@ -51,7 +51,7 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
       <div className="k2-card mx-auto max-w-md space-y-4 p-8 text-center">
         <Lock className="mx-auto text-ink-3" />
         <p className="font-semibold text-ink-2">Halaman ini khusus pengurus kelas.</p>
-        <Link href={user ? "/akun" : "/masuk"} className="inline-block rounded-full bg-navy-900 px-6 py-2.5 text-sm font-semibold text-white shadow">
+        <Link href={user ? "/akun" : "/masuk"} className="inline-block rounded-k2-md bg-navy-900 px-6 py-2.5 text-sm font-semibold text-white shadow">
           {user ? "Ke halaman akun" : "Masuk"}
         </Link>
       </div>
@@ -65,7 +65,7 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
           <h1 className="text-[clamp(36px,5vw,56px)] font-extrabold leading-none tracking-[-0.03em]">Panel Admin</h1>
           <p className="mt-3 text-[15px] text-ink-3">Halo, {user.panggilan} ({user.jabatan}).</p>
         </div>
-        <p className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-800">
+        <p className="rounded-2xl border border-bad/30 bg-bad-soft px-4 py-3 text-sm font-medium text-rose-800">
           Demi keamanan, ganti password sementara Anda dulu. Password sementara diketahui semua pengurus, jadi fitur admin baru terbuka setelah
           password diganti. Setelah itu, masuk lagi dengan password baru.
         </p>
@@ -86,12 +86,12 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
         </div>
         <div className="flex gap-2 text-sm">
           {can(user, "doa") && (
-            <Link href="/doa-harian" className="flex min-h-11 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 font-semibold text-ink transition hover:border-ink-3">
+            <Link href="/doa-harian" className="flex min-h-11 items-center gap-1.5 rounded-k2-md border border-line-strong bg-surface px-4 font-semibold text-ink transition hover:border-ink-3">
               <BookOpen size={15} /> Acak Doa
             </Link>
           )}
           {can(user, "tempat_duduk") && (
-            <Link href="/tempat-duduk" className="flex min-h-11 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 font-semibold text-ink transition hover:border-ink-3">
+            <Link href="/tempat-duduk" className="flex min-h-11 items-center gap-1.5 rounded-k2-md border border-line-strong bg-surface px-4 font-semibold text-ink transition hover:border-ink-3">
               <Armchair size={15} /> Atur Tempat Duduk
             </Link>
           )}
@@ -99,7 +99,7 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
       </div>
 
       {!storeReady && (
-        <p className="rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-900">
+        <p className="rounded-2xl border border-warn/40 bg-warn-soft px-4 py-3 text-sm font-medium text-warn">
           Penyimpanan (Upstash Redis) belum dipasang di Vercel, jadi perubahan belum bisa disimpan. Pasang dulu di Vercel &gt; Storage &gt; Upstash for Redis.
         </p>
       )}

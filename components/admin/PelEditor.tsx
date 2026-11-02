@@ -57,12 +57,12 @@ export default function PelEditor() {
       <Panel title="Hall of Shame" desc="Tiga siswa dengan poin tertinggi tampil di Hall of Shame. Kecualikan siswa tertentu bila perlu.">
         <div className="grid gap-3 sm:grid-cols-3">
           {stats.shame.map((s, i) => (
-            <div key={s.nama} className="rounded-2xl border border-rose-200 bg-rose-50 p-3 shadow-sm">
-              <p className="flex items-center gap-1 text-xs font-bold text-rose-600">
+            <div key={s.nama} className="rounded-2xl border border-bad/30 bg-bad-soft p-3 shadow-sm">
+              <p className="flex items-center gap-1 text-xs font-bold text-bad">
                 <Flame size={12} /> #{i + 1}
               </p>
-              <p className="font-bold text-slate-800">{s.nama}</p>
-              <p className="text-xs text-slate-500">
+              <p className="font-bold text-ink">{s.nama}</p>
+              <p className="text-xs text-ink-3">
                 {s.jumlah} poin · {s.kasus} pelanggaran
               </p>
             </div>
@@ -77,7 +77,7 @@ export default function PelEditor() {
                 <button
                   key={s.nama}
                   onClick={() => toggleShame(s.nama)}
-                  className={`rounded-full border px-3 py-1 text-xs font-medium ${hidden ? "border-slate-300 bg-slate-100 text-ink-3 line-through" : "border-rose-200 bg-white text-slate-700"}`}
+                  className={`rounded-full border px-3 py-1 text-xs font-medium ${hidden ? "border-line-strong bg-surface-2 text-ink-3 line-through" : "border-bad/30 bg-surface text-ink-2"}`}
                   title={hidden ? "Dikecualikan dari Hall of Shame (klik untuk ikutkan lagi)" : "Klik untuk mengecualikan dari Hall of Shame"}
                 >
                   {s.short} · {s.jumlah}
@@ -97,7 +97,7 @@ export default function PelEditor() {
           <input value={form.kat} onChange={(e) => setForm({ ...form, kat: e.target.value })} placeholder="Jenis (mis. Terlambat)" list="pel-kat" className={input} />
           <input type="number" min={0} max={100} value={form.poin} onChange={(e) => setForm({ ...form, poin: Number(e.target.value) })} className={input} aria-label="Poin" />
           <input value={form.ket} onChange={(e) => setForm({ ...form, ket: e.target.value })} placeholder="Keterangan (opsional)" className={`${input} sm:col-span-2 lg:col-span-3`} />
-          <button onClick={addRow} disabled={!form.nama || !form.kat.trim()} className="flex items-center justify-center gap-1.5 rounded-xl bg-sea-500 px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-40">
+          <button onClick={addRow} disabled={!form.nama || !form.kat.trim()} className="flex items-center justify-center gap-1.5 rounded-xl bg-[#165f93] px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-40">
             <Plus size={15} /> Tambah
           </button>
           <datalist id="pel-kat">
@@ -110,9 +110,9 @@ export default function PelEditor() {
 
       <Panel title="Semua catatan pelanggaran" desc="Ubah jenis, keterangan, atau poin; sembunyikan catatan yang salah. Catatan dari form tidak bisa dihapus, hanya disembunyikan.">
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Cari nama, jenis, tanggal..." className={`${input} max-w-xs`} />
-        <div className="custom-scrollbar max-h-[560px] overflow-auto rounded-2xl border border-slate-200 bg-white">
+        <div className="custom-scrollbar max-h-[560px] overflow-auto rounded-2xl border border-line bg-surface">
           <table className="w-full min-w-[760px] text-left text-sm">
-            <thead className="sticky top-0 bg-slate-100 text-xs uppercase tracking-wider text-slate-500">
+            <thead className="sticky top-0 bg-surface-2 text-xs text-ink-3">
               <tr>
                 <th className="px-3 py-2.5">Tanggal</th>
                 <th className="px-3 py-2.5">Nama</th>
@@ -124,11 +124,11 @@ export default function PelEditor() {
             </thead>
             <tbody>
               {shown.map((r) => (
-                <tr key={r.id} className={`border-t border-slate-100 align-top ${r.hidden ? "bg-slate-50 text-ink-3 line-through" : ""}`}>
+                <tr key={r.id} className={`border-t border-line align-top ${r.hidden ? "bg-surface-2 text-ink-3 line-through" : ""}`}>
                   <td className="whitespace-nowrap px-3 py-2">{r.tanggal}</td>
                   <td className="px-3 py-2">
                     {r.nama}
-                    {r.source === "admin" && <span className="ml-1.5 rounded bg-sea-100 px-1.5 py-0.5 text-[10px] font-bold text-sea-600 no-underline">admin</span>}
+                    {r.source === "admin" && <span className="ml-1.5 rounded bg-sea-100 px-1.5 py-0.5 text-[10px] font-bold text-accent-ink no-underline">admin</span>}
                   </td>
                   {editing === r.id ? (
                     <>
@@ -174,7 +174,7 @@ export default function PelEditor() {
                         <Pencil size={13} />
                       </button>
                       {r.source === "admin" ? (
-                        <button onClick={() => removeAdded(r.id)} className={`${smallBtn} text-rose-600`} title="Hapus catatan admin">
+                        <button onClick={() => removeAdded(r.id)} className={`${smallBtn} text-bad`} title="Hapus catatan admin">
                           <Trash2 size={13} />
                         </button>
                       ) : (

@@ -101,7 +101,7 @@ function Countdown() {
             key={m}
             onClick={() => set(m * 60_000)}
             aria-pressed={total === m * 60_000}
-            className={`min-h-11 rounded-full border px-3.5 text-[13px] font-semibold transition ${total === m * 60_000 ? "border-accent bg-accent-soft text-accent-ink" : "border-line-strong bg-surface text-ink hover:border-ink-3"}`}
+            className={`min-h-11 rounded-k2-md border px-3.5 text-[13px] font-semibold transition ${total === m * 60_000 ? "border-accent bg-accent-soft text-accent-ink" : "border-line-strong bg-surface text-ink hover:border-ink-3"}`}
           >
             {m} menit
           </button>
@@ -112,7 +112,7 @@ function Countdown() {
         <span>menit</span>
         <input value={sec} onChange={(e) => setSec(e.target.value.replace(/\D/g, ""))} inputMode="numeric" className="min-h-11 w-16 rounded-k2-md border border-line-strong bg-surface px-2 text-center font-mono text-ink" aria-label="Detik" />
         <span>detik</span>
-        <button onClick={apply} className="min-h-11 rounded-full border border-line-strong bg-surface px-4 font-semibold text-ink hover:border-ink-3">Atur</button>
+        <button onClick={apply} className="min-h-11 rounded-k2-md border border-line-strong bg-surface px-4 font-semibold text-ink hover:border-ink-3">Atur</button>
       </div>
 
       <div className="flex justify-center gap-3">
@@ -221,7 +221,7 @@ export default function TimerTools() {
 
   return (
     <section aria-labelledby="judul-alat">
-      <SectionHead no="01" label="Alat" title="Timer & stopwatch" id="judul-alat" />
+      <SectionHead label="Alat" title="Timer & stopwatch" id="judul-alat" />
       <div className="k2-card grid items-center gap-8 p-5 sm:p-8 md:grid-cols-[minmax(0,1fr)_auto]">
         <div className="w-full min-w-0">
           <div role="tablist" aria-label="Pilih alat" onKeyDown={onKey} className="mx-auto mb-6 flex w-fit gap-1 rounded-full border border-line bg-surface-2 p-1">

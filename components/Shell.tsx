@@ -35,7 +35,7 @@ function AccountButton() {
     return (
       <Link
         href="/masuk"
-        className="flex min-h-11 items-center gap-1.5 rounded-full border border-line-strong bg-[#fff] px-4 text-xs font-semibold text-[#0b1e3d] transition hover:bg-[#f1f8fd] sm:text-sm"
+        className="flex min-h-11 items-center gap-1.5 rounded-k2-md border border-line-strong bg-[#fff] px-4 text-xs font-semibold text-[#0b1e3d] transition hover:bg-[#f1f8fd] sm:text-sm"
       >
         <LogIn size={15} /> Masuk
       </Link>
@@ -60,21 +60,21 @@ function AccountButton() {
         <ChevronDown size={14} />
       </button>
       {open && (
-        <div className="animate-fadeIn absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl border border-slate-200 bg-white text-sm text-slate-700 shadow-[0_18px_40px_rgba(15,23,42,0.3)]">
-          <div className="border-b border-slate-100 px-4 py-3">
-            <p className="font-bold text-slate-900">{user.nama}</p>
-            <p className="text-xs text-slate-500">{user.admin ? `${user.jabatan} · ${GRUP_LABEL[user.grup]}${user.webAdmin ? " · Admin Website" : ""}` : `${GRUP_LABEL.Siswa} · absen ${user.absen}`}</p>
+        <div className="animate-fadeIn absolute right-0 top-full mt-2 w-56 overflow-hidden rounded-2xl border border-line bg-surface text-sm text-ink-2 shadow-[0_18px_40px_rgba(15,23,42,0.3)]">
+          <div className="border-b border-line px-4 py-3">
+            <p className="font-bold text-ink">{user.nama}</p>
+            <p className="text-xs text-ink-3">{user.admin ? `${user.jabatan} · ${GRUP_LABEL[user.grup]}${user.webAdmin ? " · Admin Website" : ""}` : `${GRUP_LABEL.Siswa} · absen ${user.absen}`}</p>
           </div>
           {user.admin && (
-            <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 hover:bg-slate-50">
+            <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 hover:bg-surface-2">
               <LayoutDashboard size={15} /> Panel Admin
             </Link>
           )}
-          <Link href={`/profil/${user.absen}`} onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 hover:bg-slate-50">
+          <Link href={`/profil/${user.absen}`} onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 hover:bg-surface-2">
             <UserRound size={15} /> Profil saya
           </Link>
-          <Link href="/akun" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 hover:bg-slate-50">
-            <KeyRound size={15} /> {user.tempPassword ? <span className="font-semibold text-rose-600">Ganti password awal</span> : "Edit profil & akun"}
+          <Link href="/akun" onClick={() => setOpen(false)} className="flex items-center gap-2 px-4 py-2.5 hover:bg-surface-2">
+            <KeyRound size={15} /> {user.tempPassword ? <span className="font-semibold text-bad">Ganti password awal</span> : "Edit profil & akun"}
           </Link>
           <button
             type="button"
@@ -83,7 +83,7 @@ function AccountButton() {
               await logout();
               router.refresh();
             }}
-            className="flex w-full items-center gap-2 border-t border-slate-100 px-4 py-2.5 text-left text-rose-600 hover:bg-rose-50"
+            className="flex w-full items-center gap-2 border-t border-line px-4 py-2.5 text-left text-bad hover:bg-bad-soft"
           >
             <LogOut size={15} /> Keluar
           </button>

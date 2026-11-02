@@ -97,7 +97,7 @@ export default function ProfileView({ absen }: { absen: number }) {
       </Link>
       {dev && <DevTitle />}
 
-      <section className={`k2-card flex flex-col gap-6 p-[clamp(20px,3vw,32px)] sm:flex-row sm:items-start ${dev ? "!border-sea-300 shadow-[0_0_0_1px_rgba(46,155,224,.35),0_24px_70px_-18px_rgba(46,155,224,.7)]" : ""}`}>
+      <section className={`k2-card flex flex-col gap-6 p-[clamp(20px,3vw,32px)] sm:flex-row sm:items-start ${dev ? "!border-line-strong shadow-[0_0_0_1px_rgba(46,155,224,.35),0_24px_70px_-18px_rgba(46,155,224,.7)]" : ""}`}>
         {dev ? (
           <DevAvatar src={data.avatar ? `/api/avatar/${data.absen}?v=${data.avatar}` : null} name={data.panggilan} />
         ) : (
@@ -127,7 +127,7 @@ export default function ProfileView({ absen }: { absen: number }) {
               </span>
             )}
             {data.own && (
-              <Link href="/akun" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink hover:border-ink-3">
+              <Link href="/akun" className="inline-flex min-h-11 items-center gap-2 rounded-k2-md border border-line-strong bg-surface px-4 text-sm font-semibold text-ink hover:border-ink-3">
                 <Pencil size={15} /> Edit profil
               </Link>
             )}

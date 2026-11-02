@@ -23,11 +23,11 @@ export default async function Page() {
       <div className="space-y-12 py-[clamp(32px,5vw,56px)]">
         <ContactK2 text="Mau izin tidak hadir, telat, atau pulang lebih awal? Kabari Divisi K2 lewat WhatsApp." />
         <section>
-          <SectionHead no="01" label="Ringkasan" title="Angka izin" />
+          <SectionHead label="Ringkasan" title="Angka izin" />
           <IzinStats stats={stats} unit="izin" />
         </section>
         <section>
-          <SectionHead no="02" label="Data" title="Daftar izin" />
+          <SectionHead label="Data" title="Daftar izin" />
           <DataTable cols={t.cols} rows={t.rows} emptySticker label="daftar izin" />
         </section>
       </div>

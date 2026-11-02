@@ -29,7 +29,7 @@ export function Loading({ title }: { title?: string }) {
   const body = (
     <div role="status" className="flex flex-col items-center gap-2 py-4 text-center">
       <Sticker name="sebentar-ya" size={120} />
-      <p className="text-sm text-slate-500">Memuat data...</p>
+      <p className="text-sm text-ink-3">Memuat data...</p>
     </div>
   );
   return title ? <Panel title={title}>{body}</Panel> : body;
@@ -85,10 +85,10 @@ export function SaveBar({ dirty, saving, status, onSave, onReset }: { dirty: boo
           {status?.text ?? (dirty ? "Ada perubahan yang belum disimpan." : "Tidak ada perubahan.")}
         </p>
         <div className="flex gap-2">
-          <button onClick={onReset} disabled={!dirty || saving} className="flex min-h-11 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink transition hover:border-ink-3 disabled:cursor-not-allowed disabled:opacity-45">
+          <button onClick={onReset} disabled={!dirty || saving} className="flex min-h-11 items-center gap-1.5 rounded-k2-md border border-line-strong bg-surface px-4 text-sm font-semibold text-ink transition hover:border-ink-3 disabled:cursor-not-allowed disabled:opacity-45">
             <Undo2 size={14} /> Batalkan
           </button>
-          <button onClick={onSave} disabled={!dirty || saving} className="flex min-h-11 items-center gap-1.5 rounded-full bg-[#0b1e3d] px-5 text-sm font-semibold text-white transition hover:bg-[#1b3a6b] disabled:cursor-not-allowed disabled:opacity-45 dark:bg-[#2e9be0] dark:text-[#061227] dark:hover:bg-[#8fcff1]">
+          <button onClick={onSave} disabled={!dirty || saving} className="flex min-h-11 items-center gap-1.5 rounded-k2-md bg-[#0b1e3d] px-5 text-sm font-semibold text-white transition hover:bg-[#1b3a6b] disabled:cursor-not-allowed disabled:opacity-45 dark:bg-[#2e9be0] dark:text-[#061227] dark:hover:bg-[#8fcff1]">
             <Save size={14} /> {saving ? "Menyimpan..." : "Simpan"}
           </button>
         </div>
@@ -165,7 +165,7 @@ export function TimeSelect({ value, onChange, optional = false, label }: { value
         ))}
       </select>
       {optional && h && (
-        <button type="button" onClick={() => onChange("")} className="px-1 text-xs text-ink-3 hover:text-rose-600" aria-label={`Kosongkan ${label}`}>
+        <button type="button" onClick={() => onChange("")} className="px-1 text-xs text-ink-3 hover:text-bad" aria-label={`Kosongkan ${label}`}>
           ×
         </button>
       )}

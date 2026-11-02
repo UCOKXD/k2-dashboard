@@ -61,7 +61,7 @@ export default function MobileNav() {
     <>
       <nav
         aria-label="Menu utama"
-        className="fixed inset-x-0 bottom-0 z-[60] grid grid-cols-5 border-t border-white/10 bg-[rgba(6,18,39,0.94)] px-1.5 pt-1.5 pb-[calc(6px+env(safe-area-inset-bottom))] backdrop-blur-[14px] md:hidden print:hidden"
+        className="fixed inset-x-0 bottom-0 z-[60] grid grid-cols-5 border-t border-white/10 bg-[rgba(6,18,39,0.94)] px-1.5 pt-1.5 pb-[calc(6px+env(safe-area-inset-bottom))] md:hidden print:hidden"
       >
         {TABS.map(({ name, icon: Icon, href }) => {
           const active = path === href;
@@ -120,7 +120,7 @@ export default function MobileNav() {
               ...MENU_GROUPS.flatMap((e) => ("children" in e ? [{ name: e.name, items: e.children }] : [])),
             ].map((sec) => (
               <div key={sec.name || "utama"} className="mb-4">
-                {sec.name && <p className="mb-2 font-mono text-[11px] font-semibold uppercase tracking-[0.12em] text-ink-3">{sec.name}</p>}
+                {sec.name && <p className="mb-2 text-xs font-semibold text-ink-3">{sec.name}</p>}
                 <ul className="grid grid-cols-3 gap-2">
                   {sec.items.map((m) => {
                     const active = isActive(path, m);
