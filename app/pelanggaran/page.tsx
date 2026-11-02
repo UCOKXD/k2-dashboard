@@ -34,21 +34,22 @@ export default async function Page() {
         </section>
 
         {pel.shame.length > 0 && (
-          <section className="rounded-k2-lg border border-bad/35 bg-bad-soft p-5 shadow-2">
-            <h3 className="mb-4 text-lg font-bold text-bad">Hall of Shame</h3>
-            <div className="grid gap-4 sm:grid-cols-3">
+          <section aria-labelledby="judul-hos">
+            <SectionHead label="Peringkat" title="Hall of Shame" id="judul-hos" />
+            {/* Peringkat 1 lebih besar (fokus), 2 dan 3 di sampingnya. */}
+            <ol className="grid gap-4 sm:grid-cols-[1.3fr_1fr_1fr]">
               {pel.shame.map((r, i) => (
-                <div key={r.nama} className="rounded-xl border-2 border-dashed border-red-400 bg-warn-soft p-4 text-center shadow transition-transform hover:-rotate-1 hover:scale-105">
-                  <p className="font-mono text-sm font-bold text-bad">#{i + 1}</p>
-                  <Avatar nama={r.nama} className="mx-auto mt-2 h-20 w-20 text-2xl ring-4 ring-red-200" />
-                  <p className="my-2 text-lg font-extrabold">{r.nama}</p>
-                  <p className="font-display text-3xl font-black text-bad">
+                <li key={r.nama} className={`k2-card flex flex-col items-center p-5 text-center ${i === 0 ? "border-bad/40 sm:py-7" : ""}`}>
+                  <p className="font-display text-lg font-extrabold text-bad">Peringkat {i + 1}</p>
+                  <Avatar nama={r.nama} className={`mt-3 ${i === 0 ? "h-24 w-24 text-3xl" : "h-16 w-16 text-xl"}`} />
+                  <p className="mt-3 font-bold text-ink">{r.nama}</p>
+                  <p className="mt-1 font-display text-3xl font-extrabold text-bad">
                     {r.jumlah} <span className="font-sans text-sm font-semibold">poin</span>
                   </p>
-                  <p className="text-xs text-red-500">{r.kasus} pelanggaran</p>
-                </div>
+                  <p className="text-sm text-ink-3">{r.kasus} pelanggaran</p>
+                </li>
               ))}
-            </div>
+            </ol>
           </section>
         )}
 

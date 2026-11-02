@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import {
-  Activity,
   AlertTriangle,
   Armchair,
   Cake,
@@ -12,14 +11,8 @@ import {
   Images,
   Network,
   Presentation,
-  BarChart3,
-  BellRing,
   Calendar,
-  Clock,
   FileText,
-  Filter,
-  Flame,
-  PieChart as PieIcon,
   Pause,
   Play,
   Stethoscope,
@@ -42,26 +35,25 @@ import Avatar from "@/components/Avatar";
 import type { DoaPick } from "@/lib/store";
 import type { HomeData, LogType, PelanggaranData } from "@/lib/dashboard";
 
-// Bayangan sengaja agak gelap supaya kartu terlihat timbul (3D).
 const CARD = "k2-card";
-const PIE_COLORS = ["#2563eb", "#6366f1", "#38bdf8", "#f59e0b", "#10b981", "#94a3b8"];
 
-const LOG_STYLE: Record<LogType, { icon: typeof Calendar; badge: string; color: string }> = {
-  pelanggaran: { icon: AlertTriangle, badge: "Pelanggaran", color: "bg-rose-50 text-rose-600 border-rose-200" },
-  sakit: { icon: Stethoscope, badge: "Izin Sakit", color: "bg-amber-50 text-amber-600 border-amber-200" },
-  izin: { icon: FileText, badge: "Izin", color: "bg-sky-50 text-sky-600 border-sky-200" },
-  acara: { icon: Calendar, badge: "Input Acara", color: "bg-indigo-50 text-indigo-600 border-indigo-200" },
-  doa: { icon: UserCheck, badge: "Doa Harian", color: "bg-emerald-50 text-emerald-600 border-emerald-200" },
-  seats: { icon: Armchair, badge: "Tempat Duduk", color: "bg-blue-50 text-blue-600 border-blue-200" },
-  org: { icon: Network, badge: "Struktur", color: "bg-violet-50 text-violet-600 border-violet-200" },
-  slides: { icon: Presentation, badge: "Foto Banner", color: "bg-sky-50 text-sky-600 border-sky-200" },
-  gallery: { icon: Images, badge: "Galeri", color: "bg-sky-50 text-sky-600 border-sky-200" },
-  birthdays: { icon: Cake, badge: "Ulang Tahun", color: "bg-pink-50 text-pink-600 border-pink-200" },
-  schedule: { icon: GraduationCap, badge: "Jadwal Kuliah", color: "bg-sky-50 text-sky-600 border-sky-200" },
-  tasks: { icon: ClipboardList, badge: "Tugas", color: "bg-amber-50 text-amber-600 border-amber-200" },
-  cawu: { icon: Network, badge: "Struktur CAWU", color: "bg-violet-50 text-violet-600 border-violet-200" },
-  footer: { icon: Network, badge: "Media Sosial", color: "bg-sky-50 text-sky-600 border-sky-200" },
-  "doa-reset": { icon: UserCheck, badge: "Doa Harian", color: "bg-emerald-50 text-emerald-600 border-emerald-200" },
+// Jenis log: ikon yang menggambarkan sumbernya + label. Warna seragam (aksen) supaya isi yang menonjol, bukan kategorinya.
+const LOG_STYLE: Record<LogType, { icon: typeof Calendar; badge: string }> = {
+  pelanggaran: { icon: AlertTriangle, badge: "Pelanggaran" },
+  sakit: { icon: Stethoscope, badge: "Izin sakit" },
+  izin: { icon: FileText, badge: "Izin" },
+  acara: { icon: Calendar, badge: "Acara" },
+  doa: { icon: UserCheck, badge: "Doa harian" },
+  seats: { icon: Armchair, badge: "Tempat duduk" },
+  org: { icon: Network, badge: "Struktur" },
+  slides: { icon: Presentation, badge: "Foto sampul" },
+  gallery: { icon: Images, badge: "Galeri" },
+  birthdays: { icon: Cake, badge: "Ulang tahun" },
+  schedule: { icon: GraduationCap, badge: "Jadwal kuliah" },
+  tasks: { icon: ClipboardList, badge: "Tugas" },
+  cawu: { icon: Network, badge: "Struktur CAWU" },
+  footer: { icon: Network, badge: "Media sosial" },
+  "doa-reset": { icon: UserCheck, badge: "Doa harian" },
 };
 
 /* Hero */
@@ -223,6 +215,26 @@ function readLocalDoa() {
   }
 }
 
+// Pilihan bersegmen (44 px) untuk filter kecil.
+function Segmented<T extends string | number>({ value, options, onChange, label }: { value: T; options: [T, string][]; onChange: (v: T) => void; label: string }) {
+  return (
+    <div role="group" aria-label={label} className="flex rounded-k2-md border border-line bg-surface-2 p-1">
+      {options.map(([v, text]) => (
+        <button
+          key={String(v)}
+          type="button"
+          aria-pressed={value === v}
+          onClick={() => onChange(v)}
+          className={`min-h-11 rounded-[8px] px-3.5 text-sm font-semibold transition ${value === v ? "bg-surface text-ink shadow-1" : "text-ink-2 hover:text-ink"}`}
+        >
+          {text}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// Aktivitas & pengumuman: linimasa (garis kiri + titik), paling bawah beranda.
 function LogPanel({ logs }: { logs: HomeData["logs"] }) {
   const [range, setRange] = useState<7 | 14>(14);
   const [order, setOrder] = useState<"newest" | "oldest">("newest");
@@ -241,239 +253,134 @@ function LogPanel({ logs }: { logs: HomeData["logs"] }) {
     .sort((a, b) => (order === "newest" ? a.daysAgo - b.daysAgo : b.daysAgo - a.daysAgo));
 
   return (
-    <div className={`${CARD} p-6 sm:p-8`}>
-      <div className="mb-6 flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-        <div className="flex items-center gap-4">
-          <Sticker name="info-penting" size={130} />
-          <div>
-            <h3 className="flex items-center gap-2 text-lg font-bold text-slate-800">
-              <BellRing className="h-5 w-5 text-blue-600" aria-hidden="true" /> Log Aktivitas &amp; Pengumuman Terbaru K2
-            </h3>
-            <p className="text-xs text-ink-3">Semua laporan dari Google Form dan setiap perubahan oleh admin, lengkap dengan nama admin yang mengubah.</p>
-          </div>
+    <section aria-labelledby="judul-aktivitas" className="space-y-5">
+      <SectionHead label="Riwayat" title="Aktivitas & pengumuman" id="judul-aktivitas">
+        <div className="flex flex-wrap gap-2">
+          <Segmented label="Rentang waktu" value={range} onChange={setRange} options={[[7, "7 hari"], [14, "14 hari"]]} />
+          <Segmented label="Urutan" value={order} onChange={setOrder} options={[["newest", "Terbaru dulu"], ["oldest", "Terlama dulu"]]} />
         </div>
-
-        <div className="flex flex-wrap items-center gap-2.5">
-          <div className="flex items-center gap-1 rounded-xl border border-slate-200 bg-slate-100 p-1">
-            {([7, 14] as const).map((d) => (
-              <button
-                key={d}
-                onClick={() => setRange(d)}
-                className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-all ${
-                  range === d ? "bg-white text-blue-600 shadow-sm" : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                {d} Hari Terakhir
-              </button>
-            ))}
-          </div>
-          <button
-            onClick={() => setOrder(order === "newest" ? "oldest" : "newest")}
-            className="flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-100 px-3.5 py-2 text-xs font-semibold text-slate-700 transition-all hover:bg-slate-200/70"
-          >
-            <Filter size={13} />
-            {order === "newest" ? "Terbaru ke Terlama" : "Terlama ke Terbaru"}
-          </button>
-        </div>
-      </div>
-
-      <div className="custom-scrollbar max-h-[380px] space-y-3.5 overflow-y-auto pr-1">
+      </SectionHead>
+      <div className={`${CARD} p-5 sm:p-7`}>
+        <p className="mb-5 max-w-[62ch] text-sm text-ink-3">Laporan dari Google Form dan setiap perubahan oleh admin, lengkap dengan nama admin yang mengubah.</p>
         {shown.length > 0 ? (
-          shown.map((log) => {
-            const st = LOG_STYLE[log.type] ?? LOG_STYLE.seats;
-            const Icon = st.icon;
-            return (
-              <div
-                key={log.id}
-                className="flex items-start justify-between gap-4 rounded-2xl border border-slate-200/80 bg-slate-50/80 p-4 shadow-[0_6px_16px_rgba(15,23,42,0.10)] transition-all hover:bg-slate-100/80 sm:items-center"
-              >
-                <div className="flex min-w-0 items-start gap-3.5 sm:items-center">
-                  <div className={`mt-0.5 shrink-0 rounded-xl border p-2.5 sm:mt-0 ${st.color}`}>
-                    <Icon size={18} />
+          <ol className="custom-scrollbar max-h-[440px] overflow-y-auto pr-1">
+            {shown.map((log) => {
+              const st = LOG_STYLE[log.type] ?? LOG_STYLE.seats;
+              const Icon = st.icon;
+              return (
+                <li key={log.id} className="relative flex gap-4 pb-5 pl-0 last:pb-0 before:absolute before:left-[17px] before:top-10 before:bottom-0 before:w-px before:bg-line last:before:hidden">
+                  <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-accent-soft text-accent-ink" aria-hidden="true">
+                    <Icon size={16} />
+                  </span>
+                  <div className="min-w-0 flex-1 pt-1">
+                    <p className="flex flex-wrap items-baseline gap-x-2 text-sm">
+                      <span className="font-semibold text-ink">{log.title}</span>
+                      <span className="text-ink-3">{st.badge}</span>
+                      <span className="ml-auto font-mono text-xs text-ink-3">{log.time}</span>
+                    </p>
+                    <p className="mt-0.5 text-sm text-ink-2">{log.detail}</p>
                   </div>
-                  <div className="min-w-0">
-                    <div className="mb-0.5 flex flex-wrap items-center gap-2">
-                      <span className="text-xs font-bold text-slate-900">{log.title}</span>
-                      <span className="rounded-md border border-slate-200 bg-white px-2 py-0.5 text-[10px] font-semibold text-slate-600">{st.badge}</span>
-                    </div>
-                    <p className="text-xs font-medium text-slate-600">{log.detail}</p>
-                  </div>
-                </div>
-                <div className="flex shrink-0 items-center gap-1 self-center text-[11px] font-medium text-ink-3 sm:self-auto">
-                  <Clock size={12} /> {log.time}
-                </div>
-              </div>
-            );
-          })
+                </li>
+              );
+            })}
+          </ol>
         ) : (
-          <div className="py-12 text-center text-xs font-medium text-ink-3">Tidak ada data log aktivitas pada rentang waktu ini.</div>
+          <div className="flex flex-col items-center gap-3 py-8 text-center">
+            <Sticker name="belum-ada-data" size={110} />
+            <p className="text-sm text-ink-3">Belum ada aktivitas dalam {range} hari terakhir. Coba pilih rentang 14 hari.</p>
+          </div>
         )}
       </div>
+    </section>
+  );
+}
+
+// Jenis pelanggaran: batang horizontal satu warna (sama seperti halaman Pelanggaran), diurutkan terbanyak.
+function KategoriBars({ pel }: { pel: PelanggaranData }) {
+  const { total, categories } = pel;
+  const max = Math.max(1, ...categories.map((c) => c.jumlah));
+  return (
+    <div className={`${CARD} p-5 sm:p-7`}>
+      <h3 className="text-lg font-bold">Jenis pelanggaran paling sering</h3>
+      <p className="mt-1 text-sm text-ink-3">Dari {total} kasus yang tercatat.</p>
+      {categories.length === 0 ? (
+        <p className="mt-5 text-sm text-ink-3">Belum ada pelanggaran yang tercatat.</p>
+      ) : (
+        <ul className="mt-5 space-y-3.5">
+          {categories.map((c) => (
+            <li key={c.kategori} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1.5 text-sm">
+              <span className="truncate font-medium text-ink">{c.kategori}</span>
+              <span className="font-mono text-ink-2">
+                {c.jumlah} <span className="text-ink-3">· {c.persen}%</span>
+              </span>
+              <span className="col-span-2 h-2.5 overflow-hidden rounded-full bg-surface-2" aria-hidden="true">
+                <span className="k2-bar block h-full rounded-full" style={{ width: `${(c.jumlah / max) * 100}%` }} />
+              </span>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
 
-/* Pie chart */
-
-function PieSection({ pel }: { pel: PelanggaranData }) {
-  const { total, categories } = pel;
-  let acc = 0;
-  const stops = categories
-    .map((c, i) => {
-      const from = acc;
-      acc += (c.jumlah / total) * 100;
-      return `${PIE_COLORS[i % PIE_COLORS.length]} ${from}% ${acc}%`;
-    })
-    .join(", ");
-
+// Hall of Shame: tiga siswa dengan poin tertinggi (nama dipertahankan sesuai suara kelas).
+function HallOfShame({ pel }: { pel: PelanggaranData }) {
+  const top = pel.shame;
   return (
-    <section className={`${CARD} space-y-6 p-8 md:p-10`}>
-      <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:items-center">
-        <div>
-          <span className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-600">
-            <PieIcon size={14} /> Statistik Jenis Pelanggaran
-          </span>
-          <h3 className="text-2xl font-extrabold text-slate-800">Jenis Pelanggaran Terbanyak</h3>
-          <p className="text-xs text-slate-500 sm:text-sm">Proporsi kategori pelanggaran yang sering terjadi di kelas K2.</p>
-        </div>
-        <span className="rounded-xl border border-slate-200 bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-500">Total {total} Kasus</span>
-      </div>
-
-      <div className="grid grid-cols-1 items-center gap-8 pt-4 lg:grid-cols-3">
-        <div className="flex justify-center">
-          <div className="relative flex h-48 w-48 items-center justify-center rounded-full border-4 border-white bg-slate-50 p-3 shadow-[0_18px_40px_rgba(15,23,42,0.25)] sm:h-56 sm:w-56">
-            <div
-              className="absolute inset-3 rounded-full"
-              style={{
-                background: total ? `conic-gradient(${stops})` : "#e2e8f0",
-                WebkitMask: "radial-gradient(farthest-side, transparent calc(100% - 18px), #fff calc(100% - 18px))",
-                mask: "radial-gradient(farthest-side, transparent calc(100% - 18px), #fff calc(100% - 18px))",
-              }}
-            />
-            <div className="z-10 text-center">
-              <span className="text-2xl font-black text-slate-800 sm:text-3xl">{total} Kasus</span>
-              <p className="mt-0.5 text-xs font-bold text-ink-3">Total Akumulasi</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4 lg:col-span-2">
-          {categories.length === 0 && <p className="text-sm text-ink-3">Belum ada pelanggaran yang tercatat.</p>}
-          {categories.map((c, i) => (
-            <div key={c.kategori} className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-slate-50 p-4 shadow-[0_8px_20px_rgba(15,23,42,0.12)] transition-all hover:border-blue-300">
-              <div className="flex min-w-0 items-center gap-3">
-                <div className="h-4 w-4 shrink-0 rounded-full shadow-sm" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
-                <div className="min-w-0">
-                  <h4 className="truncate text-sm font-bold text-slate-800">{c.kategori}</h4>
-                  <p className="text-xs font-medium text-ink-3">Berdasarkan persentase kelas</p>
-                </div>
+    <div className={`${CARD} p-5 sm:p-7`}>
+      <h3 className="text-lg font-bold">Hall of Shame</h3>
+      <p className="mt-1 text-sm text-ink-3">Tiga siswa dengan poin pelanggaran tertinggi.</p>
+      {top.length === 0 ? (
+        <p className="mt-5 text-sm text-ink-3">Belum ada pelanggaran yang tercatat.</p>
+      ) : (
+        <ol className="mt-5 divide-y divide-line">
+          {top.map((s, i) => (
+            <li key={s.nama} className="flex items-center gap-3.5 py-3 first:pt-0 last:pb-0">
+              <span className="w-6 shrink-0 font-display text-xl font-extrabold text-bad">{i + 1}</span>
+              <Avatar nama={s.nama} className="h-11 w-11 text-base" />
+              <div className="min-w-0 flex-1">
+                <p className="truncate font-semibold text-ink">{s.nama}</p>
+                <p className="truncate text-sm text-ink-3">{s.kategori}</p>
               </div>
-              <div className="shrink-0 text-right">
-                <span className="text-sm font-extrabold text-blue-600">{c.jumlah} Kasus</span>
-                <p className="mt-0.5 inline-block rounded-md border border-slate-200 bg-white px-2 py-0.5 text-xs font-bold text-slate-500">{c.persen}%</p>
-              </div>
-            </div>
+              <span className="shrink-0 text-right font-mono text-sm font-semibold text-bad">{s.jumlah} poin</span>
+            </li>
           ))}
-        </div>
-      </div>
-    </section>
+        </ol>
+      )}
+    </div>
   );
 }
 
-/* Ringkasan dashboard utama */
-
-function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }) {
-
-  const topThree = pel.shame;
-
-
+// Catatan pelanggaran terbaru; status sambungan nyata (diperbarui tiap 15 detik atau terputus).
+function RecentPanel({ pel, live }: { pel: PelanggaranData; live: boolean }) {
   return (
-    <section id="dashboard" className="scroll-mt-32">
-      <div className="k2-card space-y-10 p-8 md:p-10">
-        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
-          <div>
-            <h2 className="flex items-center gap-3 text-2xl font-bold text-slate-800 sm:text-3xl">
-              <BarChart3 className="h-8 w-8 text-blue-600" /> Ringkasan Dashboard Kedisiplinan
-            </h2>
-          </div>
+    <div className={`${CARD} p-5 sm:p-7`}>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h3 className="text-lg font-bold">Catatan terbaru</h3>
+          <p className="mt-1 text-sm text-ink-3">Diperbarui otomatis tiap 15 detik.</p>
         </div>
-
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          {/* A. Hall of Shame */}
-          <div className="rounded-3xl border border-rose-100 bg-gradient-to-r from-rose-50 via-orange-50 to-amber-50 p-6 shadow-[0_20px_50px_rgba(15,23,42,0.18)] sm:p-7 lg:col-span-2">
-            <div className="mb-5 flex items-center gap-2">
-              <div className="rounded-xl bg-rose-500 p-2 text-white shadow-md">
-                <Flame size={20} />
-              </div>
-              <div>
-                <h3 className="text-base font-extrabold text-slate-800 sm:text-lg">Hall of Shame (Top 3 Teratas)</h3>
-                <p className="text-xs text-slate-500">Siswa dengan akumulasi poin pelanggaran tertinggi</p>
-              </div>
-            </div>
-            {topThree.length === 0 ? (
-              <p className="py-6 text-center text-sm text-slate-500">Belum ada pelanggaran yang tercatat.</p>
-            ) : (
-              <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-3">
-                {topThree.map((s, i) => (
-                  <div key={s.nama} className="relative flex flex-col justify-between overflow-hidden rounded-k2-md border border-rose-100 bg-surface p-4 shadow-1 transition-transform hover:scale-[1.02]">
-                    <div className="absolute right-2.5 top-2.5 flex h-7 w-7 items-center justify-center rounded-full bg-rose-100 text-xs font-black text-rose-600">#{i + 1}</div>
-                    <div className="flex items-start gap-3 pr-8">
-                      <Avatar nama={s.nama} className="h-12 w-12 text-lg ring-2 ring-rose-200" />
-                      <div className="min-w-0">
-                        <span className="inline-block max-w-full truncate rounded-md border border-rose-100 bg-rose-50 px-2 py-0.5 text-xs font-bold text-rose-600">
-                          {s.kategori}
-                        </span>
-                        <h4 className="mt-1.5 truncate text-sm font-bold text-slate-800" title={s.nama}>{s.nama}</h4>
-                        <p className="mt-0.5 text-[11px] text-ink-3">Panggilan: {s.short}</p>
-                      </div>
-                    </div>
-                    <div className="mt-3 border-t border-slate-100 pt-2.5">
-                      <span className="text-xs font-semibold text-rose-600">{s.jumlah} Poin</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* B. History terbaru (live) */}
-          <div className="flex flex-col justify-between rounded-3xl border border-slate-800 bg-slate-900 p-6 text-white shadow-[0_24px_55px_rgba(15,23,42,0.45)] sm:p-7">
-            <div>
-              <div className="mb-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="rounded-xl bg-[#165f93] p-2 text-white shadow-md">
-                    <Activity size={18} aria-hidden="true" />
-                  </div>
-                  <h3 className="text-base font-bold">History Terbaru</h3>
-                </div>
-                <span
-                  className={`flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-bold ${
-                    live ? "border-emerald-500/30 bg-emerald-500/20 text-emerald-400" : "border-slate-600 bg-slate-700/50 text-slate-400"
-                  }`}
-                >
-                  <span className={`h-1.5 w-1.5 rounded-full ${live ? "bg-emerald-400" : "bg-slate-500"}`} /> {live ? "Live" : "Terputus"}
-                </span>
-              </div>
-              <p className="mb-4 text-xs text-slate-400">Catatan pelanggaran terbaru, diperbarui otomatis tiap 15 detik.</p>
-              <div className="space-y-3">
-                {pel.recent.length === 0 && <p className="text-xs text-slate-400">Belum ada catatan.</p>}
-                {pel.recent.map((r, i) => (
-                  <div key={i} className="flex flex-col gap-1 rounded-2xl border border-slate-700/60 bg-slate-800/80 p-3 shadow-sm transition-all hover:bg-slate-800">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-bold text-blue-400">{r.nama}</span>
-                      <span className="flex items-center gap-1 text-[10px] text-slate-400">
-                        <Clock size={10} /> {r.time}
-                      </span>
-                    </div>
-                    <p className="truncate text-xs font-medium text-slate-300">{r.aksi}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+        <span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold ${live ? "bg-ok-soft text-ok" : "bg-bad-soft text-bad"}`}>
+          <span className={`h-1.5 w-1.5 rounded-full ${live ? "bg-ok" : "bg-bad"}`} aria-hidden="true" /> {live ? "Tersambung" : "Terputus, mencoba lagi"}
+        </span>
       </div>
-    </section>
+      {pel.recent.length === 0 ? (
+        <p className="mt-5 text-sm text-ink-3">Belum ada catatan.</p>
+      ) : (
+        <ul className="mt-5 divide-y divide-line">
+          {pel.recent.map((r, i) => (
+            <li key={i} className="py-2.5 first:pt-0 last:pb-0">
+              <p className="flex items-baseline justify-between gap-3 text-sm">
+                <span className="truncate font-semibold text-ink">{r.nama}</span>
+                <span className="shrink-0 font-mono text-xs text-ink-3">{r.time}</span>
+              </p>
+              <p className="truncate text-sm text-ink-2">{r.aksi}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
   );
 }
 
@@ -512,7 +419,7 @@ export default function HomeDashboard({ data, tasks, today }: { data: HomeData; 
   const bdayToday = data.bday.today.length > 0;
 
   return (
-    <div className="relative min-h-screen overflow-x-clip text-ink selection:bg-sea-100">
+    <div className="relative min-h-screen overflow-x-clip text-ink">
       {/* Pada hari ada yang ulang tahun, banner foto diganti banner ulang tahun (besoknya kembali normal). */}
       {bdayToday ? <BirthdayHero people={data.bday.today} /> : <Hero photos={data.photos} />}
       {/* Menu pulau melayang di tepi bawah sampul, lalu naik menempel di header saat di-scroll (tablet & desktop). */}
@@ -549,8 +456,14 @@ export default function HomeDashboard({ data, tasks, today }: { data: HomeData; 
               { label: "Total izin sakit", value: stats.totalSakit, unit: "izin", sub: "Semua laporan" },
             ]}
           />
-          <PieSection pel={pel} />
-          <DashboardSection pel={pel} live={live} />
+          {/* Komposisi asimetris: daftar jenis di kiri, peringkat & catatan terbaru di kanan. */}
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
+            <KategoriBars pel={pel} />
+            <div className="grid gap-5">
+              <HallOfShame pel={pel} />
+              <RecentPanel pel={pel} live={live} />
+            </div>
+          </div>
         </section>
 
         {/* Log aktivitas & pengumuman di paling bawah halaman. */}

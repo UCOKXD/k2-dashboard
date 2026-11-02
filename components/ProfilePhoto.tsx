@@ -70,7 +70,7 @@ export default function ProfilePhoto() {
   const locked = user.tempPassword;
   return (
     <div className="flex flex-wrap items-center gap-5">
-      <span className="relative grid h-24 w-24 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-3xl font-bold text-white">
+      <span className="relative grid h-24 w-24 shrink-0 place-items-center overflow-hidden rounded-full bg-[#165f93] font-display text-3xl font-bold text-white">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {src ? <img width={320} height={320} src={src} alt={`Foto profil ${user.panggilan}`} className="h-full w-full object-cover" /> : user.panggilan[0]}
       </span>

@@ -47,14 +47,14 @@ function Card({ m, src, active, onPick }: { m: MemberCard; src: string | null; a
         // Foto developer tetap memakai bingkai maskot.
         <span className="relative aspect-square w-[62%] shrink-0">
           <DevMascotBack />
-          <span className="relative z-[1] grid h-full w-full place-items-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-5xl font-bold text-white">
+          <span className="relative z-[1] grid h-full w-full place-items-center overflow-hidden rounded-full bg-[#165f93] font-display text-5xl font-bold text-white">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             {src ? <img width={320} height={320} src={src} alt={active ? `Foto profil ${m.short}` : ""} loading="lazy" draggable={false} className="h-full w-full object-cover" /> : m.short[0]}
           </span>
           <DevMascotFront />
         </span>
       ) : (
-        <span className="grid aspect-square w-[62%] shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-5xl font-bold text-white ring-4 ring-accent-soft">
+        <span className="grid aspect-square w-[62%] shrink-0 place-items-center overflow-hidden rounded-full bg-[#165f93] font-display text-5xl font-bold text-white ring-4 ring-accent-soft">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {src ? <img width={320} height={320} src={src} alt={active ? `Foto profil ${m.short}` : ""} loading="lazy" draggable={false} className="h-full w-full object-cover" /> : m.short[0]}
         </span>

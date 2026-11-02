@@ -118,7 +118,7 @@ export default function NglPage() {
       <div className="k2-card mx-auto max-w-md space-y-4 p-8 text-center">
         <MessageCircleHeart className="mx-auto text-pink-500" size={32} />
         <p className="font-semibold text-ink-2">Masuk dulu dengan akunmu untuk memakai NGL.</p>
-        <Link href="/masuk" className="inline-block rounded-k2-md bg-navy-900 px-6 py-2.5 text-sm font-semibold text-white shadow">
+        <Link href="/masuk" className="inline-flex min-h-11 items-center rounded-k2-md bg-[#0b1e3d] px-6 text-sm font-semibold text-white dark:bg-[#165f93]">
           Masuk
         </Link>
       </div>

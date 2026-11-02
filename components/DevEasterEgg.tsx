@@ -185,7 +185,7 @@ export function DevAvatar({ src, name }: { src: string | null; name: string }) {
     <span className="k2-dev-pp relative block aspect-[451/374] w-[200px] shrink-0 self-center sm:w-[220px] sm:self-start">
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img width={451} height={374} src="/dev/pp-back.webp" alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full" />
-      <span className="absolute left-[31.26%] top-[16.98%] grid h-[79.41%] w-[65.85%] place-items-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-4xl font-bold text-white">
+      <span className="absolute left-[31.26%] top-[16.98%] grid h-[79.41%] w-[65.85%] place-items-center overflow-hidden rounded-full bg-[#165f93] font-display text-4xl font-bold text-white">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         {src ? <img width={320} height={320} src={src} alt={`Foto profil ${name}`} className="h-full w-full object-cover" /> : name[0]}
       </span>

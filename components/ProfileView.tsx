@@ -101,7 +101,7 @@ export default function ProfileView({ absen }: { absen: number }) {
         {dev ? (
           <DevAvatar src={data.avatar ? `/api/avatar/${data.absen}?v=${data.avatar}` : null} name={data.panggilan} />
         ) : (
-          <span className="relative grid h-28 w-28 shrink-0 place-items-center self-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-4xl font-bold text-white ring-4 ring-accent-soft sm:self-start">
+          <span className="relative grid h-28 w-28 shrink-0 place-items-center self-center overflow-hidden rounded-full bg-[#165f93] font-display text-4xl font-bold text-white ring-4 ring-accent-soft sm:self-start">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             {data.avatar ? <img width={320} height={320} src={`/api/avatar/${data.absen}?v=${data.avatar}`} alt={`Foto profil ${data.panggilan}`} className="h-full w-full object-cover" /> : data.panggilan[0]}
           </span>

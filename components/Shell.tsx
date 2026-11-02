@@ -53,7 +53,7 @@ function AccountButton() {
           // eslint-disable-next-line @next/next/no-img-element
           <img width={320} height={320} src={avatarSrc(avatars, user.absen)} alt="" className="h-7 w-7 rounded-full object-cover" />
         ) : (
-          <span className="grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-sea-500 to-navy-700 text-[11px] text-white">{user.panggilan[0]}</span>
+          <span className="grid h-7 w-7 place-items-center rounded-full bg-[#165f93] text-[11px] text-white">{user.panggilan[0]}</span>
         )}
         {/* Nama disembunyikan di layar sempit & saat island menu menempel di header (1024-1279px) supaya tidak bertabrakan. */}
         <span className="hidden sm:inline lg:hidden xl:inline">{user.panggilan}</span>

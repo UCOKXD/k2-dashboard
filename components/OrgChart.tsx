@@ -9,19 +9,25 @@ const person = (full: string): Person | undefined =>
   full ? { nama: full, panggilan: STUDENTS.find((s) => s.full === full)?.short ?? "" } : undefined;
 
 function Connector() {
-  return <div className="h-5 w-0.5 bg-slate-300" aria-hidden />;
+  return <div className="h-5 w-px bg-line-strong" aria-hidden="true" />;
 }
 
-// Kartu berwarna (gradien) untuk DPP, BPH, dan Koordinator.
-function Box({ role, icon: Icon, person: p, text, className }: { role: string; icon: typeof User; person?: Person; text?: string; className: string }) {
+// Kartu peran: navy untuk pucuk pimpinan (fokus mata), permukaan biasa untuk peran lain. Satu bahasa warna, tanpa gradasi.
+function Box({ role, icon: Icon, person: p, text, lead = false, className = "" }: { role: string; icon: typeof User; person?: Person; text?: string; lead?: boolean; className?: string }) {
   return (
-    <div className={`flex min-w-0 items-center gap-2.5 rounded-2xl border px-3.5 py-2.5 text-white ${className}`}>
-      <Icon size={18} className="shrink-0 opacity-80" />
+    <div
+      className={`flex min-w-0 items-center gap-3 rounded-k2-md border px-3.5 py-2.5 ${
+        lead ? "border-transparent bg-[#0b1e3d] text-white dark:bg-[#165f93]" : "border-line bg-surface text-ink"
+      } ${className}`}
+    >
+      <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${lead ? "bg-white/15 text-[#8fcff1]" : "bg-accent-soft text-accent-ink"}`} aria-hidden="true">
+        <Icon size={17} />
+      </span>
       <div className="min-w-0 text-left leading-tight">
-        <p className="text-xs font-bold opacity-85">{role}</p>
+        <p className={`text-xs font-semibold ${lead ? "text-[#c9d6e6]" : "text-ink-3"}`}>{role}</p>
         {p ? (
           <p className="text-sm font-bold">
-            {p.nama} {p.panggilan && <span className="font-medium opacity-80">({p.panggilan})</span>}
+            {p.nama} {p.panggilan && <span className={`font-medium ${lead ? "text-[#c9d6e6]" : "text-ink-3"}`}>({p.panggilan})</span>}
           </p>
         ) : (
           text && <p className="text-sm font-bold">{text}</p>
@@ -31,31 +37,25 @@ function Box({ role, icon: Icon, person: p, text, className }: { role: string; i
   );
 }
 
-const DIV_STYLE: Record<DivKey, { icon: typeof User; box: string; tag: string }> = {
-  k2: { icon: Shield, box: "border-emerald-400 bg-gradient-to-r from-emerald-600 to-teal-600", tag: "text-emerald-600" },
-  kurikulum: { icon: GraduationCap, box: "border-orange-400 bg-gradient-to-r from-orange-500 to-rose-500", tag: "text-orange-600" },
-  itl: { icon: Laptop, box: "border-slate-500 bg-gradient-to-r from-slate-600 to-slate-800", tag: "text-slate-600" },
-  pubdok: { icon: Camera, box: "border-pink-400 bg-gradient-to-r from-pink-500 to-fuchsia-600", tag: "text-pink-600" },
-};
+const DIV_ICON: Record<DivKey, typeof User> = { k2: Shield, kurikulum: GraduationCap, itl: Laptop, pubdok: Camera };
 
 function Division({ k, org }: { k: DivKey; org: OrgData }) {
   const d = k === "k2" ? { koordinator: org.koordinator, anggota: org.anggota } : org[k];
-  const s = DIV_STYLE[k];
   const anggota = d.anggota.map(person).filter((p): p is Person => !!p);
   const name = k === "k2" ? "K2" : ROLE_DEF[k].label;
   return (
     <div className="flex min-w-0 flex-col gap-2.5 rounded-k2-lg border border-line bg-surface-2 p-4">
-      <p className="text-center text-xs font-bold text-ink-3">{ROLE_DEF[k].label}</p>
-      <Box role={`Koordinator ${name}`} icon={s.icon} person={person(d.koordinator)} text="Belum diisi" className={s.box} />
+      <p className="text-center text-sm font-semibold text-ink-2">{ROLE_DEF[k].label}</p>
+      <Box role={`Koordinator ${name}`} icon={DIV_ICON[k]} person={person(d.koordinator)} text="Belum diisi" />
       {anggota.length > 0 && (
         <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {anggota.map((p) => (
             <li key={p.nama} className="min-w-0 rounded-k2-md border border-line bg-surface px-3 py-2 text-center">
-              <p className={`text-xs font-bold ${s.tag}`}>Anggota</p>
+              <p className="text-xs font-semibold text-ink-3">Anggota</p>
               <p className="truncate text-sm font-bold text-ink" title={p.nama}>
                 {p.nama}
               </p>
-              <p className="text-[11px] text-ink-3">({p.panggilan})</p>
+              <p className="text-xs text-ink-3">({p.panggilan})</p>
             </li>
           ))}
         </ul>
@@ -70,15 +70,15 @@ export default function OrgChart({ org }: { org: OrgData }) {
       <div className="k2-card space-y-5 p-6 md:p-8">
         {/* Tiap level disambung garis vertikal. */}
         <div className="flex flex-col items-center">
-          <Box role="DPP" icon={Crown} text={org.dpp} className="w-full max-w-[16rem] justify-center border-amber-400 bg-gradient-to-r from-amber-500 to-orange-500" />
+          <Box role="DPP" icon={Crown} text={org.dpp} className="w-full max-w-[16rem]" />
           <Connector />
 
           <p className="mb-2 text-xs font-bold text-ink-3">Badan Pengurus Harian</p>
           <div className="grid w-full max-w-3xl grid-cols-1 gap-3 sm:grid-cols-2">
-            <Box role="Komti" icon={User} person={person(org.komti)} className="border-blue-400 bg-gradient-to-r from-blue-600 to-indigo-600" />
-            <Box role="Wakomti" icon={User} person={person(org.wakomti)} className="border-indigo-400 bg-gradient-to-r from-indigo-600 to-violet-600" />
-            <Box role="Bendahara" icon={Wallet} person={person(org.bendahara)} className="border-sky-400 bg-gradient-to-r from-sky-600 to-blue-600" />
-            <Box role="Sekretaris" icon={BookOpen} person={person(org.sekretaris)} className="border-violet-400 bg-gradient-to-r from-violet-600 to-fuchsia-600" />
+            <Box role="Komti" icon={User} person={person(org.komti)} lead />
+            <Box role="Wakomti" icon={User} person={person(org.wakomti)} />
+            <Box role="Bendahara" icon={Wallet} person={person(org.bendahara)} />
+            <Box role="Sekretaris" icon={BookOpen} person={person(org.sekretaris)} />
           </div>
           <Connector />
 
