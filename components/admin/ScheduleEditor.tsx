@@ -36,7 +36,7 @@ export default function ScheduleEditor() {
             </button>
           </div>
         ))}
-        {d.length === 0 && <p className="text-sm text-slate-400">Belum ada jadwal.</p>}
+        {d.length === 0 && <p className="text-sm text-ink-3">Belum ada jadwal.</p>}
       </div>
       <button
         onClick={() => {

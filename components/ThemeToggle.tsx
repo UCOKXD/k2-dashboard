@@ -60,7 +60,7 @@ export default function ThemeToggle() {
       onClick={toggle}
       aria-label={dark ? "Ganti ke tema terang" : "Ganti ke tema gelap"}
       title={dark ? "Tema terang" : "Tema gelap"}
-      className="grid h-10 w-10 place-items-center overflow-hidden rounded-full border border-[color-mix(in_srgb,currentColor_22%,transparent)] transition hover:bg-[color-mix(in_srgb,currentColor_10%,transparent)] active:scale-90"
+      className="grid h-11 w-11 place-items-center overflow-hidden rounded-full border border-[color-mix(in_srgb,currentColor_22%,transparent)] transition hover:bg-[color-mix(in_srgb,currentColor_10%,transparent)] active:scale-90"
     >
       {/* Ikon baru naik dari bawah setiap kali tema diganti. */}
       <span key={dark ? "gelap" : "terang"} className="k2-icon-up grid place-items-center">

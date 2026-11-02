@@ -126,7 +126,7 @@ export default function NglPage() {
   if (user.tempPassword)
     return (
       <div className="k2-card mx-auto max-w-md space-y-4 p-8 text-center">
-        <Lock className="mx-auto text-slate-400" />
+        <Lock className="mx-auto text-ink-3" />
         <p className="font-semibold text-slate-700">Ganti password awalmu dulu sebelum memakai NGL, supaya tidak ada yang bisa mengisi atas namamu.</p>
         <Link href="/akun" className="inline-block rounded-full bg-navy-900 px-6 py-2.5 text-sm font-semibold text-white shadow">
           Ganti password
@@ -224,7 +224,7 @@ export default function NglPage() {
           </div>
           {!data.open && <p className="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-medium text-slate-700">Sesi NGL sudah ditutup.</p>}
           <label className="relative block">
-            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+            <Search size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-3" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
@@ -247,7 +247,7 @@ export default function NglPage() {
                     <span className="relative shrink-0">
                       {avatarSrc(avatars, s.absen) ? (
                         // eslint-disable-next-line @next/next/no-img-element
-                        <img src={avatarSrc(avatars, s.absen)} alt="" loading="lazy" className="h-9 w-9 rounded-full object-cover" />
+                        <img width={320} height={320} src={avatarSrc(avatars, s.absen)} alt="" loading="lazy" className="h-9 w-9 rounded-full object-cover" />
                       ) : (
                         <span className={`grid h-9 w-9 place-items-center rounded-full font-mono text-xs font-bold ${isDone ? "bg-emerald-500 text-white" : "bg-slate-100 text-slate-600"}`}>
                           {isDone ? <Check size={16} /> : s.absen}
@@ -314,7 +314,7 @@ export default function NglPage() {
             {foto ? (
               <div className="relative w-fit">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={foto} alt="Foto yang akan dikirim" className="max-h-56 rounded-2xl object-contain" />
+                <img width={800} height={600} src={foto} alt="Foto yang akan dikirim" className="max-h-56 rounded-2xl object-contain h-auto w-auto" />
                 <button type="button" onClick={() => setFoto(null)} aria-label="Hapus foto" className="absolute right-2 top-2 grid h-9 w-9 place-items-center rounded-full bg-black/60 text-white hover:bg-rose-600">
                   <Trash2 size={15} />
                 </button>
@@ -324,7 +324,7 @@ export default function NglPage() {
                 type="button"
                 disabled={fotoBusy}
                 onClick={() => fotoInput.current?.click()}
-                className="inline-flex min-h-10 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink hover:border-ink-3 disabled:opacity-50"
+                className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink hover:border-ink-3 disabled:opacity-50"
               >
                 <ImagePlus size={15} /> {fotoBusy ? "Mengecilkan foto…" : "Tambah foto"}
               </button>
@@ -379,14 +379,14 @@ export default function NglPage() {
             .filter((g) => g.messages.length)
             .map((g) => (
               <div key={g.sid} className="space-y-3">
-                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                <p className="text-xs font-bold uppercase tracking-widest text-ink-3">
                   Sesi NGL · {HARI_BULAN(g.openedAt)} – {HARI_BULAN(g.closedAt)} · {g.messages.length} pesan
                 </p>
                 <div className="grid gap-3 md:grid-cols-2">
                   {g.messages.map((m) => (
                     <article key={m.id} className={`${CARD} space-y-3`}>
                       <p className="flex items-center gap-1.5 text-sm font-bold text-navy-900">
-                        {m.from ? <UserRound size={15} className="text-sea-600" /> : <EyeOff size={15} className="text-slate-400" />}
+                        {m.from ? <UserRound size={15} className="text-sea-600" /> : <EyeOff size={15} className="text-ink-3" />}
                         {m.from ? `Dari ${m.from}` : "Anonim"}
                       </p>
                       <div className="space-y-1 rounded-2xl bg-emerald-50/80 px-4 py-3">
@@ -400,7 +400,7 @@ export default function NglPage() {
                       {m.foto && (
                         <a href={`/api/ngl/foto?sid=${g.sid}&id=${m.id}`} target="_blank" rel="noopener noreferrer" className="block">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={`/api/ngl/foto?sid=${g.sid}&id=${m.id}`} alt="Foto dari pengirim" loading="lazy" className="max-h-72 w-full rounded-2xl bg-slate-100 object-contain" />
+                          <img width={800} height={600} src={`/api/ngl/foto?sid=${g.sid}&id=${m.id}`} alt="Foto dari pengirim" loading="lazy" className="max-h-72 w-full rounded-2xl bg-slate-100 object-contain h-auto" />
                         </a>
                       )}
                       {m.tambahan && (

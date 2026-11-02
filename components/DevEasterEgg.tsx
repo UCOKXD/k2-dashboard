@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import MotionToggle from "@/components/MotionToggle";
 import { STICKERS, type StickerName } from "@/lib/stickers";
 
 // Easter egg khusus profil developer (Francis): judul "You Meet The Developer!!", aura biru di kiri/kanan/bawah,
@@ -36,9 +37,11 @@ const reduced = () => typeof window !== "undefined" && window.matchMedia("(prefe
 export function DevTitle() {
   return (
     <div className="k2-dev-head relative text-center">
-      <p className="font-mono text-[11px] font-semibold uppercase tracking-[0.3em] text-sea-500 dark:text-sea-300">✦ easter egg ditemukan ✦</p>
-      <h1 className="k2-dev-title mt-2 font-display text-[clamp(34px,7vw,76px)] font-extrabold leading-[0.95] tracking-[-0.035em]">You Meet The Developer!!</h1>
-      <p className="mt-3 text-sm text-ink-3">Klik di mana saja di latar 🎉</p>
+      <p className="text-sm font-semibold text-accent-ink">Easter egg ditemukan</p>
+      {/* Judul hiasan, bukan heading: judul halaman tetap nama di kartu profil. */}
+      <p className="k2-dev-title mt-2 font-display text-[clamp(34px,7vw,76px)] font-extrabold leading-[0.95] tracking-[-0.035em]">You Meet The Developer!!</p>
+      <p className="mt-3 text-sm text-ink-3">Klik di mana saja di latar untuk letupan konfeti.</p>
+      <MotionToggle className="mt-3" />
     </div>
   );
 }
@@ -135,7 +138,7 @@ export default function DevEasterEgg() {
             }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={src(f.n)} alt="" loading="lazy" draggable={false} className={`block h-auto w-full ${f.flip && f.n.startsWith("maskot-balon") ? "-scale-x-100" : ""}`} />
+            <img width={STICKERS[f.n].w} height={STICKERS[f.n].h} src={src(f.n)} alt="" loading="lazy" draggable={false} className={`block h-auto w-full ${f.flip && f.n.startsWith("maskot-balon") ? "-scale-x-100" : ""}`} />
           </span>
         ))}
       </div>
@@ -166,7 +169,7 @@ export default function DevEasterEgg() {
         {pops.map((p) => (
           <span key={p.id} className="k2-dev-pop" style={{ left: p.x, top: p.y, ["--dx" as string]: `${p.dx}px`, ["--rot" as string]: `${p.rot}deg` }}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={src(p.n)} alt="" draggable={false} className="block h-auto w-full" />
+            <img width={STICKERS[p.n].w} height={STICKERS[p.n].h} src={src(p.n)} alt="" draggable={false} className="block h-auto w-full" />
           </span>
         ))}
       </div>
@@ -181,13 +184,13 @@ export function DevAvatar({ src, name }: { src: string | null; name: string }) {
   return (
     <span className="k2-dev-pp relative block aspect-[451/374] w-[200px] shrink-0 self-center sm:w-[220px] sm:self-start">
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/dev/pp-back.webp" alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full" />
+      <img width={451} height={374} src="/dev/pp-back.webp" alt="" aria-hidden="true" draggable={false} className="absolute inset-0 h-full w-full" />
       <span className="absolute left-[31.26%] top-[16.98%] grid h-[79.41%] w-[65.85%] place-items-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-4xl font-bold text-white">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        {src ? <img src={src} alt={`Foto profil ${name}`} className="h-full w-full object-cover" /> : name[0]}
+        {src ? <img width={320} height={320} src={src} alt={`Foto profil ${name}`} className="h-full w-full object-cover" /> : name[0]}
       </span>
       {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src="/dev/pp-front.webp" alt="" aria-hidden="true" draggable={false} className="pointer-events-none absolute inset-0 h-full w-full" />
+      <img width={451} height={374} src="/dev/pp-front.webp" alt="" aria-hidden="true" draggable={false} className="pointer-events-none absolute inset-0 h-full w-full" />
     </span>
   );
 }
@@ -197,12 +200,12 @@ export function DevAvatar({ src, name }: { src: string | null; name: string }) {
 export function DevMascotBack() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src="/dev/pp-back.webp" alt="" aria-hidden="true" draggable={false} className="pointer-events-none absolute left-[-47.47%] top-[-21.38%] z-0 h-auto w-[151.86%] max-w-none" />
+    <img width={451} height={374} src="/dev/pp-back.webp" alt="" aria-hidden="true" draggable={false} className="pointer-events-none absolute left-[-47.47%] top-[-21.38%] z-0 h-auto w-[151.86%] max-w-none" />
   );
 }
 export function DevMascotFront() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src="/dev/pp-front.webp" alt="" aria-hidden="true" draggable={false} className="pointer-events-none absolute left-[-47.47%] top-[-21.38%] z-[2] h-auto w-[151.86%] max-w-none" />
+    <img width={451} height={374} src="/dev/pp-front.webp" alt="" aria-hidden="true" draggable={false} className="pointer-events-none absolute left-[-47.47%] top-[-21.38%] z-[2] h-auto w-[151.86%] max-w-none" />
   );
 }

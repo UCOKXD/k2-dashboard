@@ -45,7 +45,7 @@ export default function AccountTab() {
     if (!confirm(`Reset password ${panggilan} ke ${awal}?`)) return;
     try {
       const r = await adminFetch<{ temp: string | null }>("/api/auth/reset", "POST", { username });
-      setResetMsg(r.temp ? `Password ${panggilan} sekarang: ${r.temp} (username juga kembali ke username awal) — minta ${panggilan} segera menggantinya.` : `Password ${panggilan} direset, tapi tanggal lahirnya belum terdata di tab Ulang Tahun.`);
+      setResetMsg(r.temp ? `Password ${panggilan} sekarang: ${r.temp} (username juga kembali ke username awal). Minta ${panggilan} segera menggantinya.` : `Password ${panggilan} direset, tapi tanggal lahirnya belum terdata di tab Ulang Tahun.`);
       setStatus((s) => (s && s[username] ? { ...s, [username]: { ...s[username], changed: false } } : s));
     } catch (err) {
       setResetMsg((err as Error).message);
@@ -107,7 +107,7 @@ export default function AccountTab() {
                         <span className="flex items-center gap-2">
                           {avatarSrc(avatars, a.absen) && (
                             // eslint-disable-next-line @next/next/no-img-element
-                            <img src={avatarSrc(avatars, a.absen)} alt="" className="h-7 w-7 shrink-0 rounded-full object-cover" />
+                            <img width={320} height={320} src={avatarSrc(avatars, a.absen)} alt="" className="h-7 w-7 shrink-0 rounded-full object-cover" />
                           )}
                           {a.nama}
                         </span>
@@ -119,7 +119,7 @@ export default function AccountTab() {
                       <td className="px-3 py-2 font-mono">
                         {s?.login && s.login !== a.username ? (
                           <>
-                            {s.login} <span className="block text-[11px] text-slate-400">awal: {a.username}</span>
+                            {s.login} <span className="block text-[11px] text-ink-3">awal: {a.username}</span>
                           </>
                         ) : (
                           a.username
@@ -127,7 +127,7 @@ export default function AccountTab() {
                       </td>
                       <td className="px-3 py-2 text-xs font-semibold">
                         {!s ? (
-                          <span className="text-slate-400">…</span>
+                          <span className="text-ink-3">…</span>
                         ) : !s.birthday && !s.changed ? (
                           <span className="flex items-center gap-1 text-rose-600">
                             <TriangleAlert size={13} /> Isi tgl lahir dulu

@@ -35,7 +35,7 @@ function AccountButton() {
     return (
       <Link
         href="/masuk"
-        className="flex min-h-9 items-center gap-1.5 rounded-full border border-line-strong bg-[#fff] px-4 text-xs font-semibold text-[#0b1e3d] transition hover:bg-[#f1f8fd] sm:text-sm"
+        className="flex min-h-11 items-center gap-1.5 rounded-full border border-line-strong bg-[#fff] px-4 text-xs font-semibold text-[#0b1e3d] transition hover:bg-[#f1f8fd] sm:text-sm"
       >
         <LogIn size={15} /> Masuk
       </Link>
@@ -46,12 +46,12 @@ function AccountButton() {
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="relative flex min-h-9 items-center gap-1.5 rounded-full border border-line-strong bg-[#fff] py-1 pl-1 pr-2 text-xs font-semibold text-[#0b1e3d] sm:gap-2 sm:pr-3 sm:text-sm"
+        className="relative flex min-h-11 items-center gap-1.5 rounded-full border border-line-strong bg-[#fff] py-1 pl-1 pr-2 text-xs font-semibold text-[#0b1e3d] sm:gap-2 sm:pr-3 sm:text-sm"
       >
         {user.tempPassword && <span aria-label="Password awal belum diganti" className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-rose-500 ring-2 ring-white" />}
         {avatarSrc(avatars, user.absen) ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={avatarSrc(avatars, user.absen)} alt="" className="h-7 w-7 rounded-full object-cover" />
+          <img width={320} height={320} src={avatarSrc(avatars, user.absen)} alt="" className="h-7 w-7 rounded-full object-cover" />
         ) : (
           <span className="grid h-7 w-7 place-items-center rounded-full bg-gradient-to-br from-sea-500 to-navy-700 text-[11px] text-white">{user.panggilan[0]}</span>
         )}
@@ -124,7 +124,7 @@ function Frame({ children }: { children: React.ReactNode }) {
         className={`k2-header fixed inset-x-0 top-0 z-40 flex h-16 items-center justify-between gap-4 border-b px-[var(--gutter)] print:hidden ${bday ? "k2-header--fest" : ""}`}
         style={bday ? { background: HEADER_BDAY } : undefined}
       >
-        <Link href="/" className="flex min-w-0 items-center gap-2" aria-label="K2 Pusat Informasi, ke halaman utama">
+        <Link href="/" className="flex min-h-11 min-w-0 items-center gap-2" aria-label="K2 Pusat Informasi, ke halaman utama">
           <span className="relative inline-flex shrink-0">
             <Image src="/logo-k2.png" alt="Logo Divisi K2" width={40} height={41} className="h-[38px] w-[38px] shrink-0 object-contain" priority />
             {bday && <PartyHat />}

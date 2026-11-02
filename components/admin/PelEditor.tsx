@@ -67,7 +67,7 @@ export default function PelEditor() {
               </p>
             </div>
           ))}
-          {stats.shame.length === 0 && <p className="text-sm text-slate-400">Belum ada.</p>}
+          {stats.shame.length === 0 && <p className="text-sm text-ink-3">Belum ada.</p>}
         </div>
         {ranked.length > 0 && (
           <div className="flex flex-wrap gap-2">
@@ -77,7 +77,7 @@ export default function PelEditor() {
                 <button
                   key={s.nama}
                   onClick={() => toggleShame(s.nama)}
-                  className={`rounded-full border px-3 py-1 text-xs font-medium ${hidden ? "border-slate-300 bg-slate-100 text-slate-400 line-through" : "border-rose-200 bg-white text-slate-700"}`}
+                  className={`rounded-full border px-3 py-1 text-xs font-medium ${hidden ? "border-slate-300 bg-slate-100 text-ink-3 line-through" : "border-rose-200 bg-white text-slate-700"}`}
                   title={hidden ? "Dikecualikan dari Hall of Shame (klik untuk ikutkan lagi)" : "Klik untuk mengecualikan dari Hall of Shame"}
                 >
                   {s.short} · {s.jumlah}
@@ -124,7 +124,7 @@ export default function PelEditor() {
             </thead>
             <tbody>
               {shown.map((r) => (
-                <tr key={r.id} className={`border-t border-slate-100 align-top ${r.hidden ? "bg-slate-50 text-slate-400 line-through" : ""}`}>
+                <tr key={r.id} className={`border-t border-slate-100 align-top ${r.hidden ? "bg-slate-50 text-ink-3 line-through" : ""}`}>
                   <td className="whitespace-nowrap px-3 py-2">{r.tanggal}</td>
                   <td className="px-3 py-2">
                     {r.nama}
@@ -188,7 +188,7 @@ export default function PelEditor() {
               ))}
               {shown.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-3 py-8 text-center text-slate-400">
+                  <td colSpan={6} className="px-3 py-8 text-center text-ink-3">
                     Tidak ada catatan.
                   </td>
                 </tr>

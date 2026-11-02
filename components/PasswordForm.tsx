@@ -33,13 +33,22 @@ export default function PasswordForm() {
 
   return (
     <form onSubmit={change} className="grid max-w-md gap-3">
-      <input type="password" value={oldPw} onChange={(e) => setOldPw(e.target.value)} placeholder="Password lama / password awal" autoComplete="current-password" className={input} />
-      <input type="password" value={newPw} onChange={(e) => setNewPw(e.target.value)} placeholder="Password baru (minimal 6 karakter)" autoComplete="new-password" className={input} />
-      <input type="password" value={again} onChange={(e) => setAgain(e.target.value)} placeholder="Ulangi password baru" autoComplete="new-password" className={input} />
-      <button disabled={busy || !oldPw || !newPw || !again} className="flex w-fit items-center gap-1.5 rounded-full bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow disabled:opacity-40">
+      <label className="grid gap-1 text-sm font-semibold text-ink-2">
+        Password lama atau password awal
+        <input type="password" value={oldPw} onChange={(e) => setOldPw(e.target.value)} autoComplete="current-password" className={input} />
+      </label>
+      <label className="grid gap-1 text-sm font-semibold text-ink-2">
+        Password baru (minimal 6 karakter)
+        <input type="password" value={newPw} onChange={(e) => setNewPw(e.target.value)} autoComplete="new-password" className={input} />
+      </label>
+      <label className="grid gap-1 text-sm font-semibold text-ink-2">
+        Ulangi password baru
+        <input type="password" value={again} onChange={(e) => setAgain(e.target.value)} autoComplete="new-password" className={input} />
+      </label>
+      <button disabled={busy || !oldPw || !newPw || !again} className="flex min-h-11 w-fit items-center gap-1.5 rounded-k2-md bg-[#0b1e3d] px-5 text-sm font-semibold text-white disabled:opacity-40 dark:bg-[#2e9be0] dark:text-[#061227]">
         <KeyRound size={14} /> {busy ? "Menyimpan..." : "Ganti password"}
       </button>
-      {msg && <p className={`text-sm font-medium ${msg.ok ? "text-emerald-600" : "text-rose-600"}`}>{msg.text}</p>}
+      {msg && <p className={`text-sm font-medium ${msg.ok ? "text-ok" : "text-bad"}`}>{msg.text}</p>}
     </form>
   );
 }

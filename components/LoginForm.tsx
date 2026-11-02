@@ -71,7 +71,7 @@ export default function LoginForm() {
             <button
               type="button"
               onClick={() => setShow((s) => !s)}
-              className="absolute right-1 top-1/2 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-k2-md text-ink-3 hover:bg-surface-2 hover:text-ink"
+              className="absolute right-0.5 top-1/2 grid h-11 w-11 -translate-y-1/2 place-items-center rounded-k2-md text-ink-3 hover:bg-surface-2 hover:text-ink"
               aria-label={show ? "Sembunyikan password" : "Tampilkan password"}
               aria-pressed={show}
             >

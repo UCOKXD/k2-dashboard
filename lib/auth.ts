@@ -51,7 +51,7 @@ function checkHash(pw: string, stored: string) {
 // Versi password: berubah setiap ganti password, sehingga sesi lama otomatis tidak berlaku.
 const pwVersion = (stored: string | null) => createHash("sha256").update(stored ?? "temp").digest("base64url").slice(0, 12);
 
-/* ------------------------------------------------------- Batas salah password */
+/* Batas salah password */
 // Setiap percobaan login "memesan" satu jatah (INCR) SEBELUM password diperiksa, jadi permintaan yang dikirim
 // bersamaan pun tidak bisa melewati batas. Hitungan disimpan di Redis (bukan memori server, yang bisa hilang/berbeda
 // antar-server di Vercel). Dua batas: per akun (5x / 10 menit) dan per alamat IP (20x / 10 menit).
@@ -86,7 +86,7 @@ async function release(key: string) {
 const minutes = (sec: number) => Math.max(1, Math.ceil(sec / 60));
 const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/* ------------------------------------------------------------------ Sesi */
+/* Sesi */
 
 function sign(payload: object) {
   const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
@@ -127,7 +127,7 @@ async function loginAccount(input: string): Promise<{ account?: Account; map: Us
   return { account: a && !map[a.key] ? a : undefined, map };
 }
 
-/* --------------------------------------------------------- Password awal */
+/* Password awal */
 // Berlaku sampai pemilik akun menggantinya. Semua akun: nomor absen + tanggal lahir DDMM dari data Ulang Tahun,
 // mis. absen 5 lahir 9 Maret → "50903" (absen boleh ditulis 2 digit: "050903").
 // Pengurus awal (8 admin pertama) juga masih bisa memakai password sementara bersama (1234#) seperti sebelumnya.
@@ -246,7 +246,7 @@ export async function changedAccounts(keys: string[]): Promise<Set<string>> {
   return new Set(keys.filter((_, i) => !!vals[i]));
 }
 
-/* --------------------------------------------- Penjaga untuk route API admin */
+/* Penjaga untuk route API admin */
 
 // Tolak permintaan ubah data dari situs lain (cookie sameSite=lax sudah menahan, ini lapisan tambahan).
 function sameOrigin(req: Request) {

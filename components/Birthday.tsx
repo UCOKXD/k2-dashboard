@@ -86,7 +86,7 @@ export function BirthdayStrip() {
       <p className="min-w-0 flex-[1_1_260px] text-[15px] leading-snug text-ink">
         <b className="k2-bd-name">Hari ini ulang tahun {joinNames(today.map((p) => p.nama))}.</b> Jangan lupa kasih ucapan!
       </p>
-      <span className="inline-flex min-h-10 items-center rounded-full bg-[#0b1e3d] px-5 text-sm font-semibold text-white dark:bg-accent dark:text-[#140a1f]">Kirim ucapan</span>
+      <span className="inline-flex min-h-11 items-center rounded-full bg-[#0b1e3d] px-5 text-sm font-semibold text-white dark:bg-accent dark:text-[#140a1f]">Kirim ucapan</span>
     </Link>
   );
 }

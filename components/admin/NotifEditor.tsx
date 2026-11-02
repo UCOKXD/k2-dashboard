@@ -35,7 +35,7 @@ function CopyBox({ text, label }: { text: string; label: string }) {
   );
 }
 
-const appsScript = (url: string, key: string, sheetId: string) => `// Notifikasi WhatsApp Divisi K2 — kirim setiap jawaban Google Form ke web K2.
+const appsScript = (url: string, key: string, sheetId: string) => `// Notifikasi WhatsApp Divisi K2: kirim setiap jawaban Google Form ke web K2.
 // Jangan bagikan kode ini: berisi kunci rahasia.
 const URL_K2 = "${url}/api/notify/form";
 const KUNCI = "${key}";
@@ -144,7 +144,7 @@ export default function NotifEditor() {
     setSamples((m) => ({ ...m, [type]: "Mengirim ke antrian..." }));
     try {
       await adminFetch("/api/notify/admin", "POST", { action: "sample", type });
-      setSamples((m) => ({ ...m, [type]: online ? "Masuk antrian — terkirim ke grup dalam ±30 detik." : "Masuk antrian. Akan terkirim begitu bot di laptop menyala." }));
+      setSamples((m) => ({ ...m, [type]: online ? "Masuk antrian, terkirim ke grup dalam ±30 detik." : "Masuk antrian. Akan terkirim begitu bot di laptop menyala." }));
       load();
     } catch (e) {
       setSamples((m) => ({ ...m, [type]: (e as Error).message }));
@@ -197,7 +197,7 @@ export default function NotifEditor() {
           {NOTIF_DEFS.map((d) => (
             <div key={d.type} className="space-y-3 rounded-2xl border border-slate-200 bg-white p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <label className="flex items-center gap-2 font-bold text-slate-800">
+                <label className="flex min-h-11 items-center gap-2 font-bold text-slate-800">
                   <input
                     type="checkbox"
                     checked={draft.enabled[d.type]}
@@ -256,12 +256,12 @@ export default function NotifEditor() {
           <ul className="divide-y divide-slate-100 rounded-2xl border border-slate-200 bg-white text-sm">
             {log.map((l, i) => (
               <li key={i} className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5 px-4 py-2.5">
-                <span className={`text-xs font-semibold ${l.skipped ? "text-slate-400" : "text-emerald-600"}`}>{l.skipped ? "Dilewati" : "Terkirim"}</span>
+                <span className={`text-xs font-semibold ${l.skipped ? "text-ink-3" : "text-emerald-600"}`}>{l.skipped ? "Dilewati" : "Terkirim"}</span>
                 <span className="font-semibold text-slate-800">
                   {NOTIF_DEF[l.type]?.label ?? l.type}
                   {l.n > 1 && ` (${l.n})`}
                 </span>
-                <span className="text-xs text-slate-400">{fmtWib(l.at)}</span>
+                <span className="text-xs text-ink-3">{fmtWib(l.at)}</span>
                 {!l.skipped && <span className="w-full truncate text-xs text-slate-500">{l.preview.replace(/\n/g, " · ")}</span>}
               </li>
             ))}

@@ -51,13 +51,13 @@ export default function TasksEditor() {
       </Panel>
 
       <Panel title={`Daftar tugas (${d.length})`} desc="Centang bulat untuk menandai tugas selesai. Tugas yang sudah lewat bisa dihapus.">
-        {sorted.length === 0 && <p className="text-sm text-slate-400">Belum ada tugas.</p>}
+        {sorted.length === 0 && <p className="text-sm text-ink-3">Belum ada tugas.</p>}
         <div className="space-y-2">
           {sorted.map((t) => {
             const u = urgencyOf(t, today);
             return (
               <div key={t.id} className={`flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-2.5 ${t.done ? "opacity-60" : ""}`}>
-                <button onClick={() => set(t.id, { done: !t.done })} className="text-slate-400 hover:text-emerald-600" title={t.done ? "Tandai belum selesai" : "Tandai selesai"}>
+                <button onClick={() => set(t.id, { done: !t.done })} className="text-ink-3 hover:text-emerald-600" title={t.done ? "Tandai belum selesai" : "Tandai selesai"}>
                   {t.done ? <CheckCircle2 size={20} className="text-emerald-600" /> : <Circle size={20} />}
                 </button>
                 <span className={`rounded-k2-sm px-2 py-0.5 font-mono text-[11px] font-bold uppercase tracking-[0.08em] ${URGENCY[u.level].chip}`}>{URGENCY[u.level].label}</span>

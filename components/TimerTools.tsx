@@ -90,7 +90,7 @@ function Countdown() {
           <circle cx="50" cy="50" r="45" fill="none" stroke={done ? "var(--bad)" : "var(--accent)"} strokeWidth="6" strokeLinecap="round" strokeDasharray={2 * Math.PI * 45} strokeDashoffset={2 * Math.PI * 45 * (1 - pct)} />
         </svg>
         <div className="text-center">
-          <p className={`font-mono text-[46px] font-extrabold tracking-[-0.03em] tabular-nums sm:text-[54px] ${done ? "animate-pulse text-bad" : "text-ink"}`}>{clock(remaining + 999)}</p>
+          <p className={`font-mono text-[46px] font-extrabold tracking-[-0.03em] tabular-nums sm:text-[54px] ${done ? "text-bad" : "text-ink"}`}>{clock(remaining + 999)}</p>
           {done && <p className="mt-1 text-sm font-bold text-bad">Waktu habis!</p>}
         </div>
       </div>
@@ -101,18 +101,18 @@ function Countdown() {
             key={m}
             onClick={() => set(m * 60_000)}
             aria-pressed={total === m * 60_000}
-            className={`min-h-9 rounded-full border px-3.5 text-[13px] font-semibold transition ${total === m * 60_000 ? "border-accent bg-accent-soft text-accent-ink" : "border-line-strong bg-surface text-ink hover:border-ink-3"}`}
+            className={`min-h-11 rounded-full border px-3.5 text-[13px] font-semibold transition ${total === m * 60_000 ? "border-accent bg-accent-soft text-accent-ink" : "border-line-strong bg-surface text-ink hover:border-ink-3"}`}
           >
             {m} menit
           </button>
         ))}
       </div>
       <div className="flex items-center justify-center gap-2 text-sm">
-        <input value={min} onChange={(e) => setMin(e.target.value.replace(/\D/g, ""))} inputMode="numeric" className="min-h-10 w-16 rounded-k2-md border border-line-strong bg-surface px-2 text-center font-mono text-ink" aria-label="Menit" />
+        <input value={min} onChange={(e) => setMin(e.target.value.replace(/\D/g, ""))} inputMode="numeric" className="min-h-11 w-16 rounded-k2-md border border-line-strong bg-surface px-2 text-center font-mono text-ink" aria-label="Menit" />
         <span>menit</span>
-        <input value={sec} onChange={(e) => setSec(e.target.value.replace(/\D/g, ""))} inputMode="numeric" className="min-h-10 w-16 rounded-k2-md border border-line-strong bg-surface px-2 text-center font-mono text-ink" aria-label="Detik" />
+        <input value={sec} onChange={(e) => setSec(e.target.value.replace(/\D/g, ""))} inputMode="numeric" className="min-h-11 w-16 rounded-k2-md border border-line-strong bg-surface px-2 text-center font-mono text-ink" aria-label="Detik" />
         <span>detik</span>
-        <button onClick={apply} className="min-h-10 rounded-full border border-line-strong bg-surface px-4 font-semibold text-ink hover:border-ink-3">Atur</button>
+        <button onClick={apply} className="min-h-11 rounded-full border border-line-strong bg-surface px-4 font-semibold text-ink hover:border-ink-3">Atur</button>
       </div>
 
       <div className="flex justify-center gap-3">
@@ -234,7 +234,7 @@ export default function TimerTools() {
                 aria-controls={`panel-${id}`}
                 tabIndex={tab === id ? 0 : -1}
                 onClick={() => setTab(id)}
-                className={`flex h-[38px] items-center gap-1.5 rounded-full px-[18px] text-sm font-semibold transition ${tab === id ? "bg-surface text-ink shadow-1" : "text-ink-3 hover:text-ink"}`}
+                className={`flex h-11 items-center gap-1.5 rounded-full px-[18px] text-sm font-semibold transition ${tab === id ? "bg-surface text-ink shadow-1" : "text-ink-3 hover:text-ink"}`}
               >
                 <Icon size={15} /> {label}
               </button>

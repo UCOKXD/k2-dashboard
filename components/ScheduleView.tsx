@@ -45,7 +45,7 @@ export default function ScheduleView({ schedule }: { schedule: ScheduleItem[] })
           <span className="inline-flex items-center gap-2"><i className="inline-block h-3 w-3 rounded-[3px] border border-dashed border-line-strong" />Selesai</span>
         </div>
         {todayShown && (
-          <a href={`#hari-${now.day}`} className="inline-flex min-h-9 items-center gap-2 rounded-full border border-line-strong bg-surface px-3.5 text-[13px] font-semibold text-ink hover:border-ink-3">
+          <a href={`#hari-${now.day}`} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-3.5 text-[13px] font-semibold text-ink hover:border-ink-3">
             <ArrowDown size={15} /> Lompat ke hari ini
           </a>
         )}

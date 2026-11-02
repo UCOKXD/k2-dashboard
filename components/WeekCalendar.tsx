@@ -53,7 +53,7 @@ export default function WeekCalendar({
           <span className="text-sm font-semibold text-slate-500">· {range}</span>
         </h3>
         <div className="flex items-center gap-2">
-          <button onClick={() => setOffset((o) => o - 1)} className="rounded-full border border-slate-200 bg-white p-1.5 shadow-sm transition hover:bg-sea-50" aria-label="Minggu sebelumnya">
+          <button onClick={() => setOffset((o) => o - 1)} className="grid h-11 w-11 shrink-0 place-items-center rounded-k2-md border border-line-strong bg-surface text-ink transition hover:bg-surface-2" aria-label="Minggu sebelumnya">
             <ChevronLeft size={16} />
           </button>
           {offset !== 0 && (
@@ -61,7 +61,7 @@ export default function WeekCalendar({
               Minggu ini
             </button>
           )}
-          <button onClick={() => setOffset((o) => o + 1)} className="rounded-full border border-slate-200 bg-white p-1.5 shadow-sm transition hover:bg-sea-50" aria-label="Minggu berikutnya">
+          <button onClick={() => setOffset((o) => o + 1)} className="grid h-11 w-11 shrink-0 place-items-center rounded-k2-md border border-line-strong bg-surface text-ink transition hover:bg-surface-2" aria-label="Minggu berikutnya">
             <ChevronRight size={16} />
           </button>
         </div>
@@ -118,7 +118,7 @@ export default function WeekCalendar({
                   </span>
                 </p>
               ))}
-              {empty && <p className="text-xs text-slate-400">Tidak ada agenda.</p>}
+              {empty && <p className="text-xs text-ink-3">Tidak ada agenda.</p>}
             </div>
           );
         })}

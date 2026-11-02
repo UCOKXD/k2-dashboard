@@ -23,7 +23,7 @@ export default function TaskBoard({ tasks, today }: { tasks: TaskItem[]; today: 
         <div className="flex items-center gap-4 rounded-k2-lg border border-bad/35 bg-bad-soft p-4 shadow-2 sm:p-5">
           <div className="min-w-0 flex-1">
             <p className="mb-2 flex items-center gap-2 text-sm font-black tracking-wider text-red-700">
-              <AlarmClock size={18} className="animate-pulse" /> URGENT: deadline 3 hari lagi atau kurang
+              <AlarmClock size={18} aria-hidden="true" /> URGENT: deadline 3 hari lagi atau kurang
             </p>
             <ul className="space-y-1.5">
               {urgent.map((t) => {

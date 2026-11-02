@@ -111,17 +111,20 @@ export default function OrgEditor() {
                   <tr key={r.key} className="border-t border-slate-100">
                     <td className="px-3 py-2 font-semibold text-slate-800">{r.label}</td>
                     {PERMS.map((p) => (
-                      <td key={p.key} className="px-2 py-2 text-center">
-                        <input
-                          type="checkbox"
-                          checked={d.izin[r.key].includes(p.key)}
-                          onChange={(e) => toggle(r.key, p.key, e.target.checked)}
-                          className="h-4 w-4 accent-sea-500"
-                          aria-label={`${r.label}: ${p.label}`}
-                        />
+                      <td key={p.key} className="px-1 py-0.5 text-center">
+                        {/* Label 44 px di sekeliling kotak centang supaya mudah disentuh. */}
+                        <label className="mx-auto grid h-11 w-11 place-items-center">
+                          <input
+                            type="checkbox"
+                            checked={d.izin[r.key].includes(p.key)}
+                            onChange={(e) => toggle(r.key, p.key, e.target.checked)}
+                            className="h-5 w-5 accent-sea-500"
+                            aria-label={`${r.label}: ${p.label}`}
+                          />
+                        </label>
                       </td>
                     ))}
-                    <td className="px-2 py-2 text-center text-xs text-slate-400" title="Khusus Admin Website">
+                    <td className="px-2 py-2 text-center text-xs text-ink-3" title="Khusus Admin Website">
                       <Lock size={13} className="mx-auto" />
                     </td>
                   </tr>

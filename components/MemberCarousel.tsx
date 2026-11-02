@@ -38,9 +38,9 @@ function Arrow({ dir, onClick }: { dir: "prev" | "next"; onClick: () => void }) 
 
 function Card({ m, src, active, onPick }: { m: MemberCard; src: string | null; active: boolean; onPick: () => void }) {
   return (
+    <div className="relative h-full w-full">
     <article
-      className={`flex h-full w-full flex-col items-center rounded-[30px] border bg-surface px-5 pb-5 pt-6 text-center shadow-3 ${active ? "border-sea-300" : "cursor-pointer border-line"}`}
-      onClick={active ? undefined : onPick}
+      className={`flex h-full w-full flex-col items-center rounded-[30px] border bg-surface px-5 pb-5 pt-6 text-center shadow-3 ${active ? "border-sea-300" : "border-line"}`}
       aria-hidden={!active}
     >
       {m.nama === DEV_NAME ? (
@@ -49,14 +49,14 @@ function Card({ m, src, active, onPick }: { m: MemberCard; src: string | null; a
           <DevMascotBack />
           <span className="relative z-[1] grid h-full w-full place-items-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-5xl font-bold text-white">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            {src ? <img src={src} alt={active ? `Foto profil ${m.short}` : ""} loading="lazy" draggable={false} className="h-full w-full object-cover" /> : m.short[0]}
+            {src ? <img width={320} height={320} src={src} alt={active ? `Foto profil ${m.short}` : ""} loading="lazy" draggable={false} className="h-full w-full object-cover" /> : m.short[0]}
           </span>
           <DevMascotFront />
         </span>
       ) : (
         <span className="grid aspect-square w-[62%] shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-5xl font-bold text-white ring-4 ring-accent-soft">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {src ? <img src={src} alt={active ? `Foto profil ${m.short}` : ""} loading="lazy" draggable={false} className="h-full w-full object-cover" /> : m.short[0]}
+          {src ? <img width={320} height={320} src={src} alt={active ? `Foto profil ${m.short}` : ""} loading="lazy" draggable={false} className="h-full w-full object-cover" /> : m.short[0]}
         </span>
       )}
       <h3 className="mt-3 line-clamp-2 font-display text-[17px] font-bold leading-tight text-ink">{m.nama}</h3>
@@ -66,13 +66,18 @@ function Card({ m, src, active, onPick }: { m: MemberCard; src: string | null; a
       <p className="mt-2 max-w-full truncate rounded-full bg-accent-soft px-3 py-1 text-[12px] font-semibold text-accent-ink">{m.jabatan}</p>
       <p className={`mt-2.5 line-clamp-3 w-full text-[13px] leading-snug ${m.bio ? "text-ink-2" : "italic text-ink-3"}`}>{m.bio || "Belum ada bio."}</p>
       {active ? (
-        <Link href={`/profil/${m.absen}`} className="mt-auto pt-3 text-sm font-semibold text-accent-ink hover:underline">
-          Lihat Profil →
+        <Link href={`/profil/${m.absen}`} className="mt-auto inline-flex min-h-11 items-center px-3 text-sm font-semibold text-accent-ink hover:underline">
+          Lihat profil {m.short}
         </Link>
       ) : (
-        <span className="mt-auto pt-3 text-sm font-semibold text-ink-3">Lihat Profil →</span>
+        <span className="mt-auto inline-flex min-h-11 items-center text-sm font-semibold text-ink-3">Lihat profil {m.short}</span>
       )}
     </article>
+      {/* Kartu samping: satu tombol menutupi kartu, untuk berpindah ke profil itu (bisa dengan keyboard). */}
+      {!active && (
+        <button type="button" onClick={onPick} aria-label={`Tampilkan profil ${m.short}`} className="absolute inset-0 rounded-[30px]" />
+      )}
+    </div>
   );
 }
 
@@ -171,6 +176,7 @@ export default function MemberCarousel({ members }: { members: MemberCard[] }) {
             return (
               <div
                 key={m.absen}
+                inert={!shown}
                 className="absolute left-1/2 top-1/2 h-[352px] w-[228px] transition-[transform,opacity] duration-500 ease-[cubic-bezier(.22,.8,.3,1)] motion-reduce:transition-none sm:h-[372px] sm:w-[240px]"
                 style={{
                   transform: `translate(-50%, -50%) translateX(${Math.max(-3, Math.min(3, d)) * STEP}px) translateY(${a === 2 ? 14 : 0}px) rotate(${rot}deg) scale(${scale})`,
@@ -199,7 +205,7 @@ export default function MemberCarousel({ members }: { members: MemberCard[] }) {
           onClick={() => setPaused((p) => !p)}
           aria-pressed={paused}
           aria-label={paused ? "Lanjutkan pergantian kartu" : "Jeda pergantian kartu"}
-          className="grid h-9 w-9 place-items-center rounded-full border border-line-strong bg-surface text-ink-2 hover:border-ink-3"
+          className="grid h-11 w-11 place-items-center rounded-full border border-line-strong bg-surface text-ink-2 hover:border-ink-3"
         >
           {paused ? <Play size={14} /> : <Pause size={14} />}
         </button>

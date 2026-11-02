@@ -64,7 +64,7 @@ const LOG_STYLE: Record<LogType, { icon: typeof Calendar; badge: string; color: 
   "doa-reset": { icon: UserCheck, badge: "Doa Harian", color: "bg-emerald-50 text-emerald-600 border-emerald-200" },
 };
 
-/* ------------------------------------------------------------------ Hero */
+/* Hero */
 
 // Chip tanggal & jam (WIB, 24 jam) di banner, mis. "Rabu, 7 Okt 2026 · 09.41 WIB".
 function heroNow() {
@@ -172,22 +172,26 @@ function Hero({ photos }: { photos: string[] }) {
       </div>
 
       {SLIDES.length > 1 && (
-        <div className="absolute bottom-16 right-[var(--gutter)] z-20 flex items-center gap-2 md:bottom-12 md:left-[max(var(--gutter),calc((100vw-var(--wadah))/2))] md:right-auto">
+        <div className="absolute bottom-14 right-[var(--gutter)] z-20 flex items-center md:bottom-10 md:left-[max(var(--gutter),calc((100vw-var(--wadah))/2))] md:right-auto">
           {SLIDES.map((_, i) => (
+            // Area sentuh 44 px; titiknya sendiri tetap kecil di tengah.
             <button
               key={i}
+              type="button"
               onClick={() => setSlide(i)}
-              className={`h-2.5 rounded-full transition-all duration-300 ${i === slide ? "w-6 bg-[#ffffff] shadow" : "w-2.5 bg-white/50 hover:bg-white/80"}`}
+              className="group -mx-2 grid h-11 min-w-11 place-items-center"
               aria-label={`Tampilkan foto ${i + 1}`}
               aria-current={i === slide ? "true" : undefined}
-            />
+            >
+              <span className={`block h-2.5 rounded-full transition-all duration-300 ${i === slide ? "w-6 bg-[#ffffff]" : "w-2.5 bg-white/60 group-hover:bg-white/90"}`} />
+            </button>
           ))}
           <button
             type="button"
             onClick={() => setPaused((v) => !v)}
             aria-pressed={paused}
             aria-label={paused ? "Lanjutkan pergantian foto" : "Jeda pergantian foto"}
-            className="ml-1 grid h-8 w-8 place-items-center rounded-full border border-white/25 bg-white/10 text-white backdrop-blur-[6px] hover:bg-white/20"
+            className="ml-1 grid h-11 w-11 place-items-center rounded-full border border-white/40 bg-[rgba(6,18,39,0.55)] text-white hover:bg-[rgba(6,18,39,0.75)]"
           >
             {paused ? <Play size={13} /> : <Pause size={13} />}
           </button>
@@ -205,7 +209,7 @@ function Hero({ photos }: { photos: string[] }) {
 }
 
 
-/* ------------------------------------------------------- Log aktivitas */
+/* Log aktivitas */
 
 function subscribeStorage(cb: () => void) {
   window.addEventListener("storage", cb);
@@ -243,9 +247,9 @@ function LogPanel({ logs }: { logs: HomeData["logs"] }) {
           <Sticker name="info-penting" size={130} />
           <div>
             <h3 className="flex items-center gap-2 text-lg font-bold text-slate-800">
-              <BellRing className="h-5 w-5 animate-bounce text-blue-600" /> Log Aktivitas &amp; Pengumuman Terbaru K2
+              <BellRing className="h-5 w-5 text-blue-600" aria-hidden="true" /> Log Aktivitas &amp; Pengumuman Terbaru K2
             </h3>
-            <p className="text-xs text-slate-400">Semua laporan dari Google Form dan setiap perubahan oleh admin, lengkap dengan nama admin yang mengubah.</p>
+            <p className="text-xs text-ink-3">Semua laporan dari Google Form dan setiap perubahan oleh admin, lengkap dengan nama admin yang mengubah.</p>
           </div>
         </div>
 
@@ -295,21 +299,21 @@ function LogPanel({ logs }: { logs: HomeData["logs"] }) {
                     <p className="text-xs font-medium text-slate-600">{log.detail}</p>
                   </div>
                 </div>
-                <div className="flex shrink-0 items-center gap-1 self-center text-[11px] font-medium text-slate-400 sm:self-auto">
+                <div className="flex shrink-0 items-center gap-1 self-center text-[11px] font-medium text-ink-3 sm:self-auto">
                   <Clock size={12} /> {log.time}
                 </div>
               </div>
             );
           })
         ) : (
-          <div className="py-12 text-center text-xs font-medium text-slate-400">Tidak ada data log aktivitas pada rentang waktu ini.</div>
+          <div className="py-12 text-center text-xs font-medium text-ink-3">Tidak ada data log aktivitas pada rentang waktu ini.</div>
         )}
       </div>
     </div>
   );
 }
 
-/* ------------------------------------------------------------- Pie chart */
+/* Pie chart */
 
 function PieSection({ pel }: { pel: PelanggaranData }) {
   const { total, categories } = pel;
@@ -348,20 +352,20 @@ function PieSection({ pel }: { pel: PelanggaranData }) {
             />
             <div className="z-10 text-center">
               <span className="text-2xl font-black text-slate-800 sm:text-3xl">{total} Kasus</span>
-              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Akumulasi</p>
+              <p className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-ink-3">Total Akumulasi</p>
             </div>
           </div>
         </div>
 
         <div className="space-y-4 lg:col-span-2">
-          {categories.length === 0 && <p className="text-sm text-slate-400">Belum ada pelanggaran yang tercatat.</p>}
+          {categories.length === 0 && <p className="text-sm text-ink-3">Belum ada pelanggaran yang tercatat.</p>}
           {categories.map((c, i) => (
             <div key={c.kategori} className="flex items-center justify-between gap-3 rounded-2xl border border-slate-200/80 bg-slate-50 p-4 shadow-[0_8px_20px_rgba(15,23,42,0.12)] transition-all hover:border-blue-300">
               <div className="flex min-w-0 items-center gap-3">
                 <div className="h-4 w-4 shrink-0 rounded-full shadow-sm" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
                 <div className="min-w-0">
                   <h4 className="truncate text-sm font-bold text-slate-800">{c.kategori}</h4>
-                  <p className="text-xs font-medium text-slate-400">Berdasarkan persentase kelas</p>
+                  <p className="text-xs font-medium text-ink-3">Berdasarkan persentase kelas</p>
                 </div>
               </div>
               <div className="shrink-0 text-right">
@@ -376,7 +380,7 @@ function PieSection({ pel }: { pel: PelanggaranData }) {
   );
 }
 
-/* -------------------------------------------- Ringkasan dashboard utama */
+/* Ringkasan dashboard utama */
 
 function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }) {
 
@@ -420,7 +424,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
                           {s.kategori}
                         </span>
                         <h4 className="mt-1.5 truncate text-sm font-bold text-slate-800" title={s.nama}>{s.nama}</h4>
-                        <p className="mt-0.5 text-[11px] text-slate-400">Panggilan: {s.short}</p>
+                        <p className="mt-0.5 text-[11px] text-ink-3">Panggilan: {s.short}</p>
                       </div>
                     </div>
                     <div className="mt-3 border-t border-slate-100 pt-2.5">
@@ -438,7 +442,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <div className="rounded-xl bg-blue-600 p-2 text-white shadow-md">
-                    <Activity size={18} className="animate-pulse" />
+                    <Activity size={18} aria-hidden="true" />
                   </div>
                   <h3 className="text-base font-bold">History Terbaru</h3>
                 </div>
@@ -447,7 +451,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
                     live ? "border-emerald-500/30 bg-emerald-500/20 text-emerald-400" : "border-slate-600 bg-slate-700/50 text-slate-400"
                   }`}
                 >
-                  <span className={`h-1.5 w-1.5 rounded-full ${live ? "animate-ping bg-emerald-400" : "bg-slate-500"}`} /> {live ? "Live" : "Terputus"}
+                  <span className={`h-1.5 w-1.5 rounded-full ${live ? "bg-emerald-400" : "bg-slate-500"}`} /> {live ? "Live" : "Terputus"}
                 </span>
               </div>
               <p className="mb-4 text-xs text-slate-400">Catatan pelanggaran terbaru, diperbarui otomatis tiap 15 detik.</p>
@@ -473,7 +477,7 @@ function DashboardSection({ pel, live }: { pel: PelanggaranData; live: boolean }
   );
 }
 
-/* ------------------------------------------------------------ Halaman */
+/* Halaman */
 
 export default function HomeDashboard({ data, tasks, today }: { data: HomeData; tasks: TaskItem[]; today: string }) {
   const [pel, setPel] = useState(data.pelanggaran);

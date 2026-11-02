@@ -136,13 +136,13 @@ export function compose(items: QItem[], s: NotifSettings, origin: string): { mes
     for (let i = 0; i < list.length; i += PER_MESSAGE) {
       const part = list.slice(i, i + PER_MESSAGE);
       const ids = part.flatMap((it) => [it.id, ...(extraIds.get(it.id) ?? [])]);
-      const body = part.map(text).join("\n\n— — —\n\n");
+      const body = part.map(text).join("\n\n· · ·\n\n");
       messages.push({ ids, type, text: list.length > 1 ? `📋 *${list.length} ${NOTIF_DEF[type].plural}*\n\n${body}` : body });
     }
   }
   // Contoh dari Panel Admin dikirim satu per satu (tidak digabung dengan laporan asli).
   for (const it of kept.filter((x) => x.test))
-    messages.push({ ids: [it.id], type: it.type, text: `🧪 *PESAN UJI — abaikan*\n\n${text(it)}` });
+    messages.push({ ids: [it.id], type: it.type, text: `🧪 *PESAN UJI (abaikan)*\n\n${text(it)}` });
   return { messages, drop };
 }
 

@@ -111,7 +111,7 @@ export default function InventarisAdmin() {
               setQ("");
               setD({ ...d, items: [{ id: newId(), nama: "", jumlah: 1, kondisi: "baik", lokasi: "", catatan: "" }, ...d.items] });
             }}
-            className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#0b1e3d] px-4 text-sm font-semibold text-white hover:bg-[#1b3a6b] dark:bg-[#2e9be0] dark:text-[#061227]"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#0b1e3d] px-4 text-sm font-semibold text-white hover:bg-[#1b3a6b] dark:bg-[#2e9be0] dark:text-[#061227]"
           >
             <PackagePlus size={16} /> Tambah barang
           </button>
@@ -152,7 +152,7 @@ export default function InventarisAdmin() {
                       disabled={out > 0}
                       title={out > 0 ? "Masih ada yang dipinjam" : "Hapus barang"}
                       onClick={() => confirm(`Hapus "${it.nama || "barang ini"}" beserta riwayat pinjamnya?`) && setD({ items: d.items.filter((x) => x.id !== it.id), loans: d.loans.filter((l) => l.itemId !== it.id) })}
-                      className={`${smallBtn} grid h-9 w-9 place-items-center !p-0 text-bad`}
+                      className={`${smallBtn} grid h-11 w-11 place-items-center !p-0 text-bad`}
                       aria-label={`Hapus ${it.nama}`}
                     >
                       <Trash2 size={14} />
@@ -171,7 +171,7 @@ export default function InventarisAdmin() {
           <label className="space-y-1">
             <span className="block text-sm font-semibold text-ink-2">Barang</span>
             <select value={form.itemId} onChange={(e) => setForm({ ...form, itemId: e.target.value })} className={input}>
-              <option value="">— pilih barang —</option>
+              <option value="">Pilih barang</option>
               {d.items
                 .filter((it) => it.nama && it.kondisi !== "hilang")
                 .map((it) => (
@@ -207,7 +207,7 @@ export default function InventarisAdmin() {
             <input value={form.catatan} onChange={(e) => setForm({ ...form, catatan: e.target.value })} placeholder="mis. untuk presentasi" maxLength={200} className={input} />
           </label>
           <div className="flex flex-wrap items-center gap-3 sm:col-span-2 lg:col-span-3">
-            <button className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#0b1e3d] px-4 text-sm font-semibold text-white hover:bg-[#1b3a6b] dark:bg-[#2e9be0] dark:text-[#061227]">Catat peminjaman</button>
+            <button className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#0b1e3d] px-4 text-sm font-semibold text-white hover:bg-[#1b3a6b] dark:bg-[#2e9be0] dark:text-[#061227]">Catat peminjaman</button>
             {formErr && <p className="text-sm font-semibold text-bad">{formErr}</p>}
           </div>
         </form>

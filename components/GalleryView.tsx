@@ -40,11 +40,11 @@ export default function GalleryView({ items }: { items: GalleryItem[] }) {
             className="group mb-4 block w-full break-inside-avoid k2-card overflow-hidden text-left"
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={it.src} alt={it.caption || "Foto kelas"} loading="lazy" className="w-full transition duration-500 group-hover:scale-[1.03]" />
+            <img width={1600} height={1200} src={it.src} alt={it.caption || "Foto kelas"} loading="lazy" className="w-full transition duration-500 group-hover:scale-[1.03] h-auto" />
             {(it.caption || it.at) && (
               <div className="px-4 py-3">
                 {it.caption && <p className="text-sm font-semibold text-slate-800">{it.caption}</p>}
-                <p className="text-xs text-slate-400">{fmt(it.at)}</p>
+                <p className="text-xs text-ink-3">{fmt(it.at)}</p>
               </div>
             )}
           </button>
@@ -82,7 +82,7 @@ export default function GalleryView({ items }: { items: GalleryItem[] }) {
           )}
           <figure className="max-h-full max-w-5xl" onClick={(e) => e.stopPropagation()}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={cur.src} alt={cur.caption || "Foto kelas"} className="max-h-[80vh] rounded-2xl object-contain" />
+            <img width={1600} height={1200} src={cur.src} alt={cur.caption || "Foto kelas"} className="max-h-[80vh] rounded-2xl object-contain h-auto w-auto" />
             <figcaption className="mt-3 text-center text-sm text-white/90">
               {cur.caption} <span className="text-white/50">{fmt(cur.at)}</span>
             </figcaption>

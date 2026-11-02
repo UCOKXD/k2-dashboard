@@ -92,7 +92,7 @@ export default function ProfileView({ absen }: { absen: number }) {
   return (
     <div className="mx-auto max-w-4xl space-y-8">
       {dev && <DevEasterEgg />}
-      <Link href="/profil" className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent-ink">
+      <Link href="/profil" className="inline-flex min-h-11 items-center gap-1.5 text-sm font-semibold text-accent-ink">
         <Users size={15} /> Semua teman sekelas
       </Link>
       {dev && <DevTitle />}
@@ -103,7 +103,7 @@ export default function ProfileView({ absen }: { absen: number }) {
         ) : (
           <span className="relative grid h-28 w-28 shrink-0 place-items-center self-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-4xl font-bold text-white ring-4 ring-accent-soft sm:self-start">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            {data.avatar ? <img src={`/api/avatar/${data.absen}?v=${data.avatar}`} alt={`Foto profil ${data.panggilan}`} className="h-full w-full object-cover" /> : data.panggilan[0]}
+            {data.avatar ? <img width={320} height={320} src={`/api/avatar/${data.absen}?v=${data.avatar}`} alt={`Foto profil ${data.panggilan}`} className="h-full w-full object-cover" /> : data.panggilan[0]}
           </span>
         )}
         <div className="min-w-0 flex-1 space-y-3 text-center sm:text-left">
@@ -127,7 +127,7 @@ export default function ProfileView({ absen }: { absen: number }) {
               </span>
             )}
             {data.own && (
-              <Link href="/akun" className="inline-flex min-h-10 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink hover:border-ink-3">
+              <Link href="/akun" className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink hover:border-ink-3">
                 <Pencil size={15} /> Edit profil
               </Link>
             )}
@@ -160,7 +160,7 @@ export default function ProfileView({ absen }: { absen: number }) {
               <li key={p.id}>
                 <button type="button" onClick={() => setOpen(i)} className="block aspect-square w-full overflow-hidden rounded-k2-md bg-surface-2" aria-label={`Buka foto ${i + 1}`}>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={postSrc(data.absen, p.id)} alt="" loading="lazy" className="h-full w-full object-cover transition duration-300 hover:scale-[1.03]" />
+                  <img width={800} height={800} src={postSrc(data.absen, p.id)} alt="" loading="lazy" className="h-full w-full object-cover transition duration-300 hover:scale-[1.03]" />
                 </button>
               </li>
             ))}
@@ -185,7 +185,7 @@ export default function ProfileView({ absen }: { absen: number }) {
           )}
           <figure className="max-h-full max-w-3xl" onClick={(e) => e.stopPropagation()}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={postSrc(data.absen, cur.id)} alt={`Foto ${data.panggilan}`} className="max-h-[78vh] rounded-k2-lg object-contain" />
+            <img width={1200} height={1200} src={postSrc(data.absen, cur.id)} alt={`Foto ${data.panggilan}`} className="max-h-[78vh] rounded-k2-lg object-contain h-auto w-auto" />
             <figcaption className="mt-3 flex items-center justify-center gap-3 text-sm text-white/85">
               <span className="font-mono">{tgl(cur.at)}</span>
               {canDelete && (

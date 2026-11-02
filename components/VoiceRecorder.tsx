@@ -290,7 +290,7 @@ export default function VoiceRecorder() {
 
         <div className="flex flex-col items-center gap-5 py-2 text-center">
           <p className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-[0.14em] text-ink-3" aria-live="polite">
-            <span className={`h-2.5 w-2.5 rounded-full ${state === "rec" ? "animate-pulse bg-rose-500" : state === "paused" ? "bg-amber-500" : "bg-line-strong"}`} aria-hidden="true" />
+            <span className={`h-2.5 w-2.5 rounded-full ${state === "rec" ? "bg-rose-600" : state === "paused" ? "bg-amber-500" : "bg-line-strong"}`} aria-hidden="true" />
             {state === "rec" ? "Merekam" : state === "paused" ? "Dijeda" : state === "saving" ? "Menyiapkan file…" : "Siap merekam"}
           </p>
           <p className="font-display text-[clamp(56px,12vw,96px)] font-extrabold leading-none tracking-[-0.03em] text-ink tabular-nums" role="timer">

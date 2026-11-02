@@ -167,7 +167,7 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
         <div className="flex items-center justify-between">
           <h3 className="font-bold">Sudah dipanggil bulan ini</h3>
           {user && (
-            <button onClick={reset} className="text-sm text-sea-600 underline">
+            <button onClick={reset} className="inline-flex min-h-11 items-center px-2 text-sm font-semibold text-accent-ink underline">
               Reset
             </button>
           )}
@@ -180,9 +180,9 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
                 value={manualName}
                 onChange={(e) => setManualName(e.target.value)}
                 aria-label="Nama yang sudah berdoa"
-                className="min-w-0 flex-[1_1_12rem] rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-sea-500"
+                className="min-h-11 min-w-0 flex-[1_1_12rem] rounded-k2-md border border-line-strong bg-surface px-3 text-sm text-ink focus:border-sea-500"
               >
-                <option value="">— pilih nama —</option>
+                <option value="">Pilih nama</option>
                 {pool.map((n) => (
                   <option key={n} value={n}>
                     {n}
@@ -193,7 +193,7 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
                 value={manualDate}
                 onChange={(e) => setManualDate(e.target.value)}
                 aria-label="Tanggal berdoa"
-                className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 outline-none focus:border-sea-500"
+                className="min-h-11 rounded-k2-md border border-line-strong bg-surface px-3 text-sm text-ink focus:border-sea-500"
               >
                 {Array.from({ length: Number(todayJkt().slice(8)) }, (_, i) => {
                   const d = `${todayJkt().slice(0, 7)}-${String(i + 1).padStart(2, "0")}`;

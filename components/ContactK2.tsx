@@ -13,7 +13,7 @@ export default function ContactK2({ text }: { text: string }) {
         href={WA_K2}
         target="_blank"
         rel="noopener noreferrer"
-        className="flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-2 text-sm font-bold text-white shadow-[0_10px_24px_rgba(16,185,129,0.35)] transition hover:-translate-y-0.5 hover:bg-emerald-600"
+        className="flex min-h-11 items-center gap-2 rounded-k2-md bg-[#047857] px-5 text-sm font-bold text-white transition hover:bg-[#065f46]"
       >
         <MessageCircle size={16} /> Hubungi K2
         <span className="font-mono text-xs font-semibold text-white/90">{WA_K2_TEXT}</span>

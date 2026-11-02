@@ -72,7 +72,7 @@ export default function ProfilePhoto() {
     <div className="flex flex-wrap items-center gap-5">
       <span className="relative grid h-24 w-24 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-sea-500 to-navy-700 font-display text-3xl font-bold text-white">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        {src ? <img src={src} alt={`Foto profil ${user.panggilan}`} className="h-full w-full object-cover" /> : user.panggilan[0]}
+        {src ? <img width={320} height={320} src={src} alt={`Foto profil ${user.panggilan}`} className="h-full w-full object-cover" /> : user.panggilan[0]}
       </span>
       <div className="min-w-0 flex-1 space-y-2.5">
         <div className="flex flex-wrap gap-2">
@@ -80,7 +80,7 @@ export default function ProfilePhoto() {
             type="button"
             disabled={busy || locked}
             onClick={() => input.current?.click()}
-            className="inline-flex min-h-10 items-center gap-2 rounded-full bg-[#0b1e3d] px-4 text-sm font-semibold text-white transition hover:bg-[#1b3a6b] disabled:cursor-not-allowed disabled:opacity-45 dark:bg-[#2e9be0] dark:text-[#061227]"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-[#0b1e3d] px-4 text-sm font-semibold text-white transition hover:bg-[#1b3a6b] disabled:cursor-not-allowed disabled:opacity-45 dark:bg-[#2e9be0] dark:text-[#061227]"
           >
             <Camera size={16} /> {busy ? "Memproses..." : src ? "Ganti foto" : "Pasang foto"}
           </button>
@@ -89,7 +89,7 @@ export default function ProfilePhoto() {
               type="button"
               disabled={busy || locked}
               onClick={remove}
-              className="inline-flex min-h-10 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-bad transition hover:border-bad disabled:opacity-45"
+              className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-bad transition hover:border-bad disabled:opacity-45"
             >
               <Trash2 size={15} /> Hapus
             </button>

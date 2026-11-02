@@ -32,7 +32,7 @@ function MessageCard({ m, onDelete, sid }: { m: Message; onDelete?: () => void; 
     <div className="space-y-2 rounded-2xl border border-slate-200 bg-white p-4 text-sm">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <p className="flex items-center gap-1.5 font-semibold text-slate-800">
-          {m.anon ? <EyeOff size={14} className="text-slate-400" /> : <UserRound size={14} className="text-sea-600" />}
+          {m.anon ? <EyeOff size={14} className="text-ink-3" /> : <UserRound size={14} className="text-sea-600" />}
           Dari {m.sender.nama} ({m.sender.panggilan}) → {nama(m.to)?.short}
           <span className={`rounded-full px-2 py-0.5 text-[11px] font-semibold ${m.anon ? "bg-slate-100 text-slate-600" : "bg-sea-50 text-sea-600"}`}>{m.anon ? "dikirim anonim" : "pakai nama"}</span>
         </p>
@@ -50,7 +50,7 @@ function MessageCard({ m, onDelete, sid }: { m: Message; onDelete?: () => void; 
       </p>
       {m.foto && sid && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img src={`/api/ngl/foto?sid=${sid}&id=${m.id}&to=${m.to}`} alt="Foto lampiran" loading="lazy" className="max-h-60 rounded-xl object-contain" />
+        <img width={800} height={600} src={`/api/ngl/foto?sid=${sid}&id=${m.id}&to=${m.to}`} alt="Foto lampiran" loading="lazy" className="max-h-60 rounded-xl object-contain h-auto w-auto" />
       )}
       {m.tambahan && (
         <p>

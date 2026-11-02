@@ -39,7 +39,7 @@ export default function GalleryEditor() {
         {d.map((it) => (
           <div key={it.id} className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-md">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={it.src} alt={it.caption || "Foto"} className="aspect-video w-full object-cover" />
+            <img width={1600} height={900} src={it.src} alt={it.caption || "Foto"} className="aspect-video w-full object-cover" />
             <div className="flex gap-2 p-2">
               <input value={it.caption} onChange={(e) => c.setDraft(d.map((x) => (x.id === it.id ? { ...x, caption: e.target.value } : x)))} placeholder="Keterangan foto" className={input} />
               <button onClick={() => c.setDraft(d.filter((x) => x.id !== it.id))} className={`${smallBtn} text-rose-600`} aria-label="Hapus foto">

@@ -96,7 +96,7 @@ export default function HomeCards({ cards }: { cards: Cards }) {
                 <span className={META}>{now ? "Tidak ada kelas minggu ini." : "Memuat..."}</span>
               )}
             </Link>
-            <Link href="/doa-harian" className="group mt-3 flex items-center gap-2 border-t border-line pt-3 text-[13.5px]">
+            <Link href="/doa-harian" className="group mt-3 flex min-h-11 items-center gap-2 border-t border-line pt-1 text-[13.5px]">
               <BookOpenCheck size={16} className="shrink-0 text-accent-ink" />
               <span className="min-w-0 truncate text-ink-3">
                 Petugas doa:{" "}

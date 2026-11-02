@@ -100,7 +100,7 @@ export default function YearCalendar({
           <button
             onClick={() => (view === "bulan" ? shift(-1) : setYear((y) => Math.max(FIRST_YEAR, y - 1)))}
             disabled={view === "bulan" ? year === FIRST_YEAR && month === 0 : year === FIRST_YEAR}
-            className="rounded-full border border-slate-200 bg-white p-2 shadow-[0_6px_16px_rgba(15,23,42,0.15)] transition hover:bg-sea-50 disabled:opacity-40"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-k2-md border border-line-strong bg-surface text-ink transition hover:bg-surface-2 disabled:opacity-40"
             aria-label="Sebelumnya"
           >
             <ChevronLeft size={18} />
@@ -108,7 +108,7 @@ export default function YearCalendar({
           <p className="min-w-[11rem] text-center text-xl font-extrabold text-navy-900">{view === "bulan" ? `${MONTHS[month]} ${year}` : year}</p>
           <button
             onClick={() => (view === "bulan" ? shift(1) : setYear((y) => y + 1))}
-            className="rounded-full border border-slate-200 bg-white p-2 shadow-[0_6px_16px_rgba(15,23,42,0.15)] transition hover:bg-sea-50"
+            className="grid h-11 w-11 shrink-0 place-items-center rounded-k2-md border border-line-strong bg-surface text-ink transition hover:bg-surface-2"
             aria-label="Berikutnya"
           >
             <ChevronRight size={18} />
@@ -118,12 +118,12 @@ export default function YearCalendar({
               setYear(Math.max(ty, FIRST_YEAR));
               setMonth(ty < FIRST_YEAR ? 0 : tm - 1);
             }}
-            className="ml-1 rounded-full bg-navy-900 px-3.5 py-2 text-xs font-semibold text-white shadow"
+            className="ml-1 inline-flex min-h-11 items-center rounded-k2-md bg-[#0b1e3d] px-4 text-sm font-semibold text-white hover:bg-[#1b3a6b] dark:bg-[#2e9be0] dark:text-[#061227]"
           >
             Hari ini
           </button>
         </div>
-        <div className="flex gap-1 rounded-full border border-slate-200 bg-slate-100 p-1">
+        <div className="flex gap-1 rounded-k2-md border border-line bg-surface-2 p-1">
           {(
             [
               ["bulan", "Bulan", CalendarDays],
@@ -133,7 +133,7 @@ export default function YearCalendar({
             <button
               key={id}
               onClick={() => setView(id)}
-              className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition ${view === id ? "bg-white text-sea-600 shadow" : "text-slate-600"}`}
+              className={`flex min-h-11 items-center gap-1.5 rounded-k2-md px-3.5 text-sm font-semibold transition ${view === id ? "bg-surface text-accent-ink shadow-1" : "text-ink-2 hover:text-ink"}`}
             >
               <Icon size={14} /> {label}
             </button>
@@ -152,7 +152,7 @@ export default function YearCalendar({
           </span>
         )}
         {schedule.length > 0 && (
-          <label className="flex cursor-pointer items-center gap-1.5">
+          <label className="flex min-h-11 cursor-pointer items-center gap-1.5">
             <input type="checkbox" checked={showKuliah} onChange={(e) => setShowKuliah(e.target.checked)} className="accent-sky-600" />
             <span className="h-2.5 w-2.5 rounded-full bg-sky-200 ring-1 ring-sky-500" /> Jadwal kuliah (tidak tampil di hari libur nasional)
           </label>
@@ -196,7 +196,7 @@ export default function YearCalendar({
                         <p
                           key={t.id}
                           title={`${t.judul}${t.matkul ? ` · ${t.matkul}` : ""} · ${DIFFICULTY[t.difficulty].label}${t.jam ? ` · pukul ${jam(t.jam)}` : ""} · ${daysLabel(u.days)}`}
-                          className={`mt-1 truncate rounded-md px-1.5 py-0.5 text-[10px] font-bold shadow-sm sm:text-[11px] ${URGENCY[u.level].chip} ${u.level === "urgent" ? "animate-pulse" : ""}`}
+                          className={`mt-1 truncate rounded-md px-1.5 py-0.5 text-[10px] font-bold shadow-sm sm:text-[11px] ${URGENCY[u.level].chip}`}
                         >
                           {u.level === "urgent" ? "URGENT · " : ""}
                           {t.judul}
@@ -227,7 +227,7 @@ export default function YearCalendar({
           <div className="grid gap-4 md:grid-cols-2">
             <div className="k2-card p-5">
               <h3 className="mb-3 font-bold text-slate-800">Acara & ulang tahun bulan ini</h3>
-              {monthEv.length === 0 && monthBd.length === 0 && <p className="text-sm text-slate-400">Belum ada acara.</p>}
+              {monthEv.length === 0 && monthBd.length === 0 && <p className="text-sm text-ink-3">Belum ada acara.</p>}
               <ul className="space-y-2">
                 {/* Acara dan ulang tahun digabung, urut tanggal. */}
                 {[
@@ -254,7 +254,7 @@ export default function YearCalendar({
             </div>
             <div className="k2-card p-5">
               <h3 className="mb-3 font-bold text-slate-800">Libur & cuti bersama bulan ini</h3>
-              {monthHol.length === 0 && <p className="text-sm text-slate-400">Tidak ada libur nasional.</p>}
+              {monthHol.length === 0 && <p className="text-sm text-ink-3">Tidak ada libur nasional.</p>}
               <ul className="space-y-2">
                 {monthHol.map((h) => (
                   <li key={h.date} className="flex gap-3 text-sm">
@@ -280,7 +280,7 @@ export default function YearCalendar({
               <p className="mb-2 font-bold text-navy-900">{name}</p>
               <div className="grid grid-cols-7 gap-y-0.5 text-center text-[11px]">
                 {DAYS.map((d, i) => (
-                  <span key={d} className={`font-bold ${i === 0 ? "text-red-600" : "text-slate-400"}`}>
+                  <span key={d} className={`font-bold ${i === 0 ? "text-red-600" : "text-ink-3"}`}>
                     {d[0]}
                   </span>
                 ))}

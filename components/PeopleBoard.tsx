@@ -54,7 +54,7 @@ function Person({ c, i, big }: { c: Card; i: number; big?: boolean }) {
           className={`relative z-[1] grid h-full w-full place-items-center overflow-hidden rounded-full bg-accent-soft transition duration-300 group-hover:shadow-3 ${dev ? "" : "ring-1 ring-line group-hover:ring-4 group-hover:ring-accent-soft"}`}
         >
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          {src ? <img src={src} alt="" loading="lazy" className="h-full w-full object-cover" /> : <span className="font-display text-[clamp(40px,6vw,64px)] font-bold text-accent-ink">{(s?.short ?? c.nama)[0]}</span>}
+          {src ? <img width={320} height={320} src={src} alt="" loading="lazy" className="h-full w-full object-cover" /> : <span className="font-display text-[clamp(40px,6vw,64px)] font-bold text-accent-ink">{(s?.short ?? c.nama)[0]}</span>}
         </span>
         {dev && <DevMascotFront />}
       </span>

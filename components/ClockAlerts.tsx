@@ -135,7 +135,7 @@ export function ClockAlertsLayer({ alerts, full }: { alerts: ReturnType<typeof u
   return (
     <>
       {needTap && (
-        <p className="absolute left-4 top-4 z-30 flex items-center gap-1.5 rounded-full bg-amber-300 px-3 py-1.5 text-xs font-bold text-navy-900 shadow">
+        <p className="absolute left-4 top-4 z-30 flex max-w-[calc(100%-8.5rem)] items-center gap-1.5 rounded-k2-md bg-amber-300 px-3 py-1.5 text-xs font-bold text-[#0b1e3d] sm:max-w-none">
           <BellRing size={14} /> Klik layar sekali supaya bel bisa berbunyi
         </p>
       )}

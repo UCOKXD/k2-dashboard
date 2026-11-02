@@ -18,7 +18,7 @@ export async function cmd<T>(...args: (string | number)[]): Promise<T> {
   return ((await res.json()) as { result: T }).result;
 }
 
-/* ------------------------------------------------------------ Dokumen JSON */
+/* Dokumen JSON */
 
 export async function getJSON<T>(key: string, fallback: T): Promise<T> {
   if (!storeReady) return fallback;
@@ -56,7 +56,7 @@ export async function listJSON<T>(key: string, count = 300): Promise<T[]> {
   }
 }
 
-/* ------------------------------------------------------------ Doa harian */
+/* Doa harian */
 
 // at = ISO waktu acak, by = panggilan admin, manual = ditambahkan admin di luar acak (sudah berdoa sebelumnya)
 export type DoaPick = { name: string; nim: string; at: string; by?: string; manual?: boolean };

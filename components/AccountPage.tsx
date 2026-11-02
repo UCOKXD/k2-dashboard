@@ -15,7 +15,7 @@ export default function AccountPage() {
   if (!user)
     return (
       <div className="k2-card mx-auto max-w-md space-y-4 p-8 text-center">
-        <Lock className="mx-auto text-slate-400" />
+        <Lock className="mx-auto text-ink-3" />
         <p className="font-semibold text-slate-700">Masuk dulu untuk membuka halaman akun.</p>
         <Link href="/masuk" className="inline-block rounded-full bg-navy-900 px-6 py-2.5 text-sm font-semibold text-white shadow">
           Masuk
@@ -31,7 +31,7 @@ export default function AccountPage() {
           <h1 className="mt-3 text-[clamp(32px,4.5vw,48px)] font-extrabold leading-none tracking-[-0.03em]">Edit profil</h1>
           <p className="mt-2 text-[15px] text-ink-3">Halo, {user.panggilan}!</p>
         </div>
-        <Link href={`/profil/${user.absen}`} className="inline-flex min-h-10 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink hover:border-ink-3">
+        <Link href={`/profil/${user.absen}`} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink hover:border-ink-3">
           <Eye size={15} /> Lihat profilku
         </Link>
       </div>
@@ -64,7 +64,7 @@ export default function AccountPage() {
           </div>
         </dl>
         {user.admin && (
-          <Link href="/admin" className="flex w-fit items-center gap-1.5 rounded-full border border-slate-200 bg-white/80 px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm">
+          <Link href="/admin" className="flex min-h-11 w-fit items-center gap-1.5 rounded-k2-md border border-line-strong bg-surface px-4 text-sm font-semibold text-ink hover:border-ink-3">
             <LayoutDashboard size={15} /> Buka Panel Admin
           </Link>
         )}

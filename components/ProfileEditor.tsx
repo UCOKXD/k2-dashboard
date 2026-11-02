@@ -11,7 +11,7 @@ import { input } from "@/components/admin/ui";
 
 const BIO_MAX = 150;
 const btn =
-  "inline-flex min-h-10 items-center gap-2 rounded-full bg-[#0b1e3d] px-4 text-sm font-semibold text-white transition hover:bg-[#1b3a6b] disabled:cursor-not-allowed disabled:opacity-45 dark:bg-[#2e9be0] dark:text-[#061227]";
+  "inline-flex min-h-11 items-center gap-2 rounded-full bg-[#0b1e3d] px-4 text-sm font-semibold text-white transition hover:bg-[#1b3a6b] disabled:cursor-not-allowed disabled:opacity-45 dark:bg-[#2e9be0] dark:text-[#061227]";
 
 function Status({ msg }: { msg: { ok: boolean; text: string } | null }) {
   if (!msg) return null;
@@ -162,7 +162,7 @@ export function ProfileInfoEditor() {
             <input value={ig} onChange={(e) => setIg(e.target.value)} maxLength={60} autoCapitalize="none" spellCheck={false} placeholder="username instagram" className={`${input} w-full max-w-xs font-mono`} />
           </span>
         </label>
-        <label className="flex items-center gap-2.5 text-sm text-ink-2">
+        <label className="flex min-h-11 items-center gap-2.5 text-sm text-ink-2">
           <input type="checkbox" checked={showIg} disabled={!handle} onChange={(e) => setShowIg(e.target.checked)} className="h-4 w-4 accent-[#dd2a7b]" />
           Tampilkan tombol Instagram di profilku
         </label>
@@ -179,7 +179,7 @@ export function ProfileInfoEditor() {
             <input value={tt} onChange={(e) => setTt(e.target.value)} maxLength={60} autoCapitalize="none" spellCheck={false} placeholder="username tiktok" className={`${input} w-full max-w-xs font-mono`} />
           </span>
         </label>
-        <label className="flex items-center gap-2.5 text-sm text-ink-2">
+        <label className="flex min-h-11 items-center gap-2.5 text-sm text-ink-2">
           <input type="checkbox" checked={showTt} disabled={!ttHandle} onChange={(e) => setShowTt(e.target.checked)} className="h-4 w-4 accent-[#fe2c55]" />
           Tampilkan tombol TikTok di profilku
         </label>
@@ -202,7 +202,7 @@ export function ProfileInfoEditor() {
           />
           <span className="block text-xs text-ink-3">Tempel link profil LinkedIn-mu, atau ketik bagian setelah /in/.</span>
         </label>
-        <label className="flex items-center gap-2.5 text-sm text-ink-2">
+        <label className="flex min-h-11 items-center gap-2.5 text-sm text-ink-2">
           <input type="checkbox" checked={showLi} disabled={!liHandle} onChange={(e) => setShowLi(e.target.checked)} className="h-4 w-4 accent-[#0a66c2]" />
           Tampilkan tombol LinkedIn di profilku
         </label>
@@ -234,8 +234,8 @@ export function ProfileInfoEditor() {
             {data.posts.map((p) => (
               <li key={p.id} className="relative">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={postSrc(user.absen, p.id)} alt="" className="aspect-square w-full rounded-k2-md object-cover" />
-                <button type="button" onClick={() => remove(p.id)} aria-label="Hapus foto" className="absolute right-1.5 top-1.5 grid h-8 w-8 place-items-center rounded-full bg-black/60 text-white hover:bg-rose-600">
+                <img width={800} height={800} src={postSrc(user.absen, p.id)} alt="" className="aspect-square w-full rounded-k2-md object-cover" />
+                <button type="button" onClick={() => remove(p.id)} aria-label="Hapus foto" className="absolute right-1 top-1 grid h-11 w-11 place-items-center rounded-full bg-black/60 text-white hover:bg-rose-600">
                   <Trash2 size={14} />
                 </button>
               </li>

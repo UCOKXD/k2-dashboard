@@ -86,12 +86,12 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
         </div>
         <div className="flex gap-2 text-sm">
           {can(user, "doa") && (
-            <Link href="/doa-harian" className="flex min-h-10 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 font-semibold text-ink transition hover:border-ink-3">
+            <Link href="/doa-harian" className="flex min-h-11 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 font-semibold text-ink transition hover:border-ink-3">
               <BookOpen size={15} /> Acak Doa
             </Link>
           )}
           {can(user, "tempat_duduk") && (
-            <Link href="/tempat-duduk" className="flex min-h-10 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 font-semibold text-ink transition hover:border-ink-3">
+            <Link href="/tempat-duduk" className="flex min-h-11 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 font-semibold text-ink transition hover:border-ink-3">
               <Armchair size={15} /> Atur Tempat Duduk
             </Link>
           )}
@@ -111,7 +111,7 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
             role="tab"
             aria-selected={t.id === tab.id}
             onClick={() => router.replace(`${path}?tab=${t.id}`, { scroll: false })}
-            className={`flex h-10 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold transition ${
+            className={`flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold transition ${
               t.id === tab.id ? "bg-[#0b1e3d] text-white dark:bg-[#2e9be0] dark:text-[#061227]" : "text-ink-3 hover:bg-surface-2 hover:text-ink"
             }`}
           >

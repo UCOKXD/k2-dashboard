@@ -126,7 +126,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
             </button>
           </>
         )}
-        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Cari nama..." className="rounded-lg border border-sea-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-sea-500" />
+        <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Cari nama" aria-label="Cari nama di denah" className="min-h-11 rounded-k2-md border border-line-strong bg-surface px-3 text-sm text-ink" />
       </div>
 
       {admin ? (
@@ -163,16 +163,18 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
             const s = STUDENTS[order[i]];
             const hit = q !== "" && s.full.toLowerCase().includes(q.toLowerCase());
             const isPrio = prio.includes(order[i]);
+            // Hanya admin yang bisa menukar kursi; pengunjung melihat denah (bukan tombol).
+            const Seat = admin ? motion.button : motion.div;
             return (
-              <motion.button
+              <Seat
                 key={order[i]}
                 layout
                 transition={{ type: "spring", stiffness: 260, damping: 28 }}
                 whileTap={admin ? { scale: 0.95 } : undefined}
-                onClick={() => tap(i)}
+                onClick={admin ? () => tap(i) : undefined}
                 title={isPrio ? `${s.full} (wajib depan)` : s.full}
                 style={{ gridRow: p.r, gridColumn: p.c }}
-                className={`relative rounded-lg border px-1 text-xs font-medium shadow-[0_4px_10px_rgba(15,23,42,0.12)] transition-colors ${admin ? "" : "cursor-default"} ${
+                className={`relative rounded-lg border px-1 text-xs font-medium shadow-[0_4px_10px_rgba(15,23,42,0.12)] transition-colors ${
                   picked === i
                     ? "border-axo-500 bg-axo-300"
                     : hit
@@ -186,7 +188,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
               >
                 {isPrio && <Star size={10} className="absolute right-1 top-1 fill-amber-400 text-amber-500" />}
                 {s.short}
-              </motion.button>
+              </Seat>
             );
           })}
         </div>
@@ -217,14 +219,14 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
           {prio.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {prio.map((st) => (
-                <button key={st} onClick={() => togglePrio(st)} className="flex items-center gap-1 rounded-full border border-amber-300 bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-900 shadow-sm hover:bg-amber-200">
+                <button key={st} onClick={() => togglePrio(st)} className="flex min-h-11 items-center gap-1 rounded-full border border-amber-300 bg-amber-100 px-3.5 text-sm font-semibold text-amber-900 shadow-sm hover:bg-amber-200">
                   {STUDENTS[st].full} <X size={12} />
                 </button>
               ))}
             </div>
           )}
 
-          <input value={pq} onChange={(e) => setPq(e.target.value)} placeholder="Cari nama untuk ditambahkan..." className="w-full max-w-xs rounded-lg border border-sea-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-sea-500" />
+          <input value={pq} onChange={(e) => setPq(e.target.value)} placeholder="Cari nama untuk ditambahkan" aria-label="Cari nama untuk ditambahkan" className="min-h-11 w-full max-w-xs rounded-k2-md border border-line-strong bg-surface px-3 text-sm text-ink focus:ring-2 focus:ring-sea-500" />
           <div className="flex max-h-56 flex-wrap gap-2 overflow-y-auto">
             {candidates.map((s) => {
               const on = prio.includes(s.i);
@@ -233,7 +235,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
                   key={s.i}
                   onClick={() => togglePrio(s.i)}
                   disabled={busy}
-                  className={`rounded-full border px-3 py-1 text-xs font-medium transition ${on ? "border-amber-400 bg-amber-400 text-white shadow" : "border-sea-300 bg-sea-50 text-navy-900 hover:bg-sea-100"}`}
+                  className={`min-h-11 rounded-full border px-3.5 text-sm font-medium transition ${on ? "border-amber-400 bg-amber-400 text-white shadow" : "border-sea-300 bg-sea-50 text-navy-900 hover:bg-sea-100"}`}
                 >
                   {s.absen}. {s.full}
                 </button>

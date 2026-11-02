@@ -49,7 +49,7 @@ export default function SiteFooter() {
           href={WA_K2}
           target="_blank"
           rel="noopener noreferrer"
-          className="flex min-h-11 w-full items-center justify-center gap-2 rounded-full sm:w-auto bg-emerald-500 px-5 text-sm font-bold text-white transition hover:bg-emerald-600"
+          className="flex min-h-11 w-full items-center justify-center gap-2 rounded-full sm:w-auto bg-[#047857] px-5 text-sm font-bold text-white transition hover:bg-[#065f46]"
         >
           <MessageCircle size={17} /> Hubungi K2
           <span className="font-mono text-xs font-semibold text-white/90">{WA_K2_TEXT}</span>

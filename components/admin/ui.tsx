@@ -8,9 +8,9 @@ import Sticker from "@/components/Sticker";
 
 // Gaya isian tanpa lebar (inputBase) dan versi selebar kolom (input).
 export const inputBase =
-  "min-h-[42px] rounded-k2-md border border-line-strong bg-surface px-3 py-2 text-sm text-ink outline-none transition hover:border-ink-3 focus:border-sea-500 focus:shadow-[0_0_0_3px_rgba(46,155,224,0.25)]";
+  "min-h-11 rounded-k2-md border border-line-strong bg-surface px-3 py-2 text-sm text-ink outline-none transition hover:border-ink-3 focus:border-sea-500 focus:shadow-[0_0_0_3px_rgba(46,155,224,0.25)]";
 export const input = `w-full ${inputBase}`;
-export const smallBtn = "rounded-full border border-line-strong bg-surface px-3 py-1.5 text-xs font-semibold text-ink transition hover:border-ink-3 disabled:opacity-40";
+export const smallBtn = "inline-flex min-h-11 min-w-11 items-center justify-center rounded-k2-md border border-line-strong bg-surface px-3 text-xs font-semibold text-ink transition hover:border-ink-3 disabled:opacity-40 md:min-h-9";
 
 export function Panel({ title, desc, children }: { title: string; desc?: string; children: React.ReactNode }) {
   return (
@@ -85,10 +85,10 @@ export function SaveBar({ dirty, saving, status, onSave, onReset }: { dirty: boo
           {status?.text ?? (dirty ? "Ada perubahan yang belum disimpan." : "Tidak ada perubahan.")}
         </p>
         <div className="flex gap-2">
-          <button onClick={onReset} disabled={!dirty || saving} className="flex min-h-10 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink transition hover:border-ink-3 disabled:cursor-not-allowed disabled:opacity-45">
+          <button onClick={onReset} disabled={!dirty || saving} className="flex min-h-11 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink transition hover:border-ink-3 disabled:cursor-not-allowed disabled:opacity-45">
             <Undo2 size={14} /> Batalkan
           </button>
-          <button onClick={onSave} disabled={!dirty || saving} className="flex min-h-10 items-center gap-1.5 rounded-full bg-[#0b1e3d] px-5 text-sm font-semibold text-white transition hover:bg-[#1b3a6b] disabled:cursor-not-allowed disabled:opacity-45 dark:bg-[#2e9be0] dark:text-[#061227] dark:hover:bg-[#8fcff1]">
+          <button onClick={onSave} disabled={!dirty || saving} className="flex min-h-11 items-center gap-1.5 rounded-full bg-[#0b1e3d] px-5 text-sm font-semibold text-white transition hover:bg-[#1b3a6b] disabled:cursor-not-allowed disabled:opacity-45 dark:bg-[#2e9be0] dark:text-[#061227] dark:hover:bg-[#8fcff1]">
             <Save size={14} /> {saving ? "Menyimpan..." : "Simpan"}
           </button>
         </div>
@@ -98,7 +98,7 @@ export function SaveBar({ dirty, saving, status, onSave, onReset }: { dirty: boo
   );
 }
 
-export function StudentSelect({ value, onChange, empty = "— kosong —", className = "" }: { value: string; onChange: (v: string) => void; empty?: string; className?: string }) {
+export function StudentSelect({ value, onChange, empty = "Kosong", className = "" }: { value: string; onChange: (v: string) => void; empty?: string; className?: string }) {
   return (
     <select value={value} onChange={(e) => onChange(e.target.value)} className={`${input} ${className}`}>
       <option value="">{empty}</option>
@@ -155,7 +155,7 @@ export function TimeSelect({ value, onChange, optional = false, label }: { value
           </option>
         ))}
       </select>
-      <span className="font-bold text-slate-400">.</span>
+      <span className="font-bold text-ink-3">.</span>
       <select value={h ? m : ""} disabled={!h} onChange={(e) => emit(h, e.target.value)} className={`${inputBase} w-[4.25rem] px-2 py-1.5 disabled:opacity-50`} aria-label={`${label} (menit)`}>
         {!h && <option value="">--</option>}
         {Array.from({ length: 60 }, (_, i) => (
@@ -165,7 +165,7 @@ export function TimeSelect({ value, onChange, optional = false, label }: { value
         ))}
       </select>
       {optional && h && (
-        <button type="button" onClick={() => onChange("")} className="px-1 text-xs text-slate-400 hover:text-rose-600" aria-label={`Kosongkan ${label}`}>
+        <button type="button" onClick={() => onChange("")} className="px-1 text-xs text-ink-3 hover:text-rose-600" aria-label={`Kosongkan ${label}`}>
           ×
         </button>
       )}

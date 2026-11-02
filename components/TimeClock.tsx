@@ -1,4 +1,5 @@
 "use client";
+import MotionToggle from "@/components/MotionToggle";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CheckCircle2, Maximize2, Minimize2, RefreshCw, TriangleAlert } from "lucide-react";
@@ -207,14 +208,18 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
 
         <ClockAlertsLayer alerts={alerts} full={full} />
 
-        <button
-          type="button"
-          onClick={toggleFull}
-          className="absolute right-4 top-4 z-30 flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-white/20"
-          aria-label={full ? "Keluar dari layar penuh" : "Tampilkan jam layar penuh"}
-        >
-          {full ? <Minimize2 size={14} /> : <Maximize2 size={14} />} {full ? "Keluar" : "Layar penuh"}
-        </button>
+        <h1 className="sr-only">Waktu Jakarta</h1>
+        <div className="absolute right-4 top-4 z-30 flex gap-2">
+          <MotionToggle tone="dark" compact />
+          <button
+            type="button"
+            onClick={toggleFull}
+            className="flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-k2-md border border-white/40 bg-[rgba(6,18,39,0.55)] px-3 text-xs font-semibold text-white transition hover:bg-[rgba(6,18,39,0.75)]"
+            aria-label={full ? "Keluar dari layar penuh" : "Tampilkan jam layar penuh"}
+          >
+            {full ? <Minimize2 size={14} aria-hidden="true" /> : <Maximize2 size={14} aria-hidden="true" />} <span className="hidden sm:inline">{full ? "Keluar" : "Layar penuh"}</span>
+          </button>
+        </div>
         <div className="relative z-20 flex w-full flex-col items-center">
           {/* Label diberi latar navy tipis supaya tetap terbaca di atas foto apa pun. */}
           <p
@@ -275,7 +280,7 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
         <button
           onClick={resync}
           disabled={busy}
-          className="flex min-h-10 shrink-0 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink transition hover:border-ink-3 disabled:opacity-50"
+          className="flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border border-line-strong bg-surface px-4 text-sm font-semibold text-ink transition hover:border-ink-3 disabled:opacity-50"
         >
           <RefreshCw size={14} className={busy ? "animate-spin" : ""} /> Cek ulang
         </button>

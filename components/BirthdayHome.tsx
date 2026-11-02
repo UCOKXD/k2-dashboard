@@ -1,4 +1,5 @@
 "use client";
+import MotionToggle from "@/components/MotionToggle";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Send, Trash2 } from "lucide-react";
@@ -104,6 +105,9 @@ export function BirthdayHero({ people }: { people: BdayPerson[] }) {
           <Image src="/perayaan/terompet-konfeti.png" alt="" width={270} height={520} className="absolute -bottom-2 right-2 h-auto w-[48px] sm:right-6 sm:w-[84px]" />
         </div>
 
+        <div className="absolute right-3 top-3 z-30" onClick={(e) => e.stopPropagation()}>
+          <MotionToggle tone="dark" />
+        </div>
         <div className="relative z-10 flex w-full flex-col items-center">
           <Image
             src="/perayaan/happy-birthday.png"
@@ -271,7 +275,7 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
                   <p className="mt-0.5 break-words text-sm leading-relaxed text-slate-800">{w.text}</p>
                 </div>
                 {user && (
-                  <button type="button" onClick={() => remove(w)} className="shrink-0 rounded-full p-1.5 text-slate-400 transition hover:bg-rose-50 hover:text-rose-600" aria-label="Hapus ucapan ini">
+                  <button type="button" onClick={() => remove(w)} className="shrink-0 rounded-full p-1.5 text-ink-3 transition hover:bg-rose-50 hover:text-rose-600" aria-label="Hapus ucapan ini">
                     <Trash2 size={15} />
                   </button>
                 )}

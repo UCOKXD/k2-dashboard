@@ -104,7 +104,7 @@ export default function Calculators() {
             aria-controls={`panel-kalk-${t.id}`}
             tabIndex={tab === t.id ? 0 : -1}
             onClick={() => pick(t.id)}
-            className={`flex h-10 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold transition ${
+            className={`flex h-11 shrink-0 items-center gap-2 rounded-full px-4 text-sm font-semibold transition ${
               tab === t.id ? "bg-[#0b1e3d] text-white dark:bg-[#2e9be0] dark:text-[#061227]" : "text-ink-3 hover:bg-surface-2 hover:text-ink"
             }`}
           >

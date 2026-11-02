@@ -3,7 +3,7 @@
 /* Varian dark: mengikuti kelas .dark di <html> (bukan pengaturan sistem). */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ------------------------------------------------------------------ Token desain v2
+/* Token desain v2
    "Laut Dalam, Buletin Kelas". Sumber kebenaran: desain-web-k2-v2/aset/k2.css.
    Desain memakai [data-theme="dark"]; di repo ini tema gelap tetap kelas .dark di <html> (kunci k2-theme). */
 :root {
@@ -127,7 +127,7 @@ body {
 }
 .animate-fadeIn { animation: fadeIn 0.15s ease-out; }
 
-/* ------------------------------------------------------------------ Tema gelap
+/* Tema gelap
    Kelas "dark" dipasang di <html> (tombol bulan/matahari di header). Token di :root/.dark di atas sudah
    menukar warna komponen yang memakai token (bg-surface, text-ink, border-line, dst.).
    Pemetaan ulang di bawah ini untuk kelas warna lama yang belum dipindah ke token — dipertahankan selama
@@ -293,7 +293,7 @@ body {
   100% { top: -6%; opacity: 0; }
 }
 
-/* ---------- Tema ulang tahun (aktif lewat kelas k2-bday di <html>) ---------- */
+/* Tema ulang tahun (aktif lewat kelas k2-bday di <html>) */
 /* Token ulang tahun v2: kertas & garis menghangat, aksen merah muda tua (kontras AA tetap terjaga). */
 .k2-bday { --paper: #fff6f8; --surface-2: #fdf0f3; --line: #f4dbe2; --line-strong: #ebc3cf; --accent: #c2185b; --accent-ink: #9d174d; --accent-soft: #fde8ee; }
 .dark.k2-bday { --paper: #140a1f; --surface: #1d1230; --surface-2: #26173d; --line: #3a2552; --line-strong: #4f3270; --accent: #ff8fb3; --accent-ink: #ffb3cb; --accent-soft: rgba(240, 140, 163, 0.16); }
@@ -339,7 +339,7 @@ body {
 .dark .text-red-700\/80 { color: rgb(254 202 202 / 0.85); }
 .dark .text-red-600 { color: #f87171; }
 
-/* ------------------------------------------------------------------ Kerangka v2 (Fase B) */
+/* Kerangka v2 (Fase B) */
 @layer base {
   /* Cincin fokus keyboard yang seragam (utilitas outline-none/ring di komponen tetap bisa menimpa). */
   :focus-visible { outline: 2px solid #2e9be0; outline-offset: 2px; }
@@ -350,7 +350,7 @@ html { scroll-padding-top: calc(var(--header-h) + 72px); }
 .k2-sheet { animation: k2SheetUp 0.28s var(--ease); }
 @media (prefers-reduced-motion: reduce) { .k2-sheet { animation: none; } }
 
-/* ------------------------------------------------------------------ Halaman v2 (Fase C) */
+/* Halaman v2 (Fase C) */
 :root { --art-laut: none; --art-ulang-tahun: none; } /* slot latar Higgsfield (Fase F), kosong dulu */
 
 /* Kepala halaman biru: navy + cahaya laut + pola gelombang halus. Lebar penuh layar. */
@@ -433,7 +433,7 @@ html { scroll-padding-top: calc(var(--header-h) + 72px); }
 .k2-reveal.is-in { opacity: 1; transform: none; filter: none; }
 @media (prefers-reduced-motion: reduce) { .k2-reveal { opacity: 1; transform: none; filter: none; transition: none; } }
 
-/* ------------------------------------------------------------------ Header & footer ikut tema */
+/* Header & footer ikut tema */
 .k2-header { background-color: #ffffff; color: var(--ink); border-color: var(--line); box-shadow: 0 1px 2px rgba(11,30,61,.05); }
 .dark .k2-header { background-color: #0b1e3d; color: #fff; border-color: rgba(255,255,255,.08); box-shadow: none; }
 .k2-header--fest { color: #fff; border-color: rgba(255,255,255,.08); } /* ulang tahun: gradasi navy -> merah muda (inline) */
@@ -455,7 +455,7 @@ html { scroll-padding-top: calc(var(--header-h) + 72px); }
   .k2-icon-up, .k2-drop { animation: none; }
 }
 
-/* ------------------------------------------------------------------ Easter egg profil developer */
+/* Easter egg profil developer */
 .k2-dev-aura { position: absolute; border-radius: 9999px; will-change: transform, opacity; animation: k2Aura 6s ease-in-out infinite alternate; }
 .k2-dev-aura--l { left: -22vw; top: 10vh; width: 52vw; height: 85vh; background: radial-gradient(closest-side, rgba(46,155,224,.55), rgba(46,155,224,.18) 55%, transparent); }
 .k2-dev-aura--r { right: -22vw; top: 4vh; width: 52vw; height: 85vh; background: radial-gradient(closest-side, rgba(124,92,255,.42), rgba(46,155,224,.2) 55%, transparent); animation-delay: -2s; }
@@ -505,3 +505,12 @@ html { scroll-padding-top: calc(var(--header-h) + 72px); }
 .k2-dev-pp { transition: transform .4s cubic-bezier(.2,1.4,.4,1); filter: drop-shadow(0 12px 22px rgba(46,155,224,.35)); }
 .k2-dev-pp:hover { transform: rotate(-3deg) scale(1.04); }
 @media (prefers-reduced-motion: reduce) { .k2-dev-pp, .k2-dev-pp:hover { transition: none; transform: none; } }
+
+/* Animasi hiasan yang berjalan terus bisa dijeda pengunjung (tombol MotionToggle). */
+.k2-still :is(.k2-swim, .k2-bubble, .k2-bd-flag, .k2-bd-sway, .k2-confetti, .k2-dev-fly, .k2-dev-aura, .k2-dev-title) { animation-play-state: paused !important; }
+
+/* Semua kontrol aktif menampilkan kursor tangan; kontrol nonaktif menampilkan tanda dilarang. */
+@layer base {
+  :is(button, [role="button"], [role="tab"], [role="switch"], a[href], select, summary, label[for], input[type="checkbox"], input[type="radio"], input[type="file"]):not(:disabled) { cursor: pointer; }
+  :is(button, select, input, textarea):disabled { cursor: not-allowed; }
+}

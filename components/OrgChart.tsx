@@ -45,7 +45,7 @@ function Division({ k, org }: { k: DivKey; org: OrgData }) {
   const name = k === "k2" ? "K2" : ROLE_DEF[k].label;
   return (
     <div className="flex min-w-0 flex-col gap-2.5 rounded-k2-lg border border-line bg-surface-2 p-4">
-      <p className="text-center text-[11px] font-bold uppercase tracking-widest text-slate-400">{ROLE_DEF[k].label}</p>
+      <p className="text-center text-[11px] font-bold uppercase tracking-widest text-ink-3">{ROLE_DEF[k].label}</p>
       <Box role={`Koordinator ${name}`} icon={s.icon} person={person(d.koordinator)} text="Belum diisi" className={s.box} />
       {anggota.length > 0 && (
         <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -55,7 +55,7 @@ function Division({ k, org }: { k: DivKey; org: OrgData }) {
               <p className="truncate text-sm font-bold text-slate-800" title={p.nama}>
                 {p.nama}
               </p>
-              <p className="text-[11px] text-slate-400">({p.panggilan})</p>
+              <p className="text-[11px] text-ink-3">({p.panggilan})</p>
             </li>
           ))}
         </ul>
@@ -73,7 +73,7 @@ export default function OrgChart({ org }: { org: OrgData }) {
           <Box role="DPP" icon={Crown} text={org.dpp} className="w-full max-w-[16rem] justify-center border-amber-400 bg-gradient-to-r from-amber-500 to-orange-500" />
           <Connector />
 
-          <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-slate-400">Badan Pengurus Harian</p>
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-ink-3">Badan Pengurus Harian</p>
           <div className="grid w-full max-w-3xl grid-cols-1 gap-3 sm:grid-cols-2">
             <Box role="Komti" icon={User} person={person(org.komti)} className="border-blue-400 bg-gradient-to-r from-blue-600 to-indigo-600" />
             <Box role="Wakomti" icon={User} person={person(org.wakomti)} className="border-indigo-400 bg-gradient-to-r from-indigo-600 to-violet-600" />
@@ -82,7 +82,7 @@ export default function OrgChart({ org }: { org: OrgData }) {
           </div>
           <Connector />
 
-          <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-slate-400">Divisi</p>
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-ink-3">Divisi</p>
           <div className="grid w-full grid-cols-1 gap-4 lg:grid-cols-2">
             {DIV_KEYS.map((k) => (
               <Division key={k} k={k} org={org} />

@@ -65,7 +65,7 @@ export const MENU_GROUPS: MenuEntry[] = [
 export const MENU: MenuItem[] = MENU_GROUPS.flatMap((e) => ("children" in e ? e.children : [e]));
 export const isActive = (path: string, m: MenuItem) => (m.match === "/" ? path === "/" : path === m.match || path.startsWith(`${m.match}/`));
 
-const ITEM = "group relative grid h-10 w-10 shrink-0 cursor-pointer place-items-center rounded-full transition-colors duration-200";
+const ITEM = "group relative grid h-11 w-11 shrink-0 cursor-pointer place-items-center rounded-full transition-colors duration-200";
 
 // Tombol ikon dengan label kecil yang muncul saat disorot/fokus.
 function Tip({ text }: { text: string }) {
@@ -200,7 +200,7 @@ export default function NavIsland({ variant }: { variant: "floating" | "static" 
                         href={c.href}
                         aria-current={on ? "page" : undefined}
                         onClick={() => setOpen(null)}
-                        className={`flex min-h-10 items-center gap-2.5 rounded-k2-md px-3 text-sm font-semibold ${on ? "bg-[#fff] text-[#0b1e3d]" : "text-[#dbe5f0] hover:bg-white/10 hover:text-white"}`}
+                        className={`flex min-h-11 items-center gap-2.5 rounded-k2-md px-3 text-sm font-semibold ${on ? "bg-[#fff] text-[#0b1e3d]" : "text-[#dbe5f0] hover:bg-white/10 hover:text-white"}`}
                       >
                         <c.icon size={16} className={on ? "text-sea-600" : "text-sea-300"} />
                         {c.name}
