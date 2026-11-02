@@ -157,10 +157,10 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
     <div className="space-y-4">
       <div
         ref={card}
-        className={`k2-clock relative flex flex-col items-center justify-center overflow-hidden bg-navy-900 text-center text-white ${
+        className={`k2-clock relative flex flex-col items-center justify-center overflow-hidden bg-[#0b1e3d] dark:bg-[#1b3a6b] text-center text-white ${
           full
             ? "k2-clock--full fixed inset-0 z-[100] p-6"
-            : "min-h-[360px] rounded-[2rem] border border-slate-200/70 p-6 shadow-[0_28px_70px_rgba(11,30,61,0.45)] sm:min-h-[460px] sm:p-10"
+            : "min-h-[360px] rounded-[2rem] border border-line p-6 shadow-[0_28px_70px_rgba(11,30,61,0.45)] sm:min-h-[460px] sm:p-10"
         }`}
       >
         {/* Latar foto kelas + lapisan gelap di tengah supaya angka tetap terbaca. */}
@@ -253,11 +253,11 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
       <div className="flex flex-col items-start justify-between gap-3 k2-card p-5 sm:flex-row sm:items-center">
         <div className="flex items-start gap-3">
           {failed ? (
-            <TriangleAlert className="mt-0.5 shrink-0 text-amber-500" />
+            <TriangleAlert className="mt-0.5 shrink-0 text-warn" aria-hidden="true" />
           ) : exact ? (
-            <CheckCircle2 className="mt-0.5 shrink-0 text-emerald-500" />
+            <CheckCircle2 className="mt-0.5 shrink-0 text-ok" aria-hidden="true" />
           ) : (
-            <TriangleAlert className="mt-0.5 shrink-0 text-rose-500" />
+            <TriangleAlert className="mt-0.5 shrink-0 text-bad" aria-hidden="true" />
           )}
           <div>
             <p className="font-bold text-ink">

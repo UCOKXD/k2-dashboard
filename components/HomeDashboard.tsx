@@ -156,7 +156,7 @@ function Hero({ photos }: { photos: string[] }) {
             <Link href="/jadwal" className="inline-flex min-h-11 items-center gap-2 rounded-k2-md bg-[#fff] px-5 text-[15px] font-semibold text-[#0b1e3d] transition hover:bg-[#f1f8fd]">
               <GraduationCap size={17} /> Lihat jadwal
             </Link>
-            <Link href="/kalender-acara" className="inline-flex min-h-11 items-center gap-2 rounded-k2-md border border-white/35 px-5 text-[15px] font-semibold text-white transition hover:border-white hover:bg-white/[0.06]">
+            <Link href="/kalender-acara" className="inline-flex min-h-11 items-center gap-2 rounded-k2-md border border-white/35 px-5 text-[15px] font-semibold text-white transition hover:border-white hover:bg-surface/[0.06]">
               <ClipboardList size={17} /> Tugas aktif
             </Link>
           </div>
@@ -175,7 +175,7 @@ function Hero({ photos }: { photos: string[] }) {
               aria-label={`Tampilkan foto ${i + 1}`}
               aria-current={i === slide ? "true" : undefined}
             >
-              <span className={`block h-2.5 rounded-full transition-all duration-300 ${i === slide ? "w-6 bg-[#ffffff]" : "w-2.5 bg-white/60 group-hover:bg-white/90"}`} />
+              <span className={`block h-2.5 rounded-full transition-all duration-300 ${i === slide ? "w-6 bg-[#ffffff]" : "w-2.5 bg-surface/60 group-hover:bg-surface/90"}`} />
             </button>
           ))}
           <button

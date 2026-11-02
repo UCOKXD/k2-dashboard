@@ -157,7 +157,7 @@ export default function NotifEditor() {
     <div className="space-y-6">
       <Panel title="Notifikasi WhatsApp" desc="Laporan baru dikirim otomatis ke grup WhatsApp kelas lewat bot di laptop. Saat laptop mati, pesan menunggu di antrian dan dikirim begitu bot menyala lagi (yang menumpuk digabung jadi satu pesan rangkuman).">
         <div className="grid gap-3 sm:grid-cols-3">
-          <div className={`rounded-2xl border px-4 py-3 ${online ? "border-ok/30 bg-emerald-50/80" : "border-line bg-surface"}`}>
+          <div className={`rounded-2xl border px-4 py-3 ${online ? "border-ok/30 bg-ok-soft" : "border-line bg-surface"}`}>
             <p className="text-xs font-semibold text-ink-3">Bot</p>
             <p className={`flex items-center gap-1.5 font-bold ${online ? "text-ok" : "text-ink-2"}`}>
               <span className={`h-2.5 w-2.5 rounded-full ${online ? "bg-emerald-500" : "bg-slate-400"}`} /> {online ? "Aktif" : "Tidak aktif"}
@@ -185,7 +185,7 @@ export default function NotifEditor() {
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <button onClick={() => action("test")} className="flex items-center gap-1.5 rounded-k2-md bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow">
+          <button onClick={() => action("test")} className="flex items-center gap-1.5 rounded-k2-md bg-[#0b1e3d] dark:bg-[#1b3a6b] px-5 py-2 text-sm font-semibold text-white shadow">
             <Send size={14} /> Kirim pesan uji
           </button>
           {msg && <p className="text-sm font-medium text-ink-2">{msg}</p>}

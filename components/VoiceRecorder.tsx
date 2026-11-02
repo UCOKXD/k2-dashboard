@@ -349,10 +349,10 @@ export default function VoiceRecorder() {
             <ShieldCheck size={16} className="mt-0.5 shrink-0 text-ok" /> File langsung tersimpan di perangkatmu.
           </li>
           <li className="flex gap-2">
-            <AlertTriangle size={16} className="mt-0.5 shrink-0 text-amber-600" /> Di HP, tetap buka halaman ini selama merekam. Pindah aplikasi bisa menghentikan rekaman.
+            <AlertTriangle size={16} className="mt-0.5 shrink-0 text-warn" /> Di HP, tetap buka halaman ini selama merekam. Pindah aplikasi bisa menghentikan rekaman.
           </li>
           <li className="flex gap-2">
-            <AlertTriangle size={16} className="mt-0.5 shrink-0 text-amber-600" /> Unduh sebelum menutup halaman, rekaman yang belum diunduh akan hilang.
+            <AlertTriangle size={16} className="mt-0.5 shrink-0 text-warn" /> Unduh sebelum menutup halaman, rekaman yang belum diunduh akan hilang.
           </li>
           <li className="flex gap-2">
             <Mic size={16} className="mt-0.5 shrink-0 text-accent" /> Ukuran ±0,5 MB per menit (2 jam kuliah ±60 MB).

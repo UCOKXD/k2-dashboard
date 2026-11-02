@@ -68,11 +68,11 @@ export default function UpdateToasts() {
       {toasts.map((t) => (
         <div
           key={t.id}
-          className={`pointer-events-auto flex gap-3 rounded-k2-lg border border-white/10 bg-navy-900 p-3.5 text-white shadow-3 transition-all duration-700 ${
+          className={`pointer-events-auto flex gap-3 rounded-k2-lg border border-white/10 bg-[#0b1e3d] dark:bg-[#1b3a6b] p-3.5 text-white shadow-3 transition-all duration-700 ${
             t.leaving ? "translate-y-2 opacity-0" : "animate-toastIn opacity-100"
           }`}
         >
-          <div className="h-fit rounded-xl bg-white/15 p-2">
+          <div className="h-fit rounded-xl bg-surface/15 p-2">
             <BellRing size={16} className="text-sea-300" />
           </div>
           <div className="min-w-0 flex-1">

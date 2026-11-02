@@ -20,7 +20,7 @@ function Box({ role, icon: Icon, person: p, text, lead = false, className = "" }
         lead ? "border-transparent bg-[#0b1e3d] text-white dark:bg-[#165f93]" : "border-line bg-surface text-ink"
       } ${className}`}
     >
-      <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${lead ? "bg-white/15 text-[#8fcff1]" : "bg-accent-soft text-accent-ink"}`} aria-hidden="true">
+      <span className={`grid h-9 w-9 shrink-0 place-items-center rounded-full ${lead ? "bg-surface/15 text-[#8fcff1]" : "bg-accent-soft text-accent-ink"}`} aria-hidden="true">
         <Icon size={17} />
       </span>
       <div className="min-w-0 text-left leading-tight">

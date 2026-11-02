@@ -59,7 +59,7 @@ export function PartyHat() {
 
 export function BirthdayBadge() {
   return (
-    <span className="hidden items-center gap-1.5 rounded-full border border-white/30 bg-white/15 px-3 py-1.5 text-xs font-bold text-white sm:flex lg:hidden xl:flex">
+    <span className="hidden items-center gap-1.5 rounded-full border border-white/30 bg-surface/15 px-3 py-1.5 text-xs font-bold text-white sm:flex lg:hidden xl:flex">
       <Cake size={14} /> Hari ulang tahun
     </span>
   );

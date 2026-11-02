@@ -124,7 +124,7 @@ export function BirthdayHero({ people }: { people: BdayPerson[] }) {
             {people.map((p) => (
               <div
                 key={p.nama}
-                className={`flex min-w-0 flex-1 flex-col items-center gap-2 rounded-k2-lg border border-white/[0.22] bg-white/10 p-3 text-center sm:flex-row sm:gap-4 sm:p-4 sm:text-left ${
+                className={`flex min-w-0 flex-1 flex-col items-center gap-2 rounded-k2-lg border border-white/[0.22] bg-surface/10 p-3 text-center sm:flex-row sm:gap-4 sm:p-4 sm:text-left ${
                   people.length > 3 ? "min-w-[40%] sm:min-w-0" : ""
                 } ${people.length >= 3 ? "sm:flex-[0_1_280px]" : "max-w-[340px] sm:flex-[0_1_340px]"}`}
               >
@@ -227,7 +227,7 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
   }
 
   const names = joinNames(info.today.map((p) => p.nama));
-  const field = "w-full rounded-xl border border-slate-200 bg-white px-3 py-2.5 text-sm text-slate-800 outline-none focus:border-sea-500 focus:ring-2 focus:ring-sea-500/30";
+  const field = "w-full rounded-xl border border-line-strong bg-surface px-3 py-2.5 text-sm text-ink outline-none focus:border-sea-500 focus:ring-2 focus:ring-sea-500/30";
 
   return (
     <section id="ucapan" className="grid scroll-mt-32 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
@@ -254,7 +254,7 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
             </p>
             <button
               disabled={busy || mine || !text.trim()}
-              className="flex items-center gap-1.5 rounded-k2-md bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(11,30,61,0.35)] transition hover:bg-navy-800 disabled:opacity-50"
+              className="flex items-center gap-1.5 rounded-k2-md bg-[#0b1e3d] dark:bg-[#1b3a6b] px-5 py-2 text-sm font-semibold text-white shadow-[0_10px_24px_rgba(11,30,61,0.35)] transition hover:bg-navy-800 disabled:opacity-50"
             >
               <Send size={14} /> {busy ? "Mengirim..." : mine ? "Sudah terkirim" : "Kirim ucapan"}
             </button>
@@ -292,11 +292,11 @@ export function BirthdaySection({ info }: { info: BdayInfo }) {
         </h2>
         <ul className="space-y-2">
           {info.month.map((p) => (
-            <li key={p.nama} className={`flex items-center gap-3 rounded-2xl px-3 py-2 ${p.days === 0 ? "bg-pink-50" : ""} ${p.days < 0 ? "opacity-55" : ""}`}>
-              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-navy-900 text-sm font-black text-white">{Number(p.mmdd.slice(3))}</span>
+            <li key={p.nama} className={`flex items-center gap-3 rounded-2xl px-3 py-2 ${p.days === 0 ? "bg-fest-soft" : ""} ${p.days < 0 ? "opacity-55" : ""}`}>
+              <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-[#0b1e3d] dark:bg-[#1b3a6b] text-sm font-black text-white">{Number(p.mmdd.slice(3))}</span>
               <div className="min-w-0">
                 <p className="truncate font-bold text-ink">{p.nama}</p>
-                <p className={`text-xs font-semibold ${p.days === 0 ? "text-pink-600" : "text-ink-3"}`}>
+                <p className={`text-xs font-semibold ${p.days === 0 ? "text-fest" : "text-ink-3"}`}>
                   {p.days === 0 ? "Hari ini!" : p.days === 1 ? "Besok" : p.days > 0 ? `${p.days} hari lagi` : "Sudah lewat"}
                 </p>
               </div>

@@ -165,9 +165,9 @@ export default function NavIsland({ variant }: { variant: "floating" | "static" 
               aria-label={e.name}
               aria-current={active ? "page" : undefined}
               onClick={() => setOpen(null)}
-              className={`${ITEM} ${active ? "bg-[#fff] text-[#0b1e3d]" : "text-[#c9d6e6] hover:bg-white/10 hover:text-white"}`}
+              className={`${ITEM} ${active ? "bg-[#fff] text-[#0b1e3d]" : "text-[#c9d6e6] hover:bg-surface/10 hover:text-white"}`}
             >
-              <e.icon size={18} className={active ? "text-sea-600" : "text-sea-300"} />
+              <e.icon size={18} className={active ? "text-[#165f93]" : "text-sea-300"} />
               <Tip text={e.name} />
             </Link>
           );
@@ -182,9 +182,9 @@ export default function NavIsland({ variant }: { variant: "floating" | "static" 
               aria-expanded={isOpen}
               aria-haspopup="true"
               onClick={(ev) => setOpen((ev.nativeEvent as PointerEvent).pointerType === "mouse" ? e.name : isOpen ? null : e.name)}
-              className={`${ITEM} ${active ? "bg-[#fff] text-[#0b1e3d]" : isOpen ? "bg-white/15 text-white" : "text-[#c9d6e6] hover:bg-white/10 hover:text-white"}`}
+              className={`${ITEM} ${active ? "bg-[#fff] text-[#0b1e3d]" : isOpen ? "bg-surface/15 text-white" : "text-[#c9d6e6] hover:bg-surface/10 hover:text-white"}`}
             >
-              <e.icon size={18} className={active ? "text-sea-600" : "text-sea-300"} />
+              <e.icon size={18} className={active ? "text-[#165f93]" : "text-sea-300"} />
               {!isOpen && <Tip text={e.name} />}
             </button>
             {isOpen && (
@@ -200,9 +200,9 @@ export default function NavIsland({ variant }: { variant: "floating" | "static" 
                         href={c.href}
                         aria-current={on ? "page" : undefined}
                         onClick={() => setOpen(null)}
-                        className={`flex min-h-11 items-center gap-2.5 rounded-k2-md px-3 text-sm font-semibold ${on ? "bg-[#fff] text-[#0b1e3d]" : "text-[#dbe5f0] hover:bg-white/10 hover:text-white"}`}
+                        className={`flex min-h-11 items-center gap-2.5 rounded-k2-md px-3 text-sm font-semibold ${on ? "bg-[#fff] text-[#0b1e3d]" : "text-[#dbe5f0] hover:bg-surface/10 hover:text-white"}`}
                       >
-                        <c.icon size={16} className={on ? "text-sea-600" : "text-sea-300"} />
+                        <c.icon size={16} className={on ? "text-[#165f93]" : "text-sea-300"} />
                         {c.name}
                       </Link>
                     );

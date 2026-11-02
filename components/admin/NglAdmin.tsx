@@ -177,7 +177,7 @@ export default function NglAdmin() {
   return (
     <div className="space-y-6">
       <Panel title="Sesi NGL" desc="Buka sesi agar siswa bisa mengisi. Sesi baru membuat semua centang mulai dari nol lagi. Pesan baru bisa dibaca penerima setelah sesi ditutup, lalu terhapus otomatis sesuai pengaturan di bawah.">
-        <div className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-3 ${state.open ? "border-ok/30 bg-emerald-50/80" : "border-line bg-surface"}`}>
+        <div className={`flex flex-wrap items-center justify-between gap-3 rounded-2xl border px-4 py-3 ${state.open ? "border-ok/30 bg-ok-soft" : "border-line bg-surface"}`}>
           <p className="text-sm font-semibold text-ink">
             {state.open ? (
               <>
@@ -216,7 +216,7 @@ export default function NglAdmin() {
             <p className="text-sm font-semibold text-ink-2">
               {progress.count} dari {progress.total} pesan ({p}%) · {lengkap} dari {rows.length} siswa sudah lengkap
             </p>
-            <div className="h-3 overflow-hidden rounded-full bg-slate-200">
+            <div className="h-3 overflow-hidden rounded-full bg-line">
               <div className="h-full rounded-full bg-sea-500" style={{ width: `${p}%` }} />
             </div>
           </div>

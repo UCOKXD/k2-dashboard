@@ -51,7 +51,7 @@ function Progress({ done, total }: { done: number; total: number }) {
       <p className="text-sm font-semibold text-ink-2">
         Sudah mengisi <b className="text-ink">{done}</b> dari {total} teman
       </p>
-      <div className="h-2.5 overflow-hidden rounded-full bg-slate-200">
+      <div className="h-2.5 overflow-hidden rounded-full bg-line">
         <div className={`h-full rounded-full transition-all duration-500 ${p === 100 ? "bg-emerald-500" : "bg-sea-500"}`} style={{ width: `${p}%` }} />
       </div>
     </div>
@@ -65,7 +65,7 @@ function Field({ label, hint, value, onChange, required }: { label: string; hint
     <label className="block space-y-1.5">
       <span className="flex items-baseline justify-between gap-2">
         <span className="text-sm font-bold text-ink">
-          {label} {required ? <span className="text-rose-500">*</span> : <span className="text-xs font-medium text-ink-3">(opsional)</span>}
+          {label} {required ? <span className="text-bad">*</span> : <span className="text-xs font-medium text-ink-3">(opsional)</span>}
         </span>
         <span className={`text-xs font-medium ${value.length > MAX ? "text-bad" : "text-ink-3"}`}>
           {value.length}/{MAX}
@@ -116,7 +116,7 @@ export default function NglPage() {
   if (!user)
     return (
       <div className="k2-card mx-auto max-w-md space-y-4 p-8 text-center">
-        <MessageCircleHeart className="mx-auto text-pink-500" size={32} />
+        <MessageCircleHeart className="mx-auto text-fest" size={32} />
         <p className="font-semibold text-ink-2">Masuk dulu dengan akunmu untuk memakai NGL.</p>
         <Link href="/masuk" className="inline-flex min-h-11 items-center rounded-k2-md bg-[#0b1e3d] px-6 text-sm font-semibold text-white dark:bg-[#165f93]">
           Masuk
@@ -128,7 +128,7 @@ export default function NglPage() {
       <div className="k2-card mx-auto max-w-md space-y-4 p-8 text-center">
         <Lock className="mx-auto text-ink-3" />
         <p className="font-semibold text-ink-2">Ganti password awalmu dulu sebelum memakai NGL, supaya tidak ada yang bisa mengisi atas namamu.</p>
-        <Link href="/akun" className="inline-block rounded-k2-md bg-navy-900 px-6 py-2.5 text-sm font-semibold text-white shadow">
+        <Link href="/akun" className="inline-block rounded-k2-md bg-[#0b1e3d] dark:bg-[#1b3a6b] px-6 py-2.5 text-sm font-semibold text-white shadow">
           Ganti password
         </Link>
       </div>
@@ -185,7 +185,7 @@ export default function NglPage() {
   const back = (
     <button
       onClick={() => (to !== null ? setTo(null) : setView("menu"))}
-      className="flex items-center gap-1.5 rounded-k2-md border border-line bg-white/80 px-4 py-2 text-sm font-semibold text-ink-2 shadow-sm"
+      className="flex items-center gap-1.5 rounded-k2-md border border-line bg-surface/80 px-4 py-2 text-sm font-semibold text-ink-2 shadow-sm"
     >
       <ArrowLeft size={15} /> Kembali
     </button>
@@ -241,7 +241,7 @@ export default function NglPage() {
                     onClick={() => pick(s.absen)}
                     disabled={isDone || !data.open}
                     className={`flex w-full items-center gap-3 rounded-2xl border px-3.5 py-2.5 text-left transition ${
-                      isDone ? "border-ok/30 bg-emerald-50/80" : "border-line bg-surface hover:-translate-y-0.5 hover:border-line-strong hover:shadow-md"
+                      isDone ? "border-ok/30 bg-ok-soft" : "border-line bg-surface hover:-translate-y-0.5 hover:border-line-strong hover:shadow-md"
                     }`}
                   >
                     <span className="relative shrink-0">
@@ -289,7 +289,7 @@ export default function NglPage() {
               ].map((o) => (
                 <label
                   key={String(o.anon)}
-                  className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 ${draft.anon === o.anon ? "border-sea-500 bg-sea-50/80 ring-2 ring-sea-500/20" : "border-line bg-surface"}`}
+                  className={`flex cursor-pointer items-start gap-3 rounded-2xl border px-4 py-3 ${draft.anon === o.anon ? "border-sea-500 bg-accent-soft ring-2 ring-sea-500/20" : "border-line bg-surface"}`}
                 >
                   <input type="radio" name="anon" checked={draft.anon === o.anon} onChange={() => setD({ anon: o.anon })} className="mt-1 accent-sea-500" />
                   <span>
@@ -357,7 +357,7 @@ export default function NglPage() {
             <button
               onClick={() => setConfirming(true)}
               disabled={!valid || busy}
-              className="flex items-center gap-1.5 rounded-k2-md bg-navy-900 px-6 py-2.5 text-sm font-semibold text-white shadow disabled:opacity-40"
+              className="flex items-center gap-1.5 rounded-k2-md bg-[#0b1e3d] dark:bg-[#1b3a6b] px-6 py-2.5 text-sm font-semibold text-white shadow disabled:opacity-40"
             >
               <Send size={15} /> Kirim
             </button>
@@ -389,7 +389,7 @@ export default function NglPage() {
                         {m.from ? <UserRound size={15} className="text-accent-ink" /> : <EyeOff size={15} className="text-ink-3" />}
                         {m.from ? `Dari ${m.from}` : "Anonim"}
                       </p>
-                      <div className="space-y-1 rounded-2xl bg-emerald-50/80 px-4 py-3">
+                      <div className="space-y-1 rounded-2xl bg-ok-soft px-4 py-3">
                         <p className="text-xs font-bold text-ok">Apresiasi</p>
                         <p className="whitespace-pre-wrap text-sm text-ink">{m.apresiasi}</p>
                       </div>
@@ -437,7 +437,7 @@ export default function NglPage() {
               <button onClick={() => setConfirming(false)} disabled={busy} className="rounded-k2-md border border-line px-4 py-2 text-sm font-semibold text-ink-2">
                 Periksa lagi
               </button>
-              <button onClick={send} disabled={busy} className="flex items-center gap-1.5 rounded-k2-md bg-navy-900 px-5 py-2 text-sm font-semibold text-white shadow">
+              <button onClick={send} disabled={busy} className="flex items-center gap-1.5 rounded-k2-md bg-[#0b1e3d] dark:bg-[#1b3a6b] px-5 py-2 text-sm font-semibold text-white shadow">
                 <Send size={14} /> {busy ? "Mengirim..." : "Ya, kirim"}
               </button>
             </div>

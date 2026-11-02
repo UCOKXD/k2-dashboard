@@ -128,7 +128,7 @@ export default function PelEditor() {
                   <td className="whitespace-nowrap px-3 py-2">{r.tanggal}</td>
                   <td className="px-3 py-2">
                     {r.nama}
-                    {r.source === "admin" && <span className="ml-1.5 rounded bg-sea-100 px-1.5 py-0.5 text-[10px] font-bold text-accent-ink no-underline">admin</span>}
+                    {r.source === "admin" && <span className="ml-1.5 rounded bg-accent-soft px-1.5 py-0.5 text-[10px] font-bold text-accent-ink no-underline">admin</span>}
                   </td>
                   {editing === r.id ? (
                     <>

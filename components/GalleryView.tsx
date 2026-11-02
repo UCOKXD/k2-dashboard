@@ -53,7 +53,7 @@ export default function GalleryView({ items }: { items: GalleryItem[] }) {
 
       {cur && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 p-4" onClick={() => setOpen(null)}>
-          <button className="absolute right-4 top-4 rounded-full bg-white/15 p-2 text-white" aria-label="Tutup">
+          <button className="absolute right-4 top-4 rounded-full bg-surface/15 p-2 text-white" aria-label="Tutup">
             <X />
           </button>
           {items.length > 1 && (
@@ -63,7 +63,7 @@ export default function GalleryView({ items }: { items: GalleryItem[] }) {
                   e.stopPropagation();
                   setOpen((open! - 1 + items.length) % items.length);
                 }}
-                className="absolute left-3 rounded-full bg-white/15 p-2 text-white"
+                className="absolute left-3 rounded-full bg-surface/15 p-2 text-white"
                 aria-label="Sebelumnya"
               >
                 <ChevronLeft />
@@ -73,7 +73,7 @@ export default function GalleryView({ items }: { items: GalleryItem[] }) {
                   e.stopPropagation();
                   setOpen((open! + 1) % items.length);
                 }}
-                className="absolute right-3 rounded-full bg-white/15 p-2 text-white"
+                className="absolute right-3 rounded-full bg-surface/15 p-2 text-white"
                 aria-label="Berikutnya"
               >
                 <ChevronRight />

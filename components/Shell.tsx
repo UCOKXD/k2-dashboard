@@ -30,7 +30,7 @@ function AccountButton() {
     return () => document.removeEventListener("mousedown", close);
   }, [open]);
 
-  if (!ready) return <span className="h-8 w-20 rounded-full bg-white/10" />;
+  if (!ready) return <span className="h-8 w-20 rounded-full bg-surface/10" />;
   if (!user)
     return (
       <Link

@@ -80,7 +80,7 @@ export default function AccountTab() {
           )}
           <div className="flex gap-1.5">
             {(["semua", "admin", "siswa"] as const).map((f) => (
-              <button key={f} onClick={() => setFilter(f)} className={`rounded-full px-3 py-1.5 text-xs font-semibold capitalize ${filter === f ? "bg-navy-900 text-white" : "border border-line bg-surface text-ink-2"}`}>
+              <button key={f} onClick={() => setFilter(f)} className={`rounded-full px-3 py-1.5 text-xs font-semibold capitalize ${filter === f ? "bg-[#0b1e3d] dark:bg-[#1b3a6b] text-white" : "border border-line bg-surface text-ink-2"}`}>
                 {f}
               </button>
             ))}
@@ -114,7 +114,7 @@ export default function AccountTab() {
                       </td>
                       <td className="px-3 py-2 text-ink-3">
                         {a.jabatan}
-                        {a.webAdmin && <span className="ml-1.5 rounded-full bg-navy-900 px-2 py-0.5 text-[11px] font-semibold text-white">Admin Website</span>}
+                        {a.webAdmin && <span className="ml-1.5 rounded-full bg-[#0b1e3d] dark:bg-[#1b3a6b] px-2 py-0.5 text-[11px] font-semibold text-white">Admin Website</span>}
                       </td>
                       <td className="px-3 py-2 font-mono">
                         {s?.login && s.login !== a.username ? (
@@ -137,7 +137,7 @@ export default function AccountTab() {
                             <CheckCircle2 size={13} /> Sudah diganti
                           </span>
                         ) : (
-                          <span className="flex items-center gap-1 text-amber-600">
+                          <span className="flex items-center gap-1 text-warn">
                             <Circle size={13} /> Masih awal
                           </span>
                         )}

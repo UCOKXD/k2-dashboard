@@ -29,7 +29,7 @@ export default function TaskBoard({ tasks, today }: { tasks: TaskItem[]; today: 
               {urgent.map((t) => {
                 const u = urgencyOf(t, today);
                 return (
-                  <li key={t.id} className="flex flex-wrap items-baseline gap-x-2 text-sm text-red-900">
+                  <li key={t.id} className="flex flex-wrap items-baseline gap-x-2 text-sm text-bad">
                     <b className="text-base">{t.judul}</b>
                     {t.matkul && <span className="text-bad">· {t.matkul}</span>}
                     <span className="font-bold text-bad">

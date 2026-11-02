@@ -1,6 +1,6 @@
 # Laporan perbaikan audit antislop 001 · 2 November 2026
 
-Nomor yang disetujui pemilik: semua (1–23). Dikerjakan dalam tiga PR: #24 (tahap 1), #25 (tahap 2), dan tahap 3.
+Nomor yang disetujui pemilik: semua (1–23). Dikerjakan dalam empat PR: #24 (tahap 1), #25 (tahap 2), #26 (tahap 3), dan tahap 4 (sisa nomor 23).
 Arah desain: `DESIGN.md` (papan kelas berjaket varsity, dial ENERGY 2 / RHYTHM 2 / MOTION 2), disusun bersama design council.
 
 ## Status tiap temuan
@@ -24,12 +24,12 @@ Arah desain: `DESIGN.md` (papan kelas berjaket varsity, dial ENERGY 2 / RHYTHM 2
 | 15 | Gradasi tanpa fungsi | Selesai | Tersisa dengan alasan tertulis: sampul foto (keterbacaan), tema ulang tahun (aksen pink), meter suara perekam (level), easter egg |
 | 16 | Ikon/emoji hiasan | Selesai | Emoji antarmuka dihapus, ikon hiasan judul dihapus, ikon dekoratif `aria-hidden` |
 | 17 | Dua bahasa visual | Selesai | Statistik, Hall of Shame, catatan terbaru, log, bagan pengurus, dan Panel Admin memakai token v2 |
-| 18 | Terlalu banyak warna | Selesai | 405 kelas warna lama dipindah ke token; warna status hanya ok/warn/bad |
+| 18 | Terlalu banyak warna | Selesai | 490 kelas warna lama dipindah ke token; warna status hanya ok/warn/bad, pink hanya `fest` |
 | 19 | Semua berbentuk pil | Selesai | Tombol teks 10 px; pil untuk chip status & island |
 | 20 | Ritme seragam | Selesai | Penomoran bagian dihapus; kepala biru hanya Beranda & Waktu; statistik asimetris, log linimasa |
 | 21 | Copy kapital & campur bahasa | Selesai | "Mendesak/Sedang/Santai", "Catatan terbaru", "Aktivitas & pengumuman", panah dekoratif dihapus |
 | 22 | Komentar pemisah | Selesai | 0 komentar garis pemisah |
-| 23 | Penimpaan warna mode gelap | Sebagian | 14 penimpaan tak terpakai dihapus; 70 tersisa untuk kelas yang masih dipakai (dikurangi bertahap) |
+| 23 | Penimpaan warna mode gelap | Selesai | Semua kelas warna lama dipindah ke token (termasuk token baru `fest` untuk pink axolotl); 0 penimpaan per kelas tersisa, hanya definisi tema komponen `.k2-*` |
 
 ## Delivery Gate
 
@@ -67,6 +67,11 @@ tombol tema → kelas dark berubah · dropdown Perkuliahan (hover) → berisi Do
 
 ## Keterbatasan
 
-- 70 penimpaan warna mode gelap untuk kelas lama masih ada (nomor 23 sebagian). Aman dipakai, tetapi sebaiknya dikurangi saat komponen terkait disentuh lagi.
 - Kotak centang kecil di tabel izin Panel Admin kini dibungkus label 44 px; kotaknya sendiri 20 px.
 - Uji geser dengan jari sungguhan dan uji pembaca layar belum dilakukan (hanya simulasi browser).
+
+## Tahap 4 (tambahan)
+
+- Label "K2 · Admin" dan "K2 · Profil" yang mengulang judul dihapus; "JANGAN LUPA TAP IN & TAP OUT!" ditulis huruf biasa.
+- Ikon status sinkron jam memakai token ok/warn/bad.
+- Diuji ulang: pindai 16 halaman (0 kontrol kecil, 0 tanpa kursor, 0 tanpa nama), klik-tes 30 butir lulus, tangkapan layar mode gelap Beranda, Panel Admin, Edit profil, Izin Sakit, Kalender, Tempat Duduk.

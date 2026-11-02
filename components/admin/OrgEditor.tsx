@@ -31,7 +31,7 @@ export default function OrgEditor() {
     <div className="space-y-6">
       <Panel title="Struktur & Peran" desc="Atur pengurus kelas tiap cawu. Struktur ini tampil di halaman utama dan menentukan fitur Panel Admin yang bisa dipakai tiap orang.">
         <p
-          className={`flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm font-medium ${canEdit ? "border-line-strong bg-sea-50/80 text-ink" : "border-warn/40 bg-warn-soft text-warn"}`}
+          className={`flex items-start gap-2 rounded-2xl border px-4 py-3 text-sm font-medium ${canEdit ? "border-line-strong bg-accent-soft text-ink" : "border-warn/40 bg-warn-soft text-warn"}`}
         >
           {canEdit ? <ShieldCheck size={17} className="mt-0.5 shrink-0" /> : <Lock size={17} className="mt-0.5 shrink-0" />}
           <span>

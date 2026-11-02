@@ -8,7 +8,7 @@ export const WA_K2_TEXT = "0851-3473-3707";
 export default function ContactK2({ text }: { text: string }) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 rounded-k2-lg border border-ok/30 bg-ok-soft px-5 py-3.5 shadow-1">
-      <p className="text-sm font-medium text-emerald-900">{text}</p>
+      <p className="text-sm font-medium text-ok">{text}</p>
       <a
         href={WA_K2}
         target="_blank"

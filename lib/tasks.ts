@@ -13,9 +13,9 @@ export type TaskItem = {
 };
 
 export const DIFFICULTY: Record<TaskItem["difficulty"], { label: string; cls: string }> = {
-  1: { label: "Mudah", cls: "border-emerald-200 bg-emerald-50 text-emerald-700" },
-  2: { label: "Sedang", cls: "border-amber-200 bg-amber-50 text-amber-700" },
-  3: { label: "Sulit", cls: "border-rose-200 bg-rose-50 text-rose-700" },
+  1: { label: "Mudah", cls: "border-ok/30 bg-ok-soft text-ok" },
+  2: { label: "Sedang", cls: "border-warn/40 bg-warn-soft text-warn" },
+  3: { label: "Sulit", cls: "border-bad/30 bg-bad-soft text-bad" },
 };
 
 export type Urgency = "urgent" | "medium" | "low" | "lewat" | "selesai";
@@ -36,7 +36,7 @@ export const URGENCY: Record<Urgency, { label: string; chip: string; dot: string
   medium: { label: "Sedang", chip: "bg-[var(--chip-medium)] text-white", dot: "bg-[var(--chip-medium)]" },
   low: { label: "Santai", chip: "bg-[var(--chip-low)] text-white", dot: "bg-[var(--chip-low)]" },
   lewat: { label: "Lewat", chip: "bg-[var(--chip-lewat)] text-white", dot: "bg-[var(--chip-lewat)]" },
-  selesai: { label: "Selesai", chip: "bg-slate-300 text-slate-700 line-through", dot: "bg-slate-300" },
+  selesai: { label: "Selesai", chip: "bg-line-strong text-ink-2 line-through", dot: "bg-line-strong" },
 };
 
 export const daysLabel = (d: number) => (d < 0 ? `lewat ${-d} hari` : d === 0 ? "hari ini" : d === 1 ? "besok" : `${d} hari lagi`);

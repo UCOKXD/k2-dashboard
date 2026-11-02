@@ -131,7 +131,7 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
         <motion.div
           animate={{ scale: spinning ? [1, 1.04, 1] : 1 }}
           transition={{ repeat: spinning ? Infinity : 0, duration: 0.3 }}
-          className="grid h-32 place-items-center rounded-xl bg-navy-900 px-4 text-2xl font-extrabold text-white shadow-[0_12px_28px_rgba(11,30,61,0.45)]"
+          className="grid h-32 place-items-center rounded-xl bg-[#0b1e3d] dark:bg-[#1b3a6b] px-4 text-2xl font-extrabold text-white shadow-[0_12px_28px_rgba(11,30,61,0.45)]"
         >
           {shown}
         </motion.div>
@@ -160,7 +160,7 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
           </p>
         )}
         {error && <p className="mt-3 text-sm font-medium text-bad">{error}</p>}
-        {user && !stored && <p className="mt-3 text-xs text-navy-700/80">Riwayat & log saat ini hanya tersimpan di perangkat ini (penyimpanan server belum dipasang).</p>}
+        {user && !stored && <p className="mt-3 text-xs text-ink-2">Riwayat & log saat ini hanya tersimpan di perangkat ini (penyimpanan server belum dipasang).</p>}
       </div>
 
       <div className="k2-card p-6">
@@ -173,7 +173,7 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
           )}
         </div>
         {user && (
-          <form onSubmit={addManual} className="mt-4 space-y-2 rounded-xl border border-line bg-sea-50/60 p-3">
+          <form onSubmit={addManual} className="mt-4 space-y-2 rounded-xl border border-line bg-accent-soft p-3">
             <p className="text-xs font-semibold text-ink-2">Tambah manual: nama yang sudah berdoa bulan ini di luar acak</p>
             <div className="flex flex-wrap gap-2">
               <select
@@ -206,19 +206,19 @@ export default function DoaRandomizer({ names }: { names: string[] }) {
               </select>
               <button
                 disabled={!manualName || adding}
-                className="flex items-center gap-1 rounded-k2-md bg-navy-900 px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-40"
+                className="flex items-center gap-1 rounded-k2-md bg-[#0b1e3d] dark:bg-[#1b3a6b] px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-40"
               >
                 <Plus size={14} /> {adding ? "Menyimpan..." : "Tambah"}
               </button>
             </div>
           </form>
         )}
-        {history.length === 0 && <p className="mt-3 text-sm text-navy-700/70">Belum ada.</p>}
+        {history.length === 0 && <p className="mt-3 text-sm text-ink-2">Belum ada.</p>}
         <ol className="mt-3 space-y-1 text-sm">
           {history.map((h, i) => (
             <li key={i} className="flex justify-between gap-3 border-b border-line py-1">
               <span>
-                {h.name} <span className="text-xs text-navy-700/70">({h.nim})</span>
+                {h.name} <span className="text-xs text-ink-2">({h.nim})</span>
                 {h.manual && <span className="ml-1.5 rounded-full bg-surface-2 px-2 py-0.5 text-[11px] font-semibold text-ink-2">manual</span>}
               </span>
               <span className="shrink-0 text-ink-2">{fmt(h.at)}</span>

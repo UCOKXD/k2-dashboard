@@ -15,8 +15,8 @@ export default function TapReminder() {
         <CreditCard size={24} />
       </span>
       <div className="min-w-0">
-        <p className="text-lg font-black tracking-wide text-bad sm:text-xl">JANGAN LUPA TAP IN &amp; TAP OUT!</p>
-        <p className="text-sm text-red-700/80">Tap kartu saat masuk dan saat pulang supaya kehadiranmu tercatat.</p>
+        <p className="text-lg font-extrabold text-bad sm:text-xl">Jangan lupa tap in &amp; tap out!</p>
+        <p className="text-sm text-bad">Tap kartu saat masuk dan saat pulang supaya kehadiranmu tercatat.</p>
       </div>
     </div>
   );

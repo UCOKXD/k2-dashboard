@@ -21,6 +21,7 @@ export default {
         ok: { DEFAULT: v("ok"), soft: v("ok-soft") },
         warn: { DEFAULT: v("warn"), soft: v("warn-soft") },
         bad: { DEFAULT: v("bad"), soft: v("bad-soft") },
+        fest: { DEFAULT: v("fest"), soft: v("fest-soft") }, // pink axolotl: aksen tunggal untuk momen gembira (DESIGN.md)
       },
       fontFamily: {
         display: ["var(--font-k2-display)", "var(--font-k2-sans)", "system-ui", "sans-serif"],

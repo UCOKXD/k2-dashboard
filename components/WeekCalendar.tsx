@@ -57,7 +57,7 @@ export default function WeekCalendar({
             <ChevronLeft size={16} />
           </button>
           {offset !== 0 && (
-            <button onClick={() => setOffset(0)} className="rounded-full bg-navy-900 px-3 py-1.5 text-xs font-semibold text-white shadow">
+            <button onClick={() => setOffset(0)} className="rounded-full bg-[#0b1e3d] dark:bg-[#1b3a6b] px-3 py-1.5 text-xs font-semibold text-white shadow">
               Minggu ini
             </button>
           )}
@@ -88,12 +88,12 @@ export default function WeekCalendar({
               </div>
               {holiday && <p className="text-xs font-semibold text-bad">{holiday}</p>}
               {bd.map((b) => (
-                <p key={b.nama} className="flex items-center gap-1 text-xs font-semibold text-pink-600">
+                <p key={b.nama} className="flex items-center gap-1 text-xs font-semibold text-fest">
                   <Cake size={12} className="shrink-0" /> Ultah {b.short}
                 </p>
               ))}
               {ev.map((e, i) => (
-                <p key={i} className="flex items-start gap-1 text-xs font-semibold text-indigo-600" title={e.detail}>
+                <p key={i} className="flex items-start gap-1 text-xs font-semibold text-accent-ink" title={e.detail}>
                   <PartyPopper size={12} className="mt-0.5 shrink-0" /> {e.title}
                 </p>
               ))}

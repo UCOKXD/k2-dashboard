@@ -51,7 +51,7 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
       <div className="k2-card mx-auto max-w-md space-y-4 p-8 text-center">
         <Lock className="mx-auto text-ink-3" />
         <p className="font-semibold text-ink-2">Halaman ini khusus pengurus kelas.</p>
-        <Link href={user ? "/akun" : "/masuk"} className="inline-block rounded-k2-md bg-navy-900 px-6 py-2.5 text-sm font-semibold text-white shadow">
+        <Link href={user ? "/akun" : "/masuk"} className="inline-block rounded-k2-md bg-[#0b1e3d] dark:bg-[#1b3a6b] px-6 py-2.5 text-sm font-semibold text-white shadow">
           {user ? "Ke halaman akun" : "Masuk"}
         </Link>
       </div>
@@ -65,7 +65,7 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
           <h1 className="text-[clamp(36px,5vw,56px)] font-extrabold leading-none tracking-[-0.03em]">Panel Admin</h1>
           <p className="mt-3 text-[15px] text-ink-3">Halo, {user.panggilan} ({user.jabatan}).</p>
         </div>
-        <p className="rounded-2xl border border-bad/30 bg-bad-soft px-4 py-3 text-sm font-medium text-rose-800">
+        <p className="rounded-2xl border border-bad/30 bg-bad-soft px-4 py-3 text-sm font-medium text-bad">
           Demi keamanan, ganti password sementara Anda dulu. Password sementara diketahui semua pengurus, jadi fitur admin baru terbuka setelah
           password diganti. Setelah itu, masuk lagi dengan password baru.
         </p>
@@ -78,8 +78,7 @@ export default function AdminPanel({ storeReady }: { storeReady: boolean }) {
     <div className="space-y-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="k2-eyebrow">K2 · Admin</p>
-          <h1 className="mt-3.5 text-[clamp(36px,5vw,56px)] font-extrabold leading-none tracking-[-0.03em]">Panel Admin</h1>
+          <h1 className="text-[clamp(36px,5vw,56px)] font-extrabold leading-none tracking-[-0.03em]">Panel Admin</h1>
           <p className="mt-3 max-w-[70ch] text-[15px] text-ink-3">
             Halo, {user.panggilan} ({user.jabatan}{user.webAdmin ? " · Admin Website" : ""}). Perubahan di sini langsung terlihat oleh semua pengunjung setelah disimpan.
           </p>

@@ -107,7 +107,7 @@ export function CawuEditor() {
           {!canEdit && <p className="text-sm font-medium text-warn">Hanya Admin Website yang bisa mengubah struktur per CAWU.</p>}
 
           {isCurrent ? (
-            <p className="flex items-start gap-2 rounded-2xl border border-line-strong bg-sea-50/80 px-4 py-3 text-sm text-ink">
+            <p className="flex items-start gap-2 rounded-2xl border border-line-strong bg-accent-soft px-4 py-3 text-sm text-ink">
               <Info size={17} className="mt-0.5 shrink-0" />
               <span>
                 CAWU {sel} sedang berjalan, jadi halaman Profil memakai pengurus dari tab <b>Struktur &amp; Peran</b> (yang juga menentukan hak akses). Ubah pengurusnya di sana. Saat

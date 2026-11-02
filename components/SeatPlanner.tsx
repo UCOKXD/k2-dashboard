@@ -120,7 +120,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
                 setMsg("");
               }}
               disabled={busy}
-              className={`${btn} border border-line-strong bg-surface hover:bg-sea-100`}
+              className={`${btn} border border-line-strong bg-surface hover:bg-accent-soft`}
             >
               Kembali ke denah awal
             </button>
@@ -138,13 +138,13 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
       )}
 
       {admin && dirty && (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-warn/40 bg-amber-50/90 px-4 py-3 shadow-[0_12px_28px_rgba(15,23,42,0.15)]">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-warn/40 bg-warn-soft px-4 py-3 shadow-[0_12px_28px_rgba(15,23,42,0.15)]">
           <p className="text-sm font-semibold text-warn">Ada perubahan yang belum disimpan.</p>
           <div className="flex gap-2">
             <button onClick={discard} className="flex items-center gap-1.5 rounded-k2-md border border-warn/40 bg-surface px-4 py-2 text-sm font-semibold text-warn">
               <Undo2 size={14} /> Batalkan
             </button>
-            <button onClick={save} disabled={saving || busy} className="flex items-center gap-1.5 rounded-k2-md bg-navy-900 px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-50">
+            <button onClick={save} disabled={saving || busy} className="flex items-center gap-1.5 rounded-k2-md bg-[#0b1e3d] dark:bg-[#1b3a6b] px-4 py-2 text-sm font-semibold text-white shadow disabled:opacity-50">
               <Save size={14} /> {saving ? "Menyimpan..." : "Simpan & umumkan"}
             </button>
           </div>
@@ -155,7 +155,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
 
       <div className="k2-card overflow-x-auto p-4">
         <div className="grid min-w-[900px] grid-cols-11 gap-2" style={{ gridTemplateRows: "auto repeat(4, 3.25rem)" }}>
-          <div style={{ gridRow: 1, gridColumn: "4 / 8" }} className="rounded-lg bg-navy-900 py-2 text-center text-sm font-semibold text-white">Papan</div>
+          <div style={{ gridRow: 1, gridColumn: "4 / 8" }} className="rounded-lg bg-[#0b1e3d] dark:bg-[#1b3a6b] py-2 text-center text-sm font-semibold text-white">Papan</div>
           <div style={{ gridRow: 1, gridColumn: "10 / 12" }} className="rounded-lg bg-[#165f93] py-2 text-center text-sm font-semibold text-white">Dosen</div>
           <div style={{ gridRow: "4 / 6", gridColumn: "1 / 4" }} className="grid place-items-center rounded-lg border-2 border-dashed border-line-strong text-sm text-accent-ink">Box</div>
 
@@ -182,8 +182,8 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
                       : isPrio
                         ? "border-amber-400 bg-warn-soft hover:bg-warn-soft"
                         : zone.has(i)
-                          ? "border-line-strong bg-sea-100/70 hover:bg-sea-100"
-                          : "border-line-strong bg-accent-soft hover:bg-sea-100"
+                          ? "border-line-strong bg-accent-soft hover:bg-accent-soft"
+                          : "border-line-strong bg-accent-soft hover:bg-accent-soft"
                 }`}
               >
                 {isPrio && <Star size={10} className="absolute right-1 top-1 fill-amber-400 text-amber-500" />}
@@ -219,7 +219,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
           {prio.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {prio.map((st) => (
-                <button key={st} onClick={() => togglePrio(st)} className="flex min-h-11 items-center gap-1 rounded-k2-md border border-warn/40 bg-warn-soft px-3.5 text-sm font-semibold text-warn shadow-sm hover:bg-amber-200">
+                <button key={st} onClick={() => togglePrio(st)} className="flex min-h-11 items-center gap-1 rounded-k2-md border border-warn/40 bg-warn-soft px-3.5 text-sm font-semibold text-warn shadow-sm hover:bg-warn-soft">
                   {STUDENTS[st].full} <X size={12} />
                 </button>
               ))}
@@ -235,7 +235,7 @@ export default function SeatPlanner({ initial }: { initial: SeatsData }) {
                   key={s.i}
                   onClick={() => togglePrio(s.i)}
                   disabled={busy}
-                  className={`min-h-11 rounded-k2-md border px-3.5 text-sm font-medium transition ${on ? "border-amber-400 bg-amber-400 text-white shadow" : "border-line-strong bg-accent-soft text-ink hover:bg-sea-100"}`}
+                  className={`min-h-11 rounded-k2-md border px-3.5 text-sm font-medium transition ${on ? "border-amber-400 bg-amber-400 text-white shadow" : "border-line-strong bg-accent-soft text-ink hover:bg-accent-soft"}`}
                 >
                   {s.absen}. {s.full}
                 </button>

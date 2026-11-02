@@ -131,7 +131,7 @@ export default function HomeCards({ cards }: { cards: Cards }) {
       {ultah.some((u) => u.days > 0) && (
         <div>
           <div className="flex flex-wrap items-center gap-4 rounded-k2-lg border border-[#fbcfe8] bg-gradient-to-r from-[#fdf2f8] via-[#fff1f2] to-[#fffbeb] p-5 dark:border-[rgba(244,114,182,0.28)] dark:from-[rgba(236,72,153,0.16)] dark:via-[rgba(244,63,94,0.1)] dark:to-[rgba(245,158,11,0.1)]">
-            <div className="rounded-2xl border border-pink-200 bg-surface p-3 text-pink-500">
+            <div className="rounded-2xl border border-fest/30 bg-surface p-3 text-fest">
               <Cake size={22} />
             </div>
             <div className="min-w-0 flex-1">

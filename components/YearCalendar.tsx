@@ -44,10 +44,10 @@ function useYearData(year: number, events: CalEvent[], birthdays: Bday[]) {
 
 // Warna angka tanggal: merah untuk Minggu & libur nasional, merah muda untuk cuti bersama, hitam untuk hari biasa.
 function dayTone(dow: number, h?: Holiday) {
-  if (h && !h.cuti) return "text-red-600";
-  if (dow === 0) return "text-red-600";
-  if (h?.cuti) return "text-rose-400";
-  return "text-slate-900";
+  if (h && !h.cuti) return "text-bad";
+  if (dow === 0) return "text-bad";
+  if (h?.cuti) return "text-fest";
+  return "text-ink";
 }
 
 export default function YearCalendar({
@@ -172,7 +172,7 @@ export default function YearCalendar({
             </div>
             <div className="grid grid-cols-7">
               {monthCells(year, month).map((d, i) => {
-                if (d === null) return <div key={`x${i}`} className="min-h-20 border-b border-r border-line bg-slate-50/50 sm:min-h-28" />;
+                if (d === null) return <div key={`x${i}`} className="min-h-20 border-b border-r border-line bg-surface-2/50 sm:min-h-28" />;
                 const k = key(year, month, d);
                 const h = hol.get(k);
                 const es = ev.get(k) ?? [];
@@ -182,9 +182,9 @@ export default function YearCalendar({
                 const kul = showKuliah && !(h && !h.cuti) ? (kuliahByDay.get(i % 7) ?? []) : [];
                 const isToday = k === today;
                 return (
-                  <div key={k} className={`min-h-20 border-b border-r border-line p-1.5 sm:min-h-28 sm:p-2 ${h && !h.cuti ? "bg-red-50/60" : h?.cuti ? "bg-rose-50/40" : ""}`}>
+                  <div key={k} className={`min-h-20 border-b border-r border-line p-1.5 sm:min-h-28 sm:p-2 ${h && !h.cuti ? "bg-bad-soft" : h?.cuti ? "bg-bad-soft" : ""}`}>
                     <span className={`inline-grid h-7 w-7 place-items-center rounded-full text-sm font-bold ${isToday ? "bg-[#165f93] text-white shadow-md" : dayTone(i % 7, h)}`}>{d}</span>
-                    {h && <p className={`mt-0.5 line-clamp-2 text-[10px] font-semibold leading-tight sm:text-[11px] ${h.cuti ? "text-rose-400" : "text-bad"}`}>{h.name}</p>}
+                    {h && <p className={`mt-0.5 line-clamp-2 text-[10px] font-semibold leading-tight sm:text-[11px] ${h.cuti ? "text-fest" : "text-bad"}`}>{h.name}</p>}
                     {es.map((e, j) => (
                       <p key={j} title={e.detail || e.title} className="mt-1 truncate rounded-md bg-[#165f93] px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm sm:text-[11px]">
                         {e.title}
@@ -207,12 +207,12 @@ export default function YearCalendar({
                       <p
                         key={c.id}
                         title={`${c.matkul} · ${jam(c.start)}–${jam(c.end)}${c.ruang ? ` · ${c.ruang}` : ""}${c.dosen ? ` · ${c.dosen}` : ""}`}
-                        className="mt-1 truncate rounded-md border border-sky-200 bg-sky-50 px-1.5 py-0.5 text-[10px] font-medium text-sky-700 sm:text-[11px]"
+                        className="mt-1 truncate rounded-md border border-line bg-accent-soft px-1.5 py-0.5 text-[10px] font-medium text-accent-ink sm:text-[11px]"
                       >
                         <span className="font-mono">{jam(c.start)}</span> {c.matkul}
                       </p>
                     ))}
-                    {kul.length > 3 && <p className="mt-0.5 text-[10px] font-semibold text-sky-600">+{kul.length - 3} kelas lagi</p>}
+                    {kul.length > 3 && <p className="mt-0.5 text-[10px] font-semibold text-accent-ink">+{kul.length - 3} kelas lagi</p>}
                     {bs.map((b) => (
                       <p key={b.nama} title={`Ulang tahun ${b.nama}`} className="mt-1 flex items-center gap-1 truncate rounded-md bg-pink-500 px-1.5 py-0.5 text-[10px] font-semibold text-white shadow-sm sm:text-[11px]">
                         <Cake size={11} className="shrink-0" /> <span className="truncate">{b.short}</span>
@@ -237,7 +237,7 @@ export default function YearCalendar({
                   .sort((x, y) => x.d.localeCompare(y.d))
                   .map(({ d, k, e, b }) => (
                     <li key={k} className="flex gap-3 text-sm">
-                      <span className={`w-8 shrink-0 font-bold ${b ? "text-pink-500" : "text-accent-ink"}`}>{Number(d.slice(8))}</span>
+                      <span className={`w-8 shrink-0 font-bold ${b ? "text-fest" : "text-accent-ink"}`}>{Number(d.slice(8))}</span>
                       {e ? (
                         <span>
                           <b className="text-ink">{e.title}</b>
@@ -245,7 +245,7 @@ export default function YearCalendar({
                         </span>
                       ) : (
                         <span className="flex items-center gap-1.5">
-                          <Cake size={14} className="shrink-0 text-pink-500" /> <b className="text-ink">Ulang tahun {b!.nama}</b>
+                          <Cake size={14} className="shrink-0 text-fest" /> <b className="text-ink">Ulang tahun {b!.nama}</b>
                         </span>
                       )}
                     </li>
@@ -258,8 +258,8 @@ export default function YearCalendar({
               <ul className="space-y-2">
                 {monthHol.map((h) => (
                   <li key={h.date} className="flex gap-3 text-sm">
-                    <span className={`w-8 shrink-0 font-bold ${h.cuti ? "text-rose-400" : "text-bad"}`}>{Number(h.date.slice(8))}</span>
-                    <span className={h.cuti ? "text-rose-500" : "text-red-700"}>{h.name}</span>
+                    <span className={`w-8 shrink-0 font-bold ${h.cuti ? "text-fest" : "text-bad"}`}>{Number(h.date.slice(8))}</span>
+                    <span className={h.cuti ? "text-fest" : "text-bad"}>{h.name}</span>
                   </li>
                 ))}
               </ul>

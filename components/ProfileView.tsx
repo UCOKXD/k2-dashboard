@@ -170,15 +170,15 @@ export default function ProfileView({ absen }: { absen: number }) {
 
       {cur && open !== null && (
         <div role="dialog" aria-modal="true" aria-label="Foto" className="fixed inset-0 z-[90] flex items-center justify-center bg-black/85 p-4" onClick={() => setOpen(null)}>
-          <button type="button" className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white/15 text-white" aria-label="Tutup" autoFocus>
+          <button type="button" className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-surface/15 text-white" aria-label="Tutup" autoFocus>
             <X size={20} />
           </button>
           {data.posts.length > 1 && (
             <>
-              <button type="button" onClick={(e) => (e.stopPropagation(), setOpen((open + data.posts.length - 1) % data.posts.length))} className="absolute left-3 grid h-11 w-11 place-items-center rounded-full bg-white/15 text-white" aria-label="Foto sebelumnya">
+              <button type="button" onClick={(e) => (e.stopPropagation(), setOpen((open + data.posts.length - 1) % data.posts.length))} className="absolute left-3 grid h-11 w-11 place-items-center rounded-full bg-surface/15 text-white" aria-label="Foto sebelumnya">
                 <ChevronLeft size={22} />
               </button>
-              <button type="button" onClick={(e) => (e.stopPropagation(), setOpen((open + 1) % data.posts.length))} className="absolute right-3 grid h-11 w-11 place-items-center rounded-full bg-white/15 text-white" aria-label="Foto berikutnya">
+              <button type="button" onClick={(e) => (e.stopPropagation(), setOpen((open + 1) % data.posts.length))} className="absolute right-3 grid h-11 w-11 place-items-center rounded-full bg-surface/15 text-white" aria-label="Foto berikutnya">
                 <ChevronRight size={22} />
               </button>
             </>
@@ -189,7 +189,7 @@ export default function ProfileView({ absen }: { absen: number }) {
             <figcaption className="mt-3 flex items-center justify-center gap-3 text-sm text-white/85">
               <span className="font-mono">{tgl(cur.at)}</span>
               {canDelete && (
-                <button type="button" onClick={() => removePost(cur.id)} className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1.5 font-semibold text-white hover:bg-rose-600">
+                <button type="button" onClick={() => removePost(cur.id)} className="inline-flex items-center gap-1.5 rounded-full bg-surface/15 px-3 py-1.5 font-semibold text-white hover:bg-rose-600">
                   <Trash2 size={14} /> Hapus{!data.own && " (pengurus)"}
                 </button>
               )}

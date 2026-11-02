@@ -7,9 +7,9 @@ const BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "O
 // Tingkat pelanggaran ditentukan dari poinnya (aturan Divisi K2):
 // sampai 20 poin = Ringan, 21–50 = Sedang, di atas 50 = Berat.
 export const TINGKAT = [
-  { id: "ringan", label: "Ringan", range: "≤20 poin", cls: "bg-slate-100 text-slate-700" },
-  { id: "sedang", label: "Sedang", range: "21–50 poin", cls: "bg-amber-50 text-amber-700" },
-  { id: "berat", label: "Berat", range: ">50 poin", cls: "bg-rose-50 text-rose-700" },
+  { id: "ringan", label: "Ringan", range: "≤20 poin", cls: "bg-surface-2 text-ink-2" },
+  { id: "sedang", label: "Sedang", range: "21–50 poin", cls: "bg-warn-soft text-warn" },
+  { id: "berat", label: "Berat", range: ">50 poin", cls: "bg-bad-soft text-bad" },
 ] as const;
 export type TingkatId = (typeof TINGKAT)[number]["id"];
 export const tingkatOf = (poin: number): TingkatId => (poin > 50 ? "berat" : poin > 20 ? "sedang" : "ringan");
