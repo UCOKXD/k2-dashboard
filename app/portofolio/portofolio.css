@@ -1,0 +1,110 @@
+/* Gerak dan hover khusus halaman portofolio (/portofolio). Arah desain: DESIGN.md bagian "Halaman portofolio".
+   Semua gerak berhenti bila perangkat meminta gerak dikurangi; ambangan chip bisa dijeda lewat tombol "Jeda animasi". */
+
+/* Pop saat disorot: naik sedikit dan membesar, menekan saat diklik. */
+.pf-pop {
+  transition: transform 0.25s var(--ease), border-color 0.2s, box-shadow 0.25s var(--ease);
+}
+.pf-pop:hover {
+  transform: translateY(-3px) scale(1.04);
+}
+.pf-pop:active {
+  transform: scale(0.97);
+}
+
+/* Chip alat yang mengambang. Lapisan luar mengambang, lapisan dalam miring dan bereaksi saat disorot. */
+.pf-float {
+  animation: pf-float var(--dur, 6s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+@keyframes pf-float {
+  from { transform: translateY(-7px); }
+  to { transform: translateY(7px); }
+}
+:root[data-pf-diam] .pf-float {
+  animation-play-state: paused;
+}
+.pf-chip {
+  transform: rotate(var(--r, 0deg));
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.pf-chip:hover {
+  transform: rotate(0deg) scale(1.12);
+}
+
+/* Huruf nama raksasa melompat satu per satu saat disorot. */
+.pf-huruf {
+  display: inline-block;
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s;
+}
+.pf-huruf:hover {
+  transform: translateY(-0.07em) rotate(-3deg);
+  color: var(--ink);
+}
+
+/* Ledakan logo: diam di belakang foto (kecil, tak terlihat), lalu terlempar ke posisinya saat data-pecah="1". */
+.pf-ledak {
+  --k-x: var(--x);
+  --k-y: var(--y);
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%) scale(0.2);
+  transition: transform 0.45s cubic-bezier(0.5, 0, 0.75, 0), opacity 0.3s linear 0.15s;
+}
+@media (max-width: 767px) {
+  .pf-ledak {
+    --k-x: var(--xh);
+    --k-y: var(--yh);
+  }
+}
+[data-pecah="1"] .pf-ledak {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(calc(-50% + var(--k-x)), calc(-50% + var(--k-y))) rotate(var(--r)) scale(1);
+  transition: transform 0.85s cubic-bezier(0.34, 1.56, 0.64, 1) var(--d), opacity 0.2s linear var(--d);
+}
+.pf-ledak-ubin {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.pf-ledak-ubin:hover {
+  transform: scale(1.18) rotate(-8deg);
+}
+
+/* Baris terminal menyala saat disorot. */
+.pf-baris {
+  transition: background-color 0.15s, transform 0.2s var(--ease);
+}
+.pf-baris:hover {
+  background-color: rgba(143, 207, 241, 0.12);
+  transform: translateX(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pf-float {
+    animation: none;
+  }
+  .pf-pop,
+  .pf-chip,
+  .pf-huruf,
+  .pf-ledak-ubin,
+  .pf-baris {
+    transition: none;
+  }
+  .pf-pop:hover,
+  .pf-huruf:hover,
+  .pf-ledak-ubin:hover,
+  .pf-baris:hover {
+    transform: none;
+  }
+  .pf-chip:hover {
+    transform: rotate(var(--r, 0deg));
+  }
+  /* Tanpa lemparan: logo langsung di tempatnya, hanya muncul dan hilang perlahan. */
+  .pf-ledak,
+  [data-pecah="1"] .pf-ledak {
+    transform: translate(calc(-50% + var(--k-x)), calc(-50% + var(--k-y))) rotate(var(--r));
+    transition: opacity 0.2s linear;
+  }
+}

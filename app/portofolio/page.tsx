@@ -4,7 +4,10 @@ import { join } from "node:path";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
-import { FOKUS, KEAHLIAN, KONTAK, PROFIL, PROYEK, TENTANG } from "./data";
+import { BEASISWA, FOKUS, KEAHLIAN, KONTAK, LOGO_MENGAMBANG, PROFIL, PROYEK, TENTANG } from "./data";
+import Ledakan from "./Ledakan";
+import TombolJeda from "./TombolJeda";
+import "./portofolio.css";
 
 export const metadata: Metadata = {
   title: `${PROFIL.nama} | Portofolio`,
@@ -27,8 +30,11 @@ const NAVY = "#0b1e3d"; // kartu "terminal" dan kartu proyek tetap navy jaket di
 export default function PortofolioPage() {
   const adaFoto = existsSync(join(process.cwd(), "public", PROFIL.foto));
   const utama = PROYEK[0];
+  const sosial = [
+    { label: "Instagram", file: "instagram", handle: KONTAK.instagram, href: `https://www.instagram.com/${encodeURIComponent(KONTAK.instagram)}/` },
+    { label: "TikTok", file: "tiktok", handle: KONTAK.tiktok, href: `https://www.tiktok.com/@${encodeURIComponent(KONTAK.tiktok)}` },
+  ];
   const tautan = [
-    KONTAK.instagram && { label: "Instagram", href: `https://www.instagram.com/${encodeURIComponent(KONTAK.instagram)}/` },
     KONTAK.linkedin && { label: "LinkedIn", href: `https://www.linkedin.com/in/${encodeURIComponent(KONTAK.linkedin)}/` },
     KONTAK.github && { label: "GitHub", href: `https://github.com/${encodeURIComponent(KONTAK.github)}` },
     KONTAK.email && { label: "Email", href: `mailto:${KONTAK.email}` },
@@ -61,20 +67,21 @@ export default function PortofolioPage() {
               </p>
             </div>
             <nav aria-label="Tautan" className="flex shrink-0 items-center">
-              <a href="#proyek" className={`hidden min-h-11 items-center px-3 text-[13px] font-semibold text-ink-2 hover:text-ink md:inline-flex ${FOKUS_RING}`}>
+              <a href="#proyek" className={`pf-pop hidden min-h-11 items-center px-3 text-[13px] font-semibold text-ink-2 hover:text-ink md:inline-flex ${FOKUS_RING}`}>
                 Proyek
               </a>
-              <a href="#tentang" className={`hidden min-h-11 items-center px-3 text-[13px] font-semibold text-ink-2 hover:text-ink md:inline-flex ${FOKUS_RING}`}>
+              <a href="#tentang" className={`pf-pop hidden min-h-11 items-center px-3 text-[13px] font-semibold text-ink-2 hover:text-ink md:inline-flex ${FOKUS_RING}`}>
                 Tentang
               </a>
               <span aria-hidden="true" className="mx-2 hidden h-4 w-px bg-line-strong md:block" />
+              <TombolJeda />
               {tautan.map((t) => (
                 <a
                   key={t.href}
                   href={t.href}
                   target={t.href.startsWith("mailto:") ? undefined : "_blank"}
                   rel="noopener noreferrer"
-                  className={`inline-flex min-h-11 items-center gap-1 px-2 text-[13px] font-semibold text-accent-ink hover:underline ${FOKUS_RING}`}
+                  className={`pf-pop inline-flex min-h-11 items-center gap-1 px-2 text-[13px] font-semibold text-accent-ink hover:underline ${FOKUS_RING}`}
                 >
                   {t.label}
                   <ArrowUpRight size={14} aria-hidden="true" />
@@ -85,12 +92,21 @@ export default function PortofolioPage() {
 
           {/* Nama raksasa (h1). Di HP di atas foto, di layar lebar di tengah di belakang foto. */}
           <h1 className="relative z-0 mt-6 text-center font-display text-[19.5vw] font-extrabold leading-[0.82] tracking-[-0.045em] text-accent md:absolute md:inset-x-0 md:top-[38%] md:mt-0 md:text-[clamp(120px,17.5vw,248px)]">
-            <span aria-hidden="true">{PROFIL.namaBesar}</span>
+            <span aria-hidden="true">
+              {[...PROFIL.namaBesar].map((h, i) => (
+                <span key={i} className="pf-huruf">
+                  {h}
+                </span>
+              ))}
+            </span>
             <span className="sr-only">{PROFIL.nama}</span>
           </h1>
 
-          {/* Foto potong */}
-          <div className="relative z-10 mx-auto -mt-[9vw] flex h-[min(110vw,460px)] justify-center md:absolute md:bottom-0 md:left-1/2 md:mt-0 md:h-[84%] md:w-[min(46vw,560px)] md:-translate-x-1/2">
+          {/* Logo bahasa & alat yang meledak dari belakang foto saat di-scroll */}
+          <Ledakan />
+
+          {/* Foto potong. Tidak menangkap kursor supaya huruf nama dan logo di belakangnya tetap bisa disorot. */}
+          <div className="pointer-events-none relative z-10 mx-auto -mt-[9vw] flex h-[min(110vw,460px)] justify-center md:absolute md:bottom-0 md:left-1/2 md:mt-0 md:h-[84%] md:w-[min(46vw,560px)] md:-translate-x-1/2">
             {adaFoto ? (
               <Image
                 src={PROFIL.foto}
@@ -119,7 +135,59 @@ export default function PortofolioPage() {
             </span>
             <blockquote className="mt-1 font-display text-[22px] font-bold leading-[1.15] tracking-[-0.01em] text-ink md:text-[24px]">{PROFIL.kutipan}</blockquote>
             <figcaption className="mt-2 text-[13px] text-ink-3">{PROFIL.nama}</figcaption>
+            <p className="pf-pop mt-4 inline-flex items-center gap-2.5 rounded-k2-md border border-[#dce4ee] bg-white px-3 py-2">
+              <span className="text-[12px] font-semibold text-[#33475f]">Penerima beasiswa</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={`/portofolio/logo/${BEASISWA.file}.webp`} alt={BEASISWA.nama} width={BEASISWA.w} height={BEASISWA.h} className="h-5 w-auto" />
+            </p>
           </figure>
+
+          {/* Media sosial: ikon di sisi kiri. Ikon yang username-nya belum diisi tampil pudar dan tidak bisa diklik. */}
+          <ul aria-label="Media sosial" className="absolute left-4 top-[170px] z-30 flex flex-col gap-2.5 md:left-10 md:top-[47%]">
+            {sosial.map((s) => {
+              const ikon = (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={`/portofolio/logo/${s.file}.webp`} alt="" width={160} height={160} className="h-11 w-11 rounded-[12px] shadow-2" />
+              );
+              return (
+                <li key={s.label}>
+                  {s.handle ? (
+                    <a
+                      href={s.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${s.label} @${s.handle}`}
+                      className={`pf-chip block rounded-[12px] [--r:0deg] hover:[--r:-8deg] ${FOKUS_RING}`}
+                    >
+                      {ikon}
+                    </a>
+                  ) : (
+                    <span title={`${s.label}: username belum diisi`} aria-label={`${s.label} (belum diisi)`} className="block opacity-45 grayscale">
+                      {ikon}
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+
+          {/* Chip alat yang mengambang di sekitar foto */}
+          {LOGO_MENGAMBANG.map((c, i) => (
+            <span
+              key={c.nama}
+              className={`pf-float absolute z-20 ${c.hp ? "" : "hidden md:block"} ${c.posisi}`}
+              style={{ "--dur": `${5 + (i % 3)}s`, "--delay": `${-i * 1.3}s` } as React.CSSProperties}
+            >
+              <span
+                className="pf-chip flex h-11 items-center gap-2 rounded-k2-md border border-[#dce4ee] bg-white px-2.5 shadow-2 md:h-12 md:px-3"
+                style={{ "--r": `${c.r}deg` } as React.CSSProperties}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/portofolio/logo/${c.file}.webp`} alt={c.teks ? "" : c.nama} width={c.w} height={c.h} className={c.teks ? "h-7 w-7 rounded-[7px]" : "h-6 w-auto md:h-7"} />
+                {c.teks && <span className="text-[14px] font-semibold text-[#0b1e3d]">{c.teks}</span>}
+              </span>
+            </span>
+          ))}
 
           {/* Angka angkatan, diarsir seperti gambar teknik */}
           <p className="absolute right-10 top-[17%] z-20 hidden text-right md:block">
@@ -138,15 +206,15 @@ export default function PortofolioPage() {
           <div className="relative z-20 mt-5 grid gap-3 sm:grid-cols-2 md:contents">
             {/* Kartu terminal: bidang fokus */}
             <div
-              className="rounded-k2-lg border border-line-strong p-4 font-mono text-[13px] leading-relaxed text-[#eaf0f8] md:absolute md:bottom-8 md:left-10 md:w-[290px]"
+              className="pf-pop rounded-k2-lg border border-line-strong p-4 font-mono text-[13px] leading-relaxed text-[#eaf0f8] md:absolute md:bottom-8 md:left-10 md:w-[290px]"
               style={{ background: NAVY }}
             >
               <p className="text-[#8fcff1]">
                 <span className="text-[#f8c3cf]">ancis@ppti28</span>:~$ whoami --fokus
               </p>
-              <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-4">
+              <dl className="mt-2 flex flex-col">
                 {FOKUS.map((f) => (
-                  <div key={f.kunci} className="contents">
+                  <div key={f.kunci} className="pf-baris -mx-1.5 grid grid-cols-[5.5rem_1fr] rounded-[4px] px-1.5">
                     <dt className="text-[#93a4bc]">{f.kunci}</dt>
                     <dd className="text-white">{f.nilai}</dd>
                   </div>
@@ -161,7 +229,7 @@ export default function PortofolioPage() {
             {utama && (
               <Link
                 href={utama.href ?? "#proyek"}
-                className={`group block rounded-k2-lg border border-line-strong p-4 text-white transition hover:border-[#8fcff1] md:absolute md:bottom-8 md:right-10 md:w-[320px] ${FOKUS_RING}`}
+                className={`pf-pop group block rounded-k2-lg border border-line-strong p-4 text-white hover:border-[#8fcff1] md:absolute md:bottom-8 md:right-10 md:w-[320px] ${FOKUS_RING}`}
                 style={{ background: NAVY }}
               >
                 <div className="flex items-center justify-between gap-3">
@@ -205,7 +273,7 @@ export default function PortofolioPage() {
           <h3 className="mt-8 text-[17px] font-bold">Keahlian</h3>
           <ul className="mt-3 flex flex-wrap gap-1.5">
             {KEAHLIAN.map((k) => (
-              <li key={k} className="rounded-k2-sm border border-line bg-surface px-2.5 py-1 text-[13px] text-ink-2">
+              <li key={k} className="pf-pop rounded-k2-sm border border-line bg-surface px-2.5 py-1 text-[13px] text-ink-2 hover:border-accent hover:text-ink">
                 {k}
               </li>
             ))}
@@ -218,18 +286,18 @@ export default function PortofolioPage() {
           </h2>
           <ol className="mt-4 border-t border-line">
             {PROYEK.map((p, i) => (
-              <li key={p.judul} className="grid grid-cols-[2.5rem_1fr] gap-x-2 border-b border-line py-5">
-                <span className="font-mono text-[13px] text-ink-3">{String(i + 1).padStart(2, "0")}</span>
+              <li key={p.judul} className="group grid grid-cols-[2.5rem_1fr] gap-x-2 border-b border-line py-5">
+                <span className="font-mono text-[13px] text-ink-3 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-accent-ink motion-reduce:transition-none">{String(i + 1).padStart(2, "0")}</span>
                 <div>
                   <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-                    <h3 className="text-[19px] font-bold">{p.judul}</h3>
+                    <h3 className="text-[19px] font-bold transition-colors group-hover:text-accent-ink">{p.judul}</h3>
                     <p className="text-[13px] font-semibold text-accent-ink">{p.peran}</p>
                   </div>
                   <p className="mt-1.5 text-[15px] leading-relaxed text-ink-2">{p.deskripsi}</p>
                   <div className="mt-1 flex flex-wrap items-center justify-between gap-x-4">
                     {p.teknologi && <p className="py-2 text-[13px] text-ink-3">{p.teknologi}</p>}
                     {p.href && (
-                      <Link href={p.href} className={`inline-flex min-h-11 items-center gap-1 text-[14px] font-semibold text-accent-ink underline-offset-4 hover:underline ${FOKUS_RING}`}>
+                      <Link href={p.href} className={`pf-pop inline-flex min-h-11 items-center gap-1 text-[14px] font-semibold text-accent-ink underline-offset-4 hover:underline ${FOKUS_RING}`}>
                         {p.hrefLabel ?? "Lihat proyek"}
                         <ArrowUpRight size={15} aria-hidden="true" />
                       </Link>
@@ -245,7 +313,7 @@ export default function PortofolioPage() {
       <footer className="border-t border-line">
         <div className="mx-auto flex w-full max-w-[1280px] flex-wrap items-center justify-between gap-x-6 px-4 py-2 text-[13px] text-ink-3 sm:px-6 md:px-10">
           <p className="py-3">Dibangun dengan Next.js, di-deploy di Vercel.</p>
-          <Link href="/" className={`inline-flex min-h-11 items-center underline-offset-4 hover:underline ${FOKUS_RING}`}>
+          <Link href="/" className={`pf-pop inline-flex min-h-11 items-center underline-offset-4 hover:underline ${FOKUS_RING}`}>
             Bagian dari web K2 PPTI 28
           </Link>
         </div>
