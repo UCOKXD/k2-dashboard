@@ -41,10 +41,10 @@ export default function Ledakan() {
           className="pf-ledak"
           style={{ "--x": `${l.x}px`, "--y": `${l.y}px`, "--xh": `${l.xh}px`, "--yh": `${l.yh}px`, "--r": `${l.r}deg`, "--d": `${i * 45}ms` } as CSSProperties}
         >
-          <span title={l.nama} className="pf-ledak-ubin grid h-12 w-12 place-items-center rounded-k2-md border border-[#dce4ee] bg-white p-1.5 shadow-2 md:h-[76px] md:w-[76px] md:p-2.5">
+          <span title={l.nama} className="pf-ledak-ubin grid h-12 w-12 place-items-center md:h-[76px] md:w-[76px]">
             {muat && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={`/portofolio/logo/${l.file}.webp`} alt="" width={l.w} height={l.h} decoding="async" className="max-h-full max-w-full object-contain" />
+              <img src={`/portofolio/logo/${l.file}.webp`} alt="" width={l.w} height={l.h} decoding="async" className={`pf-logo max-h-full max-w-full object-contain ${l.mono ? "pf-mono" : ""}`} />
             )}
           </span>
         </span>

@@ -135,10 +135,10 @@ export default function PortofolioPage() {
             </span>
             <blockquote className="mt-1 font-display text-[22px] font-bold leading-[1.15] tracking-[-0.01em] text-ink md:text-[24px]">{PROFIL.kutipan}</blockquote>
             <figcaption className="mt-2 text-[13px] text-ink-3">{PROFIL.nama}</figcaption>
-            <p className="pf-pop mt-4 inline-flex items-center gap-2.5 rounded-k2-md border border-[#dce4ee] bg-white px-3 py-2">
-              <span className="text-[12px] font-semibold text-[#33475f]">Penerima beasiswa</span>
+            <p className="pf-pop mt-4 inline-flex items-center gap-2.5 rounded-k2-md border border-line-strong bg-accent-soft px-3 py-2">
+              <span className="text-[12px] font-semibold text-ink-2">Penerima beasiswa</span>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`/portofolio/logo/${BEASISWA.file}.webp`} alt={BEASISWA.nama} width={BEASISWA.w} height={BEASISWA.h} className="h-5 w-auto" />
+              <img src={`/portofolio/logo/${BEASISWA.file}.webp`} alt={BEASISWA.nama} width={BEASISWA.w} height={BEASISWA.h} className={`h-5 w-auto ${BEASISWA.mono ? "pf-mono" : ""}`} />
             </p>
           </figure>
 
@@ -179,12 +179,12 @@ export default function PortofolioPage() {
               style={{ "--dur": `${5 + (i % 3)}s`, "--delay": `${-i * 1.3}s` } as React.CSSProperties}
             >
               <span
-                className="pf-chip flex h-11 items-center gap-2 rounded-k2-md border border-[#dce4ee] bg-white px-2.5 shadow-2 md:h-12 md:px-3"
+                className="pf-chip flex h-11 items-center gap-2 rounded-k2-md border border-line-strong bg-accent-soft px-2.5 shadow-2 md:h-12 md:px-3"
                 style={{ "--r": `${c.r}deg` } as React.CSSProperties}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`/portofolio/logo/${c.file}.webp`} alt={c.teks ? "" : c.nama} width={c.w} height={c.h} className={c.teks ? "h-7 w-7 rounded-[7px]" : "h-6 w-auto md:h-7"} />
-                {c.teks && <span className="text-[14px] font-semibold text-[#0b1e3d]">{c.teks}</span>}
+                <img src={`/portofolio/logo/${c.file}.webp`} alt={c.teks ? "" : c.nama} width={c.w} height={c.h} className={`${c.mono ? "pf-mono" : ""} ${c.teks ? "h-7 w-7 rounded-[7px]" : "h-6 w-auto md:h-7"}`} />
+                {c.teks && <span className="text-[14px] font-semibold text-ink">{c.teks}</span>}
               </span>
             </span>
           ))}
@@ -297,7 +297,7 @@ export default function PortofolioPage() {
                   <div className="mt-1 flex flex-wrap items-center justify-between gap-x-4">
                     {p.teknologi && <p className="py-2 text-[13px] text-ink-3">{p.teknologi}</p>}
                     {p.href && (
-                      <Link href={p.href} className={`pf-pop inline-flex min-h-11 items-center gap-1 text-[14px] font-semibold text-accent-ink underline-offset-4 hover:underline ${FOKUS_RING}`}>
+                      <Link href={p.href} {...(p.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})} className={`pf-pop inline-flex min-h-11 items-center gap-1 text-[14px] font-semibold text-accent-ink underline-offset-4 hover:underline ${FOKUS_RING}`}>
                         {p.hrefLabel ?? "Lihat proyek"}
                         <ArrowUpRight size={15} aria-hidden="true" />
                       </Link>

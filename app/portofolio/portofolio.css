@@ -72,6 +72,22 @@
   transform: scale(1.18) rotate(-8deg);
 }
 
+/* Logo tanpa kotak: bayangan lembut supaya terasa melayang. */
+.pf-logo {
+  filter: drop-shadow(0 6px 10px rgba(11, 30, 61, 0.2));
+}
+.dark .pf-logo {
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.55));
+}
+/* Logo bertulisan gelap (Claude, AWS, Google Cloud, Node.js, MySQL, BCA) tidak terbaca di atas navy,
+   jadi di mode gelap ditampilkan versi putih polos. */
+.dark .pf-mono {
+  filter: brightness(0) invert(1);
+}
+.dark .pf-logo.pf-mono {
+  filter: brightness(0) invert(1) drop-shadow(0 6px 12px rgba(0, 0, 0, 0.55));
+}
+
 /* Baris terminal menyala saat disorot. */
 .pf-baris {
   transition: background-color 0.15s, transform 0.2s var(--ease);

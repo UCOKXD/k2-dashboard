@@ -40,19 +40,20 @@ export const KONTAK = {
 };
 
 // Logo ada di public/portofolio/logo/<file>.webp (latar sudah dibuang, maks 160 px).
-export type Logo = { nama: string; file: string; w: number; h: number };
+// `mono` = logo bertulisan gelap; di mode gelap ditampilkan putih polos supaya terbaca.
+export type Logo = { nama: string; file: string; w: number; h: number; mono?: boolean };
 
 // Beasiswa: lencana kecil di bawah kutipan.
-export const BEASISWA: Logo = { nama: "BCA", file: "bca", w: 160, h: 53 };
+export const BEASISWA: Logo = { nama: "BCA", file: "bca", w: 160, h: 53, mono: true };
 
 // Chip alat yang mengambang di sekitar foto (seperti contoh "Photoshop", "Figma").
 // `teks` hanya untuk logo berbentuk ikon; logo yang sudah berisi tulisan tampil tanpa teks tambahan.
 // `posisi` = kelas Tailwind letak chip (HP lalu md:), `r` = kemiringan.
 export const LOGO_MENGAMBANG: (Logo & { teks?: string; posisi: string; r: number; hp: boolean })[] = [
-  { nama: "Claude", file: "claude", w: 160, h: 35, posisi: "left-3 top-[455px] md:left-[24%] md:top-[54%]", r: -6, hp: true },
+  { nama: "Claude", file: "claude", w: 160, h: 35, mono: true, posisi: "left-3 top-[455px] md:left-[24%] md:top-[54%]", r: -6, hp: true },
   { nama: "Figma", file: "figma", w: 160, h: 160, teks: "Figma", posisi: "right-3 top-[395px] md:left-auto md:right-[20%] md:top-[46%]", r: 5, hp: true },
-  { nama: "Google Cloud", file: "google-cloud", w: 160, h: 76, posisi: "md:right-[16%] md:top-[60%]", r: -4, hp: false },
-  { nama: "AWS", file: "aws", w: 160, h: 96, posisi: "md:left-[30%] md:top-[70%]", r: 4, hp: false },
+  { nama: "Google Cloud", file: "google-cloud", w: 160, h: 76, mono: true, posisi: "md:right-[16%] md:top-[60%]", r: -4, hp: false },
+  { nama: "AWS", file: "aws", w: 160, h: 96, mono: true, posisi: "md:left-[30%] md:top-[70%]", r: 4, hp: false },
 ];
 
 // Logo bahasa & alat yang "meledak" keluar dari belakang foto saat halaman di-scroll turun.
@@ -64,8 +65,8 @@ export const LOGO_LEDAKAN: (Logo & { x: number; y: number; xh: number; yh: numbe
   { nama: "Python", file: "python", w: 160, h: 160, x: 340, y: -116, xh: 161, yh: -60, r: 12 },
   { nama: "HTML5", file: "html5", w: 114, h: 160, x: -340, y: -76, xh: -161, yh: 50, r: -8 },
   { nama: "Docker", file: "docker", w: 160, h: 137, x: 450, y: -56, xh: 161, yh: 150, r: 6 },
-  { nama: "Node.js", file: "nodejs", w: 160, h: 98, x: -235, y: 250, xh: -161, yh: 190, r: -5 },
-  { nama: "MySQL", file: "mysql", w: 160, h: 96, x: 230, y: 274, xh: 95, yh: 210, r: 7 },
+  { nama: "Node.js", file: "nodejs", w: 160, h: 98, mono: true, x: -235, y: 250, xh: -161, yh: 190, r: -5 },
+  { nama: "MySQL", file: "mysql", w: 160, h: 96, mono: true, x: 230, y: 274, xh: 95, yh: 210, r: 7 },
   { nama: "Linux", file: "linux", w: 133, h: 160, x: 510, y: 54, xh: -95, yh: -170, r: -12 },
 ];
 
@@ -91,8 +92,10 @@ export const PROYEK: Proyek[] = [
   {
     judul: "SINAU",
     peran: "Pengembang",
-    deskripsi: "Platform belajar untuk calon mahasiswa baru, dengan asesmen diagnostik untuk mengenali materi yang perlu diperkuat.",
-    teknologi: "Aplikasi web",
+    deskripsi: "Siap Nambah Ilmu: platform persiapan kuliah untuk siswa SMA/SMK dan mahasiswa baru. Pretest untuk mengenali kesiapan akademik, materi sesuai kebutuhan, streak belajar harian, asisten belajar NARA, dan Career Lounge.",
+    teknologi: "Aplikasi web, Vercel",
+    href: "https://sinauproject.vercel.app/",
+    hrefLabel: "Buka SINAU",
   },
   {
     judul: "Kinote",

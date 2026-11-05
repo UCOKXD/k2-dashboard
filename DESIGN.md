@@ -88,5 +88,5 @@ Disusun dengan design council pada 5 November 2026; masih draf sampai disetujui 
   - Kisi kertas milimeter di latar poster: bahan "kertas gambar teknik", dibuat dari garis `--line`, bukan gradasi warna.
   - Arsiran pada angka 28: konvensi gambar teknik, menggantikan angka bergaris di referensi.
   - Masker pudar di bawah foto potong (hanya di HP) supaya foto menyatu dengan kertas.
-- **Logo:** chip alat mengambang (Claude, Figma, Google Cloud, AWS), lencana "Penerima beasiswa BCA", ikon Instagram dan TikTok di sisi kiri. Logo berlatar putih di kedua tema supaya logo bertulisan gelap tetap terbaca.
+- **Logo:** chip alat mengambang (Claude, Figma, Google Cloud, AWS), lencana "Penerima beasiswa BCA", ikon Instagram dan TikTok di sisi kiri. Logo tanpa kotak putih: logo ledakan berdiri sendiri dengan bayangan lembut, chip dan lencana memakai biru muda `--accent-soft`; di mode gelap logo bertulisan gelap (Claude, AWS, Google Cloud, Node.js, MySQL, BCA) tampil putih polos supaya terbaca.
 - **Gerak:** chip mengambang pelan (bisa dijeda lewat tombol "Jeda animasi"); saat halaman di-scroll turun, logo bahasa dan alat meledak keluar dari belakang foto lalu kembali saat ke atas; semua elemen bereaksi saat disorot. Semua gerak berhenti bila perangkat meminta gerak dikurangi. Logo ledakan baru dimuat saat browser senggang supaya muat awal tetap ringan.
