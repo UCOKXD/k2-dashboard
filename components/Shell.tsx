@@ -93,7 +93,12 @@ function AccountButton() {
   );
 }
 
+// Halaman yang tampil sendiri, tanpa header, menu, dan footer dashboard K2 (mis. portofolio untuk link bio Instagram).
+const STANDALONE = ["/portofolio"];
+
 export default function Shell({ children }: { children: React.ReactNode }) {
+  const path = usePathname();
+  if (STANDALONE.some((p) => path === p || path.startsWith(`${p}/`))) return <>{children}</>;
   return (
     <AuthProvider>
       <BirthdayProvider>
