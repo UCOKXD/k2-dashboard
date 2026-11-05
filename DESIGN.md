@@ -75,3 +75,17 @@ Semua pasangan teks diuji dengan `contrast-check.py` antislop; minimal 4,5:1 unt
 - Nama "Hall of Shame" dan tanda seru ganda di sapaan dipertahankan sebagai suara kelas.
 - Judul berkilau dan aura biru di profil developer adalah easter egg yang disengaja (glow dan gradasi hanya di sana).
 - Pesan WhatsApp grup (bukan antarmuka web) boleh memakai emoji.
+
+## Halaman portofolio (`/portofolio`, arah sendiri)
+
+Halaman link bio Instagram milik Francis, bukan bagian papan kelas. Tampil tanpa header dan menu dashboard.
+Disusun dengan design council pada 5 November 2026; masih draf sampai disetujui pemilik.
+
+- **Design Read:** poster "loud engineering". Satu momen besar (nama raksasa di belakang foto potong), sisanya tenang di atas kertas.
+- **Warna:** tetap token K2. Nama raksasa biru laut, kartu terminal dan kartu proyek navy jaket di kedua tema, pink hanya chip "Sedang dikelola" dan prompt terminal.
+- **Pengecualian dari aturan kelas, dengan alasan:**
+  - JetBrains Mono dipakai di kartu terminal karena isinya memang meniru baris perintah, bukan label hias.
+  - Kisi kertas milimeter di latar poster: bahan "kertas gambar teknik", dibuat dari garis `--line`, bukan gradasi warna.
+  - Arsiran pada angka 28: konvensi gambar teknik, menggantikan angka bergaris di referensi.
+  - Masker pudar di bawah foto potong (hanya di HP) supaya foto menyatu dengan kertas.
+- **Gerak:** tidak ada. Halaman statis tanpa JS tambahan supaya cepat dimuat dari Instagram.

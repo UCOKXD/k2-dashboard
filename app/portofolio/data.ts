@@ -3,13 +3,33 @@
 
 export const PROFIL = {
   nama: "Francis Demetrio Villanova",
+  namaBesar: "FRANCIS", // nama raksasa di belakang foto
   panggilan: "Ancis",
-  peran: "Mahasiswa BINUS University",
-  bio: "Suka membangun aplikasi web yang benar-benar dipakai orang, dari dashboard kelas sampai platform belajar. Sekarang juga ikut riset pengembangan aplikasi untuk mahasiswa baru.",
-  absenFoto: 18, // nomor absen di web K2; fotonya diambil dari foto akun
+  peran: "Mahasiswa PPTI, penerima beasiswa BCA",
+  kampus: "BINUS University",
+  kutipan: "Teknologi adalah tempat saya terus belajar, bereksplorasi, dan bertumbuh.",
+  // Angka besar di kanan atas: nomor angkatan PPTI 28.
+  angka: "28",
+  angkaLabel: "Angkatan PPTI",
+  // Foto potong (PNG latar transparan, tegak, sekitar 1200 px tinggi) taruh di public/portofolio/foto.png.
+  // Selama belum ada, halaman menampilkan kotak penanda.
+  foto: "/portofolio/foto.png",
 };
 
-// Isi username/alamat untuk menampilkan tombolnya. Contoh: instagram: "usernamekamu"
+export const TENTANG = [
+  "Saya mahasiswa PPTI (Program Pendidikan Teknik Informatika) penerima beasiswa BCA di BINUS University. Fokus saya Cloud Computing dan Cybersecurity, ditambah Public Speaking dan Digital Marketing supaya ide teknis bisa sampai ke orang yang tepat.",
+  "Saya cepat beradaptasi, berkomunikasi dengan asertif, dan siap memimpin dengan tanggung jawab. Sekarang saya Koordinator Divisi K2 sekaligus pembuat web kelas ABSORBING PPTI 28, dan sehari-hari terbiasa memakai Bahasa Inggris.",
+];
+
+// Baris "terminal" di kartu kiri bawah.
+export const FOKUS = [
+  { kunci: "cloud", nilai: "Cloud Computing" },
+  { kunci: "security", nilai: "Cybersecurity" },
+  { kunci: "speaking", nilai: "Public Speaking" },
+  { kunci: "marketing", nilai: "Digital Marketing" },
+];
+
+// Isi username/alamat untuk menampilkan tautannya. Contoh: instagram: "usernamekamu"
 export const KONTAK = {
   instagram: "",
   linkedin: "",
@@ -26,6 +46,7 @@ export type Proyek = {
   hrefLabel?: string;
 };
 
+// Proyek pertama juga tampil di kartu kanan bawah poster.
 export const PROYEK: Proyek[] = [
   {
     judul: "Web K2 PPTI 28",
@@ -49,4 +70,4 @@ export const PROYEK: Proyek[] = [
   },
 ];
 
-export const KEAHLIAN = ["Next.js", "React", "TypeScript", "Tailwind CSS", "Desain antarmuka", "Riset dan penulisan jurnal"];
+export const KEAHLIAN = ["Cloud Computing", "Cybersecurity", "Next.js", "React", "TypeScript", "Tailwind CSS", "Public Speaking", "Digital Marketing", "Bahasa Inggris"];
