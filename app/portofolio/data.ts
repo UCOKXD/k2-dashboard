@@ -97,12 +97,6 @@ export const PROYEK: Proyek[] = [
     href: "https://sinauproject.vercel.app/",
     hrefLabel: "Buka SINAU",
   },
-  {
-    judul: "Kinote",
-    peran: "Anggota tim peneliti",
-    deskripsi: "Riset aplikasi self-management untuk mahasiswa baru berbasis AI dan gamifikasi, dengan metode design thinking.",
-    teknologi: "Riset dan desain aplikasi",
-  },
 ];
 
 export const KEAHLIAN = [
