@@ -79,14 +79,16 @@ Semua pasangan teks diuji dengan `contrast-check.py` antislop; minimal 4,5:1 unt
 ## Halaman portofolio (`/portofolio`, arah sendiri)
 
 Halaman link bio Instagram milik Francis, bukan bagian papan kelas. Tampil tanpa header dan menu dashboard.
-Disusun dengan design council pada 5 November 2026; masih draf sampai disetujui pemilik.
+Sejak 10 November 2026 tata letak dan geraknya mengikuti gaya situs inherited.band atas permintaan pemilik,
+dengan isi sendiri dan warna kunci K2. Masih draf sampai disetujui pemilik.
 
-- **Design Read:** poster "loud engineering". Satu momen besar (nama raksasa di belakang foto potong), sisanya tenang di atas kertas.
-- **Warna:** tetap token K2. Nama raksasa biru laut, kartu terminal dan kartu proyek navy jaket di kedua tema, pink hanya chip "Sedang dikelola" dan prompt terminal.
+- **Design Read:** poster musik yang dipindah ke dunia programmer. Baris kecil menempel di tepi layar, nama raksasa terpecah selebar layar, lalu adegan layar penuh: foto dari dekat, kartu, nama dua baris, daftar peran berundak. Bagian akhir bergaya "records" untuk SINAU.
+- **Warna (palet tetap, tidak ikut tema terang/gelap):** navy malam `#061227` menggantikan hitam, biru laut `#1f7dba` menggantikan merah, kertas `#eef3f8` menggantikan krem. Pink hanya di prompt terminal.
+- **Foto:** semua foto diberi duotone biru lewat CSS supaya foto apa pun menyatu dengan palet. Foto diri di `public/portofolio/foto.jpg`, cover SINAU di `public/portofolio/sinau.webp`; selama belum ada tampil penanda.
 - **Pengecualian dari aturan kelas, dengan alasan:**
-  - JetBrains Mono dipakai di kartu terminal karena isinya memang meniru baris perintah, bukan label hias.
-  - Kisi kertas milimeter di latar poster: bahan "kertas gambar teknik", dibuat dari garis `--line`, bukan gradasi warna.
-  - Arsiran pada angka 28: konvensi gambar teknik, menggantikan angka bergaris di referensi.
-  - Masker pudar di bawah foto potong (hanya di HP) supaya foto menyatu dengan kertas.
-- **Logo:** chip alat mengambang (Claude, Figma, Google Cloud, AWS), lencana "Penerima beasiswa BCA", ikon Instagram dan TikTok di sisi kiri. Logo tanpa kotak putih: logo ledakan berdiri sendiri dengan bayangan lembut, chip dan lencana memakai biru muda `--accent-soft`; di mode gelap logo bertulisan gelap (Claude, AWS, Google Cloud, Node.js, MySQL, BCA) tampil putih polos supaya terbaca.
-- **Gerak:** chip mengambang pelan (bisa dijeda lewat tombol "Jeda animasi"); saat halaman di-scroll turun, logo bahasa dan alat meledak keluar dari belakang foto lalu kembali saat ke atas; semua elemen bereaksi saat disorot. Semua gerak berhenti bila perangkat meminta gerak dikurangi. Logo ledakan baru dimuat saat browser senggang supaya muat awal tetap ringan.
+  - Label kecil huruf kapital (navigasi, peran): ciri utama gaya rujukan. Ditulis kapital langsung di data, bukan lewat `uppercase`.
+  - Filter tepi kasar pada huruf tebal dan butiran film statis: meniru cetakan kasar rujukan.
+  - JetBrains Mono di kartu terminal karena isinya meniru baris perintah.
+  - Bidang miring tipis di bagian SINAU menggantikan tekstur kertas rujukan.
+- **Gerak:** huruf nama berserakan lalu merakit diri saat bagiannya masuk layar, foto bergeser pelan mengikuti scroll, kartu mendekat saat disorot. Tidak ada gerak yang berjalan terus. Semua gerak berhenti bila perangkat meminta gerak dikurangi.
+- **Aksesibilitas:** satu `h1`, nama dibacakan utuh lewat teks tersembunyi, tombol di HP minimal 44 px (daftar bagian pindah ke layar MENU), layar menu memakai `<dialog>`.

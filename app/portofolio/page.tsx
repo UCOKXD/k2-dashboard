@@ -3,321 +3,272 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
-import { BEASISWA, FOKUS, KEAHLIAN, KONTAK, LOGO_MENGAMBANG, PROFIL, PROYEK, TENTANG } from "./data";
-import Ledakan from "./Ledakan";
-import TombolJeda from "./TombolJeda";
+import { ADEGAN, KONTAK, KONTAK_UNTUK, MEDIA, PROFIL, UNGGULAN } from "./data";
+import Gerak from "./Gerak";
+import Kontak from "./Kontak";
+import Rakit from "./Rakit";
 import "./portofolio.css";
 
 export const metadata: Metadata = {
   title: `${PROFIL.nama} | Portofolio`,
-  description: `${PROFIL.panggilan}, ${PROFIL.peran} di ${PROFIL.kampus}. ${PROFIL.kutipan}`,
-  openGraph: {
-    title: `${PROFIL.nama} | Portofolio`,
-    description: PROFIL.kutipan,
-    type: "profile",
-    locale: "id_ID",
-  },
+  description: PROFIL.deskripsi,
+  openGraph: { title: `${PROFIL.nama} | Portofolio`, description: PROFIL.deskripsi, type: "profile", locale: "id_ID" },
 };
 
-// Halaman mini untuk link di bio Instagram, arah desainnya di DESIGN.md bagian "Halaman portofolio".
-// Tampil sendiri tanpa header dan menu dashboard K2 (lihat Shell.tsx). Server component murni tanpa JS tambahan,
-// dibuat statis saat build supaya cepat dimuat.
+// Halaman mini untuk link di bio Instagram. Tata letak dan gerak mengikuti gaya inherited.band
+// (baris kecil yang menempel, nama raksasa terpecah, adegan layar penuh, huruf merakit diri, butiran film),
+// dengan isi sendiri dan warna kunci K2. Arah desain: DESIGN.md bagian "Halaman portofolio".
+// Tampil tanpa header dan menu dashboard K2 (lihat Shell.tsx).
 
-const FOKUS_RING = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent";
-const NAVY = "#0b1e3d"; // kartu "terminal" dan kartu proyek tetap navy jaket di kedua tema
+const ada = (p: string) => existsSync(join(process.cwd(), "public", p));
+const UNDAK = ["pl-[4.5em]", "", "pl-[3em]"]; // indentasi berundak daftar peran
+const NAMA = "pf-tebal text-[15vw] md:text-[clamp(56px,7.2vw,132px)]";
+
+// Penanda untuk gambar yang belum dikirim.
+function Penanda({ file }: { file: string }) {
+  return (
+    <div className="absolute inset-0 grid place-items-center bg-[#1f7dba] p-4 text-center">
+      <p className="font-mono text-[12px] leading-relaxed text-white/80">
+        public{file}
+        <br />
+        belum ada
+      </p>
+    </div>
+  );
+}
+
+// Bingkai foto duotone. `zoom` memperbesar gambar (seperti potongan wajah dari dekat di referensi).
+function Foto({ src, alt, zoom = 1, posisi = "50% 30%", sizes, geser, prioritas }: { src: string; alt: string; zoom?: number; posisi?: string; sizes: string; geser?: number; prioritas?: boolean }) {
+  if (!ada(src)) return <Penanda file={src} />;
+  return (
+    <div className="pf-foto pf-geser absolute -inset-y-[8%] inset-x-0" data-geser={geser}>
+      <Image src={src} alt={alt} fill priority={prioritas} sizes={sizes} className="object-cover" style={{ objectPosition: posisi, transform: zoom === 1 ? undefined : `scale(${zoom})`, transformOrigin: posisi }} />
+    </div>
+  );
+}
+
+function Peran({ baris, tanda, className = "" }: { baris: string[]; tanda: string; className?: string }) {
+  return (
+    <div className={`pf-peran flex items-start justify-between gap-8 ${className}`}>
+      <ul>
+        {baris.map((b, i) => (
+          <li key={b} className={UNDAK[i % UNDAK.length]}>
+            {b}
+          </li>
+        ))}
+      </ul>
+      <p className="whitespace-pre">{`(  ${tanda}  )`}</p>
+    </div>
+  );
+}
 
 export default function PortofolioPage() {
-  const adaFoto = existsSync(join(process.cwd(), "public", PROFIL.foto));
-  const utama = PROYEK[0];
   const sosial = [
-    { label: "Instagram", file: "instagram", handle: KONTAK.instagram, href: `https://www.instagram.com/${encodeURIComponent(KONTAK.instagram)}/` },
-    { label: "TikTok", file: "tiktok", handle: KONTAK.tiktok, href: `https://www.tiktok.com/@${encodeURIComponent(KONTAK.tiktok)}` },
-  ];
-  const tautan = [
-    KONTAK.linkedin && { label: "LinkedIn", href: `https://www.linkedin.com/in/${encodeURIComponent(KONTAK.linkedin)}/` },
-    KONTAK.github && { label: "GitHub", href: `https://github.com/${encodeURIComponent(KONTAK.github)}` },
-    KONTAK.email && { label: "Email", href: `mailto:${KONTAK.email}` },
+    KONTAK.instagram && { label: "INSTAGRAM", href: `https://www.instagram.com/${encodeURIComponent(KONTAK.instagram)}/` },
+    KONTAK.tiktok && { label: "TIKTOK", href: `https://www.tiktok.com/@${encodeURIComponent(KONTAK.tiktok)}` },
+    KONTAK.linkedin && { label: "LINKEDIN", href: `https://www.linkedin.com/in/${encodeURIComponent(KONTAK.linkedin)}/` },
+    KONTAK.github && { label: "GITHUB", href: `https://github.com/${encodeURIComponent(KONTAK.github)}` },
   ].filter((t): t is { label: string; href: string } => Boolean(t));
+  const menu = [
+    { label: "BERANDA", href: "#beranda" },
+    { label: "TENTANG", href: "#tentang" },
+    { label: "PROYEK", href: "#proyek" },
+  ];
+  const { tentang, fokus, webK2 } = ADEGAN;
 
   return (
-    <main id="isi">
-      {/* Poster: nama raksasa di belakang foto, kutipan, angka angkatan, kartu terminal, kartu proyek. */}
-      <section aria-label="Perkenalan" className="relative overflow-hidden border-b border-line">
-        {/* Kertas milimeter: kisi tipis seperti kertas gambar teknik. */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-60"
-          style={{
-            backgroundImage: "linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px)",
-            backgroundSize: "48px 48px",
-          }}
-        />
+    <main id="isi" className="pf-root relative overflow-x-clip">
+      <noscript>
+        <style>{".pf-huruf{opacity:1!important;transform:none!important;filter:none!important}"}</style>
+      </noscript>
+      <Gerak />
 
-        <div className="relative mx-auto w-full max-w-[1280px] px-4 pb-6 sm:px-6 md:h-[min(100svh,880px)] md:min-h-[660px] md:px-10 md:pb-0">
-          {/* Baris atas */}
-          <div className="relative z-30 flex items-center justify-between gap-4 pt-4 md:pt-7">
-            <div className="flex min-w-0 items-center gap-3">
-              <span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-[#0b1e3d] font-display text-[13px] font-extrabold leading-none text-white ring-1 ring-line-strong">
-                {PROFIL.panggilan}
-              </span>
-              <p className="min-w-0 text-[13px] leading-snug">
-                <span className="block font-semibold text-ink">{PROFIL.kampus}</span>
-                <span className="block truncate text-ink-3">{PROFIL.peran}</span>
-              </p>
-            </div>
-            <nav aria-label="Tautan" className="flex shrink-0 items-center">
-              <a href="#proyek" className={`pf-pop hidden min-h-11 items-center px-3 text-[13px] font-semibold text-ink-2 hover:text-ink md:inline-flex ${FOKUS_RING}`}>
-                Proyek
-              </a>
-              <a href="#tentang" className={`pf-pop hidden min-h-11 items-center px-3 text-[13px] font-semibold text-ink-2 hover:text-ink md:inline-flex ${FOKUS_RING}`}>
-                Tentang
-              </a>
-              <span aria-hidden="true" className="mx-2 hidden h-4 w-px bg-line-strong md:block" />
-              <TombolJeda />
-              {tautan.map((t) => (
-                <a
-                  key={t.href}
-                  href={t.href}
-                  target={t.href.startsWith("mailto:") ? undefined : "_blank"}
-                  rel="noopener noreferrer"
-                  className={`pf-pop inline-flex min-h-11 items-center gap-1 px-2 text-[13px] font-semibold text-accent-ink hover:underline ${FOKUS_RING}`}
-                >
-                  {t.label}
-                  <ArrowUpRight size={14} aria-hidden="true" />
+      {/* Filter tepi kasar untuk huruf tebal */}
+      <svg aria-hidden="true" width="0" height="0" className="absolute">
+        <filter id="pf-kasar">
+          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="4" result="n" />
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="5" xChannelSelector="R" yChannelSelector="G" />
+        </filter>
+      </svg>
+
+      {/* Butiran film */}
+      <div aria-hidden="true" className="pf-butir pointer-events-none fixed inset-0 z-[60]" />
+
+      {/* Baris kecil yang menempel di layar */}
+      <header className="fixed inset-x-0 top-0 z-50 flex items-start justify-between px-4 md:px-5 md:pt-3">
+        <a href="#beranda" className="pf-chrome-link">
+          {PROFIL.panggilan.toUpperCase()}
+        </a>
+        <div className="md:absolute md:left-[66.6%] md:top-3">
+          <Kontak email={KONTAK.email} tautan={sosial} untuk={KONTAK_UNTUK} menu={[...menu, { label: UNGGULAN.nama, href: `#${UNGGULAN.id}` }]} />
+        </div>
+        <nav aria-label="Bagian halaman" className="hidden md:block">
+          <ul className="flex flex-col items-end">
+            {menu.map((m) => (
+              <li key={m.href}>
+                <a href={m.href} className="pf-chrome-link">
+                  {m.label}
                 </a>
-              ))}
-            </nav>
-          </div>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </header>
+      <div className="fixed inset-x-0 bottom-0 z-50 flex items-end justify-between px-4 md:px-5 md:pb-2">
+        <ul aria-label="Media sosial" className="flex gap-4">
+          {sosial.map((s) => (
+            <li key={s.href}>
+              <a href={s.href} target="_blank" rel="noopener noreferrer" className="pf-chrome-link">
+                {s.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <a href={`#${tentang.id}`} className="pf-chrome-link">
+          SCROLL
+        </a>
+      </div>
 
-          {/* Nama raksasa (h1). Di HP di atas foto, di layar lebar di tengah di belakang foto. */}
-          <h1 className="relative z-0 mt-6 text-center font-display text-[19.5vw] font-extrabold leading-[0.82] tracking-[-0.045em] text-accent md:absolute md:inset-x-0 md:top-[38%] md:mt-0 md:text-[clamp(120px,17.5vw,248px)]">
+      {/* 1. Layar pembuka: foto penuh, nama terpecah selebar layar */}
+      <section id="beranda" aria-label="Perkenalan" className="relative h-[100svh] min-h-[560px] overflow-hidden">
+        <div className="pf-duo absolute inset-0">
+          <Foto src={MEDIA.foto} alt={`Foto ${PROFIL.nama}`} sizes="100vw" geser={-0.18} prioritas />
+        </div>
+        <h1 className="absolute inset-x-0 top-[44%] z-10 flex -translate-y-1/2 justify-between px-[5%]">
+          <span className="sr-only">{PROFIL.nama}</span>
+          {PROFIL.pecahan.map((p, i) => (
+            <Rakit key={i} as="span" hiasan baris={[p]} garam={i + 11} className="pf-tebal text-[17vw] md:text-[clamp(72px,11.5vw,210px)]" />
+          ))}
+        </h1>
+        <ul className="pf-peran absolute left-[44%] top-[70%] z-10 md:left-[66.6%] md:top-[71%]">
+          {PROFIL.sub.map((s, i) => (
+            <li key={s} className={["pl-[7em]", "", "pl-[2.2em]"][i % 3]}>
+              {s}
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      {/* 2. Tentang: kotak foto dari dekat di kiri atas, kartu foto di kanan bawah */}
+      <section id={tentang.id} aria-label="Tentang" className="relative overflow-hidden pb-20 md:h-[100svh] md:min-h-[600px] md:pb-0">
+        <div className="pf-duo relative h-[58svh] w-[84%] md:absolute md:left-0 md:top-0 md:h-[72%] md:w-[62.5%]">
+          <Foto src={MEDIA.foto} alt="" zoom={2.1} sizes="(min-width: 768px) 63vw, 84vw" geser={0.08} />
+        </div>
+        <div className="pf-duo pf-kartu relative z-10 -mt-[26svh] ml-auto mr-4 h-[44svh] w-[48%] md:absolute md:right-[3.5%] md:top-[24%] md:m-0 md:h-[82%] md:w-[32%]">
+          <Foto src={MEDIA.foto} alt={`Foto ${PROFIL.nama}`} sizes="(min-width: 768px) 32vw, 48vw" />
+        </div>
+        <Rakit baris={tentang.nama} indent={["", "pl-[0.65em]"]} garam={21} className={`${NAMA} relative z-20 -mt-[15svh] px-4 md:absolute md:left-[4.5%] md:top-[45%] md:mt-0 md:px-0`} />
+        <Peran baris={tentang.peran} tanda={tentang.tanda} className="relative z-20 mt-10 px-4 md:absolute md:left-[63.5%] md:top-[11.5%] md:mt-0 md:w-[31%] md:px-0" />
+        <p className="relative z-20 mt-6 max-w-[42ch] px-4 text-[14px] leading-relaxed text-[#c3cfdf] md:absolute md:bottom-[9%] md:left-[4.5%] md:mt-0 md:max-w-[38ch] md:px-0">{PROFIL.deskripsi}</p>
+      </section>
+
+      {/* 3. Fokus: bidang biru penuh, potongan foto sangat dekat di kiri, kartu terminal di tengah */}
+      <section id={fokus.id} aria-label="Bidang fokus" className="relative overflow-hidden bg-[#1f7dba] pb-20 md:h-[100svh] md:min-h-[600px] md:pb-0">
+        <div className="pf-duo relative h-[36svh] w-full md:absolute md:left-0 md:top-0 md:h-full md:w-[34%]">
+          <Foto src={MEDIA.foto} alt="" zoom={3.4} posisi="50% 24%" sizes="(min-width: 768px) 34vw, 100vw" geser={0.06} />
+        </div>
+        <div className="relative z-10 mx-4 -mt-[14svh] bg-[#061227] p-5 font-mono text-[13px] leading-[1.7] md:absolute md:left-[33%] md:top-[10%] md:m-0 md:h-[85%] md:w-[34%] md:p-7 md:text-[14px]">
+          <p className="text-[#8fcff1]">
+            <span className="text-[#f8c3cf]">ancis@ppti28</span>:~$ whoami --fokus
+          </p>
+          <dl className="mt-3">
+            {fokus.terminal.map((t) => (
+              <div key={t.kunci} className="grid grid-cols-[6.2rem_1fr] transition-colors hover:bg-[#8fcff1]/10">
+                <dt className="text-[#93a4bc]">{t.kunci}</dt>
+                <dd>{t.nilai}</dd>
+              </div>
+            ))}
+          </dl>
+          <p className="mt-5 text-[#8fcff1]">:~$ ls stack/</p>
+          <ul aria-label="Bahasa dan alat" className="mt-3 grid grid-cols-4 items-center gap-x-4 gap-y-5 md:gap-x-6 md:gap-y-7">
+            {fokus.logo.map((l) => (
+              <li key={l.file} className="h-9 transition-transform duration-300 hover:-translate-y-1 hover:scale-110 motion-reduce:transform-none md:h-11">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`/portofolio/logo/${l.file}.webp`} alt={l.nama} loading="lazy" decoding="async" width={160} height={160} className={`mx-auto h-full w-full object-contain ${l.putih ? "[filter:brightness(0)_invert(1)]" : ""}`} />
+              </li>
+            ))}
+          </ul>
+          <p className="mt-5 text-[#8fcff1]">
+            :~$ <span aria-hidden="true" className="inline-block h-[1.05em] w-2 translate-y-[3px] bg-[#8fcff1]" />
+          </p>
+        </div>
+        <Rakit baris={fokus.nama} indent={["pl-[1.1em]", ""]} garam={31} className={`${NAMA} relative z-20 mt-10 px-4 md:absolute md:right-[4.5%] md:top-[19%] md:mt-0 md:px-0`} />
+        <Peran baris={fokus.peran} tanda={fokus.tanda} className="relative z-20 mt-8 px-4 md:absolute md:left-[70%] md:top-[60%] md:mt-0 md:w-[25%] md:px-0" />
+      </section>
+
+      {/* 4. Web K2: peran di kiri, kartu tangkapan layar HP di tengah, tangkapan layar besar di kanan */}
+      <section id={webK2.id} aria-label="Proyek Web K2" className="relative overflow-hidden pb-20 md:h-[100svh] md:min-h-[600px] md:pb-0">
+        <div className="pf-duo pf-duo-tua relative h-[38svh] w-full md:absolute md:right-0 md:top-0 md:h-[92%] md:w-[50%]">
+          <Foto src={MEDIA.webK2Desktop} alt="" zoom={1.5} posisi="30% 20%" sizes="(min-width: 768px) 50vw, 100vw" geser={0.07} />
+        </div>
+        <Link href={webK2.href} aria-label="Buka web K2 PPTI 28" className="pf-kartu relative z-10 mx-auto -mt-[16svh] block h-[62svh] w-[62%] overflow-hidden bg-[#0b1e3d] md:absolute md:left-[33%] md:top-[3%] md:m-0 md:h-[88%] md:w-[34%]">
+          {ada(MEDIA.webK2Hp) ? <Image src={MEDIA.webK2Hp} alt="Tampilan web K2 PPTI 28 di HP" fill sizes="(min-width: 768px) 34vw, 62vw" className="object-cover object-top" /> : <Penanda file={MEDIA.webK2Hp} />}
+        </Link>
+        <Rakit baris={webK2.nama} indent={["", "pl-[0.4em]"]} garam={41} className={`${NAMA} relative z-20 mt-10 px-4 md:absolute md:left-[68.5%] md:top-[57%] md:mt-0 md:px-0`} />
+        <Peran baris={webK2.peran} tanda={`${webK2.tanda} ${webK2.tandaLabel.toUpperCase()}`} className="relative z-20 mt-8 px-4 md:absolute md:left-[4.5%] md:top-[46%] md:mt-0 md:w-[26%] md:px-0" />
+      </section>
+
+      {/* 5. SINAU: bagian bergaya "records", cover persegi di kanan */}
+      <section id={UNGGULAN.id} aria-label={`Proyek ${UNGGULAN.nama}`} className="pf-tekstur relative overflow-hidden px-4 pb-24 pt-20 md:h-[100svh] md:min-h-[620px] md:p-0">
+        <div className="md:absolute md:left-[4.5%] md:top-[15%] md:w-[34%]">
+          <h2 data-rakit className="pf-tebal text-[13vw] leading-[0.92] md:text-[clamp(40px,4.6vw,84px)]">
+            <span className="sr-only">{UNGGULAN.judul.flat().join(" ")}</span>
             <span aria-hidden="true">
-              {[...PROFIL.namaBesar].map((h, i) => (
-                <span key={i} className="pf-huruf">
-                  {h}
+              {UNGGULAN.judul.map((kata, bi) => (
+                <span key={bi} className={`flex gap-[0.55em] ${bi ? "pl-[1.9em]" : ""}`}>
+                  {kata.map((k, ki) => (
+                    <span key={k} className="whitespace-pre">
+                      {[...k].map((h, hi) => {
+                        const i = bi * 20 + ki * 8 + hi;
+                        const a = (s: number) => {
+                          const x = Math.sin(i * 12.9898 + s * 78.233) * 43758.5453;
+                          return x - Math.floor(x);
+                        };
+                        return (
+                          <span key={hi} className="pf-huruf" style={{ "--tx": `${(a(51) - 0.5) * 1.4}em`, "--ty": `${(a(52) - 0.5) * 1.1}em`, "--rot": `${(a(53) - 0.5) * 70}deg`, "--d": `${Math.round(a(54) * 380)}ms` } as React.CSSProperties}>
+                            {h}
+                          </span>
+                        );
+                      })}
+                    </span>
+                  ))}
                 </span>
               ))}
             </span>
-            <span className="sr-only">{PROFIL.nama}</span>
-          </h1>
-
-          {/* Logo bahasa & alat yang meledak dari belakang foto saat di-scroll */}
-          <Ledakan />
-
-          {/* Foto potong. Tidak menangkap kursor supaya huruf nama dan logo di belakangnya tetap bisa disorot. */}
-          <div className="pointer-events-none relative z-10 mx-auto -mt-[9vw] flex h-[min(110vw,460px)] justify-center md:absolute md:bottom-0 md:left-1/2 md:mt-0 md:h-[84%] md:w-[min(46vw,560px)] md:-translate-x-1/2">
-            {adaFoto ? (
-              <Image
-                src={PROFIL.foto}
-                alt={`Foto ${PROFIL.nama}`}
-                width={900}
-                height={1200}
-                priority
-                sizes="(min-width: 768px) 560px, 100vw"
-                className="h-full w-auto object-contain object-bottom [mask-image:linear-gradient(to_bottom,black_82%,transparent)] md:[mask-image:none]"
-              />
-            ) : (
-              <div className="grid aspect-[3/4] h-full place-items-center rounded-t-full border-2 border-dashed border-line-strong bg-surface/70 px-6 text-center">
-                <p className="font-mono text-[13px] leading-relaxed text-ink-3">
-                  public{PROFIL.foto}
-                  <br />
-                  PNG latar transparan
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* Kutipan */}
-          <figure className="relative z-20 mt-5 md:absolute md:left-10 md:top-[17%] md:mt-0 md:w-[300px] lg:w-[340px]">
-            <span aria-hidden="true" className="font-mono text-[15px] font-semibold text-accent-ink">
-              {"//"}
-            </span>
-            <blockquote className="mt-1 font-display text-[22px] font-bold leading-[1.15] tracking-[-0.01em] text-ink md:text-[24px]">{PROFIL.kutipan}</blockquote>
-            <figcaption className="mt-2 text-[13px] text-ink-3">{PROFIL.nama}</figcaption>
-            <p className="pf-pop mt-4 inline-flex items-center gap-2.5 rounded-k2-md border border-line-strong bg-accent-soft px-3 py-2">
-              <span className="text-[12px] font-semibold text-ink-2">Penerima beasiswa</span>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={`/portofolio/logo/${BEASISWA.file}.webp`} alt={BEASISWA.nama} width={BEASISWA.w} height={BEASISWA.h} className={`h-5 w-auto ${BEASISWA.mono ? "pf-mono" : ""}`} />
-            </p>
-          </figure>
-
-          {/* Media sosial: ikon di sisi kiri. Ikon yang username-nya belum diisi tampil pudar dan tidak bisa diklik. */}
-          <ul aria-label="Media sosial" className="absolute left-4 top-[170px] z-30 flex flex-col gap-2.5 md:left-10 md:top-[47%]">
-            {sosial.map((s) => {
-              const ikon = (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={`/portofolio/logo/${s.file}.webp`} alt="" width={160} height={160} className="h-11 w-11 rounded-[12px] shadow-2" />
-              );
-              return (
-                <li key={s.label}>
-                  {s.handle ? (
-                    <a
-                      href={s.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`${s.label} @${s.handle}`}
-                      className={`pf-chip block rounded-[12px] [--r:0deg] hover:[--r:-8deg] ${FOKUS_RING}`}
-                    >
-                      {ikon}
-                    </a>
-                  ) : (
-                    <span title={`${s.label}: username belum diisi`} aria-label={`${s.label} (belum diisi)`} className="block opacity-45 grayscale">
-                      {ikon}
-                    </span>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-
-          {/* Chip alat yang mengambang di sekitar foto */}
-          {LOGO_MENGAMBANG.map((c, i) => (
-            <span
-              key={c.nama}
-              className={`pf-float absolute z-20 ${c.hp ? "" : "hidden md:block"} ${c.posisi}`}
-              style={{ "--dur": `${5 + (i % 3)}s`, "--delay": `${-i * 1.3}s` } as React.CSSProperties}
-            >
-              <span
-                className="pf-chip flex h-11 items-center gap-2 rounded-k2-md border border-line-strong bg-accent-soft px-2.5 shadow-2 md:h-12 md:px-3"
-                style={{ "--r": `${c.r}deg` } as React.CSSProperties}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={`/portofolio/logo/${c.file}.webp`} alt={c.teks ? "" : c.nama} width={c.w} height={c.h} className={`${c.mono ? "pf-mono" : ""} ${c.teks ? "h-7 w-7 rounded-[7px]" : "h-6 w-auto md:h-7"}`} />
-                {c.teks && <span className="text-[14px] font-semibold text-ink">{c.teks}</span>}
-              </span>
-            </span>
-          ))}
-
-          {/* Angka angkatan, diarsir seperti gambar teknik */}
-          <p className="absolute right-10 top-[17%] z-20 hidden text-right md:block">
-            <span
-              aria-hidden="true"
-              className="block font-display text-[clamp(110px,11vw,160px)] font-extrabold leading-[0.8] tracking-[-0.04em] text-transparent [-webkit-text-stroke:2px_var(--ink)]"
-              style={{ backgroundImage: "repeating-linear-gradient(135deg, var(--ink-3) 0 1px, transparent 1px 7px)", WebkitBackgroundClip: "text", backgroundClip: "text" }}
-            >
-              {PROFIL.angka}
-            </span>
-            <span className="mt-2 block text-[13px] text-ink-3">
-              {PROFIL.angkaLabel} <span className="font-mono">{PROFIL.angka}</span>
-            </span>
+          </h2>
+          <p className="pf-peran mt-8">
+            {UNGGULAN.dari}
+            <span className="block whitespace-pre pl-[4.5em]">{`(  ${UNGGULAN.nama}  )`}</span>
           </p>
+          <p className="mt-6 max-w-[40ch] text-[14px] leading-relaxed text-[#c3cfdf]">{UNGGULAN.deskripsi}</p>
+        </div>
 
-          <div className="relative z-20 mt-5 grid gap-3 sm:grid-cols-2 md:contents">
-            {/* Kartu terminal: bidang fokus */}
-            <div
-              className="pf-pop rounded-k2-lg border border-line-strong p-4 font-mono text-[13px] leading-relaxed text-[#eaf0f8] md:absolute md:bottom-8 md:left-10 md:w-[290px]"
-              style={{ background: NAVY }}
-            >
-              <p className="text-[#8fcff1]">
-                <span className="text-[#f8c3cf]">ancis@ppti28</span>:~$ whoami --fokus
-              </p>
-              <dl className="mt-2 flex flex-col">
-                {FOKUS.map((f) => (
-                  <div key={f.kunci} className="pf-baris -mx-1.5 grid grid-cols-[5.5rem_1fr] rounded-[4px] px-1.5">
-                    <dt className="text-[#93a4bc]">{f.kunci}</dt>
-                    <dd className="text-white">{f.nilai}</dd>
-                  </div>
-                ))}
-              </dl>
-              <p className="mt-2 text-[#8fcff1]">
-                :~$ <span aria-hidden="true" className="inline-block h-[1.05em] w-2 translate-y-[2px] bg-[#8fcff1]" />
-              </p>
+        <a href={UNGGULAN.href} target="_blank" rel="noopener noreferrer" aria-label={`${UNGGULAN.ajakan} (tab baru)`} className="pf-kartu relative mt-10 block aspect-square w-full overflow-hidden bg-[#0b1e3d] md:absolute md:left-[41%] md:top-[11%] md:mt-0 md:w-[min(49%,76svh)]">
+          {ada(MEDIA.sinau) ? (
+            <Image src={MEDIA.sinau} alt={`Tampilan ${UNGGULAN.nama}`} fill sizes="(min-width: 768px) 49vw, 100vw" className="object-cover object-top" />
+          ) : (
+            <div className="absolute inset-0 grid place-items-center bg-[#1f7dba]">
+              <Rakit as="span" hiasan baris={[UNGGULAN.nama]} garam={61} className="pf-tebal text-[22vw] md:text-[clamp(60px,9vw,170px)]" />
+              <p className="absolute bottom-3 left-3 font-mono text-[11px] text-white/75">public{MEDIA.sinau} belum ada</p>
             </div>
+          )}
+        </a>
 
-            {/* Kartu proyek utama */}
-            {utama && (
-              <Link
-                href={utama.href ?? "#proyek"}
-                className={`pf-pop group block rounded-k2-lg border border-line-strong p-4 text-white hover:border-[#8fcff1] md:absolute md:bottom-8 md:right-10 md:w-[320px] ${FOKUS_RING}`}
-                style={{ background: NAVY }}
-              >
-                <div className="flex items-center justify-between gap-3">
-                  <span className="rounded-pill bg-[#f8c3cf] px-2.5 py-1 text-[12px] font-bold text-[#0b1e3d]">Sedang dikelola</span>
-                  <span className="font-mono text-[12px] text-[#c3cfdf]">2026</span>
-                </div>
-                <div className="mt-3 flex items-center justify-between gap-3">
-                  <span className="flex items-center gap-2">
-                    <Image src="/logo-k2.png" alt="" width={28} height={29} className="h-7 w-7 object-contain" />
-                    <span className="font-display text-[17px] font-bold">{utama.judul}</span>
-                  </span>
-                  <span className="text-right leading-tight">
-                    <span className="block font-mono text-[17px] font-semibold">34</span>
-                    <span className="block text-[11px] text-[#c3cfdf]">pengguna</span>
-                  </span>
-                </div>
-                <div className="mt-3 flex items-center justify-between gap-3 border-t border-white/15 pt-2.5 text-[12px] text-[#c3cfdf]">
-                  <span>{utama.teknologi}</span>
-                  <span className="inline-flex items-center gap-1 font-semibold text-[#8fcff1] group-hover:underline">
-                    {utama.hrefLabel ?? "Lihat"}
-                    <ArrowUpRight size={14} aria-hidden="true" />
-                  </span>
-                </div>
-              </Link>
-            )}
-          </div>
+        <div className="mt-10 md:absolute md:bottom-[13%] md:left-[4.5%] md:mt-0 md:w-[32%]">
+          <a href={UNGGULAN.href} target="_blank" rel="noopener noreferrer" className="pf-peran pf-garis-putus flex min-h-11 w-full items-center">
+            {UNGGULAN.ajakan}
+          </a>
+          <ul className="mt-3 flex gap-6">
+            {UNGGULAN.tautan.map((t) => (
+              <li key={t.label}>
+                <a href={t.href} {...(t.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})} className="pf-chrome-link">
+                  {t.label}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
-
-      {/* Isi tenang di atas kertas */}
-      <div className="mx-auto grid w-full max-w-[1280px] gap-12 px-4 py-12 sm:px-6 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-16 md:px-10 md:py-20">
-        <section id="tentang" aria-labelledby="judul-tentang" className="scroll-mt-6">
-          <h2 id="judul-tentang" className="text-[26px] font-bold">
-            Tentang saya
-          </h2>
-          {TENTANG.map((p) => (
-            <p key={p.slice(0, 24)} className="mt-3 max-w-[56ch] text-[15px] leading-relaxed text-ink-2">
-              {p}
-            </p>
-          ))}
-          <h3 className="mt-8 text-[17px] font-bold">Keahlian</h3>
-          <ul className="mt-3 flex flex-wrap gap-1.5">
-            {KEAHLIAN.map((k) => (
-              <li key={k} className="pf-pop rounded-k2-sm border border-line bg-surface px-2.5 py-1 text-[13px] text-ink-2 hover:border-accent hover:text-ink">
-                {k}
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section id="proyek" aria-labelledby="judul-proyek" className="scroll-mt-6">
-          <h2 id="judul-proyek" className="text-[26px] font-bold">
-            Proyek
-          </h2>
-          <ol className="mt-4 border-t border-line">
-            {PROYEK.map((p, i) => (
-              <li key={p.judul} className="group grid grid-cols-[2.5rem_1fr] gap-x-2 border-b border-line py-5">
-                <span className="font-mono text-[13px] text-ink-3 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-accent-ink motion-reduce:transition-none">{String(i + 1).padStart(2, "0")}</span>
-                <div>
-                  <div className="flex flex-wrap items-baseline justify-between gap-x-3">
-                    <h3 className="text-[19px] font-bold transition-colors group-hover:text-accent-ink">{p.judul}</h3>
-                    <p className="text-[13px] font-semibold text-accent-ink">{p.peran}</p>
-                  </div>
-                  <p className="mt-1.5 text-[15px] leading-relaxed text-ink-2">{p.deskripsi}</p>
-                  <div className="mt-1 flex flex-wrap items-center justify-between gap-x-4">
-                    {p.teknologi && <p className="py-2 text-[13px] text-ink-3">{p.teknologi}</p>}
-                    {p.href && (
-                      <Link href={p.href} {...(p.href.startsWith("http") ? { target: "_blank", rel: "noopener noreferrer" } : {})} className={`pf-pop inline-flex min-h-11 items-center gap-1 text-[14px] font-semibold text-accent-ink underline-offset-4 hover:underline ${FOKUS_RING}`}>
-                        {p.hrefLabel ?? "Lihat proyek"}
-                        <ArrowUpRight size={15} aria-hidden="true" />
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ol>
-        </section>
-      </div>
-
-      <footer className="border-t border-line">
-        <div className="mx-auto flex w-full max-w-[1280px] flex-wrap items-center justify-between gap-x-6 px-4 py-2 text-[13px] text-ink-3 sm:px-6 md:px-10">
-          <p className="py-3">Dibangun dengan Next.js, di-deploy di Vercel.</p>
-          <Link href="/" className={`pf-pop inline-flex min-h-11 items-center underline-offset-4 hover:underline ${FOKUS_RING}`}>
-            Bagian dari web K2 PPTI 28
-          </Link>
-        </div>
-      </footer>
     </main>
   );
 }
