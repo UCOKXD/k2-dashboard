@@ -19,9 +19,6 @@ export const MEDIA = {
   foto: "/portofolio/foto.jpg",
   // Tangkapan layar SINAU (persegi atau mendatar), jadi "cover" di bagian akhir.
   sinau: "/portofolio/sinau.webp",
-  // Tangkapan layar Web K2 (sudah disiapkan).
-  webK2Desktop: "/portofolio/web-k2-desktop.webp",
-  webK2Hp: "/portofolio/web-k2-hp.webp",
 };
 
 // Isi username/alamat untuk menampilkan tautannya. Contoh: instagram: "usernamekamu"
@@ -80,6 +77,13 @@ export const ADEGAN = {
     tanda: "34",
     tandaLabel: "pengguna",
     href: "/",
+    // Isi kotak di tengah adegan.
+    label: "PROYEK KELAS",
+    tahun: "2026",
+    judul: "Pusat informasi kelas ABSORBING PPTI 28",
+    deskripsi: "Satu tempat untuk semua urusan kelas. Saya rancang, bangun, dan kelola sendiri.",
+    fitur: ["Jadwal dan kalender acara", "Izin dan sakit", "Catatan pelanggaran", "Galeri kelas", "Pesan anonim"],
+    ajakan: "BUKA WEB K2",
   },
 };
 

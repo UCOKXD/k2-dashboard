@@ -84,7 +84,7 @@ dengan isi sendiri dan warna kunci K2. Masih draf sampai disetujui pemilik.
 
 - **Design Read:** poster musik yang dipindah ke dunia programmer. Baris kecil menempel di tepi layar, nama raksasa terpecah selebar layar, lalu adegan layar penuh: foto dari dekat, kartu, nama dua baris, daftar peran berundak. Bagian akhir bergaya "records" untuk SINAU.
 - **Warna (palet tetap, tidak ikut tema terang/gelap):** navy malam `#061227` menggantikan hitam, biru laut `#1f7dba` menggantikan merah, kertas `#eef3f8` menggantikan krem. Pink hanya di prompt terminal.
-- **Foto:** semua foto diberi duotone biru lewat CSS supaya foto apa pun menyatu dengan palet. Foto diri di `public/portofolio/foto.jpg`, cover SINAU di `public/portofolio/sinau.webp`; selama belum ada tampil penanda.
+- **Foto:** semua foto diberi duotone biru lewat CSS supaya foto apa pun menyatu dengan palet. Adegan Web K2 memakai kotak teks berwarna kertas, tanpa tangkapan layar. Foto diri di `public/portofolio/foto.jpg`, cover SINAU di `public/portofolio/sinau.webp`; selama belum ada tampil penanda.
 - **Pengecualian dari aturan kelas, dengan alasan:**
   - Label kecil huruf kapital (navigasi, peran): ciri utama gaya rujukan. Ditulis kapital langsung di data, bukan lewat `uppercase`.
   - Filter tepi kasar pada huruf tebal dan butiran film statis: meniru cetakan kasar rujukan.

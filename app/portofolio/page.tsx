@@ -52,7 +52,7 @@ function Peran({ baris, tanda, className = "" }: { baris: string[]; tanda: strin
     <div className={`pf-peran flex items-start justify-between gap-8 ${className}`}>
       <ul>
         {baris.map((b, i) => (
-          <li key={b} className={UNDAK[i % UNDAK.length]}>
+          <li key={b} className={`whitespace-nowrap ${UNDAK[i % UNDAK.length]}`}>
             {b}
           </li>
         ))}
@@ -196,16 +196,39 @@ export default function PortofolioPage() {
         <Peran baris={fokus.peran} tanda={fokus.tanda} className="relative z-20 mt-8 px-4 md:absolute md:left-[70%] md:top-[60%] md:mt-0 md:w-[25%] md:px-0" />
       </section>
 
-      {/* 4. Web K2: peran di kiri, kartu tangkapan layar HP di tengah, tangkapan layar besar di kanan */}
-      <section id={webK2.id} aria-label="Proyek Web K2" className="relative overflow-hidden pb-20 md:h-[100svh] md:min-h-[600px] md:pb-0">
-        <div className="pf-duo pf-duo-tua relative h-[38svh] w-full md:absolute md:right-0 md:top-0 md:h-[92%] md:w-[50%]">
-          <Foto src={MEDIA.webK2Desktop} alt="" zoom={1.5} posisi="30% 20%" sizes="(min-width: 768px) 50vw, 100vw" geser={0.07} />
+      {/* 4. Web K2: peran di kiri, kotak keterangan proyek di tengah, bidang biru di kanan */}
+      <section id={webK2.id} aria-label="Proyek Web K2" className="relative overflow-hidden pb-20 md:h-[100svh] md:min-h-[740px] md:pb-0">
+        <div aria-hidden="true" className="relative h-[22svh] w-full bg-[#1668ad] md:absolute md:right-0 md:top-0 md:h-[92%] md:w-[50%]" />
+        <div className="relative z-10 mx-4 -mt-[12svh] flex flex-col bg-[#eef3f8] p-6 text-[#0b1e3d] transition-transform duration-500 hover:-translate-y-1.5 motion-reduce:transform-none md:absolute md:left-[33%] md:top-[8%] md:m-0 md:min-h-[80%] md:w-[34%] md:p-9">
+          <div className="pf-mini flex items-center justify-between">
+            <span className="flex items-center gap-2.5">
+              <Image src="/logo-k2.png" alt="" width={36} height={37} className="h-9 w-9 object-contain" />
+              {webK2.label}
+            </span>
+            <span className="font-mono">{webK2.tahun}</span>
+          </div>
+          <h3 className="mt-6 font-display text-[clamp(24px,2.4vw,38px)] font-extrabold leading-[1.05] tracking-[-0.02em] md:mt-8">{webK2.judul}</h3>
+          <p className="mt-3 text-[14px] leading-relaxed text-[#33475f] md:text-[15px]">{webK2.deskripsi}</p>
+          <ul className="mt-5 border-t border-[#0b1e3d]/20 text-[14px] md:text-[15px]">
+            {webK2.fitur.map((f, i) => (
+              <li key={f} className="flex gap-4 border-b border-[#0b1e3d]/20 py-2 transition-[padding] duration-300 hover:pl-2 motion-reduce:transition-none">
+                <span className="font-mono text-[12px] leading-[1.9] text-[#4a5d78]">{String(i + 1).padStart(2, "0")}</span>
+                {f}
+              </li>
+            ))}
+          </ul>
+          <div className="mt-6 flex items-end justify-between gap-4 md:mt-auto">
+            <p className="leading-none">
+              <span className="font-display text-[clamp(44px,4.6vw,76px)] font-extrabold tracking-[-0.04em]">{webK2.tanda}</span>
+              <span className="pf-mini ml-2">{webK2.tandaLabel.toUpperCase()}</span>
+            </p>
+            <Link href={webK2.href} className="pf-peran pf-garis-putus inline-flex min-h-11 items-center font-semibold">
+              {webK2.ajakan}
+            </Link>
+          </div>
         </div>
-        <Link href={webK2.href} aria-label="Buka web K2 PPTI 28" className="pf-kartu relative z-10 mx-auto -mt-[16svh] block h-[62svh] w-[62%] overflow-hidden bg-[#0b1e3d] md:absolute md:left-[33%] md:top-[3%] md:m-0 md:h-[88%] md:w-[34%]">
-          {ada(MEDIA.webK2Hp) ? <Image src={MEDIA.webK2Hp} alt="Tampilan web K2 PPTI 28 di HP" fill sizes="(min-width: 768px) 34vw, 62vw" className="object-cover object-top" /> : <Penanda file={MEDIA.webK2Hp} />}
-        </Link>
         <Rakit baris={webK2.nama} indent={["", "pl-[0.4em]"]} garam={41} className={`${NAMA} relative z-20 mt-10 px-4 md:absolute md:left-[68.5%] md:top-[57%] md:mt-0 md:px-0`} />
-        <Peran baris={webK2.peran} tanda={`${webK2.tanda} ${webK2.tandaLabel.toUpperCase()}`} className="relative z-20 mt-8 px-4 md:absolute md:left-[4.5%] md:top-[46%] md:mt-0 md:w-[26%] md:px-0" />
+        <Peran baris={webK2.peran} tanda={webK2.tahun} className="relative z-20 mt-8 px-4 md:absolute md:left-[4.5%] md:top-[46%] md:mt-0 md:w-[26%] md:px-0" />
       </section>
 
       {/* 5. SINAU: bagian bergaya "records", cover persegi di kanan */}
