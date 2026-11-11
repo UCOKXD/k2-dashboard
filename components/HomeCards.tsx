@@ -80,7 +80,7 @@ export default function HomeCards({ cards }: { cards: Cards }) {
             <GraduationCap size={22} />
           </span>
           <span className="min-w-0 flex-1">
-            <Link href="/jadwal" className="group block">
+            <Link href="/jadwal" className="group block min-h-11">
               <span className="block text-xs font-semibold leading-tight text-ink-3">Perkuliahan · kelas berikutnya</span>
               {!cards.schedule.length ? (
                 <span className={META}>Jadwal kuliah belum diisi admin.</span>
