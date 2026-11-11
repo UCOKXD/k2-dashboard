@@ -1,12 +1,27 @@
+import Link from "next/link";
 import { BookOpen, Camera, Crown, GraduationCap, Laptop, Shield, User, Wallet } from "lucide-react";
 import type { OrgData } from "@/lib/content";
 import { DIV_KEYS, ROLE_DEF, type DivKey } from "@/lib/roles";
 import { STUDENTS } from "@/lib/students";
 
 // Isi struktur diatur Admin Website di Panel Admin > Struktur & Peran. Nama disimpan sebagai nama lengkap siswa.
-type Person = { nama: string; panggilan: string };
-const person = (full: string): Person | undefined =>
-  full ? { nama: full, panggilan: STUDENTS.find((s) => s.full === full)?.short ?? "" } : undefined;
+type Person = { nama: string; panggilan: string; absen?: number };
+const person = (full: string): Person | undefined => {
+  if (!full) return undefined;
+  const s = STUDENTS.find((x) => x.full === full);
+  return { nama: full, panggilan: s?.short ?? "", absen: s?.absen };
+};
+
+// Kotak berisi orang = tautan ke profilnya; saat disorot sedikit membesar (diam bila gerak dikurangi).
+const LIFT = "transition-transform duration-200 ease-out hover:z-10 hover:scale-[1.04] focus-visible:scale-[1.04] motion-reduce:transition-none motion-reduce:hover:scale-100";
+function ProfileLink({ p, className, children }: { p?: Person; className: string; children: React.ReactNode }) {
+  if (!p?.absen) return <div className={className}>{children}</div>;
+  return (
+    <Link href={`/profil/${p.absen}`} aria-label={`Lihat profil ${p.panggilan || p.nama}`} className={`${className} ${LIFT} hover:border-accent hover:shadow-1`}>
+      {children}
+    </Link>
+  );
+}
 
 function Connector() {
   return <div className="h-5 w-px bg-line-strong" aria-hidden="true" />;
@@ -15,8 +30,9 @@ function Connector() {
 // Kartu peran: navy untuk pucuk pimpinan (fokus mata), permukaan biasa untuk peran lain. Satu bahasa warna, tanpa gradasi.
 function Box({ role, icon: Icon, person: p, text, lead = false, className = "" }: { role: string; icon: typeof User; person?: Person; text?: string; lead?: boolean; className?: string }) {
   return (
-    <div
-      className={`flex min-w-0 items-center gap-3 rounded-k2-md border px-3.5 py-2.5 ${
+    <ProfileLink
+      p={p}
+      className={`flex min-h-11 min-w-0 items-center gap-3 rounded-k2-md border px-3.5 py-2.5 ${
         lead ? "border-transparent bg-[#0b1e3d] text-white dark:bg-[#165f93]" : "border-line bg-surface text-ink"
       } ${className}`}
     >
@@ -33,7 +49,7 @@ function Box({ role, icon: Icon, person: p, text, lead = false, className = "" }
           text && <p className="text-sm font-bold">{text}</p>
         )}
       </div>
-    </div>
+    </ProfileLink>
   );
 }
 
@@ -50,12 +66,14 @@ function Division({ k, org }: { k: DivKey; org: OrgData }) {
       {anggota.length > 0 && (
         <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {anggota.map((p) => (
-            <li key={p.nama} className="min-w-0 rounded-k2-md border border-line bg-surface px-3 py-2 text-center">
-              <p className="text-xs font-semibold text-ink-3">Anggota</p>
-              <p className="truncate text-sm font-bold text-ink" title={p.nama}>
-                {p.nama}
-              </p>
-              <p className="text-xs text-ink-3">({p.panggilan})</p>
+            <li key={p.nama} className="min-w-0">
+              <ProfileLink p={p} className="block h-full rounded-k2-md border border-line bg-surface px-3 py-2 text-center">
+                <p className="text-xs font-semibold text-ink-3">Anggota</p>
+                <p className="truncate text-sm font-bold text-ink" title={p.nama}>
+                  {p.nama}
+                </p>
+                <p className="text-xs text-ink-3">({p.panggilan})</p>
+              </ProfileLink>
             </li>
           ))}
         </ul>

@@ -1,5 +1,5 @@
 "use client";
-import MotionToggle from "@/components/MotionToggle";
+import ClockTools from "@/components/ClockTools";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CheckCircle2, Maximize2, Minimize2, RefreshCw, TriangleAlert } from "lucide-react";
@@ -23,12 +23,6 @@ async function measure(): Promise<Sync> {
   }
   return best!;
 }
-
-const ZONES = [
-  { label: "WIB", tz: "Asia/Jakarta" },
-  { label: "WITA", tz: "Asia/Makassar" },
-  { label: "WIT", tz: "Asia/Jayapura" },
-];
 
 // Dekorasi panel jam: 4 axolotl berenang (posisi & kecepatan diatur di globals.css) dan 6 gelembung naik.
 const SWIMMERS = [
@@ -125,8 +119,13 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
   // Layar penuh: pakai Fullscreen API; kalau tidak didukung (mis. iPhone), tampilkan menutupi layar dengan CSS.
   const card = useRef<HTMLDivElement>(null);
   const [full, setFull] = useState(false);
+  const [native, setNative] = useState(false); // true = Fullscreen API (browser menyediakan cara keluar sendiri)
   useEffect(() => {
-    const onChange = () => setFull(document.fullscreenElement === card.current);
+    const onChange = () => {
+      const on = document.fullscreenElement === card.current;
+      setFull(on);
+      setNative(on);
+    };
     document.addEventListener("fullscreenchange", onChange);
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setFull(false);
     window.addEventListener("keydown", onKey);
@@ -209,18 +208,22 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
         <ClockAlertsLayer alerts={alerts} full={full} />
 
         <h1 className="sr-only">Waktu Jakarta</h1>
-        <div className="absolute right-4 top-4 z-30 flex gap-2">
-          <MotionToggle tone="dark" compact />
-          <button
-            type="button"
-            onClick={toggleFull}
-            className="flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-k2-md border border-white/40 bg-[rgba(6,18,39,0.55)] px-3 text-xs font-semibold text-white transition hover:bg-[rgba(6,18,39,0.75)]"
-            aria-label={full ? "Keluar dari layar penuh" : "Tampilkan jam layar penuh"}
-          >
-            {full ? <Minimize2 size={14} aria-hidden="true" /> : <Maximize2 size={14} aria-hidden="true" />} <span className="hidden sm:inline">{full ? "Keluar" : "Layar penuh"}</span>
-          </button>
-        </div>
-        <div className="relative z-20 flex w-full flex-col items-center">
+        {/* Hanya tombol "Layar penuh". Keluar lewat Esc / tombol kembali bawaan browser.
+            Pengecualian: di browser tanpa Fullscreen API (mis. iPhone) tidak ada cara keluar bawaan, jadi ikon kecil tetap muncul. */}
+        {(!full || !native) && (
+          <div className="absolute right-4 top-4 z-30">
+            <button
+              type="button"
+              onClick={toggleFull}
+              className="flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-k2-md border border-white/30 bg-white/[0.12] px-3 text-xs font-bold text-white transition hover:bg-white/[0.22]"
+              aria-label={full ? "Tutup layar penuh" : "Tampilkan jam layar penuh"}
+            >
+              {full ? <Minimize2 size={14} aria-hidden="true" /> : <Maximize2 size={14} aria-hidden="true" />}
+              {!full && <span className="hidden sm:inline">Layar penuh</span>}
+            </button>
+          </div>
+        )}
+        <div className={`relative z-20 flex w-full flex-col items-center ${full ? "" : "pt-10 sm:pt-0"}`}>
           {/* Label diberi latar navy tipis supaya tetap terbaca di atas foto apa pun. */}
           <p
             className={`rounded-full bg-[rgba(11,30,61,0.5)] px-4 py-1 font-semibold text-sea-100 ${full ?"text-lg sm:text-2xl" : "text-[12.5px]"}`}
@@ -229,7 +232,7 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
             Waktu Indonesia Barat
           </p>
           <p
-          className={`mt-3.5 font-mono font-extrabold leading-none tabular-nums tracking-[-0.04em] ${full ? "text-[19vw]" : "text-[clamp(64px,14vw,156px)]"} ${now && blinkAt(now.getTime()) ? "text-red-500" : ""}`}
+          className={`mt-3.5 font-mono font-extrabold leading-none tabular-nums tracking-[-0.04em] ${full ? "text-[min(19vw,30vh)]" : "text-[clamp(64px,14vw,156px)]"} ${now && blinkAt(now.getTime()) ? "text-red-500" : ""}`}
           style={SHADOW_CLOCK}
         >
             {now ? part(now, "Asia/Jakarta", { hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }) : "--:--:--"}
@@ -237,16 +240,7 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
           <p className={`mt-3 font-semibold text-white ${full ? "text-2xl sm:text-4xl" : "text-base sm:text-xl"}`} style={SHADOW_TEXT}>
             {now ? part(now, "Asia/Jakarta", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : " "}
           </p>
-          <div className={`mx-auto mt-6 grid w-full grid-cols-3 gap-3 ${full ? "max-w-2xl" : "max-w-md"}`}>
-            {ZONES.map((z) => (
-              <div key={z.tz} className="rounded-xl border border-white/[0.12] bg-[rgba(6,18,39,0.6)] px-2 py-2.5">
-                <p className="font-mono text-[11px] font-bold tracking-[0.12em] text-sea-300">{z.label}</p>
-                <p className="mt-1.5 font-mono text-[19px] font-bold tabular-nums">
-                  {now ? part(now, z.tz, { hour: "2-digit", minute: "2-digit", hourCycle: "h23" }) : "--:--"}
-                </p>
-              </div>
-            ))}
-          </div>
+          <ClockTools big={full} />
         </div>
       </div>
 

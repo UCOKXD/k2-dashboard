@@ -274,15 +274,18 @@ html { scroll-padding-top: calc(var(--header-h) + 72px); }
 .k2-page-hero__in {
   display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 24px;
   max-width: calc(var(--wadah) + var(--gutter) * 2); margin-inline: auto; padding-inline: var(--gutter);
-  padding-block: clamp(84px, 9vw, 112px) clamp(24px, 3vw, 36px);
+  /* Atas: di tablet island menu melayang di bawah header (perlu ruang), di desktop island menempel di header. */
+  padding-block: 84px 20px;
 }
-.k2-page-hero h1 { font-size: clamp(36px, 5.2vw, 60px); font-weight: 800; line-height: 1.02; letter-spacing: -.03em; }
-.k2-page-hero__lede { margin-top: 12px; max-width: 56ch; color: var(--ink-2); font-size: clamp(15px, 1.4vw, 17px); text-wrap: pretty; }
-.k2-page-hero__host { margin-bottom: -10px; }
+@media (min-width: 1024px) { .k2-page-hero__in { padding-block: 32px 22px; } }
+.k2-page-hero h1 { font-size: clamp(30px, 3.6vw, 44px); font-weight: 800; line-height: 1.08; letter-spacing: -.025em; text-wrap: balance; overflow-wrap: anywhere; }
+.k2-page-hero__lede { margin-top: 8px; max-width: 60ch; color: var(--ink-2); font-size: clamp(14.5px, 1.3vw, 16px); text-wrap: pretty; }
+.k2-page-hero__host { margin-bottom: -6px; }
+.k2-page-hero__host { height: clamp(84px, 9vw, 112px) !important; width: auto !important; }
 @media (max-width: 767px) {
-  .k2-page-hero__in { grid-template-columns: 1fr; padding-top: 32px; }
-  .k2-page-hero__host { position: absolute; right: var(--gutter); top: 14px; }
-  .k2-page-hero h1 { padding-right: 96px; }
+  .k2-page-hero__in { grid-template-columns: 1fr; padding-top: 22px; }
+  .k2-page-hero__host { position: absolute; right: var(--gutter); top: 12px; height: 72px !important; }
+  .k2-page-hero h1 { padding-right: 84px; }
 }
 
 /* Statistik: tiga angka dalam satu kartu bersekat */
@@ -407,8 +410,6 @@ html { scroll-padding-top: calc(var(--header-h) + 72px); }
 .k2-dev-pp:hover { transform: rotate(-3deg) scale(1.04); }
 @media (prefers-reduced-motion: reduce) { .k2-dev-pp, .k2-dev-pp:hover { transition: none; transform: none; } }
 
-/* Animasi hiasan yang berjalan terus bisa dijeda pengunjung (tombol MotionToggle). */
-.k2-still :is(.k2-swim, .k2-bubble, .k2-bd-flag, .k2-bd-sway, .k2-confetti, .k2-dev-fly, .k2-dev-aura, .k2-dev-title) { animation-play-state: paused !important; }
 
 /* Semua kontrol aktif menampilkan kursor tangan; kontrol nonaktif menampilkan tanda dilarang. */
 @layer base {

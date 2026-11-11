@@ -1,7 +1,6 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import MotionToggle from "@/components/MotionToggle";
 import { STICKERS, type StickerName } from "@/lib/stickers";
 
 // Easter egg khusus profil developer (Francis): judul "You Meet The Developer!!", aura biru di kiri/kanan/bawah,
@@ -41,7 +40,6 @@ export function DevTitle() {
       {/* Judul hiasan, bukan heading: judul halaman tetap nama di kartu profil. */}
       <p className="k2-dev-title mt-2 font-display text-[clamp(34px,7vw,76px)] font-extrabold leading-[0.95] tracking-[-0.035em]">You Meet The Developer!!</p>
       <p className="mt-3 text-sm text-ink-3">Klik di mana saja di latar untuk letupan konfeti.</p>
-      <MotionToggle className="mt-3" />
     </div>
   );
 }

@@ -40,12 +40,12 @@ function Card({ m, src, active, onPick }: { m: MemberCard; src: string | null; a
   return (
     <div className="relative h-full w-full">
     <article
-      className={`flex h-full w-full flex-col items-center rounded-[30px] border bg-surface px-5 pb-5 pt-6 text-center ${active ? "border-line-strong shadow-3" : "border-line shadow-1"}`}
+      className={`flex h-full w-full flex-col items-center rounded-[30px] border bg-surface px-4 pb-2 pt-5 text-center ${active ? "border-line-strong shadow-3" : "border-line shadow-1"}`}
       aria-hidden={!active}
     >
       {m.nama === DEV_NAME ? (
         // Foto developer tetap memakai bingkai maskot.
-        <span className="relative aspect-square w-[62%] shrink-0">
+        <span className="relative aspect-square w-[56%] shrink-0">
           <DevMascotBack />
           <span className="relative z-[1] grid h-full w-full place-items-center overflow-hidden rounded-full bg-[#165f93] font-display text-5xl font-bold text-white">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -54,7 +54,7 @@ function Card({ m, src, active, onPick }: { m: MemberCard; src: string | null; a
           <DevMascotFront />
         </span>
       ) : (
-        <span className="grid aspect-square w-[62%] shrink-0 place-items-center overflow-hidden rounded-full bg-[#165f93] font-display text-5xl font-bold text-white ring-4 ring-accent-soft">
+        <span className="grid aspect-square w-[56%] shrink-0 place-items-center overflow-hidden rounded-full bg-[#165f93] font-display text-5xl font-bold text-white ring-4 ring-accent-soft">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           {src ? <img width={320} height={320} src={src} alt={active ? `Foto profil ${m.short}` : ""} loading="lazy" draggable={false} className="h-full w-full object-cover" /> : m.short[0]}
         </span>
@@ -123,19 +123,29 @@ export default function MemberCarousel({ members }: { members: MemberCard[] }) {
 
   if (!n) return null;
 
-  const STEP = wide ? 205 : 128; // jarak antarkartu (px)
+  const STEP = wide ? 192 : 120; // jarak antarkartu (px)
   const cur = members[idx];
 
   return (
-    <section aria-labelledby="judul-kenalan" className="relative rounded-k2-xl border border-line bg-[color-mix(in_srgb,var(--surface)_80%,transparent)] px-2 pb-6 pt-7 sm:px-4">
-      <h2 id="judul-kenalan" className="text-center font-display text-[clamp(28px,4vw,42px)] font-extrabold tracking-[-0.02em] text-ink">
-        Yuk Kenalan!!
+    // Tanpa kotak & latar: kartu langsung di atas kertas halaman, supaya menyatu dan tidak terasa tinggi/kosong.
+    <section aria-labelledby="judul-kenalan" className="relative">
+      {/* Judul melengkung (busur) seperti tulisan di punggung jaket varsity. Teks asli untuk pembaca layar. */}
+      <h2 id="judul-kenalan" className="mx-auto w-[min(520px,100%)] px-12 sm:px-0">
+        <span className="sr-only">Yuk Kenalan!!</span>
+        <svg viewBox="0 0 520 112" className="block h-auto w-full overflow-visible" aria-hidden="true">
+          <path id="busur-kenalan" d="M 30 100 Q 260 20 490 100" fill="none" />
+          <text className="fill-ink font-display font-extrabold" fontSize="66" letterSpacing="-1">
+            <textPath href="#busur-kenalan" startOffset="50%" textAnchor="middle">
+              Yuk Kenalan!!
+            </textPath>
+          </text>
+        </svg>
       </h2>
-      {/* Stiker maskot menempel di pojok kiri atas kotak (bisa diklik: bergoyang). */}
-      <Sticker name="kenalan-yuk" size={110} className="absolute -top-14 left-2 z-20 sm:-top-16 sm:left-4 md:!h-[150px] lg:-top-20" />
+      {/* Stiker maskot di kiri judul (bisa diklik: bergoyang). */}
+      <Sticker name="kenalan-yuk" size={110} className="absolute left-0 top-0 z-20 !h-[64px] sm:-top-2 sm:left-2 sm:!h-[104px] lg:!h-[128px]" />
 
       <div
-        className="mt-5 flex items-center justify-between gap-1"
+        className="-mt-1 flex items-center justify-between gap-1"
         role="region"
         aria-roledescription="carousel"
         aria-label="Kartu profil anggota kelas"
@@ -147,7 +157,7 @@ export default function MemberCarousel({ members }: { members: MemberCard[] }) {
         <Arrow dir="prev" onClick={() => go(-1)} />
 
         <div
-          className="relative h-[372px] min-w-0 flex-1 touch-pan-y overflow-hidden sm:h-[392px]"
+          className="relative h-[340px] min-w-0 flex-1 touch-pan-y overflow-hidden sm:h-[356px]"
           onPointerDown={(e) => {
             swipe.current = { x: e.clientX, y: e.clientY };
             if (e.pointerType !== "mouse") {
@@ -177,7 +187,7 @@ export default function MemberCarousel({ members }: { members: MemberCard[] }) {
               <div
                 key={m.absen}
                 inert={!shown}
-                className="absolute left-1/2 top-1/2 h-[352px] w-[228px] transition-[transform,opacity] duration-500 ease-[cubic-bezier(.22,.8,.3,1)] motion-reduce:transition-none sm:h-[372px] sm:w-[240px]"
+                className="absolute left-1/2 top-1/2 h-[322px] w-[210px] transition-[transform,opacity] duration-500 ease-[cubic-bezier(.22,.8,.3,1)] motion-reduce:transition-none sm:h-[338px] sm:w-[222px]"
                 style={{
                   transform: `translate(-50%, -50%) translateX(${Math.max(-3, Math.min(3, d)) * STEP}px) translateY(${a === 2 ? 14 : 0}px) rotate(${rot}deg) scale(${scale})`,
                   opacity: op,
@@ -195,7 +205,7 @@ export default function MemberCarousel({ members }: { members: MemberCard[] }) {
         <Arrow dir="next" onClick={() => go(1)} />
       </div>
 
-      <div className="mt-3 flex items-center justify-center gap-3">
+      <div className="mt-1 flex items-center justify-center gap-3">
         {/* Penanda posisi hanya untuk pembaca layar (tidak ditampilkan). */}
         <p className="sr-only" aria-live={paused || hold ? "polite" : "off"}>
           Profil {idx + 1} dari {n}: {cur.nama}

@@ -127,7 +127,7 @@ function Hero({ photos }: { photos: string[] }) {
   }, []);
 
   return (
-    <section className="relative isolate flex items-end overflow-hidden bg-[#0b1e3d] text-white md:min-h-[clamp(520px,72vh,720px)]" aria-label="Sampul beranda">
+    <section className="relative isolate flex items-end overflow-hidden bg-[#0b1e3d] text-white md:min-h-[max(560px,100svh)]" aria-label="Sampul beranda">
       {SLIDES.map((src, i) => (
         <Image
           key={src}
@@ -144,7 +144,7 @@ function Hero({ photos }: { photos: string[] }) {
       <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(0deg,rgba(6,18,39,.96)_0%,rgba(11,30,61,.75)_55%,rgba(11,30,61,.35)_100%)] md:bg-[linear-gradient(90deg,rgba(6,18,39,.94)_0%,rgba(11,30,61,.78)_38%,rgba(11,30,61,.22)_72%,rgba(11,30,61,.05)_100%),linear-gradient(0deg,rgba(6,18,39,.9)_0%,transparent_42%)]" />
 
       <div className="relative mx-auto w-full max-w-[calc(var(--wadah)+var(--gutter)*2)] px-[var(--gutter)]">
-        <div ref={ref} className="relative flex max-w-[760px] flex-col pb-24 pt-[150px] md:pb-[clamp(88px,10vw,128px)] md:pt-[140px]">
+        <div ref={ref} className="relative flex max-w-[760px] flex-col pb-24 pt-[150px] md:pb-[176px] md:pt-[140px]">
           <HeroClock />
           <h1 className="mt-[22px] text-[clamp(48px,8.4vw,112px)] font-extrabold leading-[0.94] tracking-[-0.035em]">
             Halo, <em className="not-italic text-sea-300">ABSORBERS!</em>
@@ -164,7 +164,7 @@ function Hero({ photos }: { photos: string[] }) {
       </div>
 
       {SLIDES.length > 1 && (
-        <div className="absolute bottom-14 right-[var(--gutter)] z-20 flex items-center md:bottom-10 md:left-[max(var(--gutter),calc((100vw-var(--wadah))/2))] md:right-auto">
+        <div className="absolute bottom-14 right-[var(--gutter)] z-20 flex items-center md:bottom-[104px] md:left-[max(var(--gutter),calc((100vw-var(--wadah))/2))] md:right-auto">
           {SLIDES.map((_, i) => (
             // Area sentuh 44 px; titiknya sendiri tetap kecil di tengah.
             <button
@@ -194,7 +194,7 @@ function Hero({ photos }: { photos: string[] }) {
       <Sticker
         name="halo"
         size={200}
-        className="absolute right-[var(--gutter)] top-20 z-10 !h-[104px] md:bottom-[72px] md:top-auto md:!h-[clamp(120px,15vw,196px)] min-[1280px]:right-[calc((100vw-var(--wadah))/2)]"
+        className="absolute right-[var(--gutter)] top-20 z-10 !h-[104px] md:bottom-[104px] md:top-auto md:!h-[clamp(120px,15vw,196px)] min-[1280px]:right-[calc((100vw-var(--wadah))/2)]"
       />
     </section>
   );
@@ -423,11 +423,12 @@ export default function HomeDashboard({ data, tasks, today }: { data: HomeData; 
       {/* Pada hari ada yang ulang tahun, banner foto diganti banner ulang tahun (besoknya kembali normal). */}
       {bdayToday ? <BirthdayHero people={data.bday.today} /> : <Hero photos={data.photos} />}
       {/* Menu pulau melayang di tepi bawah sampul, lalu naik menempel di header saat di-scroll (tablet & desktop). */}
-      <NavIsland variant="floating" />
+      {/* Di sampul foto island naik ke dalam sampul supaya terlihat utuh di layar pertama. */}
+      <NavIsland variant="floating" lift={!bdayToday} />
 
       <div className="mx-auto max-w-[calc(var(--wadah)+var(--gutter)*2)] space-y-[clamp(48px,6vw,72px)] px-[var(--gutter)] pb-4">
         {/* FlashCard "Yuk Kenalan!!" tepat di bawah menu pulau (di ponsel menumpang di bawah sampul). */}
-        <div className={`relative z-[3] ${bdayToday ? "mt-8" : "-mt-10 md:mt-6"}`}>
+        <div className={`relative z-[3] ${bdayToday ? "mt-8" : "mt-8 sm:mt-10"}`}>
           <MemberCarousel members={data.members} />
         </div>
 

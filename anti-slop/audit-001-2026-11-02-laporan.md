@@ -14,7 +14,7 @@ Arah desain: `DESIGN.md` (papan kelas berjaket varsity, dial ENERGY 2 / RHYTHM 2
 | 5 | Kursor | Selesai | Aturan CSS dasar; pindai: 0 tombol tanpa kursor tangan |
 | 6 | Kartu kenalan bukan tombol | Selesai | Tombol penutup kartu + `inert` untuk kartu tersembunyi |
 | 7 | Struktur h1 | Selesai | Pindai: tiap halaman tepat 1 `h1` |
-| 8 | Gerak tanpa jeda | Selesai | Tombol "Jeda animasi" (Waktu, banner ulang tahun, easter egg); denyut tanpa henti dihapus |
+| 8 | Gerak tanpa jeda | Selesai, lalu diubah pemilik | Tombol "Jeda animasi" sempat dipasang, lalu dihapus atas permintaan pemilik (11 Nov 2026, lihat DESIGN.md pengecualian); gerak hias tetap berhenti lewat prefers-reduced-motion; denyut tanpa henti dihapus |
 | 9 | Gambar tanpa ukuran | Selesai | 26/26 `<img>` punya `width`/`height` |
 | 10 | Tanda pisah panjang | Selesai | Tidak ada lagi di teks antarmuka maupun pesan WhatsApp |
 | 11 | Label mengulang judul | Selesai | Label dihapus dari kepala halaman |

@@ -12,7 +12,7 @@ Bahasa visual: **papan kelas berjaket varsity**, buku tahunan dan papan pengumum
 
 - ENERGY 2: ramah dan hangat, tidak ramai. Satu momen besar per halaman, sisanya tenang.
 - RHYTHM 2: komposisi bagian bervariasi sesuai isinya (panggung kartu, daftar, angka, linimasa), bukan satu template berulang.
-- MOTION 2: transisi dan reveal saat dibutuhkan. Gerak hias yang berjalan terus wajib bisa dijeda (tombol "Jeda animasi").
+- MOTION 2: transisi dan reveal saat dibutuhkan. Gerak hias yang berjalan terus berhenti bila perangkat meminta gerak dikurangi.
 
 ## Identitas
 
@@ -55,7 +55,8 @@ Semua pasangan teks diuji dengan `contrast-check.py` antislop; minimal 4,5:1 unt
 ## Gerak
 
 - Reveal saat scroll untuk kartu pengurus; pergantian kartu kenalan 4 detik dengan tombol jeda; sampul foto berganti dengan tombol jeda.
-- Animasi hias terus-menerus (axolotl berenang, gelembung, konfeti, stiker terbang) bisa dijeda lewat tombol "Jeda animasi" dan berhenti bila perangkat meminta gerak dikurangi.
+- Animasi hias terus-menerus (axolotl berenang, gelembung, konfeti, stiker terbang) berhenti bila perangkat meminta gerak dikurangi (`prefers-reduced-motion`).
+- Kotak pengurus yang berisi orang sedikit membesar saat disorot dan membuka profilnya.
 - Tidak ada denyut tanpa henti pada titik atau ikon.
 
 ## Interaksi (R-03, R-32, R-39)
@@ -75,3 +76,6 @@ Semua pasangan teks diuji dengan `contrast-check.py` antislop; minimal 4,5:1 unt
 - Nama "Hall of Shame" dan tanda seru ganda di sapaan dipertahankan sebagai suara kelas.
 - Judul berkilau dan aura biru di profil developer adalah easter egg yang disengaja (glow dan gradasi hanya di sana).
 - Pesan WhatsApp grup (bukan antarmuka web) boleh memakai emoji.
+- Tombol "Jeda animasi" dihapus atas permintaan pemilik (11 November 2026), walau antislop R-39 meminta tombol jeda untuk gerak lebih dari 5 detik. Pengganti: semua animasi hias tetap berhenti lewat `prefers-reduced-motion`; tombol jeda sampul foto dan kartu kenalan tetap ada.
+- Panel Waktu: tombol "Keluar" layar penuh dihapus atas permintaan pemilik; keluar lewat Esc atau tombol bawaan browser. Di browser tanpa Fullscreen API (iPhone) ikon kecil tetap muncul karena tidak ada cara keluar lain.
+- Judul "Yuk Kenalan!!" melengkung seperti tulisan punggung jaket varsity; kartu kenalan tanpa kotak latar supaya menyatu dengan halaman.

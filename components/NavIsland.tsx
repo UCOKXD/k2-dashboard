@@ -80,7 +80,7 @@ function Tip({ text }: { text: string }) {
 // static: halaman lain. Island selalu menempel di atas, tanpa animasi scroll.
 // Hanya ikon (label muncul saat disorot) supaya ringkas; kelompok membuka dropdown.
 // Hanya di tablet & desktop (>=768px); di ponsel diganti bar bawah (MobileNav).
-export default function NavIsland({ variant }: { variant: "floating" | "static" }) {
+export default function NavIsland({ variant, lift = false }: { variant: "floating" | "static"; lift?: boolean }) {
   const path = usePathname();
   const ref = useRef<HTMLDivElement>(null);
   const nav = useRef<HTMLElement>(null);
@@ -221,7 +221,7 @@ export default function NavIsland({ variant }: { variant: "floating" | "static" 
   }
   // sticky: menempel otomatis saat posisinya sampai di atas layar, tanpa mengubah tinggi halaman
   return (
-    <div ref={ref} className="pointer-events-none sticky top-[76px] z-[60] -mt-7 hidden h-14 justify-center md:flex lg:top-[6px]">
+    <div ref={ref} className={`pointer-events-none sticky top-[76px] z-[60] hidden h-14 ${lift ? "-mt-[84px] mb-7" : "-mt-7"} justify-center md:flex lg:top-[6px]`}>
       {bar}
     </div>
   );

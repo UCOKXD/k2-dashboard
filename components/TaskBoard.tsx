@@ -1,6 +1,7 @@
 import { AlarmClock, BookOpen, ClipboardList } from "lucide-react";
 import { jam } from "@/lib/time";
 import Sticker from "@/components/Sticker";
+import ScrollLimit from "@/components/ScrollLimit";
 import { DIFFICULTY, URGENCY, daysLabel, urgencyOf, type TaskItem } from "@/lib/tasks";
 
 const BULAN = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
@@ -46,10 +47,11 @@ export default function TaskBoard({ tasks, today }: { tasks: TaskItem[]; today: 
       )}
 
       <div className="k2-card p-5">
-        <h3 className="mb-3 flex items-center gap-2 font-bold text-ink">
-          <ClipboardList size={18} className="text-accent-ink" /> Tugas aktif ({active.length})
+        <h3 className="mb-4 flex items-center justify-center gap-2 font-display text-xl font-extrabold text-ink sm:text-2xl">
+          <ClipboardList size={22} className="text-accent-ink" aria-hidden="true" /> Tugas aktif ({active.length})
         </h3>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {/* Enam tugas terdekat terlihat; sisanya digulir di dalam kotak. */}
+        <ScrollLimit count={6} label={`Daftar ${active.length} tugas aktif, gulir untuk melihat semua`} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {active.map((t) => {
             const u = urgencyOf(t, today);
             return (
@@ -72,7 +74,7 @@ export default function TaskBoard({ tasks, today }: { tasks: TaskItem[]; today: 
               </div>
             );
           })}
-        </div>
+        </ScrollLimit>
       </div>
     </div>
   );
