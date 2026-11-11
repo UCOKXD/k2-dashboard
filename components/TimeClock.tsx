@@ -219,55 +219,56 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
         <ClockAlertsLayer alerts={alerts} full={full} />
 
         <h1 className="sr-only">Waktu Jakarta</h1>
-        {/* Bar atas: pilihan Jam / Timer + tombol layar penuh (ikon). Tidak ada tombol "Keluar": keluar lewat Esc / tombol bawaan browser.
-            Pengecualian: di browser tanpa Fullscreen API (mis. iPhone) tidak ada cara keluar bawaan, jadi ikon tutup tetap muncul. */}
-        <div className="absolute inset-x-0 top-4 z-30 flex justify-center gap-2 px-4">
-          <div role="tablist" aria-label="Mode panel" onKeyDown={onTabKey} className="flex gap-1 rounded-k2-lg border border-white/20 bg-[rgba(6,18,39,0.45)] p-1">
-            {(
-              [
-                ["jam", "Jam"],
-                ["timer", "Timer"],
-              ] as const
-            ).map(([id, label]) => (
-              <button
-                key={id}
-                id={`mode-${id}`}
-                type="button"
-                role="tab"
-                aria-selected={mode === id}
-                aria-controls={`panel-${id}`}
-                tabIndex={mode === id ? 0 : -1}
-                onClick={() => setMode(id)}
-                className={`min-h-11 min-w-[88px] rounded-k2-md px-5 text-sm font-bold transition ${
-                  mode === id ? "bg-white text-[#0b1e3d]" : "text-[#dbe5f0] hover:bg-white/[0.14] hover:text-white"
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-          {(!full || !native) && (
-            <button
-              type="button"
-              onClick={toggleFull}
-              title={full ? "Tutup layar penuh" : "Layar penuh"}
-              aria-label={full ? "Tutup layar penuh" : "Tampilkan jam layar penuh"}
-              className={`${SOFT} min-w-[52px] self-stretch rounded-k2-lg px-0`}
-            >
-              {full ? <Minimize2 size={18} aria-hidden="true" /> : <Maximize2 size={18} aria-hidden="true" />}
-            </button>
-          )}
-        </div>
-        <div id="panel-jam" role="tabpanel" aria-labelledby="mode-jam" hidden={mode !== "jam"} className={`relative z-20 w-full flex-col items-center pt-16 ${mode === "jam" ? "flex" : ""}`}>
+        <div className="relative z-20 flex w-full flex-col items-center pt-2">
           {/* Label diberi latar navy tipis supaya tetap terbaca di atas foto apa pun. */}
+          {mode === "jam" && (
+            <p className={`rounded-full bg-[rgba(11,30,61,0.5)] px-4 py-1 font-semibold text-sea-100 ${full ? "text-lg sm:text-2xl" : "text-[12.5px]"}`} style={SHADOW_LABEL}>
+              Waktu Indonesia Barat
+            </p>
+          )}
+          {/* Pilihan Jam / Timer + tombol layar penuh (ikon), tepat di atas angka. Tidak ada tombol "Keluar": keluar lewat Esc / tombol bawaan browser.
+              Pengecualian: di browser tanpa Fullscreen API (mis. iPhone) tidak ada cara keluar bawaan, jadi ikon tutup tetap muncul. */}
+          <div className={`flex justify-center gap-1.5 ${full ? "mt-4" : "mt-3"}`}>
+            <div role="tablist" aria-label="Mode panel" onKeyDown={onTabKey} className="flex gap-0.5 rounded-k2-md border border-white/20 bg-[rgba(6,18,39,0.45)] p-0.5">
+              {(
+                [
+                  ["jam", "Jam"],
+                  ["timer", "Timer"],
+                ] as const
+              ).map(([id, label]) => (
+                <button
+                  key={id}
+                  id={`mode-${id}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={mode === id}
+                  aria-controls={`panel-${id}`}
+                  tabIndex={mode === id ? 0 : -1}
+                  onClick={() => setMode(id)}
+                  className={`h-9 min-w-[64px] rounded-[8px] px-3.5 text-xs font-bold transition relative after:absolute after:-inset-y-1 after:inset-x-0 after:content-[''] ${
+                    mode === id ? "bg-white text-[#0b1e3d]" : "text-[#dbe5f0] hover:bg-white/[0.14] hover:text-white"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            {(!full || !native) && (
+              <button
+                type="button"
+                onClick={toggleFull}
+                title={full ? "Tutup layar penuh" : "Layar penuh"}
+                aria-label={full ? "Tutup layar penuh" : "Tampilkan jam layar penuh"}
+                className={`${SOFT} relative !min-h-0 h-10 w-10 self-center !px-0 after:absolute after:-inset-0.5 after:content-['']`}
+              >
+                {full ? <Minimize2 size={15} aria-hidden="true" /> : <Maximize2 size={15} aria-hidden="true" />}
+              </button>
+            )}
+          </div>
+        </div>
+        <div id="panel-jam" role="tabpanel" aria-labelledby="mode-jam" hidden={mode !== "jam"} className={`relative z-20 w-full flex-col items-center ${mode === "jam" ? "flex" : ""}`}>
           <p
-            className={`rounded-full bg-[rgba(11,30,61,0.5)] px-4 py-1 font-semibold text-sea-100 ${full ?"text-lg sm:text-2xl" : "text-[12.5px]"}`}
-            style={SHADOW_LABEL}
-          >
-            Waktu Indonesia Barat
-          </p>
-          <p
-          className={`mt-3.5 font-mono font-extrabold leading-none tabular-nums tracking-[-0.04em] ${full ? "text-[min(19vw,30vh)]" : "text-[clamp(64px,14vw,156px)]"} ${now && blinkAt(now.getTime()) ? "text-red-500" : ""}`}
+          className={`mt-2 font-mono font-extrabold leading-none tabular-nums tracking-[-0.04em] ${full ? "text-[min(19vw,30vh)]" : "text-[clamp(64px,14vw,156px)]"} ${now && blinkAt(now.getTime()) ? "text-red-500" : ""}`}
           style={SHADOW_CLOCK}
         >
             {now ? part(now, "Asia/Jakarta", { hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23" }) : "--:--:--"}
@@ -276,7 +277,7 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
             {now ? part(now, "Asia/Jakarta", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : " "}
           </p>
         </div>
-        <div id="panel-timer" role="tabpanel" aria-labelledby="mode-timer" hidden={mode !== "timer"} className={`relative z-20 w-full flex-col items-center pt-16 ${mode === "timer" ? "flex" : ""}`}>
+        <div id="panel-timer" role="tabpanel" aria-labelledby="mode-timer" hidden={mode !== "timer"} className={`relative z-20 w-full flex-col items-center ${mode === "timer" ? "flex" : ""}`}>
           <TimerFace t={timer} big={full} digitClass={full ? "text-[min(15vw,26vh)]" : "text-[clamp(56px,12vw,140px)]"} />
         </div>
       </div>

@@ -78,4 +78,5 @@ Semua pasangan teks diuji dengan `contrast-check.py` antislop; minimal 4,5:1 unt
 - Pesan WhatsApp grup (bukan antarmuka web) boleh memakai emoji.
 - Tombol "Jeda animasi" dihapus atas permintaan pemilik (11 November 2026), walau antislop R-39 meminta tombol jeda untuk gerak lebih dari 5 detik. Pengganti: semua animasi hias tetap berhenti lewat `prefers-reduced-motion`; tombol jeda sampul foto dan kartu kenalan tetap ada.
 - Panel Waktu: tombol "Keluar" layar penuh dihapus atas permintaan pemilik; keluar lewat Esc atau tombol bawaan browser. Di browser tanpa Fullscreen API (iPhone) ikon kecil tetap muncul karena tidak ada cara keluar lain.
+- Panel Waktu: tombol Jam / Timer dan ikon layar penuh dibuat lebih kecil atas permintaan pemilik (tampak 36–40 px); area sentuhnya tetap 44 px lewat lapisan tak terlihat.
 - Judul "Yuk Kenalan!!" melengkung seperti tulisan punggung jaket varsity; kartu kenalan tanpa kotak latar supaya menyatu dengan halaman.
