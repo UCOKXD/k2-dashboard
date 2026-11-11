@@ -1,5 +1,5 @@
 "use client";
-import ClockTools from "@/components/ClockTools";
+import TimerFace, { SOFT, useCountdown } from "@/components/ClockTools";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { CheckCircle2, Maximize2, Minimize2, RefreshCw, TriangleAlert } from "lucide-react";
@@ -96,6 +96,17 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
 
   // Bel coffee break, makan siang, dan pulang (Senin–Jumat).
   const alerts = useClockAlerts();
+
+  // Dua mode panel: Jam (default) dan Timer. Timer tetap berjalan walau pindah ke mode Jam.
+  const [mode, setMode] = useState<"jam" | "timer">("jam");
+  const timer = useCountdown();
+  function onTabKey(e: React.KeyboardEvent) {
+    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+    e.preventDefault();
+    const next = mode === "jam" ? "timer" : "jam";
+    setMode(next);
+    document.getElementById(`mode-${next}`)?.focus();
+  }
   const checkAlerts = alerts.check;
 
   // Detak jam mengikuti pergantian detik yang sebenarnya.
@@ -159,7 +170,7 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
         className={`k2-clock relative flex flex-col items-center justify-center overflow-hidden bg-[#0b1e3d] dark:bg-[#1b3a6b] text-center text-white ${
           full
             ? "k2-clock--full fixed inset-0 z-[100] p-6"
-            : "min-h-[360px] rounded-[2rem] border border-line p-6 shadow-[0_28px_70px_rgba(11,30,61,0.45)] sm:min-h-[460px] sm:p-10"
+            : "min-h-[360px] rounded-[2rem] border border-line p-6 pb-16 shadow-[0_28px_70px_rgba(11,30,61,0.45)] sm:min-h-[460px] sm:p-10 sm:pb-16 lg:pb-10"
         }`}
       >
         {/* Latar foto kelas + lapisan gelap di tengah supaya angka tetap terbaca. */}
@@ -208,22 +219,46 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
         <ClockAlertsLayer alerts={alerts} full={full} />
 
         <h1 className="sr-only">Waktu Jakarta</h1>
-        {/* Hanya tombol "Layar penuh". Keluar lewat Esc / tombol kembali bawaan browser.
-            Pengecualian: di browser tanpa Fullscreen API (mis. iPhone) tidak ada cara keluar bawaan, jadi ikon kecil tetap muncul. */}
-        {(!full || !native) && (
-          <div className="absolute right-4 top-4 z-30">
+        {/* Bar atas: pilihan Jam / Timer + tombol layar penuh (ikon). Tidak ada tombol "Keluar": keluar lewat Esc / tombol bawaan browser.
+            Pengecualian: di browser tanpa Fullscreen API (mis. iPhone) tidak ada cara keluar bawaan, jadi ikon tutup tetap muncul. */}
+        <div className="absolute inset-x-0 top-4 z-30 flex justify-center gap-2 px-4">
+          <div role="tablist" aria-label="Mode panel" onKeyDown={onTabKey} className="flex gap-1 rounded-k2-lg border border-white/20 bg-[rgba(6,18,39,0.45)] p-1">
+            {(
+              [
+                ["jam", "Jam"],
+                ["timer", "Timer"],
+              ] as const
+            ).map(([id, label]) => (
+              <button
+                key={id}
+                id={`mode-${id}`}
+                type="button"
+                role="tab"
+                aria-selected={mode === id}
+                aria-controls={`panel-${id}`}
+                tabIndex={mode === id ? 0 : -1}
+                onClick={() => setMode(id)}
+                className={`min-h-11 min-w-[88px] rounded-k2-md px-5 text-sm font-bold transition ${
+                  mode === id ? "bg-white text-[#0b1e3d]" : "text-[#dbe5f0] hover:bg-white/[0.14] hover:text-white"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {(!full || !native) && (
             <button
               type="button"
               onClick={toggleFull}
-              className="flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-k2-md border border-white/30 bg-white/[0.12] px-3 text-xs font-bold text-white transition hover:bg-white/[0.22]"
+              title={full ? "Tutup layar penuh" : "Layar penuh"}
               aria-label={full ? "Tutup layar penuh" : "Tampilkan jam layar penuh"}
+              className={`${SOFT} min-w-[52px] self-stretch rounded-k2-lg px-0`}
             >
-              {full ? <Minimize2 size={14} aria-hidden="true" /> : <Maximize2 size={14} aria-hidden="true" />}
-              {!full && <span className="hidden sm:inline">Layar penuh</span>}
+              {full ? <Minimize2 size={18} aria-hidden="true" /> : <Maximize2 size={18} aria-hidden="true" />}
             </button>
-          </div>
-        )}
-        <div className={`relative z-20 flex w-full flex-col items-center ${full ? "" : "pt-10 sm:pt-0"}`}>
+          )}
+        </div>
+        <div id="panel-jam" role="tabpanel" aria-labelledby="mode-jam" hidden={mode !== "jam"} className={`relative z-20 w-full flex-col items-center pt-16 ${mode === "jam" ? "flex" : ""}`}>
           {/* Label diberi latar navy tipis supaya tetap terbaca di atas foto apa pun. */}
           <p
             className={`rounded-full bg-[rgba(11,30,61,0.5)] px-4 py-1 font-semibold text-sea-100 ${full ?"text-lg sm:text-2xl" : "text-[12.5px]"}`}
@@ -240,7 +275,9 @@ export default function TimeClock({ photos: initialPhotos }: { photos: string[] 
           <p className={`mt-3 font-semibold text-white ${full ? "text-2xl sm:text-4xl" : "text-base sm:text-xl"}`} style={SHADOW_TEXT}>
             {now ? part(now, "Asia/Jakarta", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : " "}
           </p>
-          <ClockTools big={full} />
+        </div>
+        <div id="panel-timer" role="tabpanel" aria-labelledby="mode-timer" hidden={mode !== "timer"} className={`relative z-20 w-full flex-col items-center pt-16 ${mode === "timer" ? "flex" : ""}`}>
+          <TimerFace t={timer} big={full} digitClass={full ? "text-[min(15vw,26vh)]" : "text-[clamp(56px,12vw,140px)]"} />
         </div>
       </div>
 

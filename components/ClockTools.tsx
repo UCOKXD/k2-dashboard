@@ -2,22 +2,18 @@
 import { useEffect, useRef, useState } from "react";
 import { Pause, Play, RotateCcw } from "lucide-react";
 
-// Timer & stopwatch di dalam panel jam (menggantikan kartu WIB/WITA/WIT).
-// Tombol tembus pandang dengan teks kecil tebal supaya foto latar tetap terlihat; area sentuh tetap 44 px.
+// Mode Timer panel jam (menggantikan kartu WIB/WITA/WIT). Angka timer sebesar angka jam; di bawahnya isian jam/menit/detik,
+// pilihan cepat, lalu Mulai & Ulang. Tombol tembus pandang dengan teks kecil tebal supaya foto latar tetap terlihat.
 
 const pad = (n: number) => String(n).padStart(2, "0");
-function clock(ms: number, centi = false) {
+const hms = (ms: number) => {
   const t = Math.max(0, ms);
-  const h = Math.floor(t / 3_600_000);
-  const m = Math.floor((t % 3_600_000) / 60_000);
-  const s = Math.floor((t % 60_000) / 1000);
-  const cs = Math.floor((t % 1000) / 10);
-  return `${h ? `${pad(h)}:` : ""}${pad(m)}:${pad(s)}${centi ? `.${pad(cs)}` : ""}`;
-}
+  return `${pad(Math.floor(t / 3_600_000))}:${pad(Math.floor((t % 3_600_000) / 60_000))}:${pad(Math.floor((t % 60_000) / 1000))}`;
+};
 
-const BTN = "inline-flex min-h-11 items-center justify-center gap-1.5 rounded-k2-md border px-4 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-40";
-const SOFT = `${BTN} border-white/25 bg-white/[0.12] text-white hover:bg-white/[0.22] active:bg-white/30`;
-const MAIN = `${BTN} border-white/40 bg-white/[0.24] text-white hover:bg-white/[0.34] active:bg-white/40`;
+export const BTN = "inline-flex min-h-11 items-center justify-center gap-1.5 rounded-k2-md border px-4 text-xs font-bold transition disabled:cursor-not-allowed disabled:opacity-40";
+export const SOFT = `${BTN} border-white/25 bg-white/[0.12] text-white hover:bg-white/[0.22] active:bg-white/30`;
+export const MAIN = `${BTN} border-white/40 bg-white/[0.24] text-white hover:bg-white/[0.34] active:bg-white/40`;
 const SHADOW = { textShadow: "0 3px 14px rgba(11,30,61,0.85)" };
 
 // Alarm 5 detik: bip dua nada berselang, dibuat dengan Web Audio (tanpa file suara).
@@ -73,13 +69,13 @@ function useTick(on: boolean, every = 200) {
   return now;
 }
 
-const PRESETS = [5, 10, 15];
-const num = (v: string, max: number) => String(Math.min(max, Number(v.replace(/\D/g, "").slice(-3)) || 0));
+const PRESETS = [5, 10, 15, 30, 60, 90, 120];
+const num = (v: string, max: number) => Math.min(max, Number(v.replace(/\D/g, "").slice(-2)) || 0);
 
-function Countdown({ big }: { big: boolean }) {
-  const [min, setMin] = useState("5");
-  const [sec, setSec] = useState("0");
-  const total = (Number(min) * 60 + Number(sec)) * 1000;
+// Status timer dipegang TimeClock, jadi timer tetap berjalan saat pindah ke mode Jam.
+export function useCountdown() {
+  const [set, setSet] = useState({ h: 0, m: 5, s: 0 });
+  const total = (set.h * 3600 + set.m * 60 + set.s) * 1000;
   const [left, setLeft] = useState<number | null>(null); // null = belum mulai (angka masih bisa diubah)
   const [endAt, setEndAt] = useState<number | null>(null);
   const [span, setSpan] = useState(0); // panjang putaran yang sedang berjalan
@@ -100,173 +96,97 @@ function Countdown({ big }: { big: boolean }) {
     return () => clearTimeout(id);
   }, [endAt]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  function reset(ms?: number) {
-    alarm.stop();
-    setEndAt(null);
-    setLeft(null);
-    setDone(false);
-    if (ms !== undefined) {
-      setMin(String(ms / 60_000));
-      setSec("0");
-    }
-  }
-  function start() {
-    if (remaining <= 0) return;
-    alarm.prime();
-    setDone(false);
-    setSpan(remaining);
-    setEndAt(Date.now() + remaining);
-  }
-  function pause() {
-    setLeft(Math.max(0, (endAt ?? 0) - Date.now()));
-    setEndAt(null);
-  }
+  return {
+    set,
+    total,
+    remaining,
+    running: endAt !== null,
+    editing: left === null && endAt === null,
+    resumable: left !== null && left > 0,
+    done,
+    setPart: (k: "h" | "m" | "s", v: string) => setSet((o) => ({ ...o, [k]: num(v, k === "h" ? 99 : 59) })),
+    reset(min?: number) {
+      alarm.stop();
+      setEndAt(null);
+      setLeft(null);
+      setDone(false);
+      if (min !== undefined) setSet({ h: Math.floor(min / 60), m: min % 60, s: 0 });
+    },
+    start() {
+      if (remaining <= 0) return;
+      alarm.prime();
+      setDone(false);
+      setSpan(remaining);
+      setEndAt(Date.now() + remaining);
+    },
+    pause() {
+      setLeft(Math.max(0, (endAt ?? 0) - Date.now()));
+      setEndAt(null);
+    },
+  };
+}
+export type Countdown = ReturnType<typeof useCountdown>;
 
-  const editing = left === null && endAt === null;
-  const digit = big ? "text-[clamp(52px,min(8vw,12vh),110px)]" : "text-[clamp(44px,7vw,64px)]";
-  const field = `w-[2.3ch] bg-transparent text-center font-mono font-extrabold leading-none tabular-nums text-white outline-none ${digit} rounded-k2-md focus-visible:ring-2 focus-visible:ring-white`;
+const PART = [
+  ["h", "Jam"],
+  ["m", "Menit"],
+  ["s", "Detik"],
+] as const;
 
+export default function TimerFace({ t, big, digitClass }: { t: Countdown; big: boolean; digitClass: string }) {
   return (
-    <div className="flex flex-col items-center">
-      {editing ? (
-        <div className="flex items-start justify-center gap-1" style={SHADOW}>
-          <label className="flex flex-col items-center">
-            <input value={pad(Number(min))} onChange={(e) => setMin(num(e.target.value, 999))} onFocus={(e) => e.target.select()} inputMode="numeric" className={field} />
-            <span className="mt-1 text-xs font-bold text-[#c9d6e6]">Menit</span>
-          </label>
-          <span className={`font-mono font-extrabold leading-none ${digit}`} aria-hidden="true">
-            :
-          </span>
-          <label className="flex flex-col items-center">
-            <input value={pad(Number(sec))} onChange={(e) => setSec(num(e.target.value, 59))} onFocus={(e) => e.target.select()} inputMode="numeric" className={field} />
-            <span className="mt-1 text-xs font-bold text-[#c9d6e6]">Detik</span>
-          </label>
-        </div>
-      ) : (
-        <p className={`font-mono font-extrabold leading-none tabular-nums ${digit} ${done ? "text-[#ff8a8a]" : ""}`} style={SHADOW}>
-          {clock(remaining + (endAt !== null ? 999 : 0))}
-        </p>
-      )}
+    <div className="flex w-full flex-col items-center">
+      <p className={`font-mono font-extrabold leading-none tabular-nums tracking-[-0.04em] ${digitClass} ${t.done ? "text-[#ff8a8a]" : ""}`} style={SHADOW}>
+        {hms(t.remaining + (t.running ? 999 : 0))}
+      </p>
       <p className="mt-2 min-h-5 text-sm font-bold text-[#ffb4b4]" aria-live="assertive">
-        {done ? "Waktu habis!" : ""}
+        {t.done ? "Waktu habis!" : ""}
       </p>
 
-      <div className="mt-2 flex justify-center gap-2">
-        {endAt === null ? (
-          <button type="button" onClick={start} disabled={remaining <= 0} className={MAIN}>
-            <Play size={14} aria-hidden="true" /> {left !== null && left > 0 ? "Lanjut" : "Mulai"}
-          </button>
-        ) : (
-          <button type="button" onClick={pause} className={MAIN}>
-            <Pause size={14} aria-hidden="true" /> Jeda
-          </button>
-        )}
-        <button type="button" onClick={() => reset()} disabled={editing && !done} className={SOFT}>
-          <RotateCcw size={14} aria-hidden="true" /> Ulang
-        </button>
+      {/* Isian jam/menit/detik: bisa diubah selama timer belum dimulai. */}
+      <div className="mt-2 flex justify-center gap-2.5" role="group" aria-label="Atur lama timer">
+        {PART.map(([k, label]) => (
+          <label key={k} className="flex flex-col items-center gap-1.5">
+            <input
+              value={String(t.set[k])}
+              onChange={(e) => t.setPart(k, e.target.value)}
+              onFocus={(e) => e.target.select()}
+              inputMode="numeric"
+              aria-label={`${label} timer`}
+              disabled={!t.editing}
+              className={`h-12 rounded-k2-md border border-white/25 bg-white/[0.12] text-center font-mono font-bold tabular-nums text-white outline-none transition focus-visible:border-white focus-visible:ring-2 focus-visible:ring-white disabled:opacity-50 ${big ? "w-24 text-2xl" : "w-[72px] text-xl"}`}
+            />
+            <span className="text-xs font-bold text-[#dbe5f0]" style={SHADOW}>
+              {label}
+            </span>
+          </label>
+        ))}
       </div>
-      <div className="mt-3 flex justify-center gap-2" role="group" aria-label="Pilihan cepat">
+
+      <div className="mt-4 flex max-w-full flex-wrap justify-center gap-2" role="group" aria-label="Pilihan cepat">
         {PRESETS.map((m) => {
-          const on = editing && total === m * 60_000;
+          const on = t.editing && t.total === m * 60_000;
           return (
-            <button key={m} type="button" onClick={() => reset(m * 60_000)} aria-pressed={on} className={`${on ? MAIN : SOFT} px-3`}>
+            <button key={m} type="button" onClick={() => t.reset(m)} aria-pressed={on} className={`${on ? MAIN : SOFT} px-3.5`}>
               {m} menit
             </button>
           );
         })}
       </div>
-    </div>
-  );
-}
 
-function Stopwatch({ big }: { big: boolean }) {
-  const [base, setBase] = useState(0);
-  const [startAt, setStartAt] = useState<number | null>(null);
-  const now = useTick(startAt !== null, 47);
-  const elapsed = base + (startAt !== null ? Math.max(0, now - startAt) : 0);
-  const digit = big ? "text-[clamp(52px,min(8vw,12vh),110px)]" : "text-[clamp(44px,7vw,64px)]";
-
-  return (
-    <div className="flex flex-col items-center">
-      <p className={`font-mono font-extrabold leading-none tabular-nums ${digit}`} style={SHADOW}>
-        {clock(elapsed, true)}
-      </p>
-      <p className="mt-2 min-h-5" aria-hidden="true" />
-      <div className="mt-2 flex justify-center gap-2">
-        {startAt === null ? (
-          <button type="button" onClick={() => setStartAt(Date.now())} className={MAIN}>
-            <Play size={14} aria-hidden="true" /> {elapsed ? "Lanjut" : "Mulai"}
+      <div className="mt-4 flex justify-center gap-2">
+        {t.running ? (
+          <button type="button" onClick={t.pause} className={`${MAIN} px-6`}>
+            <Pause size={15} aria-hidden="true" /> Jeda
           </button>
         ) : (
-          <button
-            type="button"
-            onClick={() => {
-              setBase(base + Date.now() - startAt);
-              setStartAt(null);
-            }}
-            className={MAIN}
-          >
-            <Pause size={14} aria-hidden="true" /> Jeda
+          <button type="button" onClick={t.start} disabled={t.remaining <= 0} className={`${MAIN} px-6`}>
+            <Play size={15} aria-hidden="true" /> {t.resumable ? "Lanjut" : "Mulai"}
           </button>
         )}
-        <button
-          type="button"
-          onClick={() => {
-            setBase(0);
-            setStartAt(null);
-          }}
-          disabled={!elapsed}
-          className={SOFT}
-        >
-          <RotateCcw size={14} aria-hidden="true" /> Ulang
+        <button type="button" onClick={() => t.reset()} disabled={t.editing && !t.done} className={`${SOFT} px-5`}>
+          <RotateCcw size={15} aria-hidden="true" /> Ulang
         </button>
-      </div>
-    </div>
-  );
-}
-
-const TABS = [
-  ["timer", "Timer"],
-  ["stopwatch", "Stopwatch"],
-] as const;
-
-export default function ClockTools({ big = false }: { big?: boolean }) {
-  const [tab, setTab] = useState<"timer" | "stopwatch">("timer");
-
-  // Panah kiri/kanan berpindah tab (pola tablist WAI-ARIA).
-  function onKey(e: React.KeyboardEvent) {
-    if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
-    e.preventDefault();
-    const next = tab === "timer" ? "stopwatch" : "timer";
-    setTab(next);
-    document.getElementById(`tab-${next}`)?.focus();
-  }
-
-  return (
-    <div className={`mx-auto mt-6 w-full rounded-k2-lg border border-white/[0.14] bg-[rgba(6,18,39,0.62)] px-4 pb-5 pt-3 ${big ? "max-w-2xl" : "max-w-md"}`}>
-      <div role="tablist" aria-label="Pilih alat" onKeyDown={onKey} className="mb-4 flex justify-center gap-1.5">
-        {TABS.map(([id, label]) => (
-          <button
-            key={id}
-            id={`tab-${id}`}
-            type="button"
-            role="tab"
-            aria-selected={tab === id}
-            aria-controls={`panel-${id}`}
-            tabIndex={tab === id ? 0 : -1}
-            onClick={() => setTab(id)}
-            className={`${tab === id ? MAIN : `${SOFT} text-[#c9d6e6]`} px-3.5`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      {/* Keduanya tetap terpasang supaya timer tidak berhenti saat pindah tab. */}
-      <div id="panel-timer" role="tabpanel" aria-labelledby="tab-timer" hidden={tab !== "timer"}>
-        <Countdown big={big} />
-      </div>
-      <div id="panel-stopwatch" role="tabpanel" aria-labelledby="tab-stopwatch" hidden={tab !== "stopwatch"}>
-        <Stopwatch big={big} />
       </div>
     </div>
   );
