@@ -25,6 +25,7 @@ import type { TaskItem } from "@/lib/tasks";
 import { NOT_READY, cmd, pushJSON, setJSON, storeReady } from "@/lib/store";
 import { STUDENTS } from "@/lib/students";
 import { notify } from "@/lib/notify";
+import { taskNotifData } from "@/lib/notif";
 import { ALL_PERMS, DEFAULT_IZIN, ROLE_DEFS, type PermKey } from "@/lib/roles";
 
 export const dynamic = "force-dynamic";
@@ -379,8 +380,13 @@ export async function PUT(
   return NextResponse.json({ ok: true, data });
 }
 
-// Kabari grup WhatsApp: tempat duduk diperbarui, dan pelanggaran yang ditambahkan admin lewat Panel Admin.
+// Kabari grup WhatsApp: tempat duduk diperbarui, pelanggaran yang ditambahkan admin lewat Panel Admin, dan tugas baru.
 async function notifyGroup(key: ContentKey, before: unknown, after: unknown, by: string) {
+  if (key === "tasks") {
+    const old = new Set(((before as TaskItem[]) ?? []).map((t) => t.id));
+    for (const t of (after as TaskItem[]).filter((x) => x.id && !old.has(x.id) && !x.done))
+      await notify("tugas_baru", taskNotifData(t), by, { dedupe: `tugas|${t.id}` });
+  }
   if (key === "seats" && JSON.stringify((before as SeatsData)?.order) !== JSON.stringify((after as SeatsData)?.order))
     await notify("tempat_duduk", { link: "/tempat-duduk" }, by, { collapse: "seats" });
   if (key === "pelanggaran") {

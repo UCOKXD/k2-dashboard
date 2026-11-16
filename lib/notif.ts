@@ -8,6 +8,8 @@ export type NotifType =
   | "petugas_doa"
   | "tempat_duduk"
   | "ulang_tahun"
+  | "tugas_baru"
+  | "tugas_deadline"
   | "ngl_buka"
   | "ngl_tutup"
   | "ngl_progres"
@@ -100,6 +102,40 @@ export const NOTIF_DEFS: Def[] = [
     template: "🎂 *SELAMAT ULANG TAHUN!* 🎉\n\nHari ini *{nama}* berulang tahun.\nSelamat ulang tahun, {panggilan}! Semoga sehat, sukses, dan makin semangat 🥳\n\nKirim ucapan lewat web K2:\n{link}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
   },
   {
+    type: "tugas_baru",
+    label: "Tugas baru ditambahkan",
+    plural: "tugas baru",
+    fields: [
+      { key: "judul", label: "Judul tugas" },
+      { key: "matkul", label: "Mata kuliah" },
+      { key: "deadline", label: "Deadline (hari, tanggal, jam)" },
+      { key: "kesulitan", label: "Tingkat kesulitan" },
+      { key: "catatan", label: "Catatan" },
+      { key: "link", label: "Link halaman tugas" },
+      ...COMMON,
+    ],
+    sample: { judul: "Quiz Basis Data", matkul: "Basis Data", deadline: "Jumat, 20 Nov 2026, 23.59 WIB", kesulitan: "Sedang", catatan: "Materi pertemuan 1-6", link: "https://k2-dashboard-eight.vercel.app/kalender-acara" },
+    template: "📚 *TUGAS BARU*\n\n*{judul}*\nMata kuliah: {matkul}\nDeadline: {deadline}\nKesulitan: {kesulitan}\nCatatan: {catatan}\n\nLihat semua tugas:\n{link}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+  },
+  {
+    type: "tugas_deadline",
+    label: "Pengingat deadline tugas H-3, H-2, H-1 (dikirim mulai 07.30 WIB)",
+    plural: "pengingat deadline tugas",
+    fields: [
+      { key: "judul", label: "Judul tugas" },
+      { key: "matkul", label: "Mata kuliah" },
+      { key: "deadline", label: "Deadline (hari, tanggal, jam)" },
+      { key: "kesulitan", label: "Tingkat kesulitan" },
+      { key: "catatan", label: "Catatan" },
+      { key: "link", label: "Link halaman tugas" },
+      { key: "sisa", label: "Sisa waktu (H-3 / H-2 / H-1)" },
+      { key: "sisa_hari", label: "Sisa waktu dalam kata (3 hari lagi / besok)" },
+      ...COMMON,
+    ],
+    sample: { judul: "Quiz Basis Data", matkul: "Basis Data", deadline: "Jumat, 20 Nov 2026, 23.59 WIB", kesulitan: "Sedang", catatan: "Materi pertemuan 1-6", sisa: "H-1", sisa_hari: "besok", link: "https://k2-dashboard-eight.vercel.app/kalender-acara" },
+    template: "⏰ *DEADLINE {sisa}: {judul}*\n\nDeadline-nya {sisa_hari}, jangan sampai lupa ya!\nMata kuliah: {matkul}\nDeadline: {deadline}\nKesulitan: {kesulitan}\nCatatan: {catatan}\n\nLihat semua tugas:\n{link}\n\nDilaporkan oleh: {dilaporkan_oleh}\nWaktu laporan: {waktu_laporan}",
+  },
+  {
     type: "ngl_buka",
     label: "Sesi NGL dibuka",
     plural: "info sesi NGL",
@@ -186,4 +222,12 @@ export function render(template: string, data: Record<string, string>) {
     .join("\n")
     .replace(/\n{3,}/g, "\n\n") // baris kosong ganda setelah baris dihapus
     .trim();
+}
+
+// Data notifikasi dari satu tugas, dipakai untuk "tugas baru" dan pengingat deadline.
+export function taskNotifData(t: { judul: string; matkul: string; deadline: string; jam: string; difficulty: 1 | 2 | 3; catatan: string }) {
+  const [y, m, d] = t.deadline.split("-").map(Number);
+  const day = new Date(Date.UTC(y, m - 1, d));
+  const tgl = `${HARI[day.getUTCDay()]}, ${d} ${BULAN[m - 1]} ${y}${t.jam ? `, ${t.jam.replace(":", ".")} WIB` : ""}`;
+  return { judul: t.judul, matkul: t.matkul, deadline: tgl, kesulitan: ["", "Mudah", "Sedang", "Sulit"][t.difficulty], catatan: t.catatan, link: "/kalender-acara" };
 }
